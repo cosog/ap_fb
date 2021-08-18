@@ -1,0 +1,335 @@
+.icon-collapse-all {
+	background-image: url(../images/icon/collapse.png) !important;
+}
+
+.icon-expand-all {
+	background-image: url(../images/icon/expand.png) !important;
+}
+
+.note-refresh {
+	background-image: url(../images/icon/refresh.png) !important;
+}
+
+.x-grid-cell .first-level .x-tree-icon {
+	background-image: url(../images/icon/leaf.png) !important;
+}
+
+.node1 {
+	background-image: url(../images/icon/node1.png) !important;
+}
+
+.node2 {
+	background-image: url(../images/icon/node2.png) !important;
+}
+
+.showhand {
+	cursor: pointer;!important;
+}
+
+.toolbar {
+	background-color: #99aabb;
+	!
+	important;
+	/* background-image: url(); */
+}
+
+/*.hello-treepanel {  
+  background: url(../images/chongxie1.png) left top repeat-x !important;  
+}*/
+/* 妯″潡灏忓浘鏍嘽ss  */
+.Index {
+	background-image: url(../images/icon/index.png) !important;
+}
+
+.Video {
+	background-image: url(../images/icon/video.png) !important;
+}
+
+.Monitor {
+	background-image: url(../images/icon/monitor.png) !important;
+}
+
+.Calculate {
+	background-image: url(../images/icon/calculate.png) !important;
+}
+
+.Optimize {
+	background-image: url(../images/icon/optimize.png) !important;
+}
+
+.DeviceDebugging {
+	background-image: url(../images/icon/deviceDebugging.png) !important;
+}
+
+.Dictionary {
+	background-image: url(../images/icon/dictionary.png) !important;
+}
+
+.MonitorIn {
+	background-image: url(../images/icon/monitor.png) !important;
+}
+.MonitorHis {
+	background-image: url(../images/icon/monitorHis.png) !important;
+}
+.Pumping {
+	background-image: url(../images/icon/pumping.png) !important;
+}
+.MonitorRoot {
+	background-image: url(../images/icon/monitor.png) !important;
+}
+
+.Realtime {
+	background-image: url(../images/icon/realtime.png) !important;
+}
+
+.Total {
+	background-image: url(../images/icon/total.png) !important;
+}
+
+.ReportRoot {
+	background-image: url(../images/icon/report.png) !important;
+}
+
+.Report {
+	background-image: url(../images/icon/cbmReport.png) !important;
+}
+.audit {
+	background-image: url(../images/icon/audit.png) !important;
+}
+.ReportIn {
+	background-image: url(../images/icon/cbmReport.png) !important;
+}
+.CbmReportRoot {
+	background-image: url(../images/icon/cbmReport.png) !important;
+}
+
+.CurveRoot {
+	background-image: url(../images/icon/rawData.png) !important;
+}
+
+.RawData {
+	background-image: url(../images/icon/rawData.png) !important;
+}
+
+.CurveIn {
+	background-image: url(../images/icon/rawData.png) !important;
+}
+
+.Function {
+	background-image: url(../images/icon/function.png) !important;
+}
+
+.zuzhi {
+	background-image: url(../images/icon/zuzhi.png) !important;
+}
+
+.Downstream {
+	background-image: url(../images/icon/downstream.png) !important;
+}
+
+.MeasureIn {
+	background-image: url(../images/icon/downstream.png) !important;
+}
+
+.MeasureRoot {
+	background-image: url(../images/icon/measure.png) !important;
+}
+.ProductionData {
+	background-image: url(../images/icon/productionData.png) !important;
+}
+
+.Alarm {
+	background-image: url(../images/icon/alarm.png) !important;
+}
+
+.Image {
+	background-image: url(../images/icon/image.png) !important;
+}
+
+.Backstage {
+	background-image: url(../images/icon/backstage.png) !important;
+}
+
+.Help {
+	background-image: url(../images/icon/help.png) !important;
+}
+
+.search {
+	background-image: url(../images/icon/search.png) !important;
+}
+
+/**鍚庡彴妯″潡灏忓浘鏍�*/
+.loginOut {
+	background-image: url(../images/icon/tuichu.png) !important;
+}
+
+.save {
+	background-image: url(../images/icon/save.png) !important;
+}
+
+.select {
+	background-image: url(../images/icon/accept.png) !important;
+}
+
+.add {
+	background-image: url(../images/icon/add.png) !important;
+}
+
+.cancel {
+	background-image: url(../images/icon/cancel.png) !important;
+}
+
+.delete {
+	background-image: url(../images/icon/del.png) !important;
+}
+
+.edit {
+	background-image: url(../images/icon/mod.png) !important;
+}
+
+.export {
+	background-image: url(../images/icon/export.png) !important;
+}
+
+.Stat {
+	background-image: url(../images/icon/stat.png) !important;
+}
+
+.Role {
+	background-image: url(../images/icon/role.png) !important;
+}
+
+.Module {
+	background-image: url(../images/icon/module.png) !important;
+}
+
+.Right {
+	background-image: url(../images/icon/right.png) !important;
+}
+
+.User {
+	background-image: url(../images/icon/user.png) !important;
+}
+
+.Org {
+	background-image: url(../images/icon/org.png) !important;
+}
+.System{
+	background-image: url(../images/icon/system.png) !important;
+}
+.AlarmSet{
+	background-image: url(../images/icon/alarmset.png) !important;
+}
+.DataConfig{
+	background-image: url(../images/icon/dataconfig.png) !important;
+}
+.DataSource{
+	background-image: url(../images/icon/dataSource.png) !important;
+}
+.Device{
+	background-image: url(../images/icon/device.png) !important;
+}
+.Order{
+	background-image: url(../images/icon/order.png) !important;
+}
+.DataMaintaining{
+	background-image: url(../images/icon/dataMaintaining.png) !important;
+}
+.WellInformation{
+	background-image: url(../images/icon/wellInformation.png) !important;
+}
+.BalanceData{
+	background-image: url(../images/icon/balancedata.png) !important;
+}
+.Balance{
+	background-image: url(../images/icon/balance.png) !important;
+}
+.Cycle{
+	background-image: url(../images/icon/cycle.png) !important;
+}
+.Upload{
+	background-image: url(../images/icon/upload.png) !important;
+}
+.Resdata{
+	background-image: url(../images/icon/resdata.png) !important;
+}
+.Protocol{
+	background-image: url(../images/icon/protocol.png) !important;
+}
+.AcqUnit{
+	background-image: url(../images/icon/acqUnit.png) !important;
+}
+.AcqGroup{
+	background-image: url(../images/icon/acqGroup.png) !important;
+}
+ /* shared styles for the ActionColumn icons */
+.x-action-col-cell img {
+	height: 16px;
+	width: 45px;
+	cursor: pointer;
+}
+/*******************************************************************************/
+/*缁勭粐鏍戝浘鏍�*/
+.tree_root_icon {
+	background-image: url(../images/icon/root.png) !important;
+}
+
+.tree_node_icon {
+	background-image: url(../images/icon/node.png) !important;
+}
+
+.tree_leaf_icon {
+	background-image: url(../images/icon/leaf.png) !important;
+}
+/*******************************************************************************/
+/*************鍔ㄦ�佺洃娴嬫姤璀︾被鍨嬪浘鏍�*/
+.normal {
+	background-image: url(../images/icon/normal.png) !important;
+}
+.exception {
+	background-image: url(../images/icon/exception.png) !important;
+}
+/********************************************************************************/
+/*************鎶ヨ*/
+.realaralm {
+	background-image: url(../images/icon/real-alarm.png) !important;
+}
+.rfid {
+	background-image: url(../images/icon/RFID.png) !important;
+}
+.gkbj {
+	background-image: url(../images/icon/gkbj.png) !important;
+}
+.alarmdoing {
+	background-image: url(../images/icon/alarm-doing.png) !important;
+}
+.warn {
+	background-image: url(../images/icon/warn.png) !important;
+}
+.WellboreTrajectory{
+	background-image: url(../images/icon/wellboreTrajectory.png) !important;
+}
+.dtred{
+	background-image: url(../images/icon/alarmdt-red.gif) !important;
+}
+.dtyellow{
+	background-image: url(../images/icon/alarmdt-yellow.gif) !important;
+}
+.dtgreen{
+	background-image: url(../images/icon/alarm-greenlight.png) !important;
+}
+.submit{a
+	background-image: url(../images/icon/submit.png) !important;
+}
+.alarm_well1{
+	background-image: url(../images/icon/alarm-well.png) !important;
+}
+.FESDiagram{
+	background-image: url(../images/icon/FESDiagram.png) !important;
+}
+.InjectionWell{
+	background-image: url(../images/icon/injectionWell.png) !important;
+}
+.MeteringPlant{
+	background-image: url(../images/icon/meteringPlant.png) !important;
+}
