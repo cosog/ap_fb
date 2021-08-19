@@ -58,11 +58,6 @@ public class PageTurnController extends BaseController {
 		ConfigFile configFile=Config.getInstance().configFile;
 		response.setContentType("text/html;charset=utf-8");
 		HttpSession session=request.getSession();
-		session.setAttribute("dataSourceSN", LicenseMap.dataSourceSN);
-		session.setAttribute("pcp", LicenseMap.pcp);
-		session.setAttribute("rawWaterCut", LicenseMap.rawWaterCut);
-		session.setAttribute("dynamicCurve", LicenseMap.dynamicCurve);
-		session.setAttribute("electricalHidden", LicenseMap.electricalHidden);
 		session.setAttribute("configFile", gson.toJson(configFile));
 		session.setAttribute("viewInformation", gson.toJson(configFile.getViewInformation()));
 		session.setAttribute("viewProjectName", configFile.getViewInformation().getTitle());
@@ -78,11 +73,6 @@ public class PageTurnController extends BaseController {
 		ConfigFile configFile=Config.getInstance().configFile;
 		response.setContentType("text/html;charset=utf-8");
 		HttpSession session=request.getSession();
-		session.setAttribute("dataSourceSN", LicenseMap.dataSourceSN);
-		session.setAttribute("pcp", LicenseMap.pcp);
-		session.setAttribute("rawWaterCut", LicenseMap.rawWaterCut);
-		session.setAttribute("dynamicCurve", LicenseMap.dynamicCurve);
-		session.setAttribute("electricalHidden", LicenseMap.electricalHidden);
 		session.setAttribute("configFile", gson.toJson(configFile));
 		session.setAttribute("viewInformation", gson.toJson(configFile.getViewInformation()));
 		session.setAttribute("viewProjectName", configFile.getViewInformation().getTitle());

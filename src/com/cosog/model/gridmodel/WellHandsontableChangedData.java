@@ -34,12 +34,8 @@ public class WellHandsontableChangedData {
 	    private String id;
 
 	    private String orgName="";
-	    
-	    private String resName="";
 
 	    private String wellName="";
-
-	    private String liftingTypeName="抽油机";
 
 	    private String protocolName="";
 
@@ -48,6 +44,20 @@ public class WellHandsontableChangedData {
 	    private String signInId="";
 
 	    private String slave="";
+	    
+	    private String factoryNumber="";
+	    
+	    private String model="";
+	    
+	    private String productionDate="";
+	    
+	    private String deliveryDate="";
+	    
+	    private String commissioningDate="";
+	    
+	    private String controlcabinetDodel="";
+	    
+	    private String tubingLength="";
 	    
 	    private String videoUrl="";
 	    
@@ -69,28 +79,12 @@ public class WellHandsontableChangedData {
 			this.orgName = orgName;
 		}
 
-		public String getResName() {
-			return resName;
-		}
-
-		public void setResName(String resName) {
-			this.resName = resName;
-		}
-
 		public String getWellName() {
 			return wellName;
 		}
 
 		public void setWellName(String wellName) {
 			this.wellName = wellName;
-		}
-
-		public String getLiftingTypeName() {
-			return liftingTypeName;
-		}
-
-		public void setLiftingTypeName(String liftingTypeName) {
-			this.liftingTypeName = liftingTypeName;
 		}
 
 		public String getAcquisitionUnit() {
@@ -139,6 +133,62 @@ public class WellHandsontableChangedData {
 
 		public void setSlave(String slave) {
 			this.slave = slave;
+		}
+
+		public String getFactoryNumber() {
+			return factoryNumber;
+		}
+
+		public void setFactoryNumber(String factoryNumber) {
+			this.factoryNumber = factoryNumber;
+		}
+
+		public String getModel() {
+			return model;
+		}
+
+		public void setModel(String model) {
+			this.model = model;
+		}
+
+		public String getProductionDate() {
+			return productionDate;
+		}
+
+		public void setProductionDate(String productionDate) {
+			this.productionDate = productionDate;
+		}
+
+		public String getDeliveryDate() {
+			return deliveryDate;
+		}
+
+		public void setDeliveryDate(String deliveryDate) {
+			this.deliveryDate = deliveryDate;
+		}
+
+		public String getCommissioningDate() {
+			return commissioningDate;
+		}
+
+		public void setCommissioningDate(String commissioningDate) {
+			this.commissioningDate = commissioningDate;
+		}
+
+		public String getControlcabinetDodel() {
+			return controlcabinetDodel;
+		}
+
+		public void setControlcabinetDodel(String controlcabinetDodel) {
+			this.controlcabinetDodel = controlcabinetDodel;
+		}
+
+		public String getTubingLength() {
+			return tubingLength;
+		}
+
+		public void setTubingLength(String tubingLength) {
+			this.tubingLength = tubingLength;
 		}
 	    
 	}
