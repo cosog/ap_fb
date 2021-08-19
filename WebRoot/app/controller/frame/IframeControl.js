@@ -157,24 +157,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 	if (module_Code != "video" && module_Code != "map_MapDraw" && module_Code != "realtime_RealtimeMonitor"
 		&& module_Code != "ProductionReport"
 		&& module_Code != "ProductionData"
-		&& module_Code != "WellInformation"
-		&& module_Code != "WellboreTrajectory"
-		&& module_Code != "blockdata_Ids"
-		&& module_Code != "balance_BalanceMonitor"
-		&& module_Code != "balance_BalanceTotal"
-		&& module_Code != "balance_BalanceCycle"
-		&& module_Code != "RealtimeEvaluation"
-		&& module_Code != "FESDiagramQuery"
-		&& module_Code != "DailyEvaluation"
-		&& module_Code != "CalculateManager"
-		&& module_Code != "PumpingUnitInformation"
-		&& module_Code != "PSToFS_MotorInfo"
-		&& module_Code != "DiagramOptimizeInfo"
-		&& module_Code != "ElectricAnalysis_ElectricAnalysisRealtimeProfile"
-		&& module_Code != "ElectricAnalysis_ElectricAnalysisRealtimeDetails"
-		&& module_Code != "ElectricAnalysis_ElectricAnalysisRealtimeDiagram"
-		&& module_Code !="ElectricAnalysis_ElectricAnalysisDailyProfile"
-		&& module_Code !="kafkaConfig_A9RawDataGridPanel") {
+		&& module_Code != "WellInformation") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -284,109 +267,14 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		} else {
 			// Ext.Msg.alert("info", '抱歉，该模块正在开发中... ');
 		}
-	}else if(module_Code == "ProductionReport"){
-		var tabPanel = Ext.getCmp("ProductionWellDailyReportPanel_Id");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="ReportPumpingUnitDayReport"){
-			CreateDiagnosisDailyReportTable();
-			Ext.getCmp("RPCDailyReportGridPanel_Id").getStore().load();
-		}else if(activeId=="screwPumpDailyReportPanel_Id"){
-			CreateScrewPumpDailyReportTable();
-			Ext.getCmp("PPCDailyReportGridPanel_Id").getStore().load();
-		}
-	}else if(module_Code == "ProductionData"){
-		var tabPanel = Ext.getCmp("ProductionWellProductionPanel");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="PumpingUnitProductionDataPanel"){
-			CreateAndLoadWellProTable(true);
-		}else if(activeId=="ScrewPumpProductionDataPanel"){
-			CreateAndLoadScrewPumpProTable(true);
-		}
 	}else if(module_Code == "WellInformation"){
-		CreateAndLoadWellInfoTable(true);
-	}else if(module_Code == "WellboreTrajectory"){
-		CreateAndLoadWellboreTrajectoryTable(true);
-	}
-	else if(module_Code == "blockdata_Ids"){
-		CreateAndLoadReservoirPropertyTable(true);
-	}else if(module_Code == "RealtimeEvaluation"){
-		var tabPanel = Ext.getCmp("ProductionWellRealtimeAnalisisPanel");
+		var tabPanel = Ext.getCmp("DeviceManagerTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="RPCSingleDetailsInfoPanel_Id"){
-			Ext.getCmp('FSDiagramAnalysisSingleDetailsWellCom_Id').setValue("");
-			Ext.getCmp('FSDiagramAnalysisSingleDetailsSelectRow_Id').setValue(0);
-			loadFSDiagramAnalysisSingleStatData();
-		}else if(activeId=="PCPSingleDetailsInfoPanel_Id"){
-			Ext.getCmp('ScrewPumpRealtimeAnalysisWellCom_Id').setValue("");
-			loadPCPRPMAnalysisSingleStatData();
+		if(activeId=="PumpDeviceManagerPanel"){
+			CreateAndLoadPumpDeviceInfoTable();
+		}else if(activeId=="TubingDeviceManagerPanel"){
+			CreateAndLoadTubingDeviceInfoTable();
 		}
-	}else if(module_Code=="FESDiagramQuery"){
-		
-		var GridPanel = Ext.getCmp("GraphicalQueryWellListGridPanel_Id");
-		if(isNotVal(GridPanel)){
-			GridPanel.getStore().load();
-		}else{
-			Ext.create("AP.store.graphicalQuery.GraphicalQueryWellListStore");
-		}
-		loadSurfaceCardList(1);
-	}else if(module_Code == "DailyEvaluation"){
-		var tabPanel = Ext.getCmp("ProductionWellDailyAnalisisPanel");
-		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="pumpUnitDailyAnalysisPanel_Id"){
-			Ext.getCmp('FSDiagramAnalysisDailyDetailsWellCom_Id').setValue("");
-			loadTotalStatData();
-		}else if(activeId=="screwPumpDailyAnalysisPanel_Id"){
-			Ext.getCmp('ScrewPumpDailyAnalysisWellCom_Id').setValue("");
-			loadScrewPumpDailyStatData();
-		}
-	}else if(module_Code == "CalculateManager"){
-		var bbarId="pumpingCalculateManagerBbar";
-        var tabPanelId = Ext.getCmp("CalculateManagerTabPanel").getActiveTab().id;
-        if(tabPanelId=="PumpingUnitCalculateManagerPanel"){
-        	bbarId="pumpingCalculateManagerBbar";
-		}else if(tabPanelId=="ScrewPumpCalculateManagerPanel"){
-			bbarId="screwPumpCalculateManagerBbar";
-		}
-        var bbar=Ext.getCmp(bbarId);
-        if (isNotVal(bbar)) {
-        	bbar.getStore().loadPage(1);
-        }
-        var panel=Ext.getCmp("CalculateManagerWellListGridPanel_Id");
-        if (isNotVal(panel)) {
-        	panel.getStore().loadPage(1);
-        }
-	}else if(module_Code=="PumpingUnitInformation"){//反演抽油机数据
-		CreateAndLoadFSToPSPumpingUnitTable(true);
-	}else if(module_Code=="PSToFS_MotorInfo"){//反演电机数据
-		CreateAndLoadFSToPSMotorTable(true);
-	}else if(module_Code=="DiagramOptimizeInfo"){//反演参数优化
-		CreateAndLoadInverOptimizeTable(true);
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisRealtimeProfile"){
-		getElectricAnalysisRealtimeProfileData();
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisRealtimeDetails"){//电参分析详情
-		var tabPanel = Ext.getCmp("electricAnalysisRealtimeDetailsTabpanel_Id");
-        var activeId = tabPanel.getActiveTab().id;
-    	  if(activeId=="electricAnalysisRealtimeDetailsDiscretePanel_Id"){
-    		  var gridPanel=Ext.getCmp('ElectricAnalysisRealtimeDiscreteDetails_Id');
-    		  if(isNotVal(gridPanel)){
-    			  gridPanel.getStore().loadPage(1);
-    		  }else{
-    			  Ext.create('AP.store.electricAnalysis.ElectricAnalysisRealtimeDetailsListStore');
-    		  }
-    	  }else if(activeId=="electricAnalysisRealtimeDetailsDiagramPanel_Id"){
-    		  var gridPanel=Ext.getCmp('ElectricAnalysisRealtimeDiagramDetails_Id');
-    		  if(isNotVal(gridPanel)){
-    			  gridPanel.getStore().loadPage(1);
-    		  }else{
-    			  Ext.create('AP.store.electricAnalysis.ElectricAnalysisRealtimeDetailsDiagramListStore');
-    		  }
-    	  }
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisRealtimeDiagram"){
-		loadElectricInverDiagramList(1);
-	}else if(module_Code=="ElectricAnalysis_ElectricAnalysisDailyProfile"){
-		getElectricAnalysisDailyProfileData();
-	}else if(module_Code=="kafkaConfig_A9RawDataGridPanel"){
-		reLoadA9RawData();
 	}else {
 		return false;
 	}

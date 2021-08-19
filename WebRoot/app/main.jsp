@@ -51,12 +51,6 @@
  var viewInformation = ${configFile}.viewInformation;
  
  var productionUnit = ${configFile}.others.productionUnit;
- 
- var dataSourceSN=${dataSourceSN};
- var rawWaterCutHidden = !${rawWaterCut};
- var pcpHidden = !${pcp};
- var dynamicCurveHidden = !${dynamicCurve};
- var electricalHidden = !${electricalHidden};
 if (user_ == null || "" == (user_)) {
 			window.location.href = "../login/toLogin";
 }

@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cosog.model.WellInformation;
+import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
+import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.Page;
@@ -25,18 +27,17 @@ import com.cosog.utils.StringManagerUtils;
 public class WellInformationManagerService<T> extends BaseService<T> {
 	@Autowired
 	private CommonDataService service;
+	@Autowired
+	private DataitemsInfoService dataitemsInfoService;
 	
-	public String loadWellComboxList(Page pager,String orgId,String wellName,String wellType) throws Exception {
+	public String loadWellComboxList(Page pager,String orgId,String wellName,String deviceTypeStr) throws Exception {
 		//String orgIds = this.getUserOrgIds(orgId);
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer sqlCuswhere = new StringBuffer();
+		int deviceType=StringManagerUtils.stringToInteger(deviceTypeStr);
 		String sql = " select  t.wellName as wellName,t.wellName as dm from  tbl_wellinformation t  ,tbl_org  g where 1=1 and  t.orgId=g.org_id  and g.org_id in ("
 				+ orgId + ")";
-		if (wellType.trim().equalsIgnoreCase("200")) {
-			sql += " and t.liftingtype like '2%'";
-		}else if (wellType.trim().equalsIgnoreCase("400")) {
-			sql += " and t.liftingtype like '4%'";
-		}
+		sql += " and t.deviceType ="+deviceType;
 		
 		if (StringManagerUtils.isNotNull(wellName)) {
 			sql += " and t.wellName like '%" + wellName + "%'";
@@ -328,29 +329,33 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer unitDropdownData = new StringBuffer();
 		StringBuffer driverDropdownData = new StringBuffer();
+		String ddicName="pumpDeviceManager";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
 			EquipmentDriverServerTask.loadProtocolConfig();
 			equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		}
 		String wellInformationName = (String) map.get("wellInformationName");
-		String liftingType = (String) map.get("liftingType");
+		int deviceType=StringManagerUtils.stringToInteger((String) map.get("deviceType"));
 		String orgId = (String) map.get("orgId");
 		String WellInformation_Str = "";
-		String liftingType_Str = "";
 		if (StringManagerUtils.isNotNull(wellInformationName)) {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
-		if (StringManagerUtils.isNotNull(liftingType)) {
-			liftingType_Str = " and t.liftingtype like '%" + liftingType.substring(0, 1)+ "%'";
+		if(deviceType==0){
+			ddicName="pumpDeviceManager";
+		}else{
+			ddicName="tubingDeviceManager";
 		}
-		String sql = "select t.id,t.orgname,t.resname,t.wellname,t.liftingtype,t.liftingtypename,"
-				+ " t.protocolcode,t.acquisitionunit,t.signinid,t.slave,"
-				+ " t.videourl,t.sortnum"
+		
+		String columns=service.showTableHeadersColumns(ddicName);
+		String sql = "select id,orgName,wellName,protocolcode,acquisitionUnit,signInId,slave,"
+				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.tubinglength,"
+				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str
-				+ liftingType_Str
-				+ "  and t.orgid in ("+orgId+" )  "
+				+ " and t.orgid in ("+orgId+" )  "
+				+ " and t.devicetype="+deviceType
 			    + " order by t.sortnum,t.wellname ";
 		String unitSql="select t.unit_name from tbl_acq_unit_conf t order by t.id";
 		List<?> unitList = this.findCallSql(unitSql);
@@ -395,12 +400,12 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		String json = "";
 		
 		List<?> list = this.findCallSql(sql);
-		String columns=service.showTableHeadersColumns("wellInfo");
+		
 		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"driverDropdownData\":"+driverDropdownData.toString()+",\"unitDropdownData\":"+unitDropdownData.toString()+",\"columns\":"+columns+",\"totalRoot\":[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
 			String protocolName="";
-			String protocolCode=obj[6]+"";
+			String protocolCode=obj[3]+"";
 			for(Entry<String, Object> entry:equipmentDriveSortMap.entrySet()){
 				if( ( entry.getValue() instanceof ModbusProtocolConfig.Protocol ) ){
 					ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)entry.getValue();
@@ -418,17 +423,24 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			}
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
-			result_json.append("\"resName\":\""+obj[2]+"\",");
-			result_json.append("\"wellName\":\""+obj[3]+"\",");
-			result_json.append("\"liftingType\":\""+obj[4]+"\",");
-			result_json.append("\"liftingTypeName\":\""+obj[5]+"\",");
-			result_json.append("\"protocolCode\":\""+obj[6]+"\",");
+			result_json.append("\"wellName\":\""+obj[2]+"\",");
+			result_json.append("\"protocolCode\":\""+obj[3]+"\",");
 			result_json.append("\"protocolName\":\""+protocolName+"\",");
-			result_json.append("\"acquisitionUnit\":\""+obj[7]+"\",");
-			result_json.append("\"signInId\":\""+obj[8]+"\",");
-			result_json.append("\"slave\":\""+obj[9]+"\",");
-			result_json.append("\"videoUrl\":\""+obj[10]+"\",");
-			result_json.append("\"sortNum\":\""+obj[11]+"\"},");
+			result_json.append("\"acquisitionUnit\":\""+obj[4]+"\",");
+			result_json.append("\"signInId\":\""+obj[5]+"\",");
+			result_json.append("\"slave\":\""+obj[6]+"\",");
+			
+			result_json.append("\"factoryNumber\":\""+obj[7]+"\",");
+			result_json.append("\"model\":\""+obj[8]+"\",");
+			result_json.append("\"productionDate\":\""+obj[9]+"\",");
+			result_json.append("\"deliveryDate\":\""+obj[10]+"\",");
+			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
+			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
+			
+			result_json.append("\"tubingLength\":\""+obj[13]+"\",");
+			
+			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
+			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
@@ -468,33 +480,26 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		}
 		String wellInformationName = (String) map.get("wellInformationName");
-		String liftingType = (String) map.get("liftingType");
-		String orgCode = (String) map.get("orgCode");
-		String resCode = (String) map.get("resCode");
+		int deviceType=StringManagerUtils.stringToInteger((String) map.get("deviceType"));
 		String orgId = (String) map.get("orgId");
 		String WellInformation_Str = "";
-		String liftingType_Str = "";
 		if (StringManagerUtils.isNotNull(wellInformationName)) {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
-		if (StringManagerUtils.isNotNull(liftingType)) {
-			liftingType_Str = " and t.liftingtype like '%" + liftingType.substring(0, 1)+ "%'";
-		}
-		String sql = "select t.id,t.orgname,t.resname,t.wellname,t.liftingtype,t.liftingtypename,"
-				+ " t.protocolcode,t.acquisitionunit,t.signinid,t.slave,"
-				+ " t.videourl,t.sortnum"
+		String sql = "select id,orgName,wellName,protocolcode,acquisitionUnit,signInId,slave,"
+				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.tubinglength,"
+				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str
-				+ liftingType_Str
-				+ "  and t.orgid in ("+orgId+" )  "
+				+ " and t.orgid in ("+orgId+" )  "
+				+ " and t.devicetype="+deviceType
 			    + " order by t.sortnum,t.wellname ";
-		String unitSql="select t.unit_name from tbl_acq_unit_conf t order by t.id";
 		List<?> list = this.findCallSql(sql);
 		result_json.append("[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
 			String protocolName="";
-			String protocolCode=obj[6]+"";
+			String protocolCode=obj[3]+"";
 			for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
 				if(entry.getKey().toUpperCase().contains("KAFKA".toUpperCase())){
 					KafkaConfig driveConfig=(KafkaConfig)equipmentDriveMap.get("KafkaDrive");
@@ -515,17 +520,24 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			}
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
-			result_json.append("\"resName\":\""+obj[2]+"\",");
-			result_json.append("\"wellName\":\""+obj[3]+"\",");
-			result_json.append("\"liftingType\":\""+obj[4]+"\",");
-			result_json.append("\"liftingTypeName\":\""+obj[5]+"\",");
-			result_json.append("\"protocolCode\":\""+obj[6]+"\",");
+			result_json.append("\"wellName\":\""+obj[2]+"\",");
+			result_json.append("\"protocolCode\":\""+obj[3]+"\",");
 			result_json.append("\"protocolName\":\""+protocolName+"\",");
-			result_json.append("\"acquisitionUnit\":\""+obj[7]+"\",");
-			result_json.append("\"signInId\":\""+obj[8]+"\",");
-			result_json.append("\"slave\":\""+obj[9]+"\",");
-			result_json.append("\"videoUrl\":\""+obj[10]+"\",");
-			result_json.append("\"sortNum\":\""+obj[11]+"\"},");
+			result_json.append("\"acquisitionUnit\":\""+obj[4]+"\",");
+			result_json.append("\"signInId\":\""+obj[5]+"\",");
+			result_json.append("\"slave\":\""+obj[6]+"\",");
+			
+			result_json.append("\"factoryNumber\":\""+obj[7]+"\",");
+			result_json.append("\"model\":\""+obj[8]+"\",");
+			result_json.append("\"productionDate\":\""+obj[9]+"\",");
+			result_json.append("\"deliveryDate\":\""+obj[10]+"\",");
+			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
+			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
+			
+			result_json.append("\"tubingLength\":\""+obj[13]+"\",");
+			
+			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
+			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);

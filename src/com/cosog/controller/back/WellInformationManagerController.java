@@ -55,6 +55,7 @@ public class WellInformationManagerController extends BaseController {
 	private List<WellInformation> list;
 	private String wellInformationName;
 	private String liftingType;
+	private String deviceType;
 	private String orgCode;
 	private String resCode;
 	private String page;
@@ -73,7 +74,7 @@ public class WellInformationManagerController extends BaseController {
 	public String loadWellComboxList() throws Exception {
 		this.pager=new Page("pageForm",request);
 		String wellName = ParamUtils.getParameter(request, "wellName");
-		String wellType = ParamUtils.getParameter(request, "wellType");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
 		orgId=ParamUtils.getParameter(request, "orgId");
 		User user = null;
 		HttpSession session=request.getSession();
@@ -83,7 +84,7 @@ public class WellInformationManagerController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		String json = this.wellInformationManagerService.loadWellComboxList(pager,orgId, wellName,wellType);
+		String json = this.wellInformationManagerService.loadWellComboxList(pager,orgId, wellName,deviceType);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -101,7 +102,7 @@ public class WellInformationManagerController extends BaseController {
 		int pageSize = Integer.parseInt((limit == null || limit == "0") ? "20" : limit);
 		int offset = (intPage - 1) * pageSize + 1;
 		wellInformationName = ParamUtils.getParameter(request, "wellInformationName");
-		liftingType=ParamUtils.getParameter(request, "liftingType");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
 		orgId=ParamUtils.getParameter(request, "orgId");
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {
@@ -118,7 +119,7 @@ public class WellInformationManagerController extends BaseController {
 		map.put(PagingConstants.PAGE_SIZE, pageSize);
 		map.put(PagingConstants.OFFSET, offset);
 		map.put("wellInformationName", wellInformationName);
-		map.put("liftingType", liftingType);
+		map.put("deviceType", deviceType);
 		map.put("orgCode", orgCode);
 		map.put("resCode", resCode);
 		map.put("orgId", orgId);
@@ -157,7 +158,7 @@ public class WellInformationManagerController extends BaseController {
 		//wellInformationName = new String(wellInformationName.getBytes("iso-8859-1"), "utf-8");
 //		String orgId=this.findCurrentUserOrgIdInfo("");
 		wellInformationName = ParamUtils.getParameter(request, "wellInformationName");
-		liftingType=ParamUtils.getParameter(request, "liftingType");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");
 		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
@@ -178,7 +179,7 @@ public class WellInformationManagerController extends BaseController {
 		map.put(PagingConstants.PAGE_SIZE, pageSize);
 		map.put(PagingConstants.OFFSET, offset);
 		map.put("wellInformationName", wellInformationName);
-		map.put("liftingType", liftingType);
+		map.put("deviceType", deviceType);
 		map.put("orgCode", orgCode);
 		map.put("resCode", resCode);
 		map.put("orgId", orgId);
@@ -371,7 +372,7 @@ public class WellInformationManagerController extends BaseController {
 		String orgids=user.getUserorgids();
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String orgId = ParamUtils.getParameter(request, "orgId");
-		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
@@ -524,6 +525,14 @@ public class WellInformationManagerController extends BaseController {
 
 	public void setLiftingType(String liftingType) {
 		this.liftingType = liftingType;
+	}
+
+	public String getDevicetype() {
+		return deviceType;
+	}
+
+	public void setDevicetype(String deviceType) {
+		this.deviceType = deviceType;
 	}
 
 }
