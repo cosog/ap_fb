@@ -84,6 +84,15 @@ public class DriverAPIController extends BaseController{
 	private CalculateDataService<?> calculateDataService;
 	@Autowired
 	private CommonDataService commonDataService;
+	@Bean
+    public static SpringWebSocketHandler infoHandler() {
+        return new SpringWebSocketHandler();
+    }
+	@Bean
+    public static WebSocketByJavax infoHandler2() {
+        return new WebSocketByJavax();
+    }
+	
 	
 	@RequestMapping("/acq/allDeviceOffline")
 	public String AllDeviceOffline() throws Exception {
@@ -199,6 +208,7 @@ public class DriverAPIController extends BaseController{
 	public String AcqOnlineData() throws Exception {
 		ServletInputStream ss = request.getInputStream();
 		Gson gson=new Gson();
+		StringBuffer webSocketSendData = new StringBuffer();
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String data=StringManagerUtils.convertStreamToString(ss,"utf-8");
 		System.out.println("接收到ad推送online数据："+data);
@@ -235,10 +245,15 @@ public class DriverAPIController extends BaseController{
 				List list = this.commonDataService.findCallSql(sql);
 				if(list.size()>0){
 					Object[] obj=(Object[]) list.get(0);
+					webSocketSendData.append("{\"functionCode\":\"pumpDeviceRealTimeMonitoringStatusData\",");
 					String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 					CommResponseData commResponseData=null;
 					String wellName=obj[0]+"";
 					String wellId=obj[obj.length-1]+"";
+					webSocketSendData.append("\"wellName\":\""+wellName+"\",");
+					webSocketSendData.append("\"acqTime\":\""+currentTime+"\",");
+					webSocketSendData.append("\"commStatus\":1");
+					webSocketSendData.append("}");
 					String commRequest="{"
 							+ "\"AKString\":\"\","
 							+ "\"WellName\":\""+wellName+"\",";
@@ -288,6 +303,11 @@ public class DriverAPIController extends BaseController{
 					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRealCommRangeClobSql,clobCont);
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateHistCommRangeClobSql,clobCont);
+					}
+					
+					if(StringManagerUtils.isNotNull(webSocketSendData.toString())){
+						infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
+						infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 					}
 				}
 			}

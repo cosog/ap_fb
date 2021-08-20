@@ -50,7 +50,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -59,39 +59,44 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 		
-//		String path="";
-//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-//		path=stringManagerUtils.getFilePath("test3.json","test/");
-//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
-//		StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+		String path="";
+		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+		path=stringManagerUtils.getFilePath("test3.json","test/");
+		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
+		
+		while(true){
+			StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+			Thread.sleep(1000*1);
+		}
+		
 		
 
-		loadProtocolConfig();
-		initServerConfig();
-		initProtocolConfig("","");
-		initDriverAcquisitionInfoConfig(null,"");
-		do{
-			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-			type = new TypeToken<DriverProbeResponse>() {}.getType();
-			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-			String Ver="";
-			if(driverProbeResponse!=null){
-				if(!driverProbeResponse.getHttpServerInitStatus()){
-					initServerConfig();
-				}
-				if(!driverProbeResponse.getProtocolInitStatus()){
-					initProtocolConfig("","");
-				}
-				if(!driverProbeResponse.getIDInitStatus()){
-					initDriverAcquisitionInfoConfig(null,"");
-				}
-				Ver=driverProbeResponse.getVer();
-			}else{
-				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-			}
-			Thread.sleep(1000*1);
-		}while(true);
+//		loadProtocolConfig();
+//		initServerConfig();
+//		initProtocolConfig("","");
+//		initDriverAcquisitionInfoConfig(null,"");
+//		do{
+//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+//			type = new TypeToken<DriverProbeResponse>() {}.getType();
+//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+//			String Ver="";
+//			if(driverProbeResponse!=null){
+//				if(!driverProbeResponse.getHttpServerInitStatus()){
+//					initServerConfig();
+//				}
+//				if(!driverProbeResponse.getProtocolInitStatus()){
+//					initProtocolConfig("","");
+//				}
+//				if(!driverProbeResponse.getIDInitStatus()){
+//					initDriverAcquisitionInfoConfig(null,"");
+//				}
+//				Ver=driverProbeResponse.getVer();
+//			}else{
+//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+//			}
+//			Thread.sleep(1000*1);
+//		}while(true);
 	}
 	
 	public static class DriverProbeResponse{
@@ -281,10 +286,7 @@ public class EquipmentDriverServerTask {
 			method="update";
 		}
 //		wellName="'POC1'";
-		String sql=""
-//				+ " select wellname, signinid,slave,protocol,unit_code,group_code,acq_cycle,max(key) items from ("
-				+ " select  t.wellname,t.signinid,t.slave,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,"
-//				+ " wm_concat(t5.itemname) over (partition by t.wellname,t.signinid,t.slave,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle order by t5.id) key"
+		String sql="select  t.wellname,t.signinid,t.slave,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,"
 				+ " listagg(t5.itemname, ',') within group(order by t5.id ) key"
 				+ " from tbl_wellinformation t,tbl_acq_unit_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_group_conf t4,tbl_acq_item2group_conf t5 "
 				+ " where t.unitcode=t2.unit_code and t2.id=t3.unitid and t3.groupid=t4.id and t4.id=t5.groupid "
@@ -328,26 +330,6 @@ public class EquipmentDriverServerTask {
 				String[] itemsArr=rs.getString(8).split(",");
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 					if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(rs.getString(4))){
-//						List<ModbusProtocolConfig.Items> itemsSortList=new ArrayList<ModbusProtocolConfig.Items>();
-//						for(int j=0;j<itemsArr.length;j++){
-//							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
-//								if(itemsArr[j].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle())){
-//									itemsSortList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k));
-//									break;
-//								}
-//							}
-//						}
-//						Collections.sort(itemsSortList); // 按地址排序
-//						
-//						for(int j=0;j<itemsSortList.size();j++){
-//							for(int k=0;k<itemsArr.length;k++ ){
-//								if(itemsArr[k].equalsIgnoreCase(itemsSortList.get(j).getTitle())){
-//									group.getAddr().add(itemsSortList.get(j).getAddr());
-//									break;
-//								}
-//							}
-//						}
-						
 						for(int j=0;j<itemsArr.length;j++){
 							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 								if(itemsArr[j].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle())){
