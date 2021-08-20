@@ -61,12 +61,22 @@ public class EquipmentDriverServerTask {
 		
 		String path="";
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		path=stringManagerUtils.getFilePath("test3.json","test/");
+		path=stringManagerUtils.getFilePath("test1.json","test/");
 		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
 		
+		path=stringManagerUtils.getFilePath("test2.json","test/");
+		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+		
+		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+		
+		int i=0;
 		while(true){
-			StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+			if(i%2==0){
+				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+			}else{
+				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
+			}
+			i++;
 			Thread.sleep(1000*1);
 		}
 		

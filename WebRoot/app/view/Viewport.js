@@ -152,10 +152,67 @@ function websocketOnMessage(evt) {
 	var activeId = Ext.getCmp("frame_center_ids").getActiveTab().id;
 	var data=Ext.JSON.decode(evt.data);
 	if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringData".toUpperCase()){//接收到推送的泵设备实时监控数据
-		
+		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
+			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+			var activeId = tabPanel.getActiveTab().id;
+			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+				if(isNotVal(PumpRealTimeMonitoringListGrid)){
+					var store = PumpRealTimeMonitoringListGrid.getStore();
+					for(var i=0;i<store.getCount();i++){
+						var record=store.getAt(i);
+						if(record.data.wellName=data.wellName){
+							record.set("commStatusName","在线");
+							record.set("commStatus",1);
+							record.set("commAlarmLevel",0);
+							record.commit();
+							break;
+						}
+					}
+				}
+				if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
+					//更新实时表
+					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+					if(wellName==data.wellName){
+						pumpDeviceRealMonitorDataHandsontableHelper.hot.loadData(data.totalRoot);
+					}
+				}
+			}
+		}
 	}else if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringStatusData".toUpperCase()){//接收到推送的泵设备通信数据
 		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
+			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+			var activeId = tabPanel.getActiveTab().id;
+			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+				if(isNotVal(PumpRealTimeMonitoringListGrid)){
+					var store = PumpRealTimeMonitoringListGrid.getStore();
+					for(var i=0;i<store.getCount();i++){
+						var record=store.getAt(i);
+						if(record.data.wellName=data.wellName){
+							record.set("commStatusName",(data.commStatus==1?"在线":"离线"));
+							record.set("commStatus",data.commStatus);
+							record.set("commAlarmLevel",(data.commStatus==1?0:100));
+							record.commit();
+							break;
+						}
+//						var newValue = store.getAt(i).get("name");
+//						  store.getAt(i).set("name",newValue);
+//						  store.commitChanges();
+					}
+					//更新实时表
+					if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
+						var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+						if(wellName==data.wellName){
+							var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
+							pumpDeviceRealMonitorDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
+						}
+					}
+				}
+			}
+			
 			if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
+				//更新实时表
 				var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 				if(wellName==data.wellName){
 					var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
