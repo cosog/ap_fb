@@ -157,7 +157,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 	if (module_Code != "video" && module_Code != "map_MapDraw" && module_Code != "realtime_RealtimeMonitor"
 		&& module_Code != "ProductionReport"
 		&& module_Code != "ProductionData"
-		&& module_Code != "WellInformation") {
+		&& module_Code != "WellInformation"
+		&& module_Code != "DeviceRealTimeMonitoring") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -274,6 +275,18 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			CreateAndLoadPumpDeviceInfoTable();
 		}else if(activeId=="TubingDeviceManagerPanel"){
 			CreateAndLoadTubingDeviceInfoTable();
+		}
+	}else if(module_Code == "DeviceRealTimeMonitoring"){
+		var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+			}
+		}else if(activeId=="TubingRealTimeMonitoringInfoPanel_Id"){
 		}
 	}else {
 		return false;

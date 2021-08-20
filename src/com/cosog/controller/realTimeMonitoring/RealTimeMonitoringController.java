@@ -27,6 +27,7 @@ import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.back.WellInformationManagerService;
 import com.cosog.service.base.CommonDataService;
+import com.cosog.service.realTimeMonitoring.RealTimeMonitoringService;
 import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.Constants;
 import com.cosog.utils.Page;
@@ -46,7 +47,7 @@ public class RealTimeMonitoringController extends BaseController {
 	private static final long serialVersionUID = 1L;
 	private static Log log = LogFactory.getLog(RealTimeMonitoringController.class);
 	@Autowired
-	private WellInformationManagerService<WellInformation> wellInformationManagerService;
+	private RealTimeMonitoringService<?> realTimeMonitoringService;
 	@Autowired
 	private CommonDataService service;
 	private String limit;
@@ -57,7 +58,52 @@ public class RealTimeMonitoringController extends BaseController {
 	private String orgId;
 	private int totals;
 	
+	//
+	@RequestMapping("/getDeviceRealTimeStatus")
+	public String getDeviceRealTimeStatus() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		wellName = ParamUtils.getParameter(request, "wellName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = realTimeMonitoringService.getDeviceRealTimeStatus(orgId,wellName,deviceType);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 	
+	@RequestMapping("/getDeviceRealMonitorData")
+	public String getDeviceRealMonitorData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		json = realTimeMonitoringService.getDeviceRealMonitorData(deviceName,deviceType);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 
 
 	public String getLimit() {

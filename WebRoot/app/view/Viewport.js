@@ -1,3 +1,4 @@
+var websocketClient = null;
 Ext.define('AP.view.Viewport', {
     extend: 'Ext.container.Viewport',
     id: 'frame_imivport_ids',
@@ -10,13 +11,10 @@ Ext.define('AP.view.Viewport', {
         bodyStyle:{
         	'z-index':10
         },
-//        bodyStyle: 'background-color:#4a96d9;',
         html: '<div id="imgTitle"><img id="logoImg" src="../images/logo/ytlogo.png" /><span id="bannertitle">' +viewInformation.title+ '</span>' +
-        		
         		"<div id='passAndExitButton'><a href='#' id='logon_a1' onclick='resetPwdFn()'><span id='logon_a1_text'>修改密码</span></a></div> " +
         		"<div id='passAndExitButton'><a href='#' id='logon_a2' onclick='userLoginOut()'><span id='logon_a2_text'>退出</span></a></div>" +
         		"<div id='passAndExitButton'><a href='#' id='logon_a5' onclick='showHelpDocumentWinFn()'><span id='logon_a5_text'>帮助</span></a></div>" +
-//        		"<div id='passAndExitButton'><a href='https://github.com/cosog/apmd' target='_blank' id='logon_a5' class='help-tip''><span id='logon_a5_text'>帮助</span><p><img src='../images/help2vm.png' width='260' /></p></a></div>" +
         		"<div id='passAndExitButton2' ><a href='#' title='全屏显示' id='logon_a3' onclick='fullscreen()'></a></div> " +
         		"<div id='passAndExitButton3' style='display:none;'><a href='#' title='退出全屏' id='logon_a4'  onclick='exitFullscreen()'></a></div> " +
         		"</div>"
@@ -41,23 +39,13 @@ Ext.define('AP.view.Viewport', {
             xtype: 'tabpanel',
             layout: 'fit',
             closeAction: 'destroy',
-            items: [
-//                {
-//                    title: cosog.string.index,
-//                    iconCls: 'Index',
-//                    html: '<iframe id="frame_main" src="' + context + '/login/showIndex" width="100%" height="100%" frameborder="0" scrolling="auto"></iframe>'
-//               }
-               ],
+            items: [],
             listeners: {
                 tabchange: function (tabPanel, newCard, oldCard,obj) {
                     var tabPanel = Ext.getCmp("frame_center_ids");
                     var tabnums = tabPanel.items.getCount();
-                    //alert(tabPanel.getActiveTab().id);
                     var curValues = Ext.getCmp("tabNums_Id").getValue();
-                    
-                    
                     var curId = newCard.id;
-                    //alert(curId);
                     var modules = curId.split("_");
                     var cyrData = "";
                     if (modules.length > 2) {
@@ -73,45 +61,10 @@ Ext.define('AP.view.Viewport', {
                             cyrData = changeTabId(curId, imageBottomTab_Id);
                         }
                         addPanelEps(curId, cyrData, curId);
-                        //alert("21");
                     } else {
                         addPanelEps(curId, curId, curId);
-                        //alert("22");
                     }
-                    
                     Ext.getCmp("tabNums_Id").setValue(tabnums);
-                    
-                    
-                    
-                    
-                    
-                    
-//                    if (curValues == tabnums) {
-//                        var curId = newCard.id;
-//                        //alert(curId);
-//                        var modules = curId.split("_");
-//                        var cyrData = "";
-//                        if (modules.length > 2) {
-//                            if (curId.indexOf("diagnosis") > -1) {
-//                                var secondBottomTab_Id = Ext.getCmp("secondBottomTab_Id").getValue();
-//                                cyrData = changeTabId(curId, secondBottomTab_Id);
-//                            } else if (curId.indexOf("compute") > -1) {
-//                                var productBottomTab_Id = Ext.getCmp("productBottomTab_Id").getValue();
-//                                cyrData = changeTabId(curId, productBottomTab_Id);
-//
-//                            } else if (curId.indexOf("image") > -1) {
-//                                var imageBottomTab_Id = Ext.getCmp("imageBottomTab_Id").getValue();
-//                                cyrData = changeTabId(curId, imageBottomTab_Id);
-//                            }
-//                            addPanelEps(curId, cyrData, curId);
-//                            //alert("21");
-//                        } else {
-//                            addPanelEps(curId, curId, curId);
-//                            //alert("22");
-//                        }
-//                    } else {
-//                        Ext.getCmp("tabNums_Id").setValue(tabnums);
-//                    }
                 },
                 delay: 300
             }
@@ -124,8 +77,6 @@ Ext.define('AP.view.Viewport', {
        split: true,
        flex:0.11,
        items:[{
-//    	   iconCls: 'zuzhi',
-//           title: cosog.string.orgNav,
            region: 'south',
            height:'50%',
            layout: 'fit',
@@ -141,8 +92,6 @@ Ext.define('AP.view.Viewport', {
        },{
     	   id: 'MainModuleShow_Id',
            region: 'center',
-//           iconCls: 'gongneng',
-//           title: cosog.string.navPanel,
            split: false,
            height:'50%',
            collapsible: false,
@@ -160,22 +109,81 @@ Ext.define('AP.view.Viewport', {
         bodyStyle: 'background-color:#FBFBFB;',
         html: "<div id=\"footer\">" + viewInformation.copy+"&nbsp;<a href='"+viewInformation.linkaddress+"' target='_blank'>"+viewInformation.linkshow+"</a> "+"</div>",
         height: 30
-   }]
+   }],
+   listeners: {
+	   afterrender: function ( panel, eOpts) {
+			var baseUrl=getBaseUrl().replace("https","ws").replace("http","ws");
+			var moduleCode = "ApWebSocketClient";
+			if ('WebSocket' in window) {
+//				websocketClient = new ReconnectingWebSocket(baseUrl+"/websocket/socketServer?module_Code="+moduleCode);
+				websocketClient = new ReconnectingWebSocket(baseUrl+"/websocketServer/"+moduleCode);
+				websocketClient.debug = true;
+				websocketClient.reconnectInterval = 1000;
+				websocketClient.timeoutInterval = 2000;
+				websocketClient.maxReconnectInterval = 30000;
+				websocketClient.reconnectDecay=1.5;
+				websocketClient.automaticOpen = true;
+//				websocketClient.maxReconnectAttempts = 5;
+			}
+			else if ('MozWebSocket' in window) {
+//				websocketClient = new MozWebSocket(baseUrl+"/websocket/socketServer?module_Code="+moduleCode);
+				websocketClient = new MozWebSocket(baseUrl+"/websocketServer/"+moduleCode);
+			}else {
+//				websocketClient = new SockJS(getBaseUrl()+"/sockjs/socketServer?module_Code="+moduleCode);
+				websocketClient = new SockJS(getBaseUrl()+"/websocketServer/"+moduleCode);
+			}
+			websocketClient.onopen = websocketOnOpen;
+			websocketClient.onmessage = websocketOnMessage;
+			websocketClient.onerror = websocketOnError;
+			websocketClient.onclose = websocketOnClose;
+		
+	   },
+	   beforeclose: function ( panel, eOpts) {
+		   websocketClose(websocketClient);
+	   }
+   }
 });
+
+function websocketOnOpen(openEvt) {
+//  alert(openEvt.Data);
+}
+
+function websocketOnMessage(evt) {
+	var activeId = Ext.getCmp("frame_center_ids").getActiveTab().id;
+	var data=Ext.JSON.decode(evt.data);
+	if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringData".toUpperCase()){//接收到推送的泵设备实时监控数据
+		
+	}else if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringStatusData".toUpperCase()){//接收到推送的泵设备通信数据
+		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
+			if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
+				var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+				if(wellName==data.wellName){
+					var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
+					pumpDeviceRealMonitorDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
+				}
+			}
+		}
+	}
+}
+function websocketOnOpen() {
+//	alert("WebSocket连接成功");
+}
+function websocketOnError() {
+//	alert("WebSocket连接发生错误");
+}
+function websocketOnClose() {
+//	alert("WebSocket连接关闭");
+}
+
+function websocketClose(websocket) {
+	if(websocket!=null){
+		websocket.close();
+	}
+}
 
 function fullscreen(){
 	document.getElementById('passAndExitButton2').style.display='none';
 	document.getElementById('passAndExitButton3').style.display='';
-//    var elem=document.body;
-//    if(elem.webkitRequestFullScreen){
-//        elem.webkitRequestFullScreen();   
-//    }else if(elem.mozRequestFullScreen){
-//        elem.mozRequestFullScreen();
-//    }else if(elem.requestFullScreen){
-//        elem.requestFullscreen();
-//    }else{
-//        //浏览器不支持全屏API或已被禁用
-//    }
 	var el = document.documentElement;
     var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
     if (typeof rfs != "undefined" && rfs) {
@@ -214,8 +222,6 @@ function resetPwdFn() {
 
 //帮助文档窗口
 function showHelpDocumentWinFn() {
-//    var HelpDocumentWin = Ext.create("AP.view.help.HelpDocumentWin");
-//    HelpDocumentWin.show();
 	var tabPanel = Ext.getCmp("frame_center_ids");
 	var getTabId = tabPanel.getComponent("HelpDocPanel");
 	if(!getTabId){
@@ -227,7 +233,6 @@ function showHelpDocumentWinFn() {
             title: '帮助',
             listeners: {
                 afterrender: function () {
-                    //all_loading.hide();
                 },
                 delay: 150
             }
@@ -238,7 +243,6 @@ function showHelpDocumentWinFn() {
     		url:context + '/helpDocController/getHelpDocHtml',
     		success:function(response) {
     			var p =Ext.getCmp("HelpDocPanel_Id");
-//    			p.body.update(response.responseText.replace(/.\/Image/g,"..\/images"));
     			p.body.update(response.responseText);
     		},
     		failure:function(){
@@ -246,13 +250,9 @@ function showHelpDocumentWinFn() {
     		},
     		params: {
             }
-    	}); 
-		
+    	});
 	}
 	tabPanel.setActiveTab("HelpDocPanel");
-	
-	
-	
     return false;
 }
 
