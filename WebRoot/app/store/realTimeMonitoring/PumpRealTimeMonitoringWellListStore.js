@@ -46,6 +46,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     		var deviceName=record.data.wellName;
                     		var deviceType=0;
                     		CreatePumpDeviceRealMonitorDataTable(deviceName,deviceType);
+                    		Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStore');
                     	}
                     }
                 });

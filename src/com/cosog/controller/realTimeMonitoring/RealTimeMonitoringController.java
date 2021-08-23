@@ -104,8 +104,48 @@ public class RealTimeMonitoringController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	@RequestMapping("/getPumpControlandInfoData")
+	public String getPumpControlandInfoData() throws Exception {
+		String json = "";
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		wellName = ParamUtils.getParameter(request, "wellName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		json = realTimeMonitoringService.getPumpControlandInfoData(wellName,deviceType,user.getUserNo());
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 
 
+	@RequestMapping("/loadCurveTypeComboxList")
+	public String loadCurveTypeComboxList() throws Exception {
+		String json = "";
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		wellName = ParamUtils.getParameter(request, "wellName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		json = realTimeMonitoringService.loadCurveTypeComboxList(wellName,deviceType);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	public String getLimit() {
 		return limit;
 	}

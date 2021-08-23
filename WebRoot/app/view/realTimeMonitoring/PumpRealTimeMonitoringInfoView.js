@@ -6,6 +6,74 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
+        
+        var pumpCurveTypeCombStore = new Ext.data.JsonStore({
+        	pageSize:defaultWellComboxSize,
+            fields: [{
+                name: "boxkey",
+                type: "string"
+            }, {
+                name: "boxval",
+                type: "string"
+            }],
+            proxy: {
+            	url: context + '/realTimeMonitoringController/loadCurveTypeComboxList',
+                type: "ajax",
+                actionMethods: {
+                    read: 'POST'
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'totals'
+                }
+            },
+            autoLoad: true,
+            listeners: {
+                beforeload: function (store, options) {
+                	var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id")
+                	var wellName="";
+                	if(isNotVal(gridPanel)){
+                		wellName=gridPanel.getSelectionModel().getSelection()[0].data.wellName;
+                	}
+                    var new_params = {
+                    		wellName: wellName,
+                    		deviceType: 0
+                    };
+                    Ext.apply(store.proxy.extraParams,new_params);
+                }
+            }
+        });
+        var pumpCurveTypeComb = Ext.create(
+                'Ext.form.field.ComboBox', {
+                    fieldLabel: '曲线类型',
+                    id: "pumpRealTimeMonitorCurveTypeComb_Id",
+                    labelWidth: 70,
+                    width: 200,
+                    labelAlign: 'left',
+                    queryMode: 'remote',
+                    typeAhead: true,
+                    store: pumpCurveTypeCombStore,
+                    autoSelect: true,
+                    editable: false,
+                    triggerAction: 'all',
+                    displayField: "boxval",
+                    valueField: "boxkey",
+                    pageSize:comboxPagingStatus,
+                    minChars:0,
+                    emptyText: cosog.string.all,
+                    blankText: cosog.string.all,
+                    listeners: {
+                        expand: function (sm, selections) {
+                            pumpCurveTypeComb.getStore().loadPage(1); // 加载井下拉框的store
+                        },
+                        select: function (combo, record, index) {
+                            
+                        }
+                    }
+                });
+        
+        
         Ext.applyIf(me, {
             items: [{
                 border: false,
@@ -50,15 +118,32 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                     	layout: 'fit',
                     	border: true,
                     	split: true,
-                        collapsible: true
+                        collapsible: true,
+                        tbar:[pumpCurveTypeComb]
                     }]
                 },{
                 	region: 'east',
                 	width: '15%',
-                	title: '设备信息及控制',
-                	split: true,
-                	collapsible: true,
-                	layout: 'fit'
+                	xtype: 'tabpanel',
+                	id:"PumpRealTimeMonitoringRightTabPanel",
+            		activeTab: 0,
+            		border: false,
+            		tabPosition: 'top',
+            		items: [{
+            			title:'控制',
+            			id: 'PumpRealTimeMonitoringRightControlPanel',
+                        border: false,
+                        layout: 'fit',
+                        autoScroll: true,
+                        scrollable: true
+            		},{
+            			title:'设备信息',
+            			id: 'PumpRealTimeMonitoringRightDeviceInfoPanel',
+                        border: false,
+                        layout: 'fit',
+                        autoScroll: true,
+                        scrollable: true
+            		}]
                 }]
             }]
         });
