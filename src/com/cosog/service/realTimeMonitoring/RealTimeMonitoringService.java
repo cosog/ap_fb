@@ -23,6 +23,8 @@ import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.Config;
+import com.cosog.utils.ConfigFile;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.Page;
@@ -195,5 +197,137 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("]");
 		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
 		return result_json.toString().replaceAll("null", "");
+	}
+	
+	
+	public String getPumpControlandInfoData(String wellName,String deviceType,int userId)throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		
+		
+		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
+		String protocolSql="select upper(t.protocolcode) from TBL_WELLINFORMATION t where t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		
+		List<?> isControlList = this.findCallSql(isControlSql);
+		List<?> protocolList = this.findCallSql(protocolSql);
+		
+		String isControl=isControlList.size()>0?isControlList.get(0).toString():"0";
+		
+		
+		List<String> controlItems=new ArrayList<String>();
+		List<String> controlColumns=new ArrayList<String>();
+		StringBuffer deviceInfoDataList=new StringBuffer();
+		StringBuffer deviceControlList=new StringBuffer();
+		deviceInfoDataList.append("[");
+		deviceControlList.append("[");
+		
+		String protocolCode="";
+		if(protocolList.size()>0){
+			protocolCode=protocolList.get(0)+"";
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
+				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
+						for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
+							if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getRWType())){//如果可读可写
+								controlItems.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle());
+								controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		String tableName="tbl_pumpacqdata_latest";
+		String sql="select t.factorynumber,t.model,t.productiondate,t.deliverydate,t.commissioningdate,t.controlcabinetmodel ";
+		if(StringManagerUtils.stringToInteger(deviceType)>0){
+			tableName="tbl_tubingacqdata_latest";
+		}
+		for(int i=0;i<controlColumns.size();i++){
+			sql+=",t2."+controlColumns.get(i);
+		}
+		
+		if(StringManagerUtils.stringToInteger(deviceType)>0){
+			sql+=",t.tubinglength";
+		}
+		sql+= "from TBL_WELLINFORMATION t,"+tableName+" t2 where t.id=t2.wellid and t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		
+		result_json.append("{ \"success\":true,\"isControl\":"+isControl+",");
+		List<?> list = this.findCallSql(sql);
+		if(list.size()>0){
+			Object[] obj=(Object[]) list.get(0);
+			
+			deviceInfoDataList.append("{\"title\":\"出厂编号\",\"name\":\"factorynumber\",\"value\":\""+obj[0]+"\"},");
+			deviceInfoDataList.append("{\"title\":\"规格型号\",\"name\":\"model\",\"value\":\""+obj[1]+"\"},");
+			deviceInfoDataList.append("{\"title\":\"生产日期\",\"name\":\"productiondate\",\"value\":\""+obj[2]+"\"},");
+			deviceInfoDataList.append("{\"title\":\"发货日期\",\"name\":\"deliverydate\",\"value\":\""+obj[3]+"\"},");
+			deviceInfoDataList.append("{\"title\":\"投产日期\",\"name\":\"commissioningdate\",\"value\":\""+obj[4]+"\"},");
+			deviceInfoDataList.append("{\"title\":\"控制柜型号\",\"name\":\"controlcabinetmodel\",\"value\":\""+obj[5]+"\"}");
+			if(StringManagerUtils.stringToInteger(deviceType)>0){
+				deviceInfoDataList.append("{\"title\":\"管体长度\",\"name\":\"tubinglength\",\"value\":\""+obj[6+controlColumns.size()]+"\"}");
+			}
+			for(int i=0;i<controlColumns.size();i++){
+				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"value\":\""+obj[6+i]+"\"},");
+			}
+			if(deviceControlList.toString().endsWith(",")){
+				deviceControlList.deleteCharAt(deviceControlList.length() - 1);
+			}
+			
+			
+		}
+		deviceInfoDataList.append("]");
+		deviceControlList.append("]");
+		result_json.append("\"deviceInfoDataList\":"+deviceInfoDataList+",");
+		result_json.append("\"deviceControlList\":"+deviceControlList);
+		result_json.append("}");
+		return result_json.toString().replaceAll("null", "");
+	}
+	
+	public String loadCurveTypeComboxList(String wellName,String deviceType)throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		List<String> controlItems=new ArrayList<String>();
+		List<String> controlColumns=new ArrayList<String>();
+		String protocolSql="select upper(t.protocolcode) from TBL_WELLINFORMATION t where t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		List<?> protocolList = this.findCallSql(protocolSql);
+		String protocolCode="";
+		if(protocolList.size()>0){
+			protocolCode=protocolList.get(0)+"";
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
+				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
+						for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
+							if(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType().contains("float")||modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType().contains("int")){//如果float或者int
+								controlItems.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle());
+								controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		result_json.append("{\"totals\":"+controlColumns.size()+",\"list\":[");
+		for(int i=0;i<controlColumns.size();i++){
+			result_json.append("{boxkey:\"" + controlColumns.get(i) + "\",");
+			result_json.append("boxval:\"" + controlItems.get(i) + "\"},");
+		}
+		if (result_json.toString().length() > 1) {
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString();
 	}
 }

@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.socket.TextMessage;
 
 import com.cosog.controller.base.BaseController;
+import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.calculate.CommResponseData;
 import com.cosog.model.calculate.ElectricCalculateResponseData;
 import com.cosog.model.calculate.EnergyCalculateResponseData;
@@ -57,6 +58,7 @@ import com.cosog.thread.calculate.TotalCalculateThread;
 import com.cosog.utils.Config;
 import com.cosog.utils.Config2;
 import com.cosog.utils.Constants;
+import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.ParamUtils;
@@ -226,12 +228,15 @@ public class DriverAPIController extends BaseController{
 			List devicetypeList = this.commonDataService.findCallSql(protocolSql);	
 			if(devicetypeList.size()>=0 && StringManagerUtils.isNotNull(devicetypeList.get(0)+"")){
 				String devicetype=devicetypeList.get(0)+"";
+				String functionCode="pumpDeviceRealTimeMonitoringData";
 				if("0".equalsIgnoreCase(devicetype)){//如果是泵设备
 					realtimeTable="tbl_pumpacqdata_latest";
 					historyTable="tbl_pumpacqdata_hist";
+					functionCode="pumpDeviceRealTimeMonitoringData";
 				}else{//否则管设备
 					realtimeTable="tbl_tubingacqdata_latest";
 					historyTable="tbl_yubingacqdata_hist";
+					functionCode="tubingDeviceRealTimeMonitoringData";
 				}
 				
 				String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
@@ -245,7 +250,7 @@ public class DriverAPIController extends BaseController{
 				List list = this.commonDataService.findCallSql(sql);
 				if(list.size()>0){
 					Object[] obj=(Object[]) list.get(0);
-					webSocketSendData.append("{\"functionCode\":\"pumpDeviceRealTimeMonitoringStatusData\",");
+					webSocketSendData.append("{\"functionCode\":\""+functionCode+"\",");
 					String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 					CommResponseData commResponseData=null;
 					String wellName=obj[0]+"";
@@ -369,7 +374,13 @@ public class DriverAPIController extends BaseController{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
-		
+		StringBuffer webSocketSendData = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
 		if(acqGroup!=null){
 			boolean ifAddDay=false;
 			String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
@@ -391,13 +402,15 @@ public class DriverAPIController extends BaseController{
 				
 				String realtimeTable="tbl_pumpacqdata_latest";
 				String historyTable="tbl_pumpacqdata_hist";
-				
+				String functionCode="pumpDeviceRealTimeMonitoringData";
 				if("0".equalsIgnoreCase(devicetype)){
 					realtimeTable="tbl_pumpacqdata_latest";
 					historyTable="tbl_pumpacqdata_hist";
+					functionCode="pumpDeviceRealTimeMonitoringData";
 				}else{
 					realtimeTable="tbl_tubingacqdata_latest";
 					historyTable="tbl_yubingacqdata_hist";
+					functionCode="tubingDeviceRealTimeMonitoringData";
 				}
 				
 				String acqColumnsSql="select v1.COLUMN_NAME from "
@@ -460,16 +473,22 @@ public class DriverAPIController extends BaseController{
 						insertHistColumns+=",commTimeEfficiency,commTime";
 						insertHistValue+=","+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime();
 					}
+					
+					List<String> columnsNameList=new ArrayList<String>();
+					List<String> valueList=new ArrayList<String>();
+					
 					for(int i=0;acqGroup.getAddr()!=null && acqGroup.getValue()!=null  &&i<acqGroup.getAddr().size();i++){
 						for(int j=0;acqGroup.getValue().get(i)!=null && j<protocol.getItems().size();j++){
 							if(acqGroup.getAddr().get(i)==protocol.getItems().get(j).getAddr()){
-								String itemName=protocol.getItems().get(j).getName();
 								String columnName="ADDR"+protocol.getItems().get(j).getAddr();
 								String value=StringManagerUtils.objectListToString(acqGroup.getValue().get(i), protocol.getItems().get(j).getIFDataType());
 								if(StringManagerUtils.existOrNot(columnsList, columnName, false)){
 									updateRealtimeData+=",t."+columnName+"='"+value+"'";
 									insertHistColumns+=","+columnName;
 									insertHistValue+=",'"+value+"'";
+									
+									columnsNameList.add(protocol.getItems().get(j).getTitle());
+									valueList.add(value);
 								}
 								
 								break;
@@ -494,6 +513,54 @@ public class DriverAPIController extends BaseController{
 						int result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql,clobCont);
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql_Hist,clobCont);
 					}
+					
+					//处理websocket推送
+					int items=4;
+					String columns = "[";
+					for(int i=1;i<=items;i++){
+						columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
+								+ "{ \"header\":\"变量\",\"dataIndex\":\"value"+i+"\",children:[] }";
+						if(i<items){
+							columns+=",";
+						}
+					}
+					columns+= "]";
+					webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"columns\":"+columns+",");
+					webSocketSendData.append("\"totalRoot\":[");
+					
+					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+",在线\"},");
+					int row=1;
+					if(valueList.size()%items==0){
+						row=valueList.size()/items+1;
+					}else{
+						row=valueList.size()/items+2;
+					}
+					
+					for(int j=1;j<row;j++){
+						webSocketSendData.append("{");
+						for(int k=0;k<items;k++){
+							int index=items*(j-1)+k;
+							if(index>columnsNameList.size()-1){
+								webSocketSendData.append("\"name"+(k+1)+"\":\"\",");
+								webSocketSendData.append("\"value"+(k+1)+"\":\"\",");
+							}else{
+								webSocketSendData.append("\"name"+(k+1)+"\":\""+columnsNameList.get(index)+"\",");
+								webSocketSendData.append("\"value"+(k+1)+"\":\""+valueList.get(index)+"\",");
+							}
+						}
+						if(webSocketSendData.toString().endsWith(",")){
+							webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
+						}
+						webSocketSendData.append("},");
+					}
+					if(webSocketSendData.toString().endsWith(",")){
+						webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
+					}
+					webSocketSendData.append("]");
+					webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
+					
+					infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
+					infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 				}
 			}
 		}
