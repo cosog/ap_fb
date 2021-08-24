@@ -156,6 +156,7 @@ function websocketOnMessage(evt) {
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
 			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+				//更新设备概览列表
 				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(PumpRealTimeMonitoringListGrid)){
 					var store = PumpRealTimeMonitoringListGrid.getStore();
@@ -170,12 +171,44 @@ function websocketOnMessage(evt) {
 						}
 					}
 				}
+				//更新实时表
 				if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
-					//更新实时表
 					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName){
 						pumpDeviceRealMonitorDataHandsontableHelper.hot.loadData(data.totalRoot);
 					}
+				}
+				//更新实时曲线
+				var selectedItem= Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").getValue();
+				var acqTime=data.acqTime;
+				var value='';
+				if(isNotVal(selectedItem)){
+					for(var i=1;i<data.totalRoot.length;i++){
+						if(selectedItem==data.totalRoot[i].name1){
+							value=data.totalRoot[i].value1;
+							break;
+						}
+						if(selectedItem==data.totalRoot[i].name2){
+							value=data.totalRoot[i].value2;
+							break;
+						}
+						if(selectedItem==data.totalRoot[i].name3){
+							value=data.totalRoot[i].value3;
+							break;
+						}
+						if(selectedItem==data.totalRoot[i].name4){
+							value=data.totalRoot[i].value4;
+							break;
+						}
+					}
+				}
+				if(isNotVal(value)){
+					var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
+					if(isNotVal(chart)){
+						var series=chart.series[0];
+						series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, true);
+					}
+                	
 				}
 			}
 		}

@@ -330,4 +330,67 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("]}");
 		return result_json.toString();
 	}
+	
+	
+	public String getRealTimeCurveData(String deviceName,String item,String deviceType)throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		List<String> controlItems=new ArrayList<String>();
+		List<String> controlColumns=new ArrayList<String>();
+		String protocolSql="select upper(t.protocolcode) from tbl_wellinformation t where t.wellname='"+deviceName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		List<?> protocolList = this.findCallSql(protocolSql);
+		String protocolCode="";
+		String column="";
+		String unit="";
+		String dataType="";
+		String tableName="tbl_pumpacqdata_hist";
+		if(StringManagerUtils.stringToInteger(deviceType)>0){
+			tableName="tbl_tubingacqdata_hist";
+		}
+		if(protocolList.size()>0){
+			protocolCode=protocolList.get(0)+"";
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
+				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
+						for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
+							if(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle().equalsIgnoreCase(item)){
+								column="ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr();
+								unit=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getUnit();
+								dataType=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType();
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"list\":[");
+		if(dataType.toUpperCase().contains("FLOAT")){//只查询float类型数据的曲线
+			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss'), t."+column+" "
+					+ " from "+tableName +" t,tbl_wellinformation t2 "
+					+ " where t.wellid=t2.id "
+					+ " and t.acqtime >to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd")+"','yyyy-mm-dd') "
+					+ " and t2.wellname='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType)
+					+ " order by t.acqtime";
+			List<?> list = this.findCallSql(sql);
+			for(int i=0;i<list.size();i++){
+				Object[] obj=(Object[]) list.get(i);
+				result_json.append("{acqTime:\"" + obj[0] + "\",");
+				result_json.append("value:\"" + obj[1] + "\"},");
+			}
+			if (result_json.toString().length() > 1) {
+				result_json.deleteCharAt(result_json.length() - 1);
+			}
+		}
+		result_json.append("]}");
+		System.out.println(result_json.toString());
+		return result_json.toString();
+	}
 }

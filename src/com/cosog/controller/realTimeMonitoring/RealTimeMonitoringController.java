@@ -146,6 +146,27 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getRealTimeCurveData")
+	public String getRealTimeCurveData() throws Exception {
+		String json = "";
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		String item = ParamUtils.getParameter(request, "item");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		json = realTimeMonitoringService.getRealTimeCurveData(deviceName,item,deviceType);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	public String getLimit() {
 		return limit;
 	}
