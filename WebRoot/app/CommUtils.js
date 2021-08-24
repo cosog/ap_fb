@@ -1740,215 +1740,6 @@ var userLoginOut = function() {
 }
 
 
-
-// 报警信息跟踪饼图统计信息
-function initFollowAlarmPieChart(data, tickInterval, w, h) {
-	$('#AlarmConPie').highcharts({
-				chart : {
-					plotBackgroundColor : null,
-					plotBorderWidth : null,
-					plotShadow : false,
-					width : w,
-					height : h
-				},
-				credits : {
-					enabled : false
-				},
-				colors : ['#058DC7','#DDDF00','#6AF9C4','#50B432', '#ED561B', '#24CBE5', '#64E572',
-							'#FF9655', '#FFF263'],
-				title : {
-					text : '处理状态统计图'
-				},
-				tooltip : {
-					pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-//			     exporting: {
-//			            buttons: {
-//			                contextButton: {
-//			                    menuItems: [{
-//			                        separator: true
-//			                    }]
-//			                    .concat(Highcharts.getOptions().exporting.buttons.contextButton.menuItems)
-//			                    .concat([{
-//			                        separator: true
-//			                    }
-//			                    ])
-//			                }
-//			            }
-//			        },
-				exporting:{    
-                    enabled:true,    
-                    filename:'class-booking-chart',    
-                    url:context + '/exportHighcharsPicController/export'
-               },
-				plotOptions : {
-					pie : {
-						allowPointSelect : true,
-						cursor : 'pointer',
-						dataLabels : {
-							enabled : true,
-							color : '#000000',
-							connectorColor : '#000000',
-							format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-						},
-						showInLegend : true
-					}
-				},
-				series : [{
-							type : 'pie',
-							name : '处理结果占',
-							data : data
-						}]
-			});
-
-}
-function initFollowAlarmPieChart1(data, tickInterval, w, h) {
-	$('#AlarmConPie1').highcharts({
-				chart : {
-					plotBackgroundColor : null,
-					plotBorderWidth : null,
-					plotShadow : false,
-					width : w,
-					height : h
-				},
-				credits : {
-					enabled : false
-				},
-				title : {
-					text : '报警等级统计图'
-				},
-				tooltip : {
-					pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				plotOptions : {
-					pie : {
-						allowPointSelect : true,
-						cursor : 'pointer',
-						dataLabels : {
-							enabled : true,
-							color : '#000000',
-							connectorColor : '#000000',
-							format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-						}
-					}
-				},
-				plotOptions : {
-					pie : {
-						allowPointSelect : true,
-						cursor : 'pointer',
-						dataLabels : {
-							enabled : true,
-							color : '#000000',
-							connectorColor : '#000000',
-							format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-						},
-						showInLegend : true
-					}
-				},
-				series : [{
-							type : 'pie',
-							name : '处理结果占',
-							data : data
-						}]
-			});
-
-}
-function initFollowAlarmPieChart2(data, tickInterval, w, h) {
-	$('#AlarmConPie2').highcharts({
-				chart : {
-					plotBackgroundColor : null,
-					plotBorderWidth : null,
-					plotShadow : false,
-					width : w,
-					height : h
-				},
-				credits : {
-					enabled : false
-				},
-				title : {
-					text : '报警类型统计图'
-				},
-				colors : ['#058DC7', '#24CBE5','#50B432', '#ED561B',  '#64E572',
-							'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-				tooltip : {
-					pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				plotOptions : {
-					pie : {
-						allowPointSelect : true,
-						cursor : 'pointer',
-						dataLabels : {
-							enabled : true,
-							color : '#000000',
-							connectorColor : '#000000',
-							format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-						}
-					}
-				},
-				plotOptions : {
-					pie : {
-						allowPointSelect : true,
-						cursor : 'pointer',
-						dataLabels : {
-							enabled : true,
-							color : '#000000',
-							connectorColor : '#000000',
-							format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-						},
-						showInLegend : true
-					}
-				},
-				series : [{
-							type : 'pie',
-							name : '处理结果占',
-							data : data
-						}]
-			});
-
-}
-function initAlarmColumnChart(values, w, h) {
-	$('#AlarmConColumn').highcharts({
-		chart : {
-			type : 'column',
-			width : w,
-			height : h
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : '处理状态统计图',
-			font : 'normal 25px Verdana, sans-serif'
-		},
-		xAxis : {
-			categories : ['处理状态统计']
-		},
-		yAxis : {
-			min : 0,
-			title : {
-				text : '次数'
-			}
-		},
-
-		tooltip : {
-			headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
-			pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
-					+ '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-			footerFormat : '</table>',
-			shared : true,
-			useHTML : true
-		},
-		plotOptions : {
-			column : {
-				pointPadding : 0.2,
-				borderWidth : 0
-			}
-		},
-		series : values
-	});
-
-}
-
 function senfe(o, a, b, c, d) {
 	var tab = document.getElementById(o);
 	var t = tab.getElementsByTagName("tr");
@@ -1978,109 +1769,6 @@ function senfe(o, a, b, c, d) {
 	}
 }
 
-// 工况诊断柱状图 共用接口1
-
-function constructColumnChart(title_, categories_, values_) {
-	$('#DiagnosisConColumn').highcharts({
-		chart : {
-			type : 'column'
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : title_,
-			font : 'normal 25px Verdana, sans-serif'
-		},
-		xAxis : {
-			categories : categories_,
-			labels : {
-				style : {
-					color : '#000000',
-					margin_top : '4px',
-					fontWeight : 'bold'
-				}
-			}
-		},
-		yAxis : {
-			min : 0,
-			title : {
-				text : cosog.string.wellNums
-			}
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			headerFormat : '<span style="font-size:8px">{point.key}</span><table>',
-			pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
-					+ '<td style="padding:0"><b>{point.y}</b></td></tr>',
-			footerFormat : '</table>',
-			shared : true,
-			useHTML : true
-		},
-		plotOptions : {
-
-			column : {
-				pointPadding : 0.2,
-				allowPointSelect : true,
-				borderWidth : 0,
-				dataLabels : {
-					enabled : true,
-					padding : 0.5
-				}
-			}
-		},
-		series : values_
-	});
-
-}
-/**
- * **工况诊断饼图 共用接口 传入参数说明 tilte_ :传入当前饼图的标题 name_:显示的名称 data ：饼图显示所需的数据
- */
-function constructPieChart(title_, name_, data) {
-	$('#DiagnosisConPie').highcharts({
-		chart : {
-			plotBackgroundColor : null,
-			plotBorderWidth : null,
-			plotShadow : false
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : title_
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			pointFormat : '{series.name} : <b>{point.percentage:.1f}%</b>'
-		},
-		legend : {
-			align : 'right',
-			verticalAlign : 'middle',
-			layout : 'vertical'
-		},
-		plotOptions : {
-			pie : {
-				allowPointSelect : true,
-				cursor : 'pointer',
-				dataLabels : {
-					enabled : true,
-					color : '#000000',
-					connectorColor : '#000000',
-					format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-				},
-				showInLegend : true
-			}
-		},
-		series : [{
-					type : 'pie',
-					name : name_,
-					data : data
-				}]
-	});
-
-}
 // 初始化柱状图或者饼图
 function initchartType(store) {
 	var get_rawData = store.proxy.reader.rawData;
@@ -2111,113 +1799,6 @@ function initchartType(store) {
 	}
 }
 
-// 产量计算柱状图 共用接口
-
-function constructComputeColumnChart(title_, categories_, values_, w, h) {
-	$('#ComputeConColumn').highcharts({
-		chart : {
-			type : 'column',
-			width : w,
-			height : h
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : title_,
-			font : 'normal 25px Verdana, sans-serif'
-		},
-		xAxis : {
-			categories : categories_,
-			labels : {
-				style : {
-					color : '#000000',
-					margin_top : '4px',
-					fontWeight : 'bold'
-				}
-			}
-		},
-		yAxis : {
-			min : 0,
-			title : {
-				text : '井数'
-			}
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			headerFormat : '<span style="font-size:8px">{point.key}</span><table>',
-			pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
-					+ '<td style="padding:0"><b>{point.y}</b></td></tr>',
-			footerFormat : '</table>',
-			shared : true,
-			useHTML : true
-		},
-		plotOptions : {
-			column : {
-				pointPadding : 0.2,
-				allowPointSelect : true,
-				borderWidth : 0,
-				dataLabels : {
-					enabled : true,
-					padding : 1
-				}
-			}
-		},
-		series : values_
-	});
-
-}
-/**
- * **产量计算饼图 共用接口 传入参数说明 tilte_ :传入当前饼图的标题 name_:显示的名称 data ：饼图显示所需的数据 w:图形的宽度
- * h:图形显示的高度
- */
-function constructComputePieChart(title_, name_, data, w, h) {
-	$('#ComputeConPie').highcharts({
-		chart : {
-			plotBackgroundColor : null,
-			plotBorderWidth : null,
-			plotShadow : false,
-			width : w,
-			height : h
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : title_
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
-		},
-		legend : {
-			align : 'right',
-			verticalAlign : 'middle',
-			layout : 'vertical'
-		},
-		plotOptions : {
-			pie : {
-				allowPointSelect : true,
-				cursor : 'pointer',
-				dataLabels : {
-					enabled : true,
-					color : '#000000',
-					connectorColor : '#000000',
-					format : '<b >{point.name}</b>: {point.percentage:.1f} %'
-				},
-				showInLegend : true
-			}
-		},
-		series : [{
-					type : 'pie',
-					name : name_,
-					data : data
-				}]
-	});
-
-}
 // 初始化产量计算柱状图或者饼图
 function initComputeChartType(obj) {
 	var get_rawData = obj;
@@ -2877,72 +2458,6 @@ color16ToRgba = function(sColor,Opacity){
 	
 }
 
-function constructAllExportPieChart(data, w, h) {
-	$('#AllExportPie').highcharts({
-		chart : {
-			plotBackgroundColor : null,
-			plotBorderWidth : null,
-			plotShadow : false,
-			width : w,
-			height : h
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : '作业区地产气饼状图'
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			pointFormat : '{series.name} : <b>{point.percentage:.1f}%</b>'
-		},  
-//		exporting: {
-//			            buttons: {
-//			                contextButton: {
-//			                    menuItems: [{
-//			                        separator: true
-//			                    }]
-//			                    .concat(Highcharts.getOptions().exporting.buttons.contextButton.menuItems)
-//			                    .concat([{
-//			                        separator: true
-//			                    }
-//			                    ])
-//			                }
-//			            }
-//			        },
-		exporting:{    
-            enabled:true,    
-            filename:'class-booking-chart',    
-            url:context + '/exportHighcharsPicController/export'
-       },
-		legend : {
-			align : 'right',
-			verticalAlign : 'middle',
-			layout : 'vertical'
-		},
-		plotOptions : {
-			pie : {
-				allowPointSelect : true,
-				cursor : 'pointer',
-				dataLabels : {
-					enabled : true,
-					color : '#000000',
-					connectorColor : '#000000',
-					format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-				},
-				showInLegend : true
-			}
-		},
-		series : [{
-					type : 'pie',
-					name : '日产气量占',
-					data: data
-				}]
-	});
-
-}
-
       /***
        * '集气站单井地产饼状图日产气量统计方法
        * **/
@@ -2984,72 +2499,6 @@ function constructAllExportPieChart(data, w, h) {
     //   alert(pieData_);
    constructAreaExportPieChart(pieData_,w,h);
 	
-}
-
-function constructAreaExportPieChart(data, w, h) {
-	$('#AreaExportPie').highcharts({
-		chart : {
-			plotBackgroundColor : null,
-			plotBorderWidth : null,
-			plotShadow : false,
-			width : w,
-			height : h
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : '集气站单井地产饼状图'
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			pointFormat : '{series.name} : <b>{point.percentage:.1f}%</b>'
-		},  
-//		exporting: {
-//			            buttons: {
-//			                contextButton: {
-//			                    menuItems: [{
-//			                        separator: true
-//			                    }]
-//			                    .concat(Highcharts.getOptions().exporting.buttons.contextButton.menuItems)
-//			                    .concat([{
-//			                        separator: true
-//			                    }
-//			                    ])
-//			                }
-//			            }
-//			        },
-		exporting:{    
-            enabled:true,    
-            filename:'class-booking-chart',    
-            url:context + '/exportHighcharsPicController/export'
-       },
-		legend : {
-			align : 'right',
-			verticalAlign : 'middle',
-			layout : 'vertical'
-		},
-		plotOptions : {
-			pie : {
-				allowPointSelect : true,
-				cursor : 'pointer',
-				dataLabels : {
-					enabled : true,
-					color : '#000000',
-					connectorColor : '#000000',
-					format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-				},
-				showInLegend : true
-			}
-		},
-		series : [{
-					type : 'pie',
-					name : '日产气量占',
-					data: data
-				}]
-	});
-
 }
 
 //刷新grid数据信息
@@ -3381,53 +2830,6 @@ var CbmJqzOutPutPieChartFn = function(store, w, h) {
 
 }
 
-
-var createJqzOutPutPieChart =function (data, w, h) {
-	$('#jqzOutPutPieCon').highcharts({
-		chart : {
-			plotBackgroundColor : null,
-			plotBorderWidth : null,
-			plotShadow : false,
-			width : w,
-			height : h
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : '集气站外输气量饼状图'
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			pointFormat : '{series.name} : <b>{point.percentage:.1f}%</b>'
-		},
-		legend : {
-			align : 'right',
-			verticalAlign : 'middle',
-			layout : 'vertical'
-		},
-		plotOptions : {
-			pie : {
-				allowPointSelect : true,
-				cursor : 'pointer',
-				dataLabels : {
-					enabled : true,
-					color : '#000000',
-					connectorColor : '#000000',
-					format : '<b>{point.name}</b>: {point.percentage:.1f} %'
-				},
-				showInLegend : true
-			}
-		},
-		series : [{
-					type : 'pie',
-					name : '外输气量占',
-					data : data
-				}]
-	});
-
-}
 
 /*** 
   * 对 特殊字符进行重新编码 
@@ -7233,66 +6635,6 @@ function initElectricOverlayAnalysisCurve(newCurrentA,lastCurrentA,newCurrentB, 
 	});
 }
 
-function ShowWorkStatusColChart(title_, categories_, values_) {
-	$('#WorkStatusStatisGraphColDiv_Id').highcharts({
-		chart : {
-			type : 'column'
-		},
-		credits : {
-			enabled : false
-		},
-		title : {
-			text : title_,
-			font : 'normal 25px Verdana, sans-serif'
-		},
-		xAxis : {
-			categories : categories_,
-			labels : {
-				style : {
-					color : '#000000',
-					margin_top : '4px',
-					fontWeight : 'bold'
-				}
-			}
-		},
-		yAxis : {
-			min : 0,
-			title : {
-				text : cosog.string.wellNums
-			}
-		},
-		colors : ['#058DC7', '#50B432', '#ED561B', '#24CBE5', '#64E572',
-				'#FF9655', '#FFF263', '#6AF9C4', '#DDDF00'],
-		tooltip : {
-			headerFormat : '<span style="font-size:8px">{point.key}</span><table>',
-			pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
-					+ '<td style="padding:0"><b>{point.y}</b></td></tr>',
-			footerFormat : '</table>',
-			shared : true,
-			useHTML : true
-		},
-		plotOptions : {
-
-			column : {
-				pointPadding : 0.2,
-				allowPointSelect : true,
-				borderWidth : 0,
-				dataLabels : {
-					enabled : true,
-					padding : 0.5
-				}
-			}
-		},
-		exporting:{    
-            enabled:true,    
-            filename:'class-booking-chart',    
-            url:context + '/exportHighcharsPicController/export'
-       },
-		series : values_
-	});
-
-};
-
 //自定义地图前台数据 type:平衡状态或诊断算产状态  1-平衡 2-诊断算产
 function getCustomMapFrontDataAndShowMap(type,divId) {
 	var orgId= Ext.getCmp("leftOrg_Id").getValue();
@@ -8308,4 +7650,110 @@ function getBaseUrl(){
 	var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
 	var baseRoot = localhostPaht+projectName;
 	return baseRoot;
+};
+
+function initTimeAndDataCurveChartFn(series, tickInterval, divId, title, subtitle, xtitle, ytitle, color,legend) {
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    var mychart = new Highcharts.Chart({
+        chart: {
+            renderTo: divId,
+            type: 'spline',
+            shadow: true,
+            borderWidth: 0,
+            zoomType: 'xy'
+        },
+        credits: {
+            enabled: false
+        },
+        title: {
+            text: title
+        },
+        subtitle: {
+            text: subtitle
+        },
+        colors: color,
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: xtitle
+            },
+            tickPixelInterval: tickInterval,
+            labels: {
+                formatter: function () {
+                    return Highcharts.dateFormat("%Y-%m-%d", this.value);
+                },
+                rotation: 0, //倾斜度，防止数量过多显示不全  
+                step: 2
+            }
+        },
+        yAxis: [{
+            lineWidth: 1,
+            title: {
+                text: ytitle,
+                style: {
+                    color: '#000000',
+                    fontWeight: 'bold'
+                }
+            },
+            labels: {
+                formatter: function () {
+                    return Highcharts.numberFormat(this.value, 2);
+                }
+            }
+      }],
+        tooltip: {
+            crosshairs: true, //十字准线
+            style: {
+                color: '#333333',
+                fontSize: '12px',
+                padding: '8px'
+            },
+            dateTimeLabelFormats: {
+                millisecond: '%Y-%m-%d %H:%M:%S.%L',
+                second: '%Y-%m-%d %H:%M:%S',
+                minute: '%Y-%m-%d %H:%M',
+                hour: '%Y-%m-%d %H',
+                day: '%Y-%m-%d',
+                week: '%m-%d',
+                month: '%Y-%m',
+                year: '%Y'
+            }
+        },
+        exporting: {
+            enabled: true,
+            filename: 'class-booking-chart',
+            url: context + '/exportHighcharsPicController/export'
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 1,
+                fillOpacity: 0.3,
+                marker: {
+                    enabled: true,
+                    radius: 3, //曲线点半径，默认是4
+                    //                            symbol: 'triangle' ,//曲线点类型："circle", "square", "diamond", "triangle","triangle-down"，默认是"circle"
+                    states: {
+                        hover: {
+                            enabled: true,
+                            radius: 6
+                        }
+                    }
+                },
+                shadow: true
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            enabled: legend,
+            borderWidth: 0
+        },
+        series: series
+    });
 };

@@ -350,11 +350,12 @@ public class DriverAPIController extends BaseController{
 				String protocolName=obj[1]+"";
 				if("A11-Modbus".equalsIgnoreCase(protocolName)){
 					this.DataProcessing_A11(acqGroup, protocolName);
-				}else if("private-lq1000".equalsIgnoreCase(protocolName) || "private-kd93".equalsIgnoreCase(protocolName)){
-					this.DataProcessing_Pump(acqGroup, protocolName);
 				}
+//				else if("private-lq1000".equalsIgnoreCase(protocolName) || "private-kd93".equalsIgnoreCase(protocolName)){
+//					this.DataProcessing_Pump(acqGroup, protocolName);
+//				}
 				else{
-					this.DataProcessing_Unknown(acqGroup, protocolName);
+					this.DataProcessing_Pump(acqGroup, protocolName);
 				}
 			}
 		}else{
@@ -525,7 +526,7 @@ public class DriverAPIController extends BaseController{
 						}
 					}
 					columns+= "]";
-					webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"columns\":"+columns+",");
+					webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"acqTime\":\""+acqTime+"\",\"columns\":"+columns+",");
 					webSocketSendData.append("\"totalRoot\":[");
 					
 					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+",在线\"},");

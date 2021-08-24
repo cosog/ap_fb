@@ -7,71 +7,74 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
     initComponent: function () {
         var me = this;
         
-        var pumpCurveTypeCombStore = new Ext.data.JsonStore({
-        	pageSize:defaultWellComboxSize,
-            fields: [{
-                name: "boxkey",
-                type: "string"
-            }, {
-                name: "boxval",
-                type: "string"
-            }],
-            proxy: {
-            	url: context + '/realTimeMonitoringController/loadCurveTypeComboxList',
-                type: "ajax",
-                actionMethods: {
-                    read: 'POST'
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'totals'
-                }
-            },
-            autoLoad: true,
-            listeners: {
-                beforeload: function (store, options) {
-                	var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id")
-                	var wellName="";
-                	if(isNotVal(gridPanel)){
-                		wellName=gridPanel.getSelectionModel().getSelection()[0].data.wellName;
-                	}
-                    var new_params = {
-                    		wellName: wellName,
-                    		deviceType: 0
-                    };
-                    Ext.apply(store.proxy.extraParams,new_params);
-                }
-            }
-        });
-        var pumpCurveTypeComb = Ext.create(
-                'Ext.form.field.ComboBox', {
-                    fieldLabel: '曲线类型',
-                    id: "pumpRealTimeMonitorCurveTypeComb_Id",
-                    labelWidth: 70,
-                    width: 200,
-                    labelAlign: 'left',
-                    queryMode: 'remote',
-                    typeAhead: true,
-                    store: pumpCurveTypeCombStore,
-                    autoSelect: true,
-                    editable: false,
-                    triggerAction: 'all',
-                    displayField: "boxval",
-                    valueField: "boxkey",
-                    pageSize:comboxPagingStatus,
-                    minChars:0,
-                    emptyText: cosog.string.all,
-                    blankText: cosog.string.all,
-                    listeners: {
-                        expand: function (sm, selections) {
-                            pumpCurveTypeComb.getStore().loadPage(1); // 加载井下拉框的store
-                        },
-                        select: function (combo, record, index) {
-                            
-                        }
-                    }
-                });
+//        var pumpCurveTypeCombStore = new Ext.data.JsonStore({
+//        	pageSize:defaultWellComboxSize,
+//            fields: [{
+//                name: "boxkey",
+//                type: "string"
+//            }, {
+//                name: "boxval",
+//                type: "string"
+//            }],
+//            proxy: {
+//            	url: context + '/realTimeMonitoringController/loadCurveTypeComboxList',
+//                type: "ajax",
+//                actionMethods: {
+//                    read: 'POST'
+//                },
+//                reader: {
+//                    type: 'json',
+//                    rootProperty: 'list',
+//                    totalProperty: 'totals'
+//                }
+//            },
+//            autoLoad: true,
+//            listeners: {
+//                beforeload: function (store, options) {
+//                	var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id")
+//                	var wellName="";
+//                	if(isNotVal(gridPanel)){
+//                		wellName=gridPanel.getSelectionModel().getSelection()[0].data.wellName;
+//                	}
+//                    var new_params = {
+//                    		wellName: wellName,
+//                    		deviceType: 0
+//                    };
+//                    Ext.apply(store.proxy.extraParams,new_params);
+//                }
+//            }
+//        });
+//        var pumpCurveTypeComb = Ext.create(
+//                'Ext.form.field.ComboBox', {
+//                    fieldLabel: '曲线类型',
+//                    id: "pumpRealTimeMonitorCurveTypeComb_Id",
+//                    labelWidth: 70,
+//                    width: 200,
+//                    labelAlign: 'left',
+//                    queryMode: 'remote',
+//                    typeAhead: true,
+//                    store: pumpCurveTypeCombStore,
+//                    autoSelect: true,
+//                    editable: false,
+//                    triggerAction: 'all',
+//                    displayField: "boxval",
+//                    valueField: "boxkey",
+//                    pageSize:comboxPagingStatus,
+//                    minChars:0,
+//                    emptyText: cosog.string.all,
+//                    blankText: cosog.string.all,
+//                    listeners: {
+//                        expand: function (sm, selections) {
+//                            pumpCurveTypeComb.getStore().loadPage(1); // 加载井下拉框的store
+//                        },
+//                        select: function (combo, record, index) {
+//                            
+//                        },
+//                        render: function(combo){
+////                        	pumpCurveTypeComb.SetCurSel(0);
+//                        }
+//                    }
+//                });
         
         
         Ext.applyIf(me, {
@@ -119,7 +122,20 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                     	border: true,
                     	split: true,
                         collapsible: true,
-                        tbar:[pumpCurveTypeComb]
+                        tbar:[{
+                            id: 'PumpRealTimeMonitoringSelectedCurve_Id',//选择的统计项的值
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        }],
+                        html: '<div id="pumpRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
+                        listeners: {
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                if ($("#pumpRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
+                                    $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pumpRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pumpRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
+                                }
+                            }
+                        }
                     }]
                 },{
                 	region: 'east',
@@ -247,10 +263,87 @@ var PumpDeviceRealMonitorDataHandsontableHelper = {
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-//	                	
+	                	if(row>0||column>0){
+	                		var relRow=row;
+	                		var relColumn=column;
+	                		if(column%2==1){
+	                			relColumn=column-1;
+	                		}else if(column%2==0){
+	                			
+	                		}
+		                	
+		                	var item=pumpDeviceRealMonitorDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
+		                	Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(item);
+		                	pumpRealTimeMonitoringCurve(item);
+	                	}
 	                }
 	        	});
 	        }
 	        return pumpDeviceRealMonitorDataHandsontableHelper;
 	    }
 };
+function pumpRealTimeMonitoringCurve(item){
+	var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id")
+	var deviceName="";
+	if(isNotVal(gridPanel)){
+		deviceName=gridPanel.getSelectionModel().getSelection()[0].data.wellName;
+		
+		Ext.Ajax.request({
+			method:'POST',
+			url:context + '/realTimeMonitoringController/getRealTimeCurveData',
+			success:function(response) {
+				var result =  Ext.JSON.decode(response.responseText);
+			    var data = result.list;
+			    if(data.length>0){
+			    	var tickInterval = 1;
+				    tickInterval = Math.floor(data.length / 10) + 1;
+				    var title = result.deviceName  + result.item + "曲线";
+				    var xTitle='采集时间';
+				    var yTitle=result.item;
+				    if(isNotVal(result.unit)){
+				    	yTitle+='('+result.unit+')';
+				    }
+				    var legendName = [result.item];
+				    var series = "[";
+				    for (var i = 0; i < legendName.length; i++) {
+				        series += "{\"name\":\"" + legendName[i] + "\",";
+				        series += "\"data\":[";
+				        for (var j = 0; j < data.length; j++) {
+				            if (i == 0) {
+				            	series += "[" + Date.parse(data[j].acqTime.replace(/-/g, '/')) + "," + data[j].value + "]";
+				            }else if(i == 1){
+				            	series += "[" + Date.parse(data[j].acqTime.replace(/-/g, '/')) + "," + data[j].value2 + "]";
+				            }
+				            if (j != data.length - 1) {
+				                series += ",";
+				            }
+				        }
+				        series += "]}";
+				        if (i != legendName.length - 1) {
+				            series += ",";
+				        }
+				    }
+				    series += "]";
+				    
+				    var ser = Ext.JSON.decode(series);
+				    var color = ['#800000', // 红
+				       '#008C00', // 绿
+				       '#000000', // 黑
+				       '#0000FF', // 蓝
+				       '#F4BD82', // 黄
+				       '#FF00FF' // 紫
+				     ];
+				    initTimeAndDataCurveChartFn(ser, tickInterval, "pumpRealTimeMonitoringCurveDiv_Id", title, '', xTitle, yTitle, color,false)
+			    }
+			},
+			failure:function(){
+				Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+			},
+			params: {
+				deviceName:deviceName,
+				item:item,
+				deviceType:0
+	        }
+		});
+	}
+}

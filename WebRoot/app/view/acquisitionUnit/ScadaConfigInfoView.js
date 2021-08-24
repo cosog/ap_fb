@@ -8,7 +8,7 @@ Ext.define("AP.view.acquisitionUnit.ScadaConfigInfoView", {
     initComponent: function () {
     	var DataSourceConfigInfoView = Ext.create('AP.view.acquisitionUnit.DataSourceConfigInfoView');
         var ProtocolConfigInfoView = Ext.create('AP.view.acquisitionUnit.ProtocolConfigInfoView');
-
+        var dataSourceSN=1;
         var DataSourceConfigItems=[{
             title: '采控直读',
             id:'DriverConfigInfoPanel_Id',
