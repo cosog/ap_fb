@@ -175,6 +175,7 @@ function websocketOnMessage(evt) {
 				if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName){
+						pumpDeviceRealMonitorDataHandsontableHelper.CellInfo=data.CellInfo;
 						pumpDeviceRealMonitorDataHandsontableHelper.hot.loadData(data.totalRoot);
 					}
 				}
@@ -208,7 +209,6 @@ function websocketOnMessage(evt) {
 						var series=chart.series[0];
 						series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, true);
 					}
-                	
 				}
 			}
 		}

@@ -47,24 +47,46 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
 		String tableName="tbl_pumpacqdata_latest";
+		String ddicName="pumpRealTimeOverview";
+		DataDictionary ddic = null;
+		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_tubingacqdata_latest";
 		}
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String columns = ddic.getTableHeader();
 		
-		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel from tbl_wellinformation t "
+		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
+		
+		String[] ddicColumns=ddic.getSql().split(",");
+		for(int i=0;i<ddicColumns.length;i++){
+			if(ddicColumns[i].toUpperCase().contains("ADDR")){
+				ddicColumnsList.add(ddicColumns[i]);
+			}
+		}
+		for(int i=0;i<ddicColumnsList.size();i++){
+			sql+=",t2."+ddicColumnsList.get(i);
+		}
+		
+		
+		sql+= " from tbl_wellinformation t "
 				+ "left outer join "+tableName+" t2 on t2.wellid=t.id"
 				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellName='"+wellName+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
+		
+		
+		
+		
 		int totals=this.getTotalCountRows(sql);
 		List<?> list = this.findCallSql(sql);
-		String columns = "["
-				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-				+ "{ \"header\":\"井名\",\"dataIndex\":\"wellName\" ,children:[] },"
-				+ "{ \"header\":\"通信状态\",\"dataIndex\":\"commStatusName\" ,width:50 ,children:[] }"
-				+ "]";
+//		String columns = "["
+//				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+//				+ "{ \"header\":\"井名\",\"dataIndex\":\"wellName\" ,children:[] },"
+//				+ "{ \"header\":\"通信状态\",\"dataIndex\":\"commStatusName\" ,width:50 ,children:[] }"
+//				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalCount\":"+totals+",");
 		result_json.append("\"totalRoot\":[");
@@ -74,7 +96,15 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
 			result_json.append("\"commStatus\":"+obj[2]+",");
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
-			result_json.append("\"commAlarmLevel\":"+obj[4]+"},");
+			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
+			
+			for(int j=0;j<ddicColumnsList.size();j++){
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":"+obj[5+j]+",");
+			}
+			if(result_json.toString().endsWith(",")){
+				result_json.deleteCharAt(result_json.length() - 1);
+			}
+			result_json.append("},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -87,6 +117,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	public String getDeviceRealMonitorData(String deviceName,String deviceType) throws IOException, SQLException{
 		int items=4;
 		StringBuffer result_json = new StringBuffer();
+		StringBuffer info_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -108,13 +139,18 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		
 		List<?> procotolCodeList = this.findCallSql(procotolSql);
-		String columns = "["
-				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-				+ "{ \"header\":\"井名\",\"dataIndex\":\"wellName\" ,children:[] },"
-				+ "{ \"header\":\"通信状态\",\"dataIndex\":\"commStatusName\" ,width:50 ,children:[] }"
-				+ "]";
+		String columns = "[";
+		for(int i=1;i<=items;i++){
+			columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
+					+ "{ \"header\":\"变量\",\"dataIndex\":\"value"+i+"\",children:[] }";
+			if(i<items){
+				columns+=",";
+			}
+		}
+		columns+= "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
+		info_json.append("[");
 		for(int i=0;i<procotolCodeList.size();i++){
 			Object[] procotolObj=(Object[]) procotolCodeList.get(i);
 			String protocolCode=procotolObj[3]+"";
@@ -138,6 +174,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				String[] itemsArr=(procotolObj[7]+"").split(",");
 				List<String> columnsList=new ArrayList<String>();
 				List<String> columnsNameList=new ArrayList<String>();
+				List<String> columnsDataTypeList=new ArrayList<String>();
+				List<Integer> alarmLevelList=new ArrayList<Integer>();
 				
 				for(int j=0;j<itemsArr.length;j++){
 					for(int k=0;k<protocol.getItems().size();k++){
@@ -146,6 +184,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							String columnName=protocol.getItems().get(k).getTitle();
 							columnsList.add(column);
 							columnsNameList.add(columnName);
+							columnsDataTypeList.add(protocol.getItems().get(k).getIFDataType());
 							break;
 						}
 					}
@@ -170,17 +209,30 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 					result_json.append("{\"name1\":\""+(obj[1]+":"+obj[2]+","+obj[4])+"\"},");
 					
 					for(int j=1;j<row;j++){
+						//记录每一行的详细信息
+						
 						result_json.append("{");
+						
+						
 						for(int k=0;k<items;k++){
-							int index=6+items*(j-1)+k;
-							if(index>obj.length-1){
-								result_json.append("\"name"+(k+1)+"\":\"\",");
-								result_json.append("\"value"+(k+1)+"\":\"\",");
-							}else{
-								result_json.append("\"name"+(k+1)+"\":\""+columnsNameList.get(items*(j-1)+k)+"\",");
-								result_json.append("\"value"+(k+1)+"\":\""+obj[index]+"\",");
+							int index=items*(j-1)+k;
+							String columnName="";
+							String value="";
+							String column="";
+							String columnDataType="";
+							int alarmLevel=0;
+							if(index<columnsNameList.size()){
+								columnName=columnsNameList.get(index);
+								value=obj[index+6]+"";
+								column=columnsList.get(index);
+								columnDataType=columnsDataTypeList.get(index);
 							}
-							
+							if(StringManagerUtils.stringToFloat(value)>2){
+								alarmLevel=100;
+							}
+							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							result_json.append("\"value"+(k+1)+"\":\""+value+"\",");
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
 							
 						}
 						if(result_json.toString().endsWith(",")){
@@ -194,8 +246,15 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				}
 			}
 		}
+		if(info_json.toString().endsWith(",")){
+			info_json.deleteCharAt(info_json.length() - 1);
+		}
+		info_json.append("]");
 		result_json.append("]");
-		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
+		result_json.append(",\"CellInfo\":"+info_json);
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+//		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
 	}
 	
@@ -324,7 +383,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("{boxkey:\"" + controlColumns.get(i) + "\",");
 			result_json.append("boxval:\"" + controlItems.get(i) + "\"},");
 		}
-		if (result_json.toString().length() > 1) {
+		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
 		}
 		result_json.append("]}");
@@ -385,12 +444,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				result_json.append("{acqTime:\"" + obj[0] + "\",");
 				result_json.append("value:\"" + obj[1] + "\"},");
 			}
-			if (result_json.toString().length() > 1) {
+			if (result_json.toString().endsWith(",")) {
 				result_json.deleteCharAt(result_json.length() - 1);
 			}
 		}
 		result_json.append("]}");
-		System.out.println(result_json.toString());
+//		System.out.println(result_json.toString());
 		return result_json.toString();
 	}
 }
