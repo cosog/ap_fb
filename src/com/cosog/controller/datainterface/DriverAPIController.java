@@ -376,6 +376,7 @@ public class DriverAPIController extends BaseController{
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		StringBuffer webSocketSendData = new StringBuffer();
+		StringBuffer info_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -477,6 +478,7 @@ public class DriverAPIController extends BaseController{
 					
 					List<String> columnsNameList=new ArrayList<String>();
 					List<String> valueList=new ArrayList<String>();
+					List<String> columnsDataTypeList=new ArrayList<String>();
 					
 					for(int i=0;acqGroup.getAddr()!=null && acqGroup.getValue()!=null  &&i<acqGroup.getAddr().size();i++){
 						for(int j=0;acqGroup.getValue().get(i)!=null && j<protocol.getItems().size();j++){
@@ -490,6 +492,7 @@ public class DriverAPIController extends BaseController{
 									
 									columnsNameList.add(protocol.getItems().get(j).getTitle());
 									valueList.add(value);
+									columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
 								}
 								
 								break;
@@ -528,7 +531,7 @@ public class DriverAPIController extends BaseController{
 					columns+= "]";
 					webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"acqTime\":\""+acqTime+"\",\"columns\":"+columns+",");
 					webSocketSendData.append("\"totalRoot\":[");
-					
+					info_json.append("[");
 					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+",在线\"},");
 					int row=1;
 					if(valueList.size()%items==0){
@@ -541,13 +544,23 @@ public class DriverAPIController extends BaseController{
 						webSocketSendData.append("{");
 						for(int k=0;k<items;k++){
 							int index=items*(j-1)+k;
-							if(index>columnsNameList.size()-1){
-								webSocketSendData.append("\"name"+(k+1)+"\":\"\",");
-								webSocketSendData.append("\"value"+(k+1)+"\":\"\",");
-							}else{
-								webSocketSendData.append("\"name"+(k+1)+"\":\""+columnsNameList.get(index)+"\",");
-								webSocketSendData.append("\"value"+(k+1)+"\":\""+valueList.get(index)+"\",");
+							String columnName="";
+							String value="";
+							String column="";
+							String columnDataType="";
+							int alarmLevel=0;
+							if(index<columnsNameList.size()){
+								columnName=columnsNameList.get(index);
+								value=valueList.get(index);
+								column=columnsList.get(index);
+								columnDataType=columnsDataTypeList.get(index);
 							}
+							if(StringManagerUtils.stringToFloat(value)>2){
+								alarmLevel=100;
+							}
+							webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
 						}
 						if(webSocketSendData.toString().endsWith(",")){
 							webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
@@ -557,9 +570,16 @@ public class DriverAPIController extends BaseController{
 					if(webSocketSendData.toString().endsWith(",")){
 						webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
 					}
-					webSocketSendData.append("]");
-					webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
 					
+					if(info_json.toString().endsWith(",")){
+						info_json.deleteCharAt(info_json.length() - 1);
+					}
+					info_json.append("]");
+					
+					webSocketSendData.append("]");
+					webSocketSendData.append(",\"CellInfo\":"+info_json);
+					webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
+//					System.out.println(webSocketSendData.toString());
 					infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
 					infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 				}

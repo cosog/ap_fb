@@ -32,7 +32,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     border: false,
                     autoLoad: true,
                     columnLines: true,
-                    forceFit: true,
+                    forceFit: false,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },

@@ -550,7 +550,7 @@ private CommonDataService service;
 			result_json.append("{boxkey:\"" + modbusProtocolConfig.getProtocol().get(i).getName() + "\",");
 			result_json.append("boxval:\"" + modbusProtocolConfig.getProtocol().get(i).getName() + "\"},");
 		}
-		if (result_json.toString().length() > 1) {
+		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
 		}
 		result_json.append("]}");
@@ -571,7 +571,7 @@ private CommonDataService service;
 			result_json.append("{boxkey:\"" + obj[0] + "\",");
 			result_json.append("boxval:\"" + obj[1] + "\"},");
 		}
-		if (result_json.toString().length() > 1) {
+		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
 		}
 		result_json.append("]}");
