@@ -33,60 +33,6 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInfoWindow", {
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
-            },{
-				xtype : "hidden",
-				id : 'modbusProtocolType_Id',
-				value:'modbus-tcp',
-				name : "modbusProtocol.type"
-			},{
-            	xtype : "combobox",
-				fieldLabel : '协议类型',
-				id : 'modbusProtocolTypeComb_Id',
-				anchor : '100%',
-				triggerAction : 'all',
-				selectOnFocus : true,
-			    forceSelection : true,
-			    value:'modbus-tcp',
-			    allowBlank: false,
-				editable : false,
-				store : new Ext.data.SimpleStore({
-							fields : ['value', 'text'],
-							data : [['modbus-tcp', 'modbus-tcp'],['modbus-rtu', 'modbus-rtu']]
-						}),
-				displayField : 'text',
-				valueField : 'value',
-				queryMode : 'local',
-				emptyText : '请选择协议类型',
-				blankText : '请选择协议类型',
-				listeners : {
-					select:function(v,o){
-						Ext.getCmp("modbusProtocolType_Id").setValue(this.value);
-					}
-				}
-            }, {
-                id: 'formModbusProtocolSignInPrefix_Id',
-                name: "modbusProtocol.signInPrefix",
-                fieldLabel: '注册包前缀',
-                anchor: '100%',
-                value: ''
-            }, {
-            	id: 'modbusProtocolSignInSuffix_Id',
-            	name: "modbusProtocol.signInSuffix",
-                fieldLabel: '注册包后缀',
-                anchor: '100%',
-                value: ''
-            }, {
-            	id: 'modbusProtocolHeartbeatPrefix_Id',
-            	name: "modbusProtocol.heartbeatPrefix",
-                fieldLabel: '心跳包前缀',
-                anchor: '100%',
-                value: ''
-            }, {
-            	id: 'modbusProtocolHeartbeatSuffix_Id',
-            	name: "modbusProtocol.heartbeatSuffix",
-                fieldLabel: '心跳包后缀',
-                anchor: '100%',
-                value: ''
             }, {
             	xtype: 'numberfield',
             	id: "modbusProtocolSort_Id",

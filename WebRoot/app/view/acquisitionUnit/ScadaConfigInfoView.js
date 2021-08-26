@@ -6,54 +6,7 @@ Ext.define("AP.view.acquisitionUnit.ScadaConfigInfoView", {
     border: false,
     referenceHolder: true,
     initComponent: function () {
-    	var DataSourceConfigInfoView = Ext.create('AP.view.acquisitionUnit.DataSourceConfigInfoView');
         var ProtocolConfigInfoView = Ext.create('AP.view.acquisitionUnit.ProtocolConfigInfoView');
-        var dataSourceSN=1;
-        var DataSourceConfigItems=[{
-            title: '采控直读',
-            id:'DriverConfigInfoPanel_Id',
-            layout: "fit",
-            border: false,
-            items:ProtocolConfigInfoView
-        },{
-            title: '数据库直读',
-            id:'DataSourceConfigInfoPanel_Id',
-            layout: "fit",
-            border: false,
-            items: DataSourceConfigInfoView
-        }];
-        
-        if(dataSourceSN==0){
-        	DataSourceConfigItems=[{
-                title: '采控直读',
-                id:'DriverConfigInfoPanel_Id',
-                layout: "fit",
-                border: false,
-                items:ProtocolConfigInfoView
-            },{
-                title: '数据库直读',
-                id:'DataSourceConfigInfoPanel_Id',
-                layout: "fit",
-                border: false,
-                items: DataSourceConfigInfoView
-            }];
-        }else if(dataSourceSN==1){
-        	DataSourceConfigItems=[{
-                title: '采控直读',
-                id:'DriverConfigInfoPanel_Id',
-                layout: "fit",
-                border: false,
-                items:ProtocolConfigInfoView
-            }];
-        }else if(dataSourceSN==2){
-        	DataSourceConfigItems=[{
-                title: '数据库直读',
-                id:'DataSourceConfigInfoPanel_Id',
-                layout: "fit",
-                border: false,
-                items: DataSourceConfigInfoView
-            }];
-        }
         Ext.apply(this, {
             items: [{
                 xtype: 'tabpanel',
@@ -61,7 +14,13 @@ Ext.define("AP.view.acquisitionUnit.ScadaConfigInfoView", {
                 activeTab: 0,
                 border: false,
                 tabPosition: 'bottom',
-                items: DataSourceConfigItems,
+                items: [{
+                    title: '采控直读',
+                    id:'DriverConfigInfoPanel_Id',
+                    layout: "fit",
+                    border: false,
+                    items:ProtocolConfigInfoView
+                }],
                 listeners: {
                     tabchange: function (tabPanel, newCard, oldCard, obj) {
                     	
@@ -82,13 +41,6 @@ Ext.define("AP.view.acquisitionUnit.ScadaConfigInfoView", {
                 			 protocolConfigPropertiesHandsontableHelper.hot.destroy();
                 		}
                 		 protocolConfigPropertiesHandsontableHelper=null;
-                	}
-                	
-                	if(kafkaProtocolConfigHandsontableHelper!=null){
-                		if(kafkaProtocolConfigHandsontableHelper.hot!=undefined){
-                			kafkaProtocolConfigHandsontableHelper.hot.destroy();
-               		 	}
-                		kafkaProtocolConfigHandsontableHelper=null;
                 	}
      			}
              }

@@ -120,16 +120,6 @@ public class ModbusProtocolConfig {
 
 	    private String Code;
 
-	    private String Type;
-
-	    private String SignInPrefix;
-
-	    private String SignInSuffix;
-
-	    private String HeartbeatPrefix;
-
-	    private String HeartbeatSuffix;
-
 	    private int Sort;
 
 	    private List<Items> Items;
@@ -145,36 +135,6 @@ public class ModbusProtocolConfig {
 	    }
 	    public String getCode(){
 	        return this.Code;
-	    }
-	    public void setType(String Type){
-	        this.Type = Type;
-	    }
-	    public String getType(){
-	        return this.Type;
-	    }
-	    public void setSignInPrefix(String SignInPrefix){
-	        this.SignInPrefix = SignInPrefix;
-	    }
-	    public String getSignInPrefix(){
-	        return this.SignInPrefix;
-	    }
-	    public void setSignInSuffix(String SignInSuffix){
-	        this.SignInSuffix = SignInSuffix;
-	    }
-	    public String getSignInSuffix(){
-	        return this.SignInSuffix;
-	    }
-	    public void setHeartbeatPrefix(String HeartbeatPrefix){
-	        this.HeartbeatPrefix = HeartbeatPrefix;
-	    }
-	    public String getHeartbeatPrefix(){
-	        return this.HeartbeatPrefix;
-	    }
-	    public void setHeartbeatSuffix(String HeartbeatSuffix){
-	        this.HeartbeatSuffix = HeartbeatSuffix;
-	    }
-	    public String getHeartbeatSuffix(){
-	        return this.HeartbeatSuffix;
 	    }
 	    public void setSort(int Sort){
 	        this.Sort = Sort;

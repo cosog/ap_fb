@@ -12,16 +12,6 @@ public class ModbusDriverSaveData {
 	
 	private String ProtocolCode;
 	
-	private String ProtocolType;
-	
-	private String SignInPrefix="";
-	
-	private String SignInSuffix="";
-	
-	private String HeartbeatPrefix="";
-	
-	private String HeartbeatSuffix="";
-	
 	private int Sort=0;
 	
 	private List<String> delidslist;
@@ -46,21 +36,8 @@ public class ModbusDriverSaveData {
     	if(!StringManagerUtils.isNotNull(this.getProtocolName())){
     		this.setProtocolName("");
     	}
-    	if(!StringManagerUtils.isNotNull(this.getProtocolType())){
-    		this.setProtocolType("");
-    	}
-    	
-    	if(!StringManagerUtils.isNotNull(this.getHeartbeatPrefix())){
-    		this.setHeartbeatPrefix("");
-    	}
-    	if(!StringManagerUtils.isNotNull(this.getHeartbeatSuffix())){
-    		this.setHeartbeatSuffix("");
-    	}
-    	if(!StringManagerUtils.isNotNull(this.getSignInPrefix())){
-    		this.setSignInPrefix("");
-    	}
-    	if(!StringManagerUtils.isNotNull(this.getSignInSuffix())){
-    		this.setSignInSuffix("");
+    	if(!StringManagerUtils.isNotNull(this.getSort()+"")){
+    		this.setSort(0);
     	}
     	if(this.getDataConfig()!=null){
     		for(int i=0;i<this.getDataConfig().size();i++){
@@ -191,37 +168,6 @@ public class ModbusDriverSaveData {
 		public void setTitle(String title) {
 			Title = title;
 		}
-	}
-
-	public String getProtocolType() {
-		return ProtocolType;
-	}
-	public void setProtocolType(String protocolType) {
-		ProtocolType = protocolType;
-	}
-	public String getHeartbeatPrefix() {
-		return HeartbeatPrefix;
-	}
-	public void setHeartbeatPrefix(String heartbeatPrefix) {
-		HeartbeatPrefix = heartbeatPrefix;
-	}
-	public String getHeartbeatSuffix() {
-		return HeartbeatSuffix;
-	}
-	public void setHeartbeatSuffix(String heartbeatSuffix) {
-		HeartbeatSuffix = heartbeatSuffix;
-	}
-	public String getSignInPrefix() {
-		return SignInPrefix;
-	}
-	public void setSignInPrefix(String signInPrefix) {
-		SignInPrefix = signInPrefix;
-	}
-	public String getSignInSuffix() {
-		return SignInSuffix;
-	}
-	public void setSignInSuffix(String signInSuffix) {
-		SignInSuffix = signInSuffix;
 	}
 	public String getProtocolCode() {
 		return ProtocolCode;

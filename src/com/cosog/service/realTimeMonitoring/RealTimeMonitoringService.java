@@ -313,7 +313,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		}
 		
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
-			sql+=",t.tubinglength";
+			sql+=",t.pipelinelength";
 		}
 		sql+= "from TBL_WELLINFORMATION t,"+tableName+" t2 where t.id=t2.wellid and t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
 		
@@ -329,7 +329,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			deviceInfoDataList.append("{\"title\":\"投产日期\",\"name\":\"commissioningdate\",\"value\":\""+obj[4]+"\"},");
 			deviceInfoDataList.append("{\"title\":\"控制柜型号\",\"name\":\"controlcabinetmodel\",\"value\":\""+obj[5]+"\"}");
 			if(StringManagerUtils.stringToInteger(deviceType)>0){
-				deviceInfoDataList.append("{\"title\":\"管体长度\",\"name\":\"tubinglength\",\"value\":\""+obj[6+controlColumns.size()]+"\"}");
+				deviceInfoDataList.append("{\"title\":\"管体长度\",\"name\":\"pipelinelength\",\"value\":\""+obj[6+controlColumns.size()]+"\"}");
 			}
 			for(int i=0;i<controlColumns.size();i++){
 				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"value\":\""+obj[6+i]+"\"},");

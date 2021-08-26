@@ -6,7 +6,7 @@ Ext.define("AP.view.well.DeviceManagerInfoView", {
     initComponent: function () {
         var me = this;
         var PumpDeviceInfoPanel = Ext.create('AP.view.well.PumpDeviceInfoPanel');
-        var TubingDeviceInfoPanel = Ext.create('AP.view.well.TubingDeviceInfoPanel');
+        var PipelineDeviceInfoPanel = Ext.create('AP.view.well.PipelineDeviceInfoPanel');
         Ext.apply(me, {
         	items: [{
         		xtype: 'tabpanel',
@@ -22,18 +22,18 @@ Ext.define("AP.view.well.DeviceManagerInfoView", {
         				items: [PumpDeviceInfoPanel]
         			},{
         				title: '管设备',
-        				id:'TubingDeviceManagerPanel',
+        				id:'PipelineDeviceManagerPanel',
         				layout: "fit",
         				border: false,
-        				items: [TubingDeviceInfoPanel]
+        				items: [PipelineDeviceInfoPanel]
         			}],
         			listeners: {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); //
         					if(newCard.id=="PumpDeviceManagerPanel"){
         						CreateAndLoadPumpDeviceInfoTable();
-        					}else if(newCard.id=="TubingDeviceManagerPanel"){
-        						CreateAndLoadTubingDeviceInfoTable();
+        					}else if(newCard.id=="PipelineDeviceManagerPanel"){
+        						CreateAndLoadPipelineDeviceInfoTable();
         					}
         				}
         			}

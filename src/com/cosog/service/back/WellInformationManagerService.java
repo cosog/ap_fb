@@ -350,7 +350,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		
 		String columns=service.showTableHeadersColumns(ddicName);
 		String sql = "select id,orgName,wellName,protocolcode,acquisitionUnit,signInId,slave,"
-				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.tubinglength,"
+				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str
@@ -437,7 +437,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
 			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
 			
-			result_json.append("\"tubingLength\":\""+obj[13]+"\",");
+			result_json.append("\"pipelineLength\":\""+obj[13]+"\",");
 			
 			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
 			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
@@ -487,7 +487,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
 		String sql = "select id,orgName,wellName,protocolcode,acquisitionUnit,signInId,slave,"
-				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.tubinglength,"
+				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str
@@ -534,7 +534,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
 			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
 			
-			result_json.append("\"tubingLength\":\""+obj[13]+"\",");
+			result_json.append("\"pipelineLength\":\""+obj[13]+"\",");
 			
 			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
 			result_json.append("\"sortNum\":\""+obj[15]+"\"},");

@@ -9,7 +9,9 @@ public class InitProtocol {
 	
 	private String ProtocolName;
     
-    private String ProtocolType;
+    private String ReadProtocolType;
+    
+    private String WriteProtocolType;
     
     private String SignInPrefix;
     
@@ -37,30 +39,31 @@ public class InitProtocol {
 		super();
 	}
     
-    public InitProtocol(ModbusProtocolConfig.Protocol protocolConfig) {
-    	this.setProtocolName(protocolConfig.getName());
-    	this.setProtocolType(protocolConfig.getType());
-    	this.setSignInPrefix(protocolConfig.getSignInPrefix());
-    	this.setSignInSuffix(protocolConfig.getSignInSuffix());
-    	this.setHeartbeatPrefix(protocolConfig.getHeartbeatPrefix());
-    	this.setHeartbeatSuffix(protocolConfig.getHeartbeatSuffix());
-    	this.Addr=new ArrayList<Integer>();
-    	this.Quantity=new ArrayList<Integer>();
-    	this.StoreDataType=new ArrayList<String>();
-    	this.IFDataType=new ArrayList<String>();
-    	this.RWType=new ArrayList<String>();
-    	this.Ratio=new ArrayList<Float>();
-    	this.AcqMode=new ArrayList<String>();
-    	for(int i=0;i<protocolConfig.getItems().size();i++){
-    		this.Addr.add(protocolConfig.getItems().get(i).getAddr());
-    		this.Quantity.add(protocolConfig.getItems().get(i).getQuantity());
-    		this.StoreDataType.add(protocolConfig.getItems().get(i).getStoreDataType());
-    		this.IFDataType.add(protocolConfig.getItems().get(i).getIFDataType());
-    		this.RWType.add(protocolConfig.getItems().get(i).getRWType());
-    		this.Ratio.add(protocolConfig.getItems().get(i).getRatio());
-    		this.AcqMode.add(protocolConfig.getItems().get(i).getAcqMode());
-    	}
-	}
+//    public InitProtocol(ModbusProtocolConfig.Protocol protocolConfig) {
+//    	this.setProtocolName(protocolConfig.getName());
+//    	this.setReadProtocolType(protocolConfig.getReadProtocolType());
+//    	this.setWriteProtocolType(protocolConfig.getWriteProtocolType());
+//    	this.setSignInPrefix(protocolConfig.getSignInPrefix());
+//    	this.setSignInSuffix(protocolConfig.getSignInSuffix());
+//    	this.setHeartbeatPrefix(protocolConfig.getHeartbeatPrefix());
+//    	this.setHeartbeatSuffix(protocolConfig.getHeartbeatSuffix());
+//    	this.Addr=new ArrayList<Integer>();
+//    	this.Quantity=new ArrayList<Integer>();
+//    	this.StoreDataType=new ArrayList<String>();
+//    	this.IFDataType=new ArrayList<String>();
+//    	this.RWType=new ArrayList<String>();
+//    	this.Ratio=new ArrayList<Float>();
+//    	this.AcqMode=new ArrayList<String>();
+//    	for(int i=0;i<protocolConfig.getItems().size();i++){
+//    		this.Addr.add(protocolConfig.getItems().get(i).getAddr());
+//    		this.Quantity.add(protocolConfig.getItems().get(i).getQuantity());
+//    		this.StoreDataType.add(protocolConfig.getItems().get(i).getStoreDataType());
+//    		this.IFDataType.add(protocolConfig.getItems().get(i).getIFDataType());
+//    		this.RWType.add(protocolConfig.getItems().get(i).getRWType());
+//    		this.Ratio.add(protocolConfig.getItems().get(i).getRatio());
+//    		this.AcqMode.add(protocolConfig.getItems().get(i).getAcqMode());
+//    	}
+//	}
     
     public String getProtocolName() {
 		return ProtocolName;
@@ -70,12 +73,20 @@ public class InitProtocol {
 		ProtocolName = protocolName;
 	}
 
-	public String getProtocolType() {
-		return ProtocolType;
+	public String getReadProtocolType() {
+		return ReadProtocolType;
 	}
 
-	public void setProtocolType(String protocolType) {
-		ProtocolType = protocolType;
+	public void setReadProtocolType(String readProtocolType) {
+		ReadProtocolType = readProtocolType;
+	}
+	
+	public String getWriteProtocolType() {
+		return WriteProtocolType;
+	}
+
+	public void setWriteProtocolType(String writeProtocolType) {
+		WriteProtocolType = writeProtocolType;
 	}
 
 	public String getSignInPrefix() {
