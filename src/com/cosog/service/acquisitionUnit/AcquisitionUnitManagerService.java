@@ -118,99 +118,6 @@ private CommonDataService service;
 		return jsonBuffer.toString();
 	}
 	
-	public String getDriverConfigData(){
-		StringBuffer result_json = new StringBuffer();
-		Gson gson = new Gson();
-		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		if(equipmentDriveMap.size()==0){
-			EquipmentDriverServerTask.loadProtocolConfig();
-			equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		}
-		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		//驱动排序
-		Map<String,Object> equipmentDriveSortMap=new TreeMap<String,Object>();
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)modbusProtocolConfig.getProtocol().get(i);
-			equipmentDriveSortMap.put(protocolConfig.getName(), protocolConfig);
-		}
-		String columns = "["
-				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-				+ "{ \"header\":\"协议名称\",\"dataIndex\":\"ProtocolName\",width:120 ,children:[] },"
-				+ "{ \"header\":\"协议类型\",\"dataIndex\":\"ProtocolType\",width:50 ,children:[] },"
-				+ "{ \"header\":\"注册包前缀(HEX)\",\"dataIndex\":\"SignInPrefix\",width:50 ,children:[] },"
-				+ "{ \"header\":\"注册包后缀(HEX)\",\"dataIndex\":\"SignInSuffix\",width:50 ,children:[] },"
-				+ "{ \"header\":\"心跳包前缀(HEX)\",\"dataIndex\":\"HeartbeatPrefix\",width:50 ,children:[] },"
-				+ "{ \"header\":\"心跳包后缀(HEX)\",\"dataIndex\":\"HeartbeatSuffix\",width:50 ,children:[] }"
-				+ "]";
-		
-		String diagramTableColumns = "["
-				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-//				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
-				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
-				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
-				+ "{ \"header\":\"数量\",\"dataIndex\":\"quantity\",width:80 ,children:[] },"
-				+ "{ \"header\":\"存储数据类型\",\"dataIndex\":\"storeDataType\",width:80 ,children:[] },"
-				+ "{ \"header\":\"接口数据类型\",\"dataIndex\":\"IFDataType\",width:80 ,children:[] },"
-				+ "{ \"header\":\"读写类型\",\"dataIndex\":\"RWType\",width:80 ,children:[] },"
-				+ "{ \"header\":\"单位\",\"dataIndex\":\"unit\",width:80 ,children:[] },"
-				+ "{ \"header\":\"换算比例\",\"dataIndex\":\"ratio\",width:80 ,children:[] },"
-				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] }"
-				+ "]";
-		
-		
-		result_json.append("{ \"success\":true,\"columns\":"+columns+",\"diagramTableColumns\":"+diagramTableColumns+",");
-		result_json.append("\"totalRoot\":[");
-		int i=0;
-		for(Entry<String, Object> entry:equipmentDriveSortMap.entrySet()){
-			i++;
-			ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)entry.getValue();
-
-			StringBuffer driverConfigData = new StringBuffer();
-			driverConfigData.append("[");
-			if("IntelligentPumpingUnitDrive".equalsIgnoreCase(protocolConfig.getCode())){
-				
-			}else{
-				
-			}
-			for(int j=0;j<protocolConfig.getItems().size();j++){
-				driverConfigData.append("{\"checked\":false,"
-						+ "\"id\":"+(j+1)+","
-//						+ "\"name\":\""+protocolConfig.getItems().get(j).getName()+"\","
-						+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
-						+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
-						+ "\"quantity\":"+protocolConfig.getItems().get(j).getQuantity()+","
-						+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
-						+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
-						+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
-						+ "\"RWType\":\""+("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())?"只读":"读写")+"\","
-						+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
-						+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
-			}
-			if(driverConfigData.toString().endsWith(",")){
-				driverConfigData.deleteCharAt(driverConfigData.length() - 1);
-			}
-			
-			driverConfigData.append("]");
-			result_json.append("{"
-					+ "\"id\":"+i+","
-					+ "\"ProtocolName\":\""+protocolConfig.getName()+"\","
-					+ "\"ProtocolType\":\""+protocolConfig.getType()+"\","
-					+ "\"SignInPrefix\":\""+protocolConfig.getSignInPrefix()+"\","
-					+ "\"SignInSuffix\":\""+protocolConfig.getSignInSuffix()+"\","
-					+ "\"HeartbeatPrefix\":\""+protocolConfig.getHeartbeatPrefix()+"\","
-					+ "\"HeartbeatSuffix\":\""+protocolConfig.getHeartbeatSuffix()+"\","
-					+ "\"dataConfig\":"+driverConfigData.toString()+""
-					+ "},");
-			
-		}
-		if(result_json.toString().endsWith(",")){
-			result_json.deleteCharAt(result_json.length() - 1);
-		}
-		result_json.append("]");
-		result_json.append("}");
-		return result_json.toString();
-	}
-	
 	public String getProtocolItemsConfigData(String protocolName,String classes,String code){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
@@ -297,11 +204,6 @@ private CommonDataService service;
 				result_json.append("{\"classes\":1,");
 				result_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 				result_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
-				result_json.append("\"type\":\""+modbusProtocolConfig.getProtocol().get(i).getType()+"\",");
-				result_json.append("\"signInPrefix\":\""+modbusProtocolConfig.getProtocol().get(i).getSignInPrefix()+"\",");
-				result_json.append("\"signInSuffix\":\""+modbusProtocolConfig.getProtocol().get(i).getSignInSuffix()+"\",");
-				result_json.append("\"heartbeatPrefix\":\""+modbusProtocolConfig.getProtocol().get(i).getHeartbeatPrefix()+"\",");
-				result_json.append("\"heartbeatSuffix\":\""+modbusProtocolConfig.getProtocol().get(i).getHeartbeatSuffix()+"\",");
 				result_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
 				result_json.append("\"iconCls\": \"Protocol\",");
 				result_json.append("\"expanded\": true,");

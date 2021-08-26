@@ -22,7 +22,6 @@ import com.cosog.controller.base.BaseController;
 import com.cosog.model.Org;
 import com.cosog.model.User;
 import com.cosog.model.WellInformation;
-import com.cosog.model.calculate.PCPCalculateResponseData;
 import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.back.WellInformationManagerService;

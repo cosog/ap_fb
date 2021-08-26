@@ -50,7 +50,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -196,8 +196,8 @@ public class EquipmentDriverServerTask {
 		}
 		int result=initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist");
 		result=initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest");
-		result=initAcquisitionItemDataBaseColumns("tbl_tubingacqdata_hist");
-		result=initAcquisitionItemDataBaseColumns("tbl_tubingacqdata_latest");
+		result=initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist");
+		result=initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest");
 		return result;
 	}
 	
@@ -268,19 +268,19 @@ public class EquipmentDriverServerTask {
 			if(StringManagerUtils.isNotNull(protocolCode)){
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
-						initProtocol=new InitProtocol(modbusProtocolConfig.getProtocol().get(i));
-						initProtocol.setMethod(method);
-						System.out.println("协议初始化："+gson.toJson(initProtocol));
-						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
+//						initProtocol=new InitProtocol(modbusProtocolConfig.getProtocol().get(i));
+//						initProtocol.setMethod(method);
+//						System.out.println("协议初始化："+gson.toJson(initProtocol));
+//						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 						break;
 					}
 				}
 			}else{
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-					initProtocol=new InitProtocol(modbusProtocolConfig.getProtocol().get(i));
-					initProtocol.setMethod(method);
-					System.out.println("协议初始化："+gson.toJson(initProtocol));
-					StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
+//					initProtocol=new InitProtocol(modbusProtocolConfig.getProtocol().get(i));
+//					initProtocol.setMethod(method);
+//					System.out.println("协议初始化："+gson.toJson(initProtocol));
+//					StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 				}
 			}
 		}
@@ -517,12 +517,12 @@ public class EquipmentDriverServerTask {
 	
 	public static int initWellCommStatus(){
 		String intPumpCommSql="update tbl_pumpacqdata_latest t set t.commstatus=0 ";
-		String intTubingCommSql="update tbl_tubingacqdata_latest t set t.commstatus=0 ";
+		String intPipelineCommSql="update tbl_pipelineacqdata_latest t set t.commstatus=0 ";
 //		sql="alter table TBL_PUMPACQDATA_HIST add addr201 VARCHAR2(50)";
 		int result=0;
 		try {
 			result = JDBCUtil.updateRecord(intPumpCommSql, null);
-			result = JDBCUtil.updateRecord(intTubingCommSql, null);
+			result = JDBCUtil.updateRecord(intPipelineCommSql, null);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

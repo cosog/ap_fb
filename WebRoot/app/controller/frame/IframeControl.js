@@ -273,8 +273,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		var activeId = tabPanel.getActiveTab().id;
 		if(activeId=="PumpDeviceManagerPanel"){
 			CreateAndLoadPumpDeviceInfoTable();
-		}else if(activeId=="TubingDeviceManagerPanel"){
-			CreateAndLoadTubingDeviceInfoTable();
+		}else if(activeId=="PipelineDeviceManagerPanel"){
+			CreateAndLoadPipelineDeviceInfoTable();
 		}
 	}else if(module_Code == "DeviceRealTimeMonitoring"){
 		var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
@@ -286,7 +286,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
 			}
-		}else if(activeId=="TubingRealTimeMonitoringInfoPanel_Id"){
+		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 		}
 	}else {
 		return false;

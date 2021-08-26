@@ -134,11 +134,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 		PrintWriter out = response.getWriter();
 		try {
 			String name = ParamUtils.getParameter(request, "modbusProtocol.name");
-			String type = ParamUtils.getParameter(request, "modbusProtocol.type");
-			String signInPrefix = ParamUtils.getParameter(request, "modbusProtocol.signInPrefix");
-			String signInSuffix = ParamUtils.getParameter(request, "modbusProtocol.signInSuffix");
-			String heartbeatPrefix = ParamUtils.getParameter(request, "modbusProtocol.heartbeatPrefix");
-			String heartbeatSuffix = ParamUtils.getParameter(request, "modbusProtocol.heartbeatSuffix");
 			String sort = ParamUtils.getParameter(request, "modbusProtocol.sort");
 			
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -151,11 +146,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 			if(modbusProtocolConfig!=null){
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 					if(name.equals(modbusProtocolConfig.getProtocol().get(i).getName())){
-						modbusProtocolConfig.getProtocol().get(i).setType(type);
-						modbusProtocolConfig.getProtocol().get(i).setSignInPrefix(signInPrefix);
-						modbusProtocolConfig.getProtocol().get(i).setSignInSuffix(signInSuffix);
-						modbusProtocolConfig.getProtocol().get(i).setHeartbeatPrefix(heartbeatPrefix);
-						modbusProtocolConfig.getProtocol().get(i).setHeartbeatSuffix(heartbeatSuffix);
 						modbusProtocolConfig.getProtocol().get(i).setSort(StringManagerUtils.stringToInteger(sort));
 						isAdd=false;
 						break;
@@ -167,12 +157,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 				String protocolCode=name;
 				protocol.setName(name);
 				protocol.setCode(protocolCode);
-				protocol.setType(type);
-				
-				protocol.setSignInPrefix(signInPrefix);
-				protocol.setSignInSuffix(signInSuffix);
-				protocol.setHeartbeatPrefix(heartbeatPrefix);
-				protocol.setHeartbeatSuffix(heartbeatSuffix);
 				protocol.setSort(StringManagerUtils.stringToInteger(sort));
 				protocol.setItems(new ArrayList<ModbusProtocolConfig.Items>());
 				modbusProtocolConfig.getProtocol().add(protocol);
@@ -481,19 +465,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getProtocolConfigData")
-	public String getProtocolConfigData() throws Exception {
-		String json = "";
-		json = acquisitionUnitItemManagerService.getDriverConfigData();
-		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
 	@RequestMapping("/getProtocolItemsConfigData")
 	public String getProtocolItemsConfigData() throws Exception {
 		String protocolName = ParamUtils.getParameter(request, "protocolName");
@@ -582,11 +553,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 					if(modbusDriverSaveData.getProtocolName().equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
 						isAdd=false;
 						modbusDriverSaveData.setProtocolCode(modbusProtocolConfig.getProtocol().get(i).getCode());
-						modbusProtocolConfig.getProtocol().get(i).setType(modbusDriverSaveData.getProtocolType());
-						modbusProtocolConfig.getProtocol().get(i).setSignInPrefix(modbusDriverSaveData.getSignInPrefix());
-						modbusProtocolConfig.getProtocol().get(i).setSignInSuffix(modbusDriverSaveData.getSignInSuffix());
-						modbusProtocolConfig.getProtocol().get(i).setHeartbeatPrefix(modbusDriverSaveData.getHeartbeatPrefix());
-						modbusProtocolConfig.getProtocol().get(i).setHeartbeatSuffix(modbusDriverSaveData.getHeartbeatSuffix());
 						modbusProtocolConfig.getProtocol().get(i).setSort(modbusDriverSaveData.getSort());
 						for(int j=0;j<modbusDriverSaveData.getDataConfig().size();j++){
 							boolean isAddItem=true;
@@ -655,12 +621,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					protocol.setName(modbusDriverSaveData.getProtocolName());
 					protocol.setCode(protocolCode);
 					modbusDriverSaveData.setProtocolCode(protocolCode);
-					protocol.setType(modbusDriverSaveData.getProtocolType());
-					
-					protocol.setSignInPrefix(modbusDriverSaveData.getSignInPrefix());
-					protocol.setSignInSuffix(modbusDriverSaveData.getSignInSuffix());
-					protocol.setHeartbeatPrefix(modbusDriverSaveData.getHeartbeatPrefix());
-					protocol.setHeartbeatSuffix(modbusDriverSaveData.getHeartbeatSuffix());
+					protocol.setSort(modbusDriverSaveData.getSort());
 					protocol.setItems(new ArrayList<ModbusProtocolConfig.Items>());
 					for(int i=0;i<modbusDriverSaveData.getDataConfig().size();i++){
 						String acqMode="passive";

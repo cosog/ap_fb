@@ -21,8 +21,8 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
         				border: false
         			},{
         				title: '管设备',
-        				id:'TubingRealTimeMonitoringInfoPanel_Id',
-//        				items: [TubingDeviceInfoPanel],
+        				id:'PipelineRealTimeMonitoringInfoPanel_Id',
+//        				items: [PipelineDeviceInfoPanel],
         				layout: "fit",
         				border: false
         			}],
@@ -31,7 +31,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); //
         					if(newCard.id=="PumpRealTimeMonitoringInfoPanel_Id"){
         						
-        					}else if(newCard.id=="TubingRealTimeMonitoringInfoPanel_Id"){
+        					}else if(newCard.id=="PipelineRealTimeMonitoringInfoPanel_Id"){
         						
         					}
         				}

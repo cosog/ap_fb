@@ -57,7 +57,7 @@ public class WellHandsontableChangedData {
 	    
 	    private String controlcabinetDodel="";
 	    
-	    private String tubingLength="";
+	    private String pipelineLength="";
 	    
 	    private String videoUrl="";
 	    
@@ -183,12 +183,12 @@ public class WellHandsontableChangedData {
 			this.controlcabinetDodel = controlcabinetDodel;
 		}
 
-		public String getTubingLength() {
-			return tubingLength;
+		public String getPipelineLength() {
+			return pipelineLength;
 		}
 
-		public void setTubingLength(String tubingLength) {
-			this.tubingLength = tubingLength;
+		public void setPipelineLength(String pipelineLength) {
+			this.pipelineLength = pipelineLength;
 		}
 	    
 	}
