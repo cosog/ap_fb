@@ -95,6 +95,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                     split: true,
                     collapsible: true,
                     layout: 'border',
+                    header: false,
                     items:[{
                         region: 'center',
                         layout: 'border',

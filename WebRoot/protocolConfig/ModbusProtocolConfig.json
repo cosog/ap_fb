@@ -3,6 +3,7 @@
         {
             "Name": "private-kd93",
             "Code": "private-kd93",
+            "DeviceType":0,
             "Sort": 0,
             "Items": [
                 {

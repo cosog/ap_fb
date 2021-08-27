@@ -134,6 +134,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 		PrintWriter out = response.getWriter();
 		try {
 			String name = ParamUtils.getParameter(request, "modbusProtocol.name");
+			String deviceType = ParamUtils.getParameter(request, "modbusProtocol.deviceType");
 			String sort = ParamUtils.getParameter(request, "modbusProtocol.sort");
 			
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -147,6 +148,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 					if(name.equals(modbusProtocolConfig.getProtocol().get(i).getName())){
 						modbusProtocolConfig.getProtocol().get(i).setSort(StringManagerUtils.stringToInteger(sort));
+						modbusProtocolConfig.getProtocol().get(i).setDeviceType(StringManagerUtils.stringToInteger(deviceType));
 						isAdd=false;
 						break;
 					}
@@ -157,6 +159,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 				String protocolCode=name;
 				protocol.setName(name);
 				protocol.setCode(protocolCode);
+				protocol.setDeviceType(StringManagerUtils.stringToInteger(deviceType));
 				protocol.setSort(StringManagerUtils.stringToInteger(sort));
 				protocol.setItems(new ArrayList<ModbusProtocolConfig.Items>());
 				modbusProtocolConfig.getProtocol().add(protocol);
@@ -481,9 +484,37 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getProtocolInstanceItemsConfigData")
+	public String getProtocolInstanceItemsConfigData() throws Exception {
+		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		String classes = ParamUtils.getParameter(request, "classes");
+		String code = ParamUtils.getParameter(request, "code");
+		String json = "";
+		json = acquisitionUnitItemManagerService.getProtocolInstanceItemsConfigData(instanceName);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/modbusConfigTreeData")
 	public String modbusConfigTreeData() throws IOException {
 		String json = acquisitionUnitItemManagerService.getModbusProtocolConfigTreeData();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/modbusInstanceConfigTreeData")
+	public String modbusInstanceConfigTreeData() throws IOException {
+		String json = acquisitionUnitItemManagerService.getModbusProtocolInstanceConfigTreeData();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -553,6 +584,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					if(modbusDriverSaveData.getProtocolName().equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
 						isAdd=false;
 						modbusDriverSaveData.setProtocolCode(modbusProtocolConfig.getProtocol().get(i).getCode());
+						modbusProtocolConfig.getProtocol().get(i).setDeviceType(modbusDriverSaveData.getDeviceType());
 						modbusProtocolConfig.getProtocol().get(i).setSort(modbusDriverSaveData.getSort());
 						for(int j=0;j<modbusDriverSaveData.getDataConfig().size();j++){
 							boolean isAddItem=true;
@@ -622,6 +654,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					protocol.setCode(protocolCode);
 					modbusDriverSaveData.setProtocolCode(protocolCode);
 					protocol.setSort(modbusDriverSaveData.getSort());
+					protocol.setDeviceType(modbusDriverSaveData.getDeviceType());
 					protocol.setItems(new ArrayList<ModbusProtocolConfig.Items>());
 					for(int i=0;i<modbusDriverSaveData.getDataConfig().size();i++){
 						String acqMode="passive";

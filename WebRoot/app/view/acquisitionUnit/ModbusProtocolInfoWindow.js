@@ -26,6 +26,36 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInfoWindow", {
                 id: 'formModbusProtocol_Id',
                 anchor: '100%',
                 name: "modbusProtocol.id"
+            },{
+				xtype : "hidden",
+				id : 'modbusProtocolDeviceType_Id',
+				value:'modbus-tcp',
+				name : "modbusProtocol.deviceType"
+			},{
+            	xtype : "combobox",
+				fieldLabel : '设备类型',
+				id : 'modbusProtocolDeviceTypeComb_Id',
+				anchor : '100%',
+				triggerAction : 'all',
+				selectOnFocus : true,
+			    forceSelection : true,
+			    value:0,
+			    allowBlank: false,
+				editable : false,
+				store : new Ext.data.SimpleStore({
+							fields : ['value', 'text'],
+							data : [[0, '泵设备'],[1, '管设备']]
+						}),
+				displayField : 'text',
+				valueField : 'value',
+				queryMode : 'local',
+				emptyText : '请选择设备类型',
+				blankText : '请选择设备类型',
+				listeners : {
+					select:function(v,o){
+						Ext.getCmp("modbusProtocolDeviceType_Id").setValue(this.value);
+					}
+				}
             }, {
                 id: 'formModbusProtocolName_Id',
                 name: "modbusProtocol.name",
