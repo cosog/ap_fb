@@ -1,5 +1,8 @@
 var protocolConfigItemsHandsontableHelper=null;
 var protocolConfigPropertiesHandsontableHelper=null;
+
+var protocolInstanceConfigItemsHandsontableHelper=null;
+var protocolConfigInstancePropertiesHandsontableHelper=null;
 Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.protocolConfigInfoView',
@@ -15,7 +18,7 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
                 id:"ScadaDriverConfigTabPanel_Id",
                 activeTab: 0,
                 border: false,
-                tabPosition: 'top',
+                tabPosition: 'bottom',
                 items: [{
                 	title:'协议配置',
                 	id:"ScadaDriverModbusProtocolConfigTabPanel_Id",
@@ -99,6 +102,7 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
 //                        flex: 4,
                     	region: 'center',
                         title:'采控项配置',
+                        id:"DriverItemsConfigTableInfoPanel_Id",
                         layout: 'fit',
                         html:'<div class="DriverItemsConfigTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="DriverItemsConfigTableInfoDiv_id"></div></div>',
                         listeners: {
@@ -120,15 +124,86 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
                     }]
                 },{
                 	title:'实例配置',
-                	id:'ScadaDriverModbusInstanceConfigTabPanel_Id'
+                	id:'ScadaDriverModbusInstanceConfigTabPanel_Id',
+                	tbar: [{
+                        id: 'ScadaProtocolModbusInstanceConfigSelectRow_Id',
+                        xtype: 'textfield',
+                        value: 0,
+                        hidden: true
+                    },'->',{
+            			xtype: 'button',
+                        text: '添加实例',
+                        iconCls: 'add',
+                        handler: function (v, o) {
+//            				addModbusProtocolConfigData();
+            			}
+            		}, "-",{
+                    	xtype: 'button',
+            			pressed: true,
+            			text: cosog.string.save,
+            			iconCls: 'save',
+            			handler: function (v, o) {
+//            				SaveModbusProtocolConfigTreeData();
+            			}
+                    }],
+                    layout: "border",
+                    items: [{
+                    	border: true,
+                    	region: 'west',
+                    	width:'25%',
+                        layout: "border",
+                        border: true,
+                        header: false,
+                        collapsible: true,
+                        split: true,
+                        collapseDirection: 'left',
+                        hideMode:'offsets',
+                        items: [{
+                        	region: 'center',
+                        	title:'实例列表',
+//                        	autoScroll:true,
+                            scrollable: true,
+                        	id:"ModbusProtocolInstanceConfigPanel_Id"
+                        },{
+                        	region: 'south',
+                        	height:'42%',
+                        	title:'属性',
+                        	collapsible: true,
+                            split: true,
+                        	layout: 'fit',
+                            html:'<div class="ProtocolConfigInstancePropertiesTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ProtocolConfigInstancePropertiesTableInfoDiv_id"></div></div>',
+                            listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	
+                                }
+                            }
+                        }]
+                    },{
+                    	border: true,
+                    	region: 'center',
+                        title:'所含采控项',
+                        id:"ModbusProtocolInstanceItemsTableInfoPanel_Id",
+                        layout: 'fit',
+                        html:'<div class="ModbusProtocolInstanceItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolInstanceItemsConfigTableInfoDiv_id"></div></div>',
+                        listeners: {
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            	
+                            }
+                        }
+                    }]
                 }],
                 listeners: {
                     tabchange: function (tabPanel, newCard, oldCard, obj) {
-//                    	if(newCard.id=="ScadaDriverModbusProtocolConfigTabPanel_Id"){
-////                    		loadFSDiagramAnalysisSingleStatData();
-//                    	}else if(newCard.id=="ScadaDriverModbusInstanceConfigTabPanel_Id"){
-//                    		CreateKafkaConfigInfoTable();
-//                    	}
+                    	if(newCard.id=="ScadaDriverModbusProtocolConfigTabPanel_Id"){
+//                    		loadFSDiagramAnalysisSingleStatData();
+                    	}else if(newCard.id=="ScadaDriverModbusInstanceConfigTabPanel_Id"){
+                    		var treePanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
+                    		if(isNotVal(treePanel)){
+                    			treePanel.getStore().load();
+                    		}else{
+                    			ModbusProtocolTreeInfoStore = Ext.create('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore');
+                    		}
+                    	}
                     }
                 }
     		}]
@@ -138,17 +213,13 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
 });
 
 function CreateProtocolItemsConfigInfoTable(protocolName,classes,code){
-//	if(protocolConfigItemsHandsontableHelper!=null){
-//		if(protocolConfigItemsHandsontableHelper.hot!=undefined){
-//			protocolConfigItemsHandsontableHelper.hot.destroy();
-//		}
-//		protocolConfigItemsHandsontableHelper=null;
-//	}
-	
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolItemsConfigData',
 		success:function(response) {
+			Ext.getCmp("DriverItemsConfigTableInfoPanel_Id").setTitle(protocolName+"采控项配置");
+			
+			
 			var result =  Ext.JSON.decode(response.responseText);
 			
 			if(protocolConfigItemsHandsontableHelper==null || protocolConfigItemsHandsontableHelper.hot==undefined){
@@ -322,9 +393,15 @@ function CreateProtocolConfigPropertiesInfoTable(data){
 		
 		var item2={};
 		item2.id=2;
-		item2.title='排序序号';
-		item2.value=data.sort;
+		item2.title='设备类型';
+		item2.value=(data.deviceType==0?"泵设备":"管设备");
 		root.push(item2);
+		
+		var item3={};
+		item3.id=3;
+		item3.title='排序序号';
+		item3.value=data.sort;
+		root.push(item3);
 	}else if(data.classes==2){
 		var item1={};
 		item1.id=1;
@@ -370,11 +447,7 @@ function CreateProtocolConfigPropertiesInfoTable(data){
 		protocolConfigPropertiesHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 		protocolConfigPropertiesHandsontableHelper.columns=Ext.JSON.decode(columns);
 		protocolConfigPropertiesHandsontableHelper.classes=data.classes;
-		if(root==undefined || root==null || root.length==0){
-			protocolConfigPropertiesHandsontableHelper.createTable([{},{},{},{},{}]);
-		}else{
-			protocolConfigPropertiesHandsontableHelper.createTable(root);
-		}
+		protocolConfigPropertiesHandsontableHelper.createTable(root);
 	}else{
 		protocolConfigPropertiesHandsontableHelper.classes=data.classes;
 		protocolConfigPropertiesHandsontableHelper.hot.loadData(root);
@@ -433,12 +506,12 @@ var ProtocolConfigPropertiesHandsontableHelper = {
 							cellProperties.renderer = protocolConfigPropertiesHandsontableHelper.addBoldBg;
 		                }
 	                    if(protocolConfigPropertiesHandsontableHelper.classes===1){
-//	                    	if (visualColIndex === 2 && visualRowIndex===1) {
-//		                    	this.type = 'dropdown';
-//		                    	this.source = ['modbus-tcp','modbus-rtu','private-kd93','modbus-lq1000'];
-//		                    	this.strict = true;
-//		                    	this.allowInvalid = false;
-//		                    }
+	                    	if (visualColIndex === 2 && visualRowIndex===1) {
+		                    	this.type = 'dropdown';
+		                    	this.source = ['泵设备','管设备'];
+		                    	this.strict = true;
+		                    	this.allowInvalid = false;
+		                    }
 //	                    	if (visualColIndex === 2 && visualRowIndex===2) {
 //		                    	this.type = 'dropdown';
 //		                    	this.source = ['modbus-tcp','modbus-rtu'];
@@ -472,7 +545,8 @@ function SaveModbusProtocolConfigTreeData(){
 			protocolProperties.classes=selectedItem.data.classes;
 			protocolProperties.code=selectedItem.data.code;
 			protocolProperties.text=propertiesData[0][2];
-			protocolProperties.sort=propertiesData[1][2];
+			protocolProperties.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
+			protocolProperties.sort=propertiesData[1][3];
 		}else if(selectedItem.data.classes==2){//选中的是采集单元
 			protocolProperties.classes=selectedItem.data.classes;
 			protocolProperties.id=selectedItem.data.id;
@@ -491,7 +565,8 @@ function SaveModbusProtocolConfigTreeData(){
 		if(selectedItem.data.classes==1){//选中的是协议
 			protocolConfigData=selectedItem.data;
 			protocolConfigData.text=propertiesData[0][2];
-			protocolConfigData.sort=propertiesData[1][2];
+			protocolConfigData.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
+			protocolConfigData.sort=propertiesData[1][3];
 			
 		}else if(selectedItem.data.classes==2){//选中的是采集单元
 			protocolConfigData=selectedItem.parentNode.data;
@@ -504,6 +579,7 @@ function SaveModbusProtocolConfigTreeData(){
 		if(isNotVal(protocolConfigData.text)){
 			var configInfo={};
 			configInfo.ProtocolName=protocolConfigData.text;
+			configInfo.DeviceType=protocolConfigData.deviceType;
 			configInfo.Sort=protocolConfigData.sort;
 			configInfo.DataConfig=[];
 			for(var i=0;i<driverConfigItemsData.length;i++){
@@ -613,4 +689,257 @@ function saveAcquisitionGroupConfigData(acqGroupSaveData,protocol,unitId){
         	unitId: unitId
         }
 	});
-}
+};
+
+function CreateProtocolInstanceConfigPropertiesInfoTable(data){
+	var root=[];
+	if(data.classes==1){
+		var item1={};
+		item1.id=1;
+		item1.title='实例名称';
+		item1.value=data.text;
+		root.push(item1);
+		
+		var item2={};
+		item2.id=2;
+		item2.title='设备类型';
+		item2.value=(data.deviceType==0?"泵设备":"管设备");
+		root.push(item2);
+		
+		var item3={};
+		item3.id=3;
+		item3.title='读协议类型';
+		item3.value=data.readProtocolType;
+		root.push(item3);
+		
+		var item4={};
+		item4.id=4;
+		item4.title='写协议类型';
+		item4.value=data.writeProtocolType;
+		root.push(item4);
+		
+		var item5={};
+		item5.id=5;
+		item5.title='注册包前缀(HEX)';
+		item5.value=data.signInPrefix;
+		root.push(item5);
+		
+		var item6={};
+		item6.id=6;
+		item6.title='注册包后缀(HEX)';
+		item6.value=data.signInSuffix;
+		root.push(item6);
+		
+		var item7={};
+		item7.id=7;
+		item7.title='心跳包前缀(HEX)';
+		item7.value=data.heartbeatPrefix;
+		root.push(item7);
+		
+		var item8={};
+		item8.id=8;
+		item8.title='心跳包后缀(HEX)';
+		item8.value=data.heartbeatSuffix;
+		root.push(item8);
+		
+		var item9={};
+		item9.id=9;
+		item9.title='排序序号';
+		item9.value=data.sort;
+		root.push(item9);
+	}
+	
+	if(protocolConfigInstancePropertiesHandsontableHelper==null || protocolConfigInstancePropertiesHandsontableHelper.hot==undefined){
+		protocolConfigInstancePropertiesHandsontableHelper = ProtocolConfigInstancePropertiesHandsontableHelper.createNew("ProtocolConfigInstancePropertiesTableInfoDiv_id");
+		var colHeaders="['序号','名称','变量']";
+		var columns="[{data:'id'},{data:'title'},{data:'value'}]";
+		protocolConfigInstancePropertiesHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+		protocolConfigInstancePropertiesHandsontableHelper.columns=Ext.JSON.decode(columns);
+		protocolConfigInstancePropertiesHandsontableHelper.classes=data.classes;
+		protocolConfigInstancePropertiesHandsontableHelper.createTable(root);
+	}else{
+		protocolConfigInstancePropertiesHandsontableHelper.classes=data.classes;
+		protocolConfigInstancePropertiesHandsontableHelper.hot.loadData(root);
+	}
+};
+
+var ProtocolConfigInstancePropertiesHandsontableHelper = {
+		createNew: function (divid) {
+	        var protocolConfigInstancePropertiesHandsontableHelper = {};
+	        protocolConfigInstancePropertiesHandsontableHelper.hot = '';
+	        protocolConfigInstancePropertiesHandsontableHelper.classes =null;
+	        protocolConfigInstancePropertiesHandsontableHelper.divid = divid;
+	        protocolConfigInstancePropertiesHandsontableHelper.validresult=true;//数据校验
+	        protocolConfigInstancePropertiesHandsontableHelper.colHeaders=[];
+	        protocolConfigInstancePropertiesHandsontableHelper.columns=[];
+	        protocolConfigInstancePropertiesHandsontableHelper.AllData=[];
+	        
+	        protocolConfigInstancePropertiesHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	             Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
+	        }
+	        
+	        protocolConfigInstancePropertiesHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(184, 184, 184)';
+	        }
+	        
+	        protocolConfigInstancePropertiesHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolConfigInstancePropertiesHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolConfigInstancePropertiesHandsontableHelper.divid);
+	        	protocolConfigInstancePropertiesHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		data: data,
+	        		colWidths: [2,5,5],
+	                columns:protocolConfigInstancePropertiesHandsontableHelper.columns,
+	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: false,//显示行头
+	                colHeaders:protocolConfigInstancePropertiesHandsontableHelper.colHeaders,//显示列头
+	                columnSorting: true,//允许排序
+	                sortIndicator: true,
+	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                	var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+	                    if (visualColIndex ==0 || visualColIndex ==1) {
+							cellProperties.readOnly = true;
+							cellProperties.renderer = protocolConfigInstancePropertiesHandsontableHelper.addBoldBg;
+		                }
+	                    if(protocolConfigInstancePropertiesHandsontableHelper.classes===1){
+	                    	if (visualColIndex === 2 && visualRowIndex===1) {
+		                    	this.type = 'dropdown';
+		                    	this.source = ['泵设备','管设备'];
+		                    	this.strict = true;
+		                    	this.allowInvalid = false;
+		                    }
+	                    	if (visualColIndex === 2 && visualRowIndex===2) {
+		                    	this.type = 'dropdown';
+		                    	this.source = ['modbus-tcp','modbus-rtu','private-kd93','private-lq1000'];
+		                    	this.strict = true;
+		                    	this.allowInvalid = false;
+		                    }
+	                    	if (visualColIndex === 2 && visualRowIndex===3) {
+		                    	this.type = 'dropdown';
+		                    	this.source = ['modbus-tcp','modbus-rtu'];
+		                    	this.strict = true;
+		                    	this.allowInvalid = false;
+		                    }
+	                    }
+	                    return cellProperties;
+	                },
+	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
+	                }
+	        	});
+	        }
+	        protocolConfigInstancePropertiesHandsontableHelper.saveData = function () {}
+	        protocolConfigInstancePropertiesHandsontableHelper.clearContainer = function () {
+	        	protocolConfigInstancePropertiesHandsontableHelper.AllData = [];
+	        }
+	        return protocolConfigInstancePropertiesHandsontableHelper;
+	    }
+};
+
+function CreateProtocolInstanceItemsConfigInfoTable(instanceName){
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/acquisitionUnitManagerController/getProtocolInstanceItemsConfigData',
+		success:function(response) {
+			Ext.getCmp("ModbusProtocolInstanceItemsTableInfoPanel_Id").setTitle(instanceName+"所含采控项");
+			
+			var result =  Ext.JSON.decode(response.responseText);
+			if(protocolInstanceConfigItemsHandsontableHelper==null || protocolInstanceConfigItemsHandsontableHelper.hot==undefined){
+				protocolInstanceConfigItemsHandsontableHelper = ProtocolInstanceConfigItemsHandsontableHelper.createNew("ModbusProtocolInstanceItemsConfigTableInfoDiv_id");
+				var colHeaders="['序号','名称','地址','数量','存储数据类型','接口数据类型','读写类型','单位','换算比例','采集模式']";
+				var columns="[{data:'id'},{data:'title'},"
+					 	+"{data:'addr',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolInstanceConfigItemsHandsontableHelper);}},"
+						+"{data:'quantity',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolInstanceConfigItemsHandsontableHelper);}}," 
+						+"{data:'storeDataType',type:'dropdown',strict:true,allowInvalid:false,source:['byte','int16','uint16','float32','bcd']}," 
+						+"{data:'IFDataType',type:'dropdown',strict:true,allowInvalid:false,source:['bool','int','float32','float64','string']}," 
+						+"{data:'RWType',type:'dropdown',strict:true,allowInvalid:false,source:['只读', '读写']}," 
+						+"{data:'unit'}," 
+						+"{data:'ratio',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolInstanceConfigItemsHandsontableHelper);}}," 
+						+"{data:'acqMode',type:'dropdown',strict:true,allowInvalid:false,source:['主动上传', '被动响应']}" 
+						+"]";
+				protocolInstanceConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				protocolInstanceConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					protocolInstanceConfigItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					protocolInstanceConfigItemsHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					protocolInstanceConfigItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					protocolInstanceConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			instanceName:instanceName
+        }
+	});
+};
+
+var ProtocolInstanceConfigItemsHandsontableHelper = {
+		createNew: function (divid) {
+	        var protocolInstanceConfigItemsHandsontableHelper = {};
+	        protocolInstanceConfigItemsHandsontableHelper.hot1 = '';
+	        protocolInstanceConfigItemsHandsontableHelper.divid = divid;
+	        protocolInstanceConfigItemsHandsontableHelper.validresult=true;//数据校验
+	        protocolInstanceConfigItemsHandsontableHelper.colHeaders=[];
+	        protocolInstanceConfigItemsHandsontableHelper.columns=[];
+	        protocolInstanceConfigItemsHandsontableHelper.AllData=[];
+	        
+	        protocolInstanceConfigItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	             Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
+	        }
+	        
+	        protocolInstanceConfigItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(184, 184, 184)';
+	        }
+	        
+	        protocolInstanceConfigItemsHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolInstanceConfigItemsHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolInstanceConfigItemsHandsontableHelper.divid);
+	        	protocolInstanceConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		data: data,
+	        		colWidths: [50,120,80,80,80,80,80,80,80,80],
+	                columns:protocolInstanceConfigItemsHandsontableHelper.columns,
+	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: false,//显示行头
+	                colHeaders:protocolInstanceConfigItemsHandsontableHelper.colHeaders,//显示列头
+	                columnSorting: true,//允许排序
+	                sortIndicator: true,
+	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                	var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+
+	                    cellProperties.readOnly = true;
+	                    return cellProperties;
+	                },
+	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
+	                }
+	        	});
+	        }
+	        return protocolInstanceConfigItemsHandsontableHelper;
+	    }
+};
+
