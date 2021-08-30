@@ -462,6 +462,7 @@ public class ConfigFile {
 	public static class DriverConfig{
 		private String server;
 		private String protocol;
+		private String instance;
 		private String id;
 		private String readAddr;
 		private String writeAddr;
@@ -501,6 +502,12 @@ public class ConfigFile {
 		}
 		public void setWriteAddr(String writeAddr) {
 			this.writeAddr = writeAddr;
+		}
+		public String getInstance() {
+			return instance;
+		}
+		public void setInstance(String instance) {
+			this.instance = instance;
 		}
 	}
 	

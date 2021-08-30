@@ -20,7 +20,7 @@ Ext.define("AP.view.org.OrgInfoWindow", {
     border: false,
     initComponent: function () {
         var me = this;
-        /**下拉机构数*/
+        /**下拉机构树*/
         var OrgTreeStore=Ext.create('Ext.data.TreeStore', {
             fields: ['orgId', 'text', 'leaf'],
             autoLoad: false,

@@ -30,6 +30,7 @@ import com.cosog.model.AcquisitionGroupItem;
 import com.cosog.model.AcquisitionUnit;
 import com.cosog.model.AcquisitionUnitGroup;
 import com.cosog.model.Module;
+import com.cosog.model.ProtocolInstance;
 import com.cosog.model.Role;
 import com.cosog.model.RoleModule;
 import com.cosog.model.User;
@@ -74,10 +75,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@Autowired
 	private AcquisitionUnitManagerService<AcquisitionGroupItem> acquisitionUnitItemManagerService;
 	@Autowired
+	private AcquisitionUnitManagerService<ProtocolInstance> protocolInstanceManagerService;
+	@Autowired
 	private CommonDataService service;
-	private List<AcquisitionUnit> list;
 	private AcquisitionUnit acquisitionUnit;
 	private AcquisitionGroup acquisitionGroup;
+	private ProtocolInstance protocolInstance;
 	private String limit;
 	private String msg = "";
 	private String unitName;
@@ -93,6 +96,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@InitBinder("acquisitionGroup")
 	public void initBinder2(WebDataBinder binder) {
 		binder.setFieldDefaultPrefix("acquisitionGroup.");
+	}
+	
+	//添加绑定前缀 
+	@InitBinder("protocolInstance")
+	public void initBinder3(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("protocolInstance.");
 	}
 
 	/**<p>描述：采集类型数据显示方法</p>
@@ -165,8 +174,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 				modbusProtocolConfig.getProtocol().add(protocol);
 			}
 			StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(modbusProtocolConfig)));
-			equipmentDriveMap.put("modbusProtocolConfig", modbusProtocolConfig);
-			EquipmentDriverServerTask.initProtocolConfig(name,"update");
+//			equipmentDriveMap.put("modbusProtocolConfig", modbusProtocolConfig);
+//			EquipmentDriverServerTask.initProtocolConfig(name,"update");
 //			this.acquisitionGroupManagerService.doAcquisitionGroupAdd(acquisitionGroup);
 			result = "{success:true,msg:true}";
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
@@ -503,6 +512,19 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@RequestMapping("/modbusConfigTreeData")
 	public String modbusConfigTreeData() throws IOException {
 		String json = acquisitionUnitItemManagerService.getModbusProtocolConfigTreeData();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/modbusProtocolAndAcqUnitTreeData")
+	public String modbusProtocolAndAcqUnitTreeData() throws IOException {
+		String deviceType=ParamUtils.getParameter(request, "deviceType");
+		String json = acquisitionUnitItemManagerService.modbusProtocolAndAcqUnitTreeData(deviceType);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -922,7 +944,76 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/doModbusProtocolInstanceAdd")
+	public String doModbusProtocolInstanceAdd(@ModelAttribute ProtocolInstance protocolInstance) throws IOException {
+		String result = "";
+		try {
+			this.protocolInstanceManagerService.doModbusProtocolInstanceAdd(protocolInstance);
+			result = "{success:true,msg:true}";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+		}
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(result);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 	
+	@RequestMapping("/saveProtocolInstanceData")
+	public String saveProtocolInstanceData() throws Exception {
+		HttpSession session=request.getSession();
+		String id = ParamUtils.getParameter(request, "id");
+		String code = ParamUtils.getParameter(request, "code");
+		String name = ParamUtils.getParameter(request, "name");
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		String unitId = ParamUtils.getParameter(request, "unitId");
+		String readProtocolType = ParamUtils.getParameter(request, "readProtocolType");
+		String writeProtocolType = ParamUtils.getParameter(request, "writeProtocolType");
+		String signInPrefix = ParamUtils.getParameter(request, "signInPrefix");
+		String signInSuffix = ParamUtils.getParameter(request, "signInSuffix");
+		String heartbeatPrefix = ParamUtils.getParameter(request, "heartbeatPrefix");
+		String heartbeatSuffix = ParamUtils.getParameter(request, "heartbeatSuffix");
+		String sort = ParamUtils.getParameter(request, "sort");
+		
+		ProtocolInstance protocolInstance=new ProtocolInstance();
+		protocolInstance.setId(StringManagerUtils.stringToInteger(id));
+		protocolInstance.setCode(code);
+		protocolInstance.setName(name);
+		protocolInstance.setDeviceType(StringManagerUtils.stringToInteger(deviceType));
+		protocolInstance.setUnitId(StringManagerUtils.stringToInteger(unitId));
+		protocolInstance.setReadProtocolType(readProtocolType);
+		protocolInstance.setWriteProtocolType(writeProtocolType);
+		protocolInstance.setSignInPrefix(signInPrefix);
+		protocolInstance.setSignInSuffix(signInSuffix);
+		protocolInstance.setHeartbeatPrefix(heartbeatPrefix);
+		protocolInstance.setHeartbeatSuffix(heartbeatSuffix);
+		protocolInstance.setSort(StringManagerUtils.stringToInteger(sort));
+		String json ="{success:true}";
+		try {
+			this.protocolInstanceManagerService.doModbusProtocolInstanceEdit(protocolInstance);
+			json = "{success:true,msg:true}";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			json = "{success:false,msg:false}";
+		}
+		
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		log.warn("jh json is ==" + json);
+		pw.flush();
+		pw.close();
+//		EquipmentDriverServerTask beeTechDriverServerTast=EquipmentDriverServerTask.getInstance();
+//		beeTechDriverServerTast.updateWellConfif(wellHandsontableChangedData);
+		return null;
+	}
 
 	public String getLimit() {
 		return limit;
@@ -946,14 +1037,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 
 	public void setPage(String page) {
 		this.page = page;
-	}
-
-	public List<AcquisitionUnit> getList() {
-		return list;
-	}
-
-	public void setList(List<AcquisitionUnit> list) {
-		this.list = list;
 	}
 
 	public AcquisitionUnit getAcquisitionUnit() {
@@ -988,5 +1071,13 @@ public class AcquisitionUnitManagerController extends BaseController {
 
 	public void setAcquisitionGroup(AcquisitionGroup acquisitionGroup) {
 		this.acquisitionGroup = acquisitionGroup;
+	}
+	
+	public ProtocolInstance getProtocolInstance() {
+		return protocolInstance;
+	}
+	
+	public void setProtocolInstance(ProtocolInstance protocolInstance) {
+		this.protocolInstance = protocolInstance;
 	}
 }

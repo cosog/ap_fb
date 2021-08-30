@@ -129,16 +129,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			tableName="tbl_tubingacqdata_latest";
 		}
 		
-		String procotolSql="select  t.wellname,t.signinid,t.slave,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,"
-				+ " listagg(t5.itemname, ',') within group(order by t5.id ) key"
-				+ " from tbl_wellinformation t,tbl_acq_unit_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_group_conf t4,tbl_acq_item2group_conf t5 "
-				+ " where t.unitcode=t2.unit_code and t2.id=t3.unitid and t3.groupid=t4.id and t4.id=t5.groupid "
-				+ " and t.signinid is not null and t.slave is not null and t.unitcode is not null "
-				+"	and t.wellname ='"+deviceName+"' and t.devicetype="+deviceType
-				+"  group by t.wellname,t.signinid,t.slave,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle ";
+		String itemsSql="select t.wellname,t3.protocol, listagg(t6.itemname, ',') within group(order by t6.id ) key "
+				+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " group by t.wellname,t3.protocol";
 		
 		
-		List<?> procotolCodeList = this.findCallSql(procotolSql);
+		List<?> itemsList = this.findCallSql(itemsSql);
 		String columns = "[";
 		for(int i=1;i<=items;i++){
 			columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
@@ -151,9 +149,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
 		info_json.append("[");
-		for(int i=0;i<procotolCodeList.size();i++){
-			Object[] procotolObj=(Object[]) procotolCodeList.get(i);
-			String protocolCode=procotolObj[3]+"";
+		for(int i=0;i<itemsList.size();i++){
+			Object[] itemsObj=(Object[]) itemsList.get(i);
+			String protocolCode=itemsObj[1]+"";
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			if(equipmentDriveMap.size()==0){
 				EquipmentDriverServerTask.loadProtocolConfig();
@@ -169,9 +167,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				}
 			}
 			
-			if(protocol!=null && StringManagerUtils.isNotNull(procotolObj[7]+"")){
+			if(protocol!=null && StringManagerUtils.isNotNull(itemsObj[2]+"")){
 				String acqColumns="";
-				String[] itemsArr=(procotolObj[7]+"").split(",");
+				String[] itemsArr=(itemsObj[2]+"").split(",");
 				List<String> columnsList=new ArrayList<String>();
 				List<String> columnsNameList=new ArrayList<String>();
 				List<String> columnsDataTypeList=new ArrayList<String>();
@@ -264,10 +262,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
-		String protocolSql="select upper(t.protocolcode) from TBL_WELLINFORMATION t where t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		String protocolItemsSql="select t.wellname,t3.protocol, listagg(t6.itemname, ',') within group(order by t6.id ) key "
+				+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+				+ " and t.wellname='"+wellName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " group by t.wellname,t3.protocol";
 		
 		List<?> isControlList = this.findCallSql(isControlSql);
-		List<?> protocolList = this.findCallSql(protocolSql);
+		List<?> itemsList = this.findCallSql(protocolItemsSql);
 		
 		String isControl=isControlList.size()>0?isControlList.get(0).toString():"0";
 		
@@ -280,8 +282,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		deviceControlList.append("[");
 		
 		String protocolCode="";
-		if(protocolList.size()>0){
-			protocolCode=protocolList.get(0)+"";
+		for(int i=0;i<itemsList.size();i++){
+			Object[] obj=(Object[]) itemsList.get(i);
+			protocolCode=obj[1]+"";
+			String[] itemsArr=(obj[2]+"").split(",");
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			if(equipmentDriveMap.size()==0){
 				EquipmentDriverServerTask.loadProtocolConfig();
@@ -289,12 +293,17 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
-				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
-						for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
-							if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getRWType())){//如果可读可写
-								controlItems.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle());
-								controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
+				for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
+					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getCode())){
+						for(int k=0;k<modbusProtocolConfig.getProtocol().get(j).getItems().size();k++){
+							for(int m=0;m<itemsArr.length;m++){
+								if(itemsArr[m].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle())){
+									if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())){
+										controlItems.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle());
+										controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr());
+									}
+									break;
+								}
 							}
 						}
 						break;
@@ -395,7 +404,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		List<String> controlItems=new ArrayList<String>();
 		List<String> controlColumns=new ArrayList<String>();
-		String protocolSql="select upper(t.protocolcode) from tbl_wellinformation t where t.wellname='"+deviceName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		String protocolSql="select upper(t3.protocol) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
+				+ " and  t.wellname='"+deviceName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
 		List<?> protocolList = this.findCallSql(protocolSql);
 		String protocolCode="";
 		String column="";
