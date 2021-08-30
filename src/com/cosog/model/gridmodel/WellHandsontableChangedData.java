@@ -37,9 +37,7 @@ public class WellHandsontableChangedData {
 
 	    private String wellName="";
 
-	    private String protocolName="";
-
-	    private String acquisitionUnit="";
+	    private String instanceName="";
 
 	    private String signInId="";
 
@@ -87,14 +85,6 @@ public class WellHandsontableChangedData {
 			this.wellName = wellName;
 		}
 
-		public String getAcquisitionUnit() {
-			return acquisitionUnit;
-		}
-
-		public void setAcquisitionUnit(String acquisitionUnit) {
-			this.acquisitionUnit = acquisitionUnit;
-		}
-
 		public String getVideoUrl() {
 			return videoUrl;
 		}
@@ -109,14 +99,6 @@ public class WellHandsontableChangedData {
 
 		public void setSortNum(String sortNum) {
 			this.sortNum = sortNum;
-		}
-
-		public String getProtocolName() {
-			return protocolName;
-		}
-
-		public void setProtocolName(String protocolName) {
-			this.protocolName = protocolName;
 		}
 
 		public String getSignInId() {
@@ -189,6 +171,14 @@ public class WellHandsontableChangedData {
 
 		public void setPipelineLength(String pipelineLength) {
 			this.pipelineLength = pipelineLength;
+		}
+
+		public String getInstanceName() {
+			return instanceName;
+		}
+
+		public void setInstanceName(String instanceName) {
+			this.instanceName = instanceName;
 		}
 	    
 	}

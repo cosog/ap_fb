@@ -180,23 +180,11 @@ function CreateAndLoadPumpDeviceInfoTable(isNew){
 	            		}else{
 	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机', '螺杆泵']}";
 	            		}
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="protocol".toUpperCase()){
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['modbus-tcp', 'modbus-rtu']}";
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="protocolName".toUpperCase()){
+	            	}else if(result.columns[i].dataIndex.toUpperCase()==="instanceName".toUpperCase()){
 	            		var source="[";
-	            		for(var j=0;j<result.driverDropdownData.length;j++){
-	            			source+="\'"+result.driverDropdownData[j]+"\'";
-	            			if(j<result.driverDropdownData.length-1){
-	            				source+=",";
-	            			}
-	            		}
-	            		source+="]";
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:"+source+"}";
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="acquisitionUnit".toUpperCase()){
-	            		var source="[";
-	            		for(var j=0;j<result.unitDropdownData.length;j++){
-	            			source+="\'"+result.unitDropdownData[j]+"\'";
-	            			if(j<result.unitDropdownData.length-1){
+	            		for(var j=0;j<result.instanceDropdownData.length;j++){
+	            			source+="\'"+result.instanceDropdownData[j]+"\'";
+	            			if(j<result.instanceDropdownData.length-1){
 	            				source+=",";
 	            			}
 	            		}

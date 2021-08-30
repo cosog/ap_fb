@@ -327,8 +327,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	@SuppressWarnings("rawtypes")
 	public String getWellInformationProList(Map map,Page pager,int recordCount) {
 		StringBuffer result_json = new StringBuffer();
-		StringBuffer unitDropdownData = new StringBuffer();
-		StringBuffer driverDropdownData = new StringBuffer();
+		StringBuffer instanceDropdownData = new StringBuffer();
 		String ddicName="pumpDeviceManager";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -349,7 +348,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}
 		
 		String columns=service.showTableHeadersColumns(ddicName);
-		String sql = "select id,orgName,wellName,protocolcode,acquisitionUnit,signInId,slave,"
+		String sql = "select id,orgName,wellName,instanceName,signInId,slave,"
 				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
@@ -357,90 +356,43 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 				+ " and t.orgid in ("+orgId+" )  "
 				+ " and t.devicetype="+deviceType
 			    + " order by t.sortnum,t.wellname ";
-		String unitSql="select t.unit_name from tbl_acq_unit_conf t order by t.id";
-		List<?> unitList = this.findCallSql(unitSql);
-		unitDropdownData.append("[");
-		for(int i=0;i<unitList.size();i++){
-			unitDropdownData.append("'"+unitList.get(i)+"',");
+		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype="+deviceType+" order by t.sort";
+		List<?> instanceList = this.findCallSql(instanceSql);
+		instanceDropdownData.append("[");
+		for(int i=0;i<instanceList.size();i++){
+			instanceDropdownData.append("'"+instanceList.get(i)+"',");
 		}
-		if(unitDropdownData.toString().endsWith(",")){
-			unitDropdownData.deleteCharAt(unitDropdownData.length() - 1);
+		if(instanceDropdownData.toString().endsWith(",")){
+			instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
 		}
-		unitDropdownData.append("]");
-		driverDropdownData.append("[");
-		
-		Map<String,Object> equipmentDriveSortMap=new TreeMap<String,Object>();
-		for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
-			if( ( entry.getValue() instanceof KafkaConfig ) ){
-				KafkaConfig driveConfig=(KafkaConfig)equipmentDriveMap.get("KafkaDrive");
-				equipmentDriveSortMap.put(driveConfig.getProtocolName(), driveConfig);
-			}else if( ( entry.getValue() instanceof ModbusProtocolConfig ) ){
-				ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-					ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)modbusProtocolConfig.getProtocol().get(i);
-					equipmentDriveSortMap.put(protocolConfig.getName(), protocolConfig);
-				}
-			}
-		}
-		for(Entry<String, Object> entry:equipmentDriveSortMap.entrySet()){
-			if( ( entry.getValue() instanceof ModbusProtocolConfig.Protocol ) ){
-				ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)entry.getValue();
-				driverDropdownData.append("'"+protocolConfig.getName()+"',");
-			}else if( ( entry.getValue() instanceof KafkaConfig ) ){
-				KafkaConfig driveConfig=(KafkaConfig)entry.getValue();
-				driverDropdownData.append("'"+driveConfig.getProtocolName()+"',");
-			}
-		}
-		if(driverDropdownData.toString().endsWith(",")){
-			driverDropdownData.deleteCharAt(driverDropdownData.length() - 1);
-		}
-		driverDropdownData.append("]");
-		
+		instanceDropdownData.append("]");
 		
 		String json = "";
 		
 		List<?> list = this.findCallSql(sql);
 		
-		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"driverDropdownData\":"+driverDropdownData.toString()+",\"unitDropdownData\":"+unitDropdownData.toString()+",\"columns\":"+columns+",\"totalRoot\":[");
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"instanceDropdownData\":"+instanceDropdownData.toString()+",\"columns\":"+columns+",\"totalRoot\":[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
-			String protocolName="";
-			String protocolCode=obj[3]+"";
-			for(Entry<String, Object> entry:equipmentDriveSortMap.entrySet()){
-				if( ( entry.getValue() instanceof ModbusProtocolConfig.Protocol ) ){
-					ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)entry.getValue();
-					if(protocolCode.equals(protocolConfig.getCode())){
-						protocolName=protocolConfig.getName();
-						break;
-					}
-				}else if( ( entry.getValue() instanceof KafkaConfig ) ){
-					KafkaConfig driveConfig=(KafkaConfig)entry.getValue();
-					if(protocolCode.equals(driveConfig.getProtocolCode())){
-						protocolName=driveConfig.getProtocolName();
-						break;
-					}
-				}
-			}
+			
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
 			result_json.append("\"wellName\":\""+obj[2]+"\",");
-			result_json.append("\"protocolCode\":\""+obj[3]+"\",");
-			result_json.append("\"protocolName\":\""+protocolName+"\",");
-			result_json.append("\"acquisitionUnit\":\""+obj[4]+"\",");
-			result_json.append("\"signInId\":\""+obj[5]+"\",");
-			result_json.append("\"slave\":\""+obj[6]+"\",");
+			result_json.append("\"instanceName\":\""+obj[3]+"\",");
+			result_json.append("\"signInId\":\""+obj[4]+"\",");
+			result_json.append("\"slave\":\""+obj[5]+"\",");
 			
-			result_json.append("\"factoryNumber\":\""+obj[7]+"\",");
-			result_json.append("\"model\":\""+obj[8]+"\",");
-			result_json.append("\"productionDate\":\""+obj[9]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[10]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
+			result_json.append("\"factoryNumber\":\""+obj[6]+"\",");
+			result_json.append("\"model\":\""+obj[7]+"\",");
+			result_json.append("\"productionDate\":\""+obj[8]+"\",");
+			result_json.append("\"deliveryDate\":\""+obj[9]+"\",");
+			result_json.append("\"commissioningDate\":\""+obj[10]+"\",");
+			result_json.append("\"controlcabinetDodel\":\""+obj[11]+"\",");
 			
-			result_json.append("\"pipelineLength\":\""+obj[13]+"\",");
+			result_json.append("\"pipelineLength\":\""+obj[12]+"\",");
 			
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[13]+"\",");
+			result_json.append("\"sortNum\":\""+obj[14]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");

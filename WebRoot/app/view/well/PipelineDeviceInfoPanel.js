@@ -188,23 +188,11 @@ function CreateAndLoadPipelineDeviceInfoTable(isNew){
 	            		}else{
 	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机', '螺杆泵']}";
 	            		}
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="protocol".toUpperCase()){
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['modbus-tcp', 'modbus-rtu']}";
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="protocolName".toUpperCase()){
+	            	}else if(result.columns[i].dataIndex.toUpperCase()==="instanceName".toUpperCase()){
 	            		var source="[";
-	            		for(var j=0;j<result.driverDropdownData.length;j++){
-	            			source+="\'"+result.driverDropdownData[j]+"\'";
-	            			if(j<result.driverDropdownData.length-1){
-	            				source+=",";
-	            			}
-	            		}
-	            		source+="]";
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:"+source+"}";
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="acquisitionUnit".toUpperCase()){
-	            		var source="[";
-	            		for(var j=0;j<result.unitDropdownData.length;j++){
-	            			source+="\'"+result.unitDropdownData[j]+"\'";
-	            			if(j<result.unitDropdownData.length-1){
+	            		for(var j=0;j<result.instanceDropdownData.length;j++){
+	            			source+="\'"+result.instanceDropdownData[j]+"\'";
+	            			if(j<result.instanceDropdownData.length-1){
 	            				source+=",";
 	            			}
 	            		}
@@ -334,18 +322,6 @@ var PipelineDeviceInfoHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-//	                    if (col === 12) {
-//	                        this.type = 'dropdown';
-//	                        this.source = ['人工录入','DI信号', '电参计算','转速计算' ];
-//	                        this.strict = true;
-//	                        this.allowInvalid = false;
-//	                    }
-//	                    if (col === 6) {
-//	                        this.type = 'dropdown';
-//	                        this.source = ['抽油机', '螺杆泵'];
-//	                        this.strict = true;
-//	                        this.allowInvalid = false;
-//	                    }
 	                },
 	                afterDestroy: function() {
 	                    // 移除事件
@@ -354,7 +330,6 @@ var PipelineDeviceInfoHandsontableHelper = {
 	                },
 	                beforeRemoveRow: function (index, amount) {
 	                    var ids = [];
-	                    //封装id成array传入后台
 	                    if (amount != 0) {
 	                        for (var i = index; i < amount + index; i++) {
 	                            var rowdata = pipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
@@ -411,11 +386,8 @@ var PipelineDeviceInfoHandsontableHelper = {
 	        pipelineDeviceInfoHandsontableHelper.insertExpressCount=function() {
 	            var idsdata = pipelineDeviceInfoHandsontableHelper.hot.getDataAtCol(0); //所有的id
 	            for (var i = 0; i < idsdata.length; i++) {
-	                //id=null时,是插入数据,此时的i正好是行号
 	                if (idsdata[i] == null||idsdata[i]<0) {
-	                    //获得id=null时的所有数据封装进data
 	                    var rowdata = pipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
-	                    //var collength = hot.countCols();
 	                    if (rowdata != null) {
 	                    	var data="{";
                         	for(var j=0;j<pipelineDeviceInfoHandsontableHelper.columns.length;j++){

@@ -9,18 +9,6 @@ public class InitProtocol {
 	
 	private String ProtocolName;
     
-    private String ReadProtocolType;
-    
-    private String WriteProtocolType;
-    
-    private String SignInPrefix;
-    
-    private String SignInSuffix;
-    
-    private String HeartbeatPrefix;
-    
-    private String HeartbeatSuffix;
-    
     private List<Integer> Addr;
     
     private List<Integer> Quantity;
@@ -39,31 +27,25 @@ public class InitProtocol {
 		super();
 	}
     
-//    public InitProtocol(ModbusProtocolConfig.Protocol protocolConfig) {
-//    	this.setProtocolName(protocolConfig.getName());
-//    	this.setReadProtocolType(protocolConfig.getReadProtocolType());
-//    	this.setWriteProtocolType(protocolConfig.getWriteProtocolType());
-//    	this.setSignInPrefix(protocolConfig.getSignInPrefix());
-//    	this.setSignInSuffix(protocolConfig.getSignInSuffix());
-//    	this.setHeartbeatPrefix(protocolConfig.getHeartbeatPrefix());
-//    	this.setHeartbeatSuffix(protocolConfig.getHeartbeatSuffix());
-//    	this.Addr=new ArrayList<Integer>();
-//    	this.Quantity=new ArrayList<Integer>();
-//    	this.StoreDataType=new ArrayList<String>();
-//    	this.IFDataType=new ArrayList<String>();
-//    	this.RWType=new ArrayList<String>();
-//    	this.Ratio=new ArrayList<Float>();
-//    	this.AcqMode=new ArrayList<String>();
-//    	for(int i=0;i<protocolConfig.getItems().size();i++){
-//    		this.Addr.add(protocolConfig.getItems().get(i).getAddr());
-//    		this.Quantity.add(protocolConfig.getItems().get(i).getQuantity());
-//    		this.StoreDataType.add(protocolConfig.getItems().get(i).getStoreDataType());
-//    		this.IFDataType.add(protocolConfig.getItems().get(i).getIFDataType());
-//    		this.RWType.add(protocolConfig.getItems().get(i).getRWType());
-//    		this.Ratio.add(protocolConfig.getItems().get(i).getRatio());
-//    		this.AcqMode.add(protocolConfig.getItems().get(i).getAcqMode());
-//    	}
-//	}
+    public InitProtocol(ModbusProtocolConfig.Protocol protocolConfig) {
+    	this.setProtocolName(protocolConfig.getName());
+    	this.Addr=new ArrayList<Integer>();
+    	this.Quantity=new ArrayList<Integer>();
+    	this.StoreDataType=new ArrayList<String>();
+    	this.IFDataType=new ArrayList<String>();
+    	this.RWType=new ArrayList<String>();
+    	this.Ratio=new ArrayList<Float>();
+    	this.AcqMode=new ArrayList<String>();
+    	for(int i=0;i<protocolConfig.getItems().size();i++){
+    		this.Addr.add(protocolConfig.getItems().get(i).getAddr());
+    		this.Quantity.add(protocolConfig.getItems().get(i).getQuantity());
+    		this.StoreDataType.add(protocolConfig.getItems().get(i).getStoreDataType());
+    		this.IFDataType.add(protocolConfig.getItems().get(i).getIFDataType());
+    		this.RWType.add(protocolConfig.getItems().get(i).getRWType());
+    		this.Ratio.add(protocolConfig.getItems().get(i).getRatio());
+    		this.AcqMode.add(protocolConfig.getItems().get(i).getAcqMode());
+    	}
+	}
     
     public String getProtocolName() {
 		return ProtocolName;
@@ -71,54 +53,6 @@ public class InitProtocol {
 
 	public void setProtocolName(String protocolName) {
 		ProtocolName = protocolName;
-	}
-
-	public String getReadProtocolType() {
-		return ReadProtocolType;
-	}
-
-	public void setReadProtocolType(String readProtocolType) {
-		ReadProtocolType = readProtocolType;
-	}
-	
-	public String getWriteProtocolType() {
-		return WriteProtocolType;
-	}
-
-	public void setWriteProtocolType(String writeProtocolType) {
-		WriteProtocolType = writeProtocolType;
-	}
-
-	public String getSignInPrefix() {
-		return SignInPrefix;
-	}
-
-	public void setSignInPrefix(String signInPrefix) {
-		SignInPrefix = signInPrefix;
-	}
-
-	public String getSignInSuffix() {
-		return SignInSuffix;
-	}
-
-	public void setSignInSuffix(String signInSuffix) {
-		SignInSuffix = signInSuffix;
-	}
-
-	public String getHeartbeatPrefix() {
-		return HeartbeatPrefix;
-	}
-
-	public void setHeartbeatPrefix(String heartbeatPrefix) {
-		HeartbeatPrefix = heartbeatPrefix;
-	}
-
-	public String getHeartbeatSuffix() {
-		return HeartbeatSuffix;
-	}
-
-	public void setHeartbeatSuffix(String heartbeatSuffix) {
-		HeartbeatSuffix = heartbeatSuffix;
 	}
 
 	public List<Integer> getAddr() {

@@ -135,7 +135,7 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
                         text: '添加实例',
                         iconCls: 'add',
                         handler: function (v, o) {
-//            				addModbusProtocolConfigData();
+            				addModbusProtocolInstanceConfigData();
             			}
             		}, "-",{
                     	xtype: 'button',
@@ -143,7 +143,7 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
             			text: cosog.string.save,
             			iconCls: 'save',
             			handler: function (v, o) {
-//            				SaveModbusProtocolConfigTreeData();
+            				SaveModbusProtocolInstanceConfigTreeData();
             			}
                     }],
                     layout: "border",
@@ -941,5 +941,63 @@ var ProtocolInstanceConfigItemsHandsontableHelper = {
 	        }
 	        return protocolInstanceConfigItemsHandsontableHelper;
 	    }
+};
+
+
+function SaveModbusProtocolInstanceConfigTreeData(){
+	var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
+	if(ScadaDriverModbusConfigSelectRow!=''){
+		var selectedItem=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
+		var propertiesData=protocolConfigInstancePropertiesHandsontableHelper.hot.getData();
+		if(selectedItem.data.classes==1){//选中的是实例
+			
+			var id=selectedItem.data.id;
+			var code=selectedItem.data.code;
+			var name=propertiesData[0][2];
+			var deviceType=(propertiesData[1][2]=="泵设备"?0:1);
+			var unitId=selectedItem.data.unitId;
+			var readProtocolType=propertiesData[2][2];
+			var writeProtocolType=propertiesData[3][2];
+			
+			var signInPrefix=propertiesData[4][2];
+			var signInSuffix=propertiesData[5][2];
+			
+			var heartbeatPrefix=propertiesData[6][2];
+			var heartbeatSuffix=propertiesData[7][2];
+			
+			var sort=propertiesData[8][2];
+			
+			Ext.Ajax.request({
+				method:'POST',
+				url:context + '/acquisitionUnitManagerController/saveProtocolInstanceData',
+				success:function(response) {
+					data=Ext.JSON.decode(response.responseText);
+					if (data.success) {
+						Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id").getStore().load();
+		            	Ext.MessageBox.alert("信息","保存成功");
+		            } else {
+		            	Ext.MessageBox.alert("信息","采集单元数据保存失败");
+		            }
+				},
+				failure:function(){
+					Ext.MessageBox.alert("信息","请求失败");
+				},
+				params: {
+					id: id,
+					code: code,
+					name: name,
+					deviceType: deviceType,
+					unitId: unitId,
+					readProtocolType: readProtocolType,
+					writeProtocolType: writeProtocolType,
+					signInPrefix: signInPrefix,
+					signInSuffix: signInSuffix,
+					heartbeatPrefix: heartbeatPrefix,
+					heartbeatSuffix: heartbeatSuffix,
+					sort: sort
+		        }
+			});
+		}
+	}
 };
 

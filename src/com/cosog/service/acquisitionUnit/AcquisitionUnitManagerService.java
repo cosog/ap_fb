@@ -386,6 +386,65 @@ private CommonDataService service;
 		return result_json.toString();
 	}
 	
+	public String modbusProtocolAndAcqUnitTreeData(String deviceTypeStr){
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		
+		int deviceType=0;
+		if(StringManagerUtils.stringToInteger(deviceTypeStr)>0){
+			deviceType=1;
+		}
+		
+		result_json.append("[");
+		if(modbusProtocolConfig!=null){
+			String unitSql="select t.id as id,t.unit_code as unitCode,t.unit_name as unitName,t.remark,t.protocol from tbl_acq_unit_conf t order by t.protocol,t.id";
+			List<?> unitList=this.findCallSql(unitSql);
+			//排序
+			Collections.sort(modbusProtocolConfig.getProtocol());
+			
+			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==deviceType){
+					result_json.append("{\"classes\":1,");
+					result_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
+					result_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
+					result_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
+					result_json.append("\"iconCls\": \"Protocol\",");
+					result_json.append("\"expanded\": true,");
+					result_json.append("\"disabled\": true,");
+					result_json.append("\"children\": [");
+					for(int j=0;j<unitList.size();j++){
+						Object[] unitObj = (Object[]) unitList.get(j);
+						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(unitObj[unitObj.length-1]+"")){
+							result_json.append("{\"classes\":2,");
+							result_json.append("\"id\":"+unitObj[0]+",");
+							result_json.append("\"code\":\""+unitObj[1]+"\",");
+							result_json.append("\"text\":\""+unitObj[2]+"\",");
+							result_json.append("\"remark\":\""+unitObj[3]+"\",");
+							result_json.append("\"protocol\":\""+unitObj[4]+"\",");
+							result_json.append("\"iconCls\": \"AcqUnit\",");
+							result_json.append("\"leaf\": true},");
+						}
+					}
+					if(result_json.toString().endsWith(",")){
+						result_json.deleteCharAt(result_json.length() - 1);
+					}
+					result_json.append("]},");
+				}
+			}
+			if(result_json.toString().endsWith(",")){
+				result_json.deleteCharAt(result_json.length() - 1);
+			}
+		}
+		result_json.append("]");
+//		System.out.println(result_json.toString());
+		return result_json.toString();
+	}
+	
 	public String getModbusProtocolInstanceConfigTreeData(){
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer pumpTree_json = new StringBuffer();
@@ -740,8 +799,12 @@ private CommonDataService service;
 		getBaseDao().saveOrUpdateObject(r);
 	}
 	
-	
-	
+	public void doModbusProtocolInstanceAdd(T protocolInstance) throws Exception {
+		getBaseDao().addObject(protocolInstance);
+	}
+	public void doModbusProtocolInstanceEdit(T protocolInstance) throws Exception {
+		getBaseDao().updateObject(protocolInstance);
+	}
 	
 	public static String getDataItemsType(String type){
 		String dataType="";
