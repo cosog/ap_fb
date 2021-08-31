@@ -349,6 +349,10 @@ function pumpRealTimeMonitoringCurve(item){
 			    var data = result.list;
 			    var tickInterval = 1;
 			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
+			    if(tickInterval<10){
+			    	tickInterval=10;
+			    }
+			    tickInterval=1000;
 //			    if(){
 //			    	
 //			    }

@@ -207,7 +207,7 @@ function websocketOnMessage(evt) {
 					var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
 					if(isNotVal(chart)){
 						var series=chart.series[0];
-						series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, true);
+						series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
 					}
 				}
 			}

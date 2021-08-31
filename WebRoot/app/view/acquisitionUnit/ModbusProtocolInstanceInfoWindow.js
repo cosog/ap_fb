@@ -126,13 +126,13 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				name : "protocolInstance.unitId"
 			},protocolAndAcqUnitTree,{
 				xtype : "hidden",
-				id : 'modbusInstanceReadProtocolType_Id',
+				id : 'modbusInstanceAcqProtocolType_Id',
 				value:'modbus-tcp',
-				name : "protocolInstance.readProtocolType"
+				name : "protocolInstance.acqProtocolType"
 			},{
             	xtype : "combobox",
 				fieldLabel : '读协议类型',
-				id : 'modbusInstanceReadProtocolTypeComb_Id',
+				id : 'modbusInstanceAcqProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
 				selectOnFocus : true,
@@ -151,18 +151,18 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				blankText : '请选择协议类型',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("modbusInstanceReadProtocolType_Id").setValue(this.value);
+						Ext.getCmp("modbusInstanceAcqProtocolType_Id").setValue(this.value);
 					}
 				}
             },{
 				xtype : "hidden",
-				id : 'modbusInstanceWriteProtocolType_Id',
+				id : 'modbusInstanceCtrlProtocolType_Id',
 				value:'modbus-tcp',
-				name : "protocolInstance.writeProtocolType"
+				name : "protocolInstance.ctrlProtocolType"
 			},{
             	xtype : "combobox",
 				fieldLabel : '写协议类型',
-				id : 'modbusInstanceWriteProtocolTypeComb_Id',
+				id : 'modbusInstanceCtrlProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
 				selectOnFocus : true,
@@ -181,7 +181,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				blankText : '请选择协议类型',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("modbusInstanceWriteProtocolType_Id").setValue(this.value);
+						Ext.getCmp("modbusInstanceCtrlProtocolType_Id").setValue(this.value);
 					}
 				}
             }, {

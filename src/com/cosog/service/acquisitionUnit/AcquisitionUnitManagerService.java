@@ -455,7 +455,7 @@ private CommonDataService service;
 		pipelineTree_json.append("[");
 		
 
-		String sql="select t.id,t.name,t.code,t.readprotocoltype,t.writeprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
+		String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
 				+ " t.unitid,t.devicetype,t.sort "
 				+ " from tbl_protocolinstance t "
 				+ " order by t.devicetype,t.sort";
@@ -470,8 +470,8 @@ private CommonDataService service;
 				pumpTree_json.append("\"id\":\""+obj[0]+"\",");
 				pumpTree_json.append("\"text\":\""+obj[1]+"\",");
 				pumpTree_json.append("\"code\":\""+obj[2]+"\",");
-				pumpTree_json.append("\"readProtocolType\":\""+obj[3]+"\",");
-				pumpTree_json.append("\"writeProtocolType\":\""+obj[4]+"\",");
+				pumpTree_json.append("\"acqProtocolType\":\""+obj[3]+"\",");
+				pumpTree_json.append("\"ctrlProtocolType\":\""+obj[4]+"\",");
 				pumpTree_json.append("\"signInPrefix\":\""+obj[5]+"\",");
 				pumpTree_json.append("\"signInSuffix\":\""+obj[6]+"\",");
 				pumpTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
@@ -487,8 +487,8 @@ private CommonDataService service;
 				pipelineTree_json.append("\"id\":\""+obj[0]+"\",");
 				pipelineTree_json.append("\"text\":\""+obj[1]+"\",");
 				pipelineTree_json.append("\"code\":\""+obj[2]+"\",");
-				pipelineTree_json.append("\"readProtocolType\":\""+obj[3]+"\",");
-				pipelineTree_json.append("\"writeProtocolType\":\""+obj[4]+"\",");
+				pipelineTree_json.append("\"acqProtocolType\":\""+obj[3]+"\",");
+				pipelineTree_json.append("\"ctrlProtocolType\":\""+obj[4]+"\",");
 				pipelineTree_json.append("\"signInPrefix\":\""+obj[5]+"\",");
 				pipelineTree_json.append("\"signInSuffix\":\""+obj[6]+"\",");
 				pipelineTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");

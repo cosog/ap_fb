@@ -709,13 +709,13 @@ function CreateProtocolInstanceConfigPropertiesInfoTable(data){
 		var item3={};
 		item3.id=3;
 		item3.title='读协议类型';
-		item3.value=data.readProtocolType;
+		item3.value=data.acqProtocolType;
 		root.push(item3);
 		
 		var item4={};
 		item4.id=4;
 		item4.title='写协议类型';
-		item4.value=data.writeProtocolType;
+		item4.value=data.ctrlProtocolType;
 		root.push(item4);
 		
 		var item5={};
@@ -956,8 +956,8 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 			var name=propertiesData[0][2];
 			var deviceType=(propertiesData[1][2]=="泵设备"?0:1);
 			var unitId=selectedItem.data.unitId;
-			var readProtocolType=propertiesData[2][2];
-			var writeProtocolType=propertiesData[3][2];
+			var acqProtocolType=propertiesData[2][2];
+			var ctrlProtocolType=propertiesData[3][2];
 			
 			var signInPrefix=propertiesData[4][2];
 			var signInSuffix=propertiesData[5][2];
@@ -988,8 +988,8 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 					name: name,
 					deviceType: deviceType,
 					unitId: unitId,
-					readProtocolType: readProtocolType,
-					writeProtocolType: writeProtocolType,
+					acqProtocolType: acqProtocolType,
+					ctrlProtocolType: ctrlProtocolType,
 					signInPrefix: signInPrefix,
 					signInSuffix: signInSuffix,
 					heartbeatPrefix: heartbeatPrefix,

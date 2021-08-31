@@ -60,55 +60,55 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 		
-//		String path="";
-//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-//		path=stringManagerUtils.getFilePath("test1.json","test/");
-//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-//		
-//		path=stringManagerUtils.getFilePath("test2.json","test/");
-//		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
-//		
-//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
-//		
-//		int i=0;
-//		while(true){
-//			if(i%2==0){
-//				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
-//			}else{
-//				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
-//			}
-//			i++;
-//			Thread.sleep(1000*1);
-//		}
+		String path="";
+		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+		path=stringManagerUtils.getFilePath("test1.json","test/");
+		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+		
+		path=stringManagerUtils.getFilePath("test2.json","test/");
+		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+		
+		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+		
+		int i=0;
+		while(true){
+			if(i%2==0){
+				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+			}else{
+				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
+			}
+			i++;
+			Thread.sleep(1000*1);
+		}
 		
 		
 
-		loadProtocolConfig();
-		initServerConfig();
-		initProtocolConfig("","");
-		initInstanceConfig(null,"");
-		initDriverAcquisitionInfoConfig(null,"");
-		do{
-			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-			type = new TypeToken<DriverProbeResponse>() {}.getType();
-			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-			String Ver="";
-			if(driverProbeResponse!=null){
-				if(!driverProbeResponse.getHttpServerInitStatus()){
-					initServerConfig();
-				}
-				if(!driverProbeResponse.getProtocolInitStatus()){
-					initProtocolConfig("","");
-				}
-				if(!driverProbeResponse.getIDInitStatus()){
-					initDriverAcquisitionInfoConfig(null,"");
-				}
-				Ver=driverProbeResponse.getVer();
-			}else{
-				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-			}
-			Thread.sleep(1000*1);
-		}while(true);
+//		loadProtocolConfig();
+//		initServerConfig();
+//		initProtocolConfig("","");
+//		initInstanceConfig(null,"");
+//		initDriverAcquisitionInfoConfig(null,"");
+//		do{
+//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+//			type = new TypeToken<DriverProbeResponse>() {}.getType();
+//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+//			String Ver="";
+//			if(driverProbeResponse!=null){
+//				if(!driverProbeResponse.getHttpServerInitStatus()){
+//					initServerConfig();
+//				}
+//				if(!driverProbeResponse.getProtocolInitStatus()){
+//					initProtocolConfig("","");
+//				}
+//				if(!driverProbeResponse.getIDInitStatus()){
+//					initDriverAcquisitionInfoConfig(null,"");
+//				}
+//				Ver=driverProbeResponse.getVer();
+//			}else{
+//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+//			}
+//			Thread.sleep(1000*1);
+//		}while(true);
 	}
 	
 	public static class DriverProbeResponse{
@@ -297,7 +297,7 @@ public class EquipmentDriverServerTask {
 		if(!StringManagerUtils.isNotNull(method)){
 			method="update";
 		}
-		String sql="select t.name,t.readprotocoltype,t.writeprotocoltype,"
+		String sql="select t.name,t.acqprotocoltype,t.ctrlprotocoltype,"
 				+ "t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
 				+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,"
 				+ "listagg(t5.itemname, ',') within group(order by t5.id ) key "
@@ -306,7 +306,7 @@ public class EquipmentDriverServerTask {
 		if(StringManagerUtils.isNotNull(instances)){
 			sql+=" and t.name in("+instances+")";
 		}
-		sql+= "group by t.name,t.readprotocoltype,t.writeprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle";
+		sql+= "group by t.name,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle";
 		
 		Map<String,InitInstance> InstanceListMap=new HashMap<String,InitInstance>();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();

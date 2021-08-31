@@ -40,6 +40,7 @@ import com.cosog.model.calculate.WellAcquisitionData;
 import com.cosog.model.drive.AcqGroup;
 import com.cosog.model.drive.AcqOnline;
 import com.cosog.model.drive.AcquisitionGroupResolutionData;
+import com.cosog.model.drive.AcquisitionItemInfo;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.datainterface.CalculateDataService;
@@ -152,13 +153,13 @@ public class DriverAPIController extends BaseController{
 						+ "}"
 						+ "}";
 				String commResponse="";
-				commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
+//				commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
 				type = new TypeToken<CommResponseData>() {}.getType();
 				commResponseData=gson.fromJson(commResponse, type);
-				String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(commResponseData.getCurrent().getCommStatus()?1:0);
+				String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0";
 				String updateRealCommRangeClobSql="update "+realtimeTable+" t set t.commrange=?";
 				
-				String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(commResponseData.getCurrent().getCommStatus()?1:0);
+				String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0";
 				String updateHistCommRangeClobSql="update "+historyTable+" t set t.commrange=?";
 				List<String> clobCont=new ArrayList<String>();
 				
@@ -209,23 +210,20 @@ public class DriverAPIController extends BaseController{
 			String realtimeTable="";
 			String historyTable="";
 			String protocolSql="select t.devicetype"
-					+ " from TBL_WELLINFORMATION t,tbl_acq_unit_conf t2  "
-					+ " where t.unitcode=t2.unit_code"
-					+ " and upper(t.protocolcode) not like '%KAFKA%' "
-					+ " and upper(t.protocolcode) not like '%MQTT%' "
-					+ " and t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
+					+ " from TBL_WELLINFORMATION t   "
+					+ " where t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
 			List devicetypeList = this.commonDataService.findCallSql(protocolSql);	
 			if(devicetypeList.size()>=0 && StringManagerUtils.isNotNull(devicetypeList.get(0)+"")){
 				String devicetype=devicetypeList.get(0)+"";
-				String functionCode="pumpDeviceRealTimeMonitoringData";
+				String functionCode="pumpDeviceRealTimeMonitoringStatusData";
 				if("0".equalsIgnoreCase(devicetype)){//如果是泵设备
 					realtimeTable="tbl_pumpacqdata_latest";
 					historyTable="tbl_pumpacqdata_hist";
-					functionCode="pumpDeviceRealTimeMonitoringData";
+					functionCode="pumpDeviceRealTimeMonitoringStatusData";
 				}else{//否则管设备
 					realtimeTable="tbl_pipelineacqdata_latest";
 					historyTable="tbl_yubingacqdata_hist";
-					functionCode="pipelineDeviceRealTimeMonitoringData";
+					functionCode="pipelineDeviceRealTimeMonitoringStatusData";
 				}
 				
 				String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
@@ -233,8 +231,6 @@ public class DriverAPIController extends BaseController{
 						+ " t.id"
 						+ " from TBL_WELLINFORMATION t,"+realtimeTable+"  t2 "
 						+ " where t.id=t2.wellid"
-						+ " and upper(t.protocolcode) not like '%KAFKA%' "
-						+ " and upper(t.protocolcode) not like '%MQTT%' "
 						+ " and t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
 				List list = this.commonDataService.findCallSql(sql);
 				if(list.size()>0){
@@ -246,7 +242,7 @@ public class DriverAPIController extends BaseController{
 					String wellId=obj[obj.length-1]+"";
 					webSocketSendData.append("\"wellName\":\""+wellName+"\",");
 					webSocketSendData.append("\"acqTime\":\""+currentTime+"\",");
-					webSocketSendData.append("\"commStatus\":1");
+					webSocketSendData.append("\"commStatus\":"+(acqOnline.getStatus()?1:0));
 					webSocketSendData.append("}");
 					String commRequest="{"
 							+ "\"AKString\":\"\","
@@ -268,13 +264,13 @@ public class DriverAPIController extends BaseController{
 							+ "}"
 							+ "}";
 					String commResponse="";
-					commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
+//					commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
 					type = new TypeToken<CommResponseData>() {}.getType();
 					commResponseData=gson.fromJson(commResponse, type);
-					String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(commResponseData.getCurrent().getCommStatus()?1:0);
+					String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
 					String updateRealCommRangeClobSql="update "+realtimeTable+" t set t.commrange=?";
 					
-					String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(commResponseData.getCurrent().getCommStatus()?1:0);
+					String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
 					String updateHistCommRangeClobSql="update "+historyTable+" t set t.commrange=?";
 					List<String> clobCont=new ArrayList<String>();
 					
@@ -326,17 +322,16 @@ public class DriverAPIController extends BaseController{
 		AcqGroup acqGroup=gson.fromJson(data, type);
 		String json = "{success:true,flag:true}";
 		if(acqGroup!=null){
-			String sql="select t.wellname ,t2.protocol"
-					+ " from TBL_WELLINFORMATION t,tbl_acq_unit_conf t2  "
-					+ " where t.unitcode=t2.unit_code"
-					+ " and upper(t.protocolcode) not like '%KAFKA%' "
-					+ " and upper(t.protocolcode) not like '%MQTT%' "
+			String sql="select t.wellname,t.devicetype ,t3.protocol"
+					+ " from TBL_WELLINFORMATION t,tbl_protocolinstance t2,tbl_acq_unit_conf t3  "
+					+ " where t.instancecode=t2.code and t2.unitid=t3.id"
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave();
 			List list = this.commonDataService.findCallSql(sql);
 			if(list.size()>0){
 				Object[] obj=(Object[]) list.get(0);
 				String wellName=obj[0]+"";
-				String protocolName=obj[1]+"";
+				String deviceType=obj[1]+"";
+				String protocolName=obj[2]+"";
 				if("A11-Modbus".equalsIgnoreCase(protocolName)){
 //					this.DataProcessing_A11(acqGroup, protocolName);
 				}
@@ -344,7 +339,7 @@ public class DriverAPIController extends BaseController{
 //					this.DataProcessing_Pump(acqGroup, protocolName);
 //				}
 				else{
-					this.DataProcessing_Pump(acqGroup, protocolName);
+					this.DataProcessing_Pump(acqGroup, wellName,deviceType,protocolName);
 				}
 			}
 		}else{
@@ -360,50 +355,54 @@ public class DriverAPIController extends BaseController{
 	};
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public String DataProcessing_Pump(AcqGroup acqGroup,String protocolName) throws Exception{
+	public String DataProcessing_Pump(AcqGroup acqGroup,String wellName,String deviceType,String protocolName) throws Exception{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		StringBuffer webSocketSendData = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		boolean save=false;
+		boolean alarm=false;
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
+		String realtimeTable="tbl_pumpacqdata_latest";
+		String historyTable="tbl_pumpacqdata_hist";
+		String functionCode="pumpDeviceRealTimeMonitoringData";
+		if("0".equalsIgnoreCase(deviceType)){
+			realtimeTable="tbl_pumpacqdata_latest";
+			historyTable="tbl_pumpacqdata_hist";
+			functionCode="pumpDeviceRealTimeMonitoringData";
+		}else{
+			realtimeTable="tbl_pipelineacqdata_latest";
+			historyTable="tbl_yubingacqdata_hist";
+			functionCode="pipelineDeviceRealTimeMonitoringData";
+		}
 		if(acqGroup!=null){
 			boolean ifAddDay=false;
 			String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 					+ " t2.commstatus,t2.commtime,t2.commtimeefficiency,t2.commrange,"
-					+ " t.devicetype,"
+					+ " t6.save_cycle,"
 					+ " t.id"
-					+ " from TBL_WELLINFORMATION t,tbl_pumpacqdata_latest  t2  "
-					+ " where t.id=t2.wellid "
-					+ " and upper(t.protocolcode) not like '%KAFKA%' "
-					+ " and upper(t.protocolcode) not like '%MQTT%' "
-					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave();
+					+ " from TBL_WELLINFORMATION t,"+realtimeTable+"  t2,tbl_protocolinstance t3,tbl_acq_unit_conf t4,tbl_acq_group2unit_conf t5,tbl_acq_group_conf t6    "
+					+ " where t.id=t2.wellid and t.instancecode=t3.code and t3.unitid=t4.id and t4.id=t5.unitid and t5.groupid=t6.id"
+					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
+					+ " order by t6.id";
 			List list = commonDataService.findCallSql(sql);
 			if(list.size()>0){
 				Object[] obj=(Object[]) list.get(0);
-				String wellName=obj[0]+"";
+				String lastSaveTime=obj[1]+"";
 				String acqTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
-				String devicetype=obj[obj.length-2]+"";
-				String wellId=obj[obj.length-1]+"";
+				int save_cycle=StringManagerUtils.stringToInteger(obj[6]+"");
 				
-				String realtimeTable="tbl_pumpacqdata_latest";
-				String historyTable="tbl_pumpacqdata_hist";
-				String functionCode="pumpDeviceRealTimeMonitoringData";
-				if("0".equalsIgnoreCase(devicetype)){
-					realtimeTable="tbl_pumpacqdata_latest";
-					historyTable="tbl_pumpacqdata_hist";
-					functionCode="pumpDeviceRealTimeMonitoringData";
-				}else{
-					realtimeTable="tbl_pipelineacqdata_latest";
-					historyTable="tbl_yubingacqdata_hist";
-					functionCode="pipelineDeviceRealTimeMonitoringData";
+				long timeDiff=StringManagerUtils.getTimeDifference(lastSaveTime, acqTime, "yyyy-MM-dd HH:mm:ss");
+				if(timeDiff>save_cycle*1000){
+					save=true;
 				}
-				
+				String wellId=obj[obj.length-1]+"";
 				String acqColumnsSql="select v1.COLUMN_NAME from "
 						+ " (select * from user_tab_cols t where t.TABLE_NAME=UPPER('"+realtimeTable+"')) v1,"
 						+ " (select * from user_tab_cols t where t.TABLE_NAME=UPPER('"+historyTable+"')) v2 "
@@ -449,7 +448,7 @@ public class DriverAPIController extends BaseController{
 							+ "}"
 							+ "}";
 					String commResponse="";
-					commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
+//					commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
 					type = new TypeToken<CommResponseData>() {}.getType();
 					commResponseData=gson.fromJson(commResponse, type);
 					
@@ -465,9 +464,11 @@ public class DriverAPIController extends BaseController{
 						insertHistValue+=","+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime();
 					}
 					
-					List<String> columnsNameList=new ArrayList<String>();
-					List<String> valueList=new ArrayList<String>();
-					List<String> columnsDataTypeList=new ArrayList<String>();
+//					List<String> columnsNameList=new ArrayList<String>();
+//					List<String> valueList=new ArrayList<String>();
+//					List<String> columnsDataTypeList=new ArrayList<String>();
+					
+					List<AcquisitionItemInfo> acquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
 					
 					for(int i=0;acqGroup.getAddr()!=null && acqGroup.getValue()!=null  &&i<acqGroup.getAddr().size();i++){
 						for(int j=0;acqGroup.getValue().get(i)!=null && j<protocol.getItems().size();j++){
@@ -479,9 +480,22 @@ public class DriverAPIController extends BaseController{
 									insertHistColumns+=","+columnName;
 									insertHistValue+=",'"+value+"'";
 									
-									columnsNameList.add(protocol.getItems().get(j).getTitle());
-									valueList.add(value);
-									columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
+									AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
+									acquisitionItemInfo.setAddr(protocol.getItems().get(j).getAddr());
+									acquisitionItemInfo.setColumn(columnName);
+									acquisitionItemInfo.setValue(value);
+									acquisitionItemInfo.setTitle(protocol.getItems().get(j).getTitle());
+									acquisitionItemInfo.setUnit(protocol.getItems().get(j).getUnit());
+									acquisitionItemInfo.setDataType(protocol.getItems().get(j).getIFDataType());
+									acquisitionItemInfo.setAlarmLevel(StringManagerUtils.stringToFloat(value)>2?100:0);
+									acquisitionItemInfoList.add(acquisitionItemInfo);
+									
+									if(acquisitionItemInfo.getAlarmLevel()>0){
+										alarm=true;
+									}
+//									columnsNameList.add(protocol.getItems().get(j).getTitle());
+//									valueList.add(value);
+//									columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
 								}
 								
 								break;
@@ -493,18 +507,20 @@ public class DriverAPIController extends BaseController{
 					
 					insertHistSql="insert into "+historyTable+"("+insertHistColumns+")values("+insertHistValue+")";
 					
-					commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
-					commonDataService.getBaseDao().updateOrDeleteBySql(insertHistSql);
-					
-					//更新clob类型数据  运行区间
-					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
-						List<String> clobCont=new ArrayList<String>();
-						String updateRunRangeClobSql="update "+realtimeTable+" t set t.commrange=? where t.wellId= "+wellId;
-						String updateRunRangeClobSql_Hist="update "+historyTable+" t set t.commrange=? where t.wellId= "+wellId+" and t.acqTime=to_date('"+acqTime+"','yyyy-mm-dd hh24:mi:ss')"; 
+					if(save || alarm){//如果满足保存周期或者有报警，保存数据
+						commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
+						commonDataService.getBaseDao().updateOrDeleteBySql(insertHistSql);
 						
-						clobCont.add(commResponseData.getCurrent().getCommEfficiency().getRangeString());
-						int result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql,clobCont);
-						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql_Hist,clobCont);
+						//更新clob类型数据  运行区间
+						if(commResponseData!=null&&commResponseData.getResultStatus()==1){
+							List<String> clobCont=new ArrayList<String>();
+							String updateRunRangeClobSql="update "+realtimeTable+" t set t.commrange=? where t.wellId= "+wellId;
+							String updateRunRangeClobSql_Hist="update "+historyTable+" t set t.commrange=? where t.wellId= "+wellId+" and t.acqTime=to_date('"+acqTime+"','yyyy-mm-dd hh24:mi:ss')"; 
+							
+							clobCont.add(commResponseData.getCurrent().getCommEfficiency().getRangeString());
+							int result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql,clobCont);
+							result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql_Hist,clobCont);
+						}
 					}
 					
 					//处理websocket推送
@@ -523,10 +539,10 @@ public class DriverAPIController extends BaseController{
 					info_json.append("[");
 					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+",在线\"},");
 					int row=1;
-					if(valueList.size()%items==0){
-						row=valueList.size()/items+1;
+					if(acquisitionItemInfoList.size()%items==0){
+						row=acquisitionItemInfoList.size()/items+1;
 					}else{
-						row=valueList.size()/items+2;
+						row=acquisitionItemInfoList.size()/items+2;
 					}
 					
 					for(int j=1;j<row;j++){
@@ -538,14 +554,12 @@ public class DriverAPIController extends BaseController{
 							String column="";
 							String columnDataType="";
 							int alarmLevel=0;
-							if(index<columnsNameList.size()){
-								columnName=columnsNameList.get(index);
-								value=valueList.get(index);
-								column=columnsList.get(index);
-								columnDataType=columnsDataTypeList.get(index);
-							}
-							if(StringManagerUtils.stringToFloat(value)>2){
-								alarmLevel=100;
+							if(index<acquisitionItemInfoList.size()){
+								columnName=acquisitionItemInfoList.get(index).getTitle();
+								value=acquisitionItemInfoList.get(index).getValue();
+								column=acquisitionItemInfoList.get(index).getColumn();
+								columnDataType=acquisitionItemInfoList.get(index).getDataType();
+								alarmLevel=acquisitionItemInfoList.get(index).getAlarmLevel();
 							}
 							webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
 							webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
@@ -602,9 +616,6 @@ public class DriverAPIController extends BaseController{
 				+ " t2.commstatus,t2.commtime,t2.commtimeefficiency,t2.commrange"
 				+ " from TBL_WELLINFORMATION t,tbl_rpc_discrete_latest  t2 "
 				+ " where t.id=t2.wellid"
-				+ " and upper(t.protocolcode) not like '%KAFKA%' "
-				+ " and upper(t.protocolcode) not like '%MQTT%' "
-//				+ " and t.protocolcode ='"+(protocol!=null?protocol.getCode():"")+"'"
 				+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave();
 		List list = this.commonDataService.findCallSql(sql);
 		if(list.size()>0){
