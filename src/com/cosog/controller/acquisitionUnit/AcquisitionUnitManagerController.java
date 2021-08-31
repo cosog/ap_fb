@@ -972,8 +972,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String name = ParamUtils.getParameter(request, "name");
 		String deviceType = ParamUtils.getParameter(request, "deviceType");
 		String unitId = ParamUtils.getParameter(request, "unitId");
-		String readProtocolType = ParamUtils.getParameter(request, "readProtocolType");
-		String writeProtocolType = ParamUtils.getParameter(request, "writeProtocolType");
+		String acqProtocolType = ParamUtils.getParameter(request, "acqProtocolType");
+		String ctrlProtocolType = ParamUtils.getParameter(request, "ctrlProtocolType");
 		String signInPrefix = ParamUtils.getParameter(request, "signInPrefix");
 		String signInSuffix = ParamUtils.getParameter(request, "signInSuffix");
 		String heartbeatPrefix = ParamUtils.getParameter(request, "heartbeatPrefix");
@@ -986,8 +986,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 		protocolInstance.setName(name);
 		protocolInstance.setDeviceType(StringManagerUtils.stringToInteger(deviceType));
 		protocolInstance.setUnitId(StringManagerUtils.stringToInteger(unitId));
-		protocolInstance.setReadProtocolType(readProtocolType);
-		protocolInstance.setWriteProtocolType(writeProtocolType);
+		protocolInstance.setAcqProtocolType(acqProtocolType);
+		protocolInstance.setCtrlProtocolType(ctrlProtocolType);
 		protocolInstance.setSignInPrefix(signInPrefix);
 		protocolInstance.setSignInSuffix(signInSuffix);
 		protocolInstance.setHeartbeatPrefix(heartbeatPrefix);

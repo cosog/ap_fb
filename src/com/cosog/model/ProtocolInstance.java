@@ -24,8 +24,8 @@ public class ProtocolInstance implements java.io.Serializable {
 	private String code;
 	private Integer deviceType;
 	private Integer unitId;
-	private String readProtocolType;
-	private String writeProtocolType;
+	private String acqProtocolType;
+	private String ctrlProtocolType;
 	private String signInPrefix;
 	private String signInSuffix;
 	private String heartbeatPrefix;
@@ -40,7 +40,7 @@ public class ProtocolInstance implements java.io.Serializable {
 
 	/** full constructor */
 	public ProtocolInstance(Integer id, String name, String code, Integer deviceType, Integer unitId,
-			String readProtocolType, String writeProtocolType, String signInPrefix, String signInSuffix,
+			String acqProtocolType, String ctrlProtocolType, String signInPrefix, String signInSuffix,
 			String heartbeatPrefix, String heartbeatSuffix, Integer sort) {
 		super();
 		this.id = id;
@@ -48,8 +48,8 @@ public class ProtocolInstance implements java.io.Serializable {
 		this.code = code;
 		this.deviceType = deviceType;
 		this.unitId = unitId;
-		this.readProtocolType = readProtocolType;
-		this.writeProtocolType = writeProtocolType;
+		this.acqProtocolType = acqProtocolType;
+		this.ctrlProtocolType = ctrlProtocolType;
 		this.signInPrefix = signInPrefix;
 		this.signInSuffix = signInSuffix;
 		this.heartbeatPrefix = heartbeatPrefix;
@@ -104,22 +104,22 @@ public class ProtocolInstance implements java.io.Serializable {
 		this.unitId = unitId;
 	}
 
-	@Column(name = "readProtocolType", nullable = false, length = 50)
-	public String getReadProtocolType() {
-		return readProtocolType;
+	@Column(name = "acqProtocolType", nullable = false, length = 50)
+	public String getAcqProtocolType() {
+		return acqProtocolType;
 	}
 
-	public void setReadProtocolType(String readProtocolType) {
-		this.readProtocolType = readProtocolType;
+	public void setAcqProtocolType(String acqProtocolType) {
+		this.acqProtocolType = acqProtocolType;
 	}
 
-	@Column(name = "writeProtocolType", nullable = false, length = 50)
-	public String getWriteProtocolType() {
-		return writeProtocolType;
+	@Column(name = "ctrlProtocolType", nullable = false, length = 50)
+	public String getCtrlProtocolType() {
+		return ctrlProtocolType;
 	}
 
-	public void setWriteProtocolType(String writeProtocolType) {
-		this.writeProtocolType = writeProtocolType;
+	public void setCtrlProtocolType(String ctrlProtocolType) {
+		this.ctrlProtocolType = ctrlProtocolType;
 	}
 
 	@Column(name = "signInPrefix", nullable = true, length = 50)
