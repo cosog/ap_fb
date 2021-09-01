@@ -287,6 +287,12 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
 			}
 		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+			}
 		}
 	}else {
 		return false;

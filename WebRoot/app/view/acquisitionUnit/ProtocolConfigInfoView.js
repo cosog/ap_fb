@@ -174,7 +174,14 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
                             html:'<div class="ProtocolConfigInstancePropertiesTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ProtocolConfigInstancePropertiesTableInfoDiv_id"></div></div>',
                             listeners: {
                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                	
+                                	if(protocolConfigInstancePropertiesHandsontableHelper!=null && protocolConfigInstancePropertiesHandsontableHelper.hot!=undefined){
+                                		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
+                                		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
+                                		if(isNotVal(gridPanel)){
+                                			var selectedItem=gridPanel.getStore().getAt(gridPanel);
+                                			CreateProtocolInstanceConfigPropertiesInfoTable(selectedItem.data);
+                                		}
+                                	}
                                 }
                             }
                         }]
@@ -187,7 +194,20 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
                         html:'<div class="ModbusProtocolInstanceItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolInstanceItemsConfigTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	
+                            	if(protocolConfigInstancePropertiesHandsontableHelper!=null && protocolConfigInstancePropertiesHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                                	    if(selectedItem.data.classes==0){
+                                	    	if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                                    			CreateProtocolInstanceItemsConfigInfoTable(selectedItem.data.children[0].text);
+                                    		}
+                                    	}else if(selectedItem.data.classes==1){
+                                    		CreateProtocolInstanceItemsConfigInfoTable(selectedItem.data.text);
+                                    	}
+                            		}
+                            	}
                             }
                         }
                     }]

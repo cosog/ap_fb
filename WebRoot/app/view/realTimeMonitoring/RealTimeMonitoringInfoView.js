@@ -6,6 +6,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
     initComponent: function () {
         var me = this;
         var PumpRealTimeMonitoringInfoView = Ext.create('AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView');
+        var PipelineRealTimeMonitoringInfoView = Ext.create('AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView');
         Ext.apply(me, {
         	items: [{
         		xtype: 'tabpanel',
@@ -22,7 +23,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
         			},{
         				title: '管设备',
         				id:'PipelineRealTimeMonitoringInfoPanel_Id',
-//        				items: [PipelineDeviceInfoPanel],
+        				items: [PipelineRealTimeMonitoringInfoView],
         				layout: "fit",
         				border: false
         			}],
@@ -32,7 +33,12 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
         					if(newCard.id=="PumpRealTimeMonitoringInfoPanel_Id"){
         						
         					}else if(newCard.id=="PipelineRealTimeMonitoringInfoPanel_Id"){
-        						
+        						var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+        						}
         					}
         				}
         			}

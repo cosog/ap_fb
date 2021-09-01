@@ -38,7 +38,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getDeviceRealTimeStatus(String orgId,String wellName,String deviceType) throws IOException, SQLException{
+	public String getDeviceRealTimeOverview(String orgId,String wellName,String deviceType) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
@@ -51,12 +51,13 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
-			tableName="tbl_tubingacqdata_latest";
+			tableName="tbl_pipelineacqdata_latest";
+			ddicName="pipelineRealTimeOverview";
 		}
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		
-		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
+		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
@@ -97,9 +98,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"commStatus\":"+obj[2]+",");
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
-			
+			result_json.append("\"acqTime\":\""+obj[5]+"\",");
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":"+obj[5+j]+",");
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
 			}
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);
@@ -111,7 +112,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		}
 		result_json.append("]");
 		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
-		return result_json.toString();
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 
 	public String getDeviceRealMonitorData(String deviceName,String deviceType) throws IOException, SQLException{
@@ -126,7 +127,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		}
 		String tableName="tbl_pumpacqdata_latest";
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
-			tableName="tbl_tubingacqdata_latest";
+			tableName="tbl_pipelineacqdata_latest";
 		}
 		
 		String itemsSql="select t.wellname,t3.protocol, listagg(t6.itemname, ',') within group(order by t6.id ) key "
@@ -230,7 +231,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							}
 							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
 							result_json.append("\"value"+(k+1)+"\":\""+value+"\",");
-							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
 							
 						}
 						if(result_json.toString().endsWith(",")){
@@ -315,7 +316,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String tableName="tbl_pumpacqdata_latest";
 		String sql="select t.factorynumber,t.model,t.productiondate,t.deliverydate,t.commissioningdate,t.controlcabinetmodel ";
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
-			tableName="tbl_tubingacqdata_latest";
+			tableName="tbl_pipelineacqdata_latest";
 		}
 		for(int i=0;i<controlColumns.size();i++){
 			sql+=",t2."+controlColumns.get(i);

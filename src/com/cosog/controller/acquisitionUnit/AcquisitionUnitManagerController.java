@@ -595,6 +595,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 			for(int i=0;modbusDriverSaveData.getDelidslist()!=null&&i<modbusDriverSaveData.getDelidslist().size();i++){
 				for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
 					if(modbusDriverSaveData.getDelidslist().get(i).equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
+						EquipmentDriverServerTask.initProtocolConfig(modbusProtocolConfig.getProtocol().get(j).getCode(),"delete");
 						modbusProtocolConfig.getProtocol().remove(j);
 						break;
 					}
@@ -761,16 +762,13 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@SuppressWarnings("static-access")
 	@RequestMapping("/saveAcquisitionUnitHandsontableData")
 	public String saveAcquisitionUnitHandsontableData() throws Exception {
-		HttpSession session=request.getSession();
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String protocol = ParamUtils.getParameter(request, "protocol");
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<AcquisitionUnitHandsontableChangeData>() {}.getType();
 		AcquisitionUnitHandsontableChangeData acquisitionUnitHandsontableChangeData=gson.fromJson(data, type);
-//		this.acquisitionUnitItemManagerService.saveAcquisitionUnitHandsontableData(acquisitionUnitHandsontableChangeData);
 		if(acquisitionUnitHandsontableChangeData!=null){
 			if(acquisitionUnitHandsontableChangeData.getDelidslist()!=null){
 				for(int i=0;i<acquisitionUnitHandsontableChangeData.getDelidslist().size();i++){
@@ -949,6 +947,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String result = "";
 		try {
 			this.protocolInstanceManagerService.doModbusProtocolInstanceAdd(protocolInstance);
+			List<String> instanceList=new ArrayList<String>();
+			instanceList.add(protocolInstance.getName());
+			EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
 			result = "{success:true,msg:true}";
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -996,6 +997,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String json ="{success:true}";
 		try {
 			this.protocolInstanceManagerService.doModbusProtocolInstanceEdit(protocolInstance);
+			List<String> instanceList=new ArrayList<String>();
+			instanceList.add(protocolInstance.getName());
+			EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
 			json = "{success:true,msg:true}";
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
