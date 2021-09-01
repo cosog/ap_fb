@@ -58,8 +58,8 @@ public class RealTimeMonitoringController extends BaseController {
 	private int totals;
 	
 	//
-	@RequestMapping("/getDeviceRealTimeStatus")
-	public String getDeviceRealTimeStatus() throws Exception {
+	@RequestMapping("/getDeviceRealTimeOverview")
+	public String getDeviceRealTimeOverview() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		wellName = ParamUtils.getParameter(request, "wellName");
@@ -73,7 +73,7 @@ public class RealTimeMonitoringController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		json = realTimeMonitoringService.getDeviceRealTimeStatus(orgId,wellName,deviceType);
+		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,wellName,deviceType);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);

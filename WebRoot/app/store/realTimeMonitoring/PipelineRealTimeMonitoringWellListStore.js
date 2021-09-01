@@ -1,6 +1,6 @@
-Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
+Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.pumpRealTimeMonitoringWellListStore',
+    alias: 'widget.pipelineRealTimeMonitoringWellListStore',
     fields: ['id','commStatus','commStatusName','wellName'],
     autoLoad: true,
     pageSize: 10000,
@@ -23,12 +23,12 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
-            var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+            var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var column = createRealTimeMonitoringColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "PumpRealTimeMonitoringListGridPanel_Id",
+                    id: "PipelineRealTimeMonitoringListGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     columnLines: true,
@@ -43,16 +43,16 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     		
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
-                    		var deviceName=record.data.wellName;
-                    		var deviceType=0;
-                    		CreatePumpDeviceRealMonitorDataTable(deviceName,deviceType);
-                    		Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStore');
+//                    		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
+//                    		var deviceName=record.data.wellName;
+//                    		var deviceType=0;
+//                    		CreatePipelineDeviceRealMonitorDataTable(deviceName,deviceType);
+//                    		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
                     	}
                     }
                 });
-                var PumpRealTimeMonitoringInfoDeviceListPanel = Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListPanel_Id");
-                PumpRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
+                var PipelineRealTimeMonitoringInfoDeviceListPanel = Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListPanel_Id");
+                PipelineRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
             	gridPanel.getSelectionModel().select(0, true);
@@ -62,7 +62,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
             var new_params = {
                     orgId: orgId,
-                    deviceType:0
+                    deviceType:1
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

@@ -166,6 +166,17 @@ function websocketOnMessage(evt) {
 							record.set("commStatusName","在线");
 							record.set("commStatus",1);
 							record.set("commAlarmLevel",0);
+							record.set("acqTime",data.acqTime);
+							for(var j=0;j<data.CellInfo.length;j++){
+								var cellValue=record.get(data.CellInfo[j].column.toUpperCase());
+								var cellValue2=record.get(data.CellInfo[j].column.toLowerCase());
+								if(cellValue!=undefined){
+									record.set(data.CellInfo[j].column.toUpperCase(),data.CellInfo[j].value);
+								}
+								if(cellValue2!=undefined){
+									record.set(data.CellInfo[j].column.toLowerCase(),data.CellInfo[j].value);
+								}
+							}
 							record.commit();
 							break;
 						}

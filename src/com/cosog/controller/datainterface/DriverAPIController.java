@@ -563,7 +563,7 @@ public class DriverAPIController extends BaseController{
 							}
 							webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
 							webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
-							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
 						}
 						if(webSocketSendData.toString().endsWith(",")){
 							webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
