@@ -3,7 +3,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
     alias: 'widget.pipelineRealTimeMonitoringWellListStore',
     fields: ['id','commStatus','commStatusName','wellName'],
     autoLoad: true,
-    pageSize: 10000,
+    pageSize: 50,
     proxy: {
         type: 'ajax',
         url: context + '/realTimeMonitoringController/getDeviceRealTimeOverview',
@@ -27,12 +27,18 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             if (!isNotVal(gridPanel)) {
                 var column = createRealTimeMonitoringColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
+                var bbar = new Ext.PagingToolbar({
+                	store: store,
+                	displayInfo: true,
+                	displayMsg: '共 {2}条'
+    	        });
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PipelineRealTimeMonitoringListGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     columnLines: true,
                     forceFit: false,
+                    bbar: bbar,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
@@ -43,11 +49,11 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     		
                     	},
                     	select: function(grid, record, index, eOpts) {
-//                    		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
-//                    		var deviceName=record.data.wellName;
-//                    		var deviceType=0;
-//                    		CreatePipelineDeviceRealMonitorDataTable(deviceName,deviceType);
-//                    		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
+                    		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
+                    		var deviceName=record.data.wellName;
+                    		var deviceType=1;
+                    		CreatePipelineDeviceRealMonitorDataTable(deviceName,deviceType);
+                    		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
                     	}
                     }
                 });

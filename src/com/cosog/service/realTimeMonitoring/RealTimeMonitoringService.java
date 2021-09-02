@@ -38,7 +38,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getDeviceRealTimeOverview(String orgId,String wellName,String deviceType) throws IOException, SQLException{
+	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
@@ -73,15 +73,15 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		sql+= " from tbl_wellinformation t "
 				+ "left outer join "+tableName+" t2 on t2.wellid=t.id"
 				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
-		if(StringManagerUtils.isNotNull(wellName)){
-			sql+=" and t.wellName='"+wellName+"'";
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=" and t.wellName='"+deviceName+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
 		
+		int maxvalue=pager.getLimit()+pager.getStart();
+		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		
-		
-		
-		int totals=this.getTotalCountRows(sql);
+		int totals=this.getTotalCountRows(finalSql);
 		List<?> list = this.findCallSql(sql);
 //		String columns = "["
 //				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
@@ -258,7 +258,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	}
 	
 	
-	public String getPumpControlandInfoData(String wellName,String deviceType,int userId)throws Exception {
+	public String getDeviceControlandInfoData(String wellName,String deviceType,int userId)throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		
 		
@@ -325,7 +325,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
 			sql+=",t.pipelinelength";
 		}
-		sql+= "from TBL_WELLINFORMATION t,"+tableName+" t2 where t.id=t2.wellid and t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		sql+= " from TBL_WELLINFORMATION t,"+tableName+" t2 where t.id=t2.wellid and t.wellname='"+wellName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
 		
 		result_json.append("{ \"success\":true,\"isControl\":"+isControl+",");
 		List<?> list = this.findCallSql(sql);
@@ -339,7 +339,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			deviceInfoDataList.append("{\"title\":\"投产日期\",\"name\":\"commissioningdate\",\"value\":\""+obj[4]+"\"},");
 			deviceInfoDataList.append("{\"title\":\"控制柜型号\",\"name\":\"controlcabinetmodel\",\"value\":\""+obj[5]+"\"}");
 			if(StringManagerUtils.stringToInteger(deviceType)>0){
-				deviceInfoDataList.append("{\"title\":\"管体长度\",\"name\":\"pipelinelength\",\"value\":\""+obj[6+controlColumns.size()]+"\"}");
+				deviceInfoDataList.append(",{\"title\":\"管体长度(m)\",\"name\":\"pipelinelength\",\"value\":\""+obj[6+controlColumns.size()]+"\"}");
 			}
 			for(int i=0;i<controlColumns.size();i++){
 				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"value\":\""+obj[6+i]+"\"},");
@@ -414,7 +414,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String dataType="";
 		String tableName="tbl_pumpacqdata_hist";
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
-			tableName="tbl_tubingacqdata_hist";
+			tableName="tbl_pipelineacqdata_hist";
 		}
 		if(protocolList.size()>0){
 			protocolCode=protocolList.get(0)+"";

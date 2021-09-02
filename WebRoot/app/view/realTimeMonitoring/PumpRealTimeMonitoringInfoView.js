@@ -6,6 +6,72 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
+        
+        var pumpCombStore = new Ext.data.JsonStore({
+        	pageSize:defaultWellComboxSize,
+            fields: [{
+                name: "boxkey",
+                type: "string"
+            }, {
+                name: "boxval",
+                type: "string"
+            }],
+            proxy: {
+            	url: context + '/wellInformationManagerController/loadWellComboxList',
+                type: "ajax",
+                actionMethods: {
+                    read: 'POST'
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'totals'
+                }
+            },
+            autoLoad: true,
+            listeners: {
+                beforeload: function (store, options) {
+                	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+                    var wellName = Ext.getCmp('RealtimeMonitorPumpDeviceListComb_Id').getValue();
+                    var new_params = {
+                        orgId: leftOrg_Id,
+                        deviceType: 0,
+                        wellName: wellName
+                    };
+                    Ext.apply(store.proxy.extraParams,new_params);
+                }
+            }
+        });
+        
+        var pumpDeviceCombo = Ext.create(
+                'Ext.form.field.ComboBox', {
+                    fieldLabel: '设备列表',
+                    id: "RealtimeMonitorPumpDeviceListComb_Id",
+                    labelWidth: 70,
+                    width: 180,
+                    labelAlign: 'left',
+                    queryMode: 'remote',
+                    typeAhead: true,
+                    store: pumpCombStore,
+                    autoSelect: false,
+                    editable: true,
+                    triggerAction: 'all',
+                    displayField: "boxval",
+                    valueField: "boxkey",
+                    pageSize:comboxPagingStatus,
+                    minChars:0,
+                    emptyText: cosog.string.all,
+                    blankText: cosog.string.all,
+                    listeners: {
+                        expand: function (sm, selections) {
+                            pumpDeviceCombo.getStore().loadPage(1); // 加载井下拉框的store
+                        },
+                        select: function (combo, record, index) {
+                        	Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getStore().loadPage(1);
+                        }
+                    }
+                });
+        
         Ext.applyIf(me, {
             items: [{
                 border: false,
@@ -21,7 +87,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         xtype: 'textfield',
                         value: 0,
                         hidden: true
-                    }]
+                    },pumpDeviceCombo]
                     
                 }, {
                 	region: 'east',
@@ -48,7 +114,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                 		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
                                 		if(isNotVal(gridPanel)){
                                 			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                			CreatePumpDeviceRealMonitorDataTable(selectedItem.data.wellName,deviceType)
+                                			CreatePumpDeviceRealMonitorDataTable(selectedItem.data.wellName,0)
                                 		}
                                 	}
                                 }
@@ -252,7 +318,7 @@ var PumpDeviceRealMonitorDataHandsontableHelper = {
 		                	var columnDataType='';
 		                	
 		                	for(var i=0;i<pumpDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-		        				if(relRow==pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col){
+		        				if(relRow==pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col*2){
 		        					columnDataType=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					break;
 		        				}

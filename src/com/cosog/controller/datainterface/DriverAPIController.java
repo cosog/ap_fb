@@ -130,7 +130,7 @@ public class DriverAPIController extends BaseController{
 					historyTable="tbl_pumpacqdata_hist";
 				}else{//否则管设备
 					realtimeTable="tbl_pipelineacqdata_latest";
-					historyTable="tbl_yubingacqdata_hist";
+					historyTable="tbl_pipelineacqdata_hist";
 				}
 				CommResponseData commResponseData=null;
 				String commRequest="{"
@@ -222,7 +222,7 @@ public class DriverAPIController extends BaseController{
 					functionCode="pumpDeviceRealTimeMonitoringStatusData";
 				}else{//否则管设备
 					realtimeTable="tbl_pipelineacqdata_latest";
-					historyTable="tbl_yubingacqdata_hist";
+					historyTable="tbl_pipelineacqdata_hist";
 					functionCode="pipelineDeviceRealTimeMonitoringStatusData";
 				}
 				
@@ -242,7 +242,8 @@ public class DriverAPIController extends BaseController{
 					String wellId=obj[obj.length-1]+"";
 					webSocketSendData.append("\"wellName\":\""+wellName+"\",");
 					webSocketSendData.append("\"acqTime\":\""+currentTime+"\",");
-					webSocketSendData.append("\"commStatus\":"+(acqOnline.getStatus()?1:0));
+					webSocketSendData.append("\"commStatus\":"+(acqOnline.getStatus()?1:0)+",");
+					webSocketSendData.append("\"commAlarmLevel\":"+(acqOnline.getStatus()?0:100));
 					webSocketSendData.append("}");
 					String commRequest="{"
 							+ "\"AKString\":\"\","
@@ -378,7 +379,7 @@ public class DriverAPIController extends BaseController{
 			functionCode="pumpDeviceRealTimeMonitoringData";
 		}else{
 			realtimeTable="tbl_pipelineacqdata_latest";
-			historyTable="tbl_yubingacqdata_hist";
+			historyTable="tbl_pipelineacqdata_hist";
 			functionCode="pipelineDeviceRealTimeMonitoringData";
 		}
 		if(acqGroup!=null){

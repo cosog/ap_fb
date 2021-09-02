@@ -82,12 +82,12 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
 //                                            function(ok){
 //                                                if("yes"==ok) {
                                     	
-//                                                	if(record.data.classes==1){
-//                                                		var configInfo={};
-//                                            			configInfo.delidslist=[];
-//                                            			configInfo.delidslist.push(record.data.text);
-//                                            			saveModbusProtocolConfigData(configInfo);
-//                                                	}
+                                                	if(record.data.classes==1){
+                                                		var configInfo={};
+                                            			configInfo.delidslist=[];
+                                            			configInfo.delidslist.push(record.data.id);
+                                            			SaveModbusProtocolInstanceConfigTreeData(configInfo);
+                                                	}
                                                 	
                                                 	
 //                                                }
