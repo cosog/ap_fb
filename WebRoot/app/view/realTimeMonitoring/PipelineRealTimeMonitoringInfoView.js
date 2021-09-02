@@ -6,6 +6,70 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
+        var pipelineCombStore = new Ext.data.JsonStore({
+        	pageSize:defaultWellComboxSize,
+            fields: [{
+                name: "boxkey",
+                type: "string"
+            }, {
+                name: "boxval",
+                type: "string"
+            }],
+            proxy: {
+            	url: context + '/wellInformationManagerController/loadWellComboxList',
+                type: "ajax",
+                actionMethods: {
+                    read: 'POST'
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'list',
+                    totalProperty: 'totals'
+                }
+            },
+            autoLoad: true,
+            listeners: {
+                beforeload: function (store, options) {
+                	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+                    var wellName = Ext.getCmp('RealtimeMonitorPipelineDeviceListComb_Id').getValue();
+                    var new_params = {
+                        orgId: leftOrg_Id,
+                        deviceType: 1,
+                        wellName: wellName
+                    };
+                    Ext.apply(store.proxy.extraParams,new_params);
+                }
+            }
+        });
+        
+        var pipelineDeviceCombo = Ext.create(
+                'Ext.form.field.ComboBox', {
+                    fieldLabel: '设备列表',
+                    id: "RealtimeMonitorPipelineDeviceListComb_Id",
+                    labelWidth: 70,
+                    width: 180,
+                    labelAlign: 'left',
+                    queryMode: 'remote',
+                    typeAhead: true,
+                    store: pipelineCombStore,
+                    autoSelect: false,
+                    editable: true,
+                    triggerAction: 'all',
+                    displayField: "boxval",
+                    valueField: "boxkey",
+                    pageSize:comboxPagingStatus,
+                    minChars:0,
+                    emptyText: cosog.string.all,
+                    blankText: cosog.string.all,
+                    listeners: {
+                        expand: function (sm, selections) {
+                            pipelineDeviceCombo.getStore().loadPage(1); // 加载井下拉框的store
+                        },
+                        select: function (combo, record, index) {
+                        	Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getStore().loadPage(1);
+                        }
+                    }
+                });
         Ext.applyIf(me, {
             items: [{
                 border: false,
@@ -21,7 +85,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         xtype: 'textfield',
                         value: 0,
                         hidden: true
-                    }]
+                    },pipelineDeviceCombo]
                     
                 }, {
                 	region: 'east',
@@ -48,7 +112,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
                                 		if(isNotVal(gridPanel)){
                                 			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                			CreatePipelineDeviceRealMonitorDataTable(selectedItem.data.wellName,deviceType)
+                                			CreatePipelineDeviceRealMonitorDataTable(selectedItem.data.wellName,1)
                                 		}
                                 	}
                                 }
@@ -252,7 +316,7 @@ var PipelineDeviceRealMonitorDataHandsontableHelper = {
 		                	var columnDataType='';
 		                	
 		                	for(var i=0;i<pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-		        				if(relRow==pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col){
+		        				if(relRow==pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col*2){
 		        					columnDataType=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					break;
 		        				}
@@ -334,7 +398,7 @@ function pipelineRealTimeMonitoringCurve(item){
 			params: {
 				deviceName:deviceName,
 				item:item,
-				deviceType:0
+				deviceType:1
 	        }
 		});
 	}

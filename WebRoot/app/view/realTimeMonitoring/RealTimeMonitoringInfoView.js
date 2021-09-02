@@ -29,9 +29,14 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
         			}],
         			listeners: {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
-        					Ext.getCmp("bottomTab_Id").setValue(newCard.id); //
+        					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
         					if(newCard.id=="PumpRealTimeMonitoringInfoPanel_Id"){
-        						
+        						var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+        						}
         					}else if(newCard.id=="PipelineRealTimeMonitoringInfoPanel_Id"){
         						var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
         						if (isNotVal(gridPanel)) {

@@ -566,7 +566,7 @@ function SaveModbusProtocolConfigTreeData(){
 			protocolProperties.code=selectedItem.data.code;
 			protocolProperties.text=propertiesData[0][2];
 			protocolProperties.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
-			protocolProperties.sort=propertiesData[1][3];
+			protocolProperties.sort=propertiesData[2][2];
 		}else if(selectedItem.data.classes==2){//选中的是采集单元
 			protocolProperties.classes=selectedItem.data.classes;
 			protocolProperties.id=selectedItem.data.id;
@@ -586,7 +586,7 @@ function SaveModbusProtocolConfigTreeData(){
 			protocolConfigData=selectedItem.data;
 			protocolConfigData.text=propertiesData[0][2];
 			protocolConfigData.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
-			protocolConfigData.sort=propertiesData[1][3];
+			protocolConfigData.sort=propertiesData[2][2];
 			
 		}else if(selectedItem.data.classes==2){//选中的是采集单元
 			protocolConfigData=selectedItem.parentNode.data;
@@ -599,6 +599,7 @@ function SaveModbusProtocolConfigTreeData(){
 		if(isNotVal(protocolConfigData.text)){
 			var configInfo={};
 			configInfo.ProtocolName=protocolConfigData.text;
+			configInfo.ProtocolCode=protocolConfigData.code;
 			configInfo.DeviceType=protocolConfigData.deviceType;
 			configInfo.Sort=protocolConfigData.sort;
 			configInfo.DataConfig=[];
@@ -973,6 +974,7 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 			
 			var id=selectedItem.data.id;
 			var code=selectedItem.data.code;
+			var oldName=selectedItem.data.text;
 			var name=propertiesData[0][2];
 			var deviceType=(propertiesData[1][2]=="泵设备"?0:1);
 			var unitId=selectedItem.data.unitId;

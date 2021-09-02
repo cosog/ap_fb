@@ -3,7 +3,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
     alias: 'widget.pumpRealTimeMonitoringWellListStore',
     fields: ['id','commStatus','commStatusName','wellName'],
     autoLoad: true,
-    pageSize: 10000,
+    pageSize: 50,
     proxy: {
         type: 'ajax',
         url: context + '/realTimeMonitoringController/getDeviceRealTimeOverview',
@@ -27,10 +27,18 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
             if (!isNotVal(gridPanel)) {
                 var column = createRealTimeMonitoringColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
+                
+                var bbar = new Ext.PagingToolbar({
+                	store: store,
+                	displayInfo: true,
+                	displayMsg: '共 {2}条'
+    	        });
+                
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PumpRealTimeMonitoringListGridPanel_Id",
                     border: false,
                     autoLoad: true,
+                    bbar: bbar,
                     columnLines: true,
                     forceFit: false,
                     viewConfig: {
@@ -60,9 +68,11 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+        	var deviceName=Ext.getCmp('RealtimeMonitorPumpDeviceListComb_Id').getValue();
             var new_params = {
                     orgId: orgId,
-                    deviceType:0
+                    deviceType:0,
+                    deviceName:deviceName
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

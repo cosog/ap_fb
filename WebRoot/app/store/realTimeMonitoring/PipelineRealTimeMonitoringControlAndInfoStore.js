@@ -1,6 +1,6 @@
-Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStore', {
+Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.pumpRealTimeMonitoringControlAndInfoStore',
+    alias: 'widget.pipelineRealTimeMonitoringControlAndInfoStore',
     autoLoad: true,
     pageSize: 10000,
     proxy: {
@@ -44,10 +44,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
 			        }
 			    }
 			});
-        	var deviceInfoGridPanel=Ext.getCmp("PumpRealMonitoringDeviceInfoDataGridPanel_Id");
+        	var deviceInfoGridPanel=Ext.getCmp("PipelineRealMonitoringDeviceInfoDataGridPanel_Id");
     		if(!isNotVal(deviceInfoGridPanel)){
     			deviceInfoGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'PumpRealMonitoringDeviceInfoDataGridPanel_Id',
+    				id:'PipelineRealMonitoringDeviceInfoDataGridPanel_Id',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -73,7 +73,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        }
     			    ]
     			});
-    			Ext.getCmp("PumpRealTimeMonitoringRightDeviceInfoPanel").add(deviceInfoGridPanel);
+    			Ext.getCmp("PipelineRealTimeMonitoringRightDeviceInfoPanel").add(deviceInfoGridPanel);
     		}else{
     			deviceInfoGridPanel.reconfigure(deviceInfoStore);
     		}
@@ -104,10 +104,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
 			    }
 			});
     		
-    		var controlGridPanel=Ext.getCmp("PumpRealMonitoringControlDataGridPanel_Id");
+    		var controlGridPanel=Ext.getCmp("PipelineRealMonitoringControlDataGridPanel_Id");
     		if(!isNotVal(controlGridPanel)){
     			controlGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'PumpRealMonitoringControlDataGridPanel_Id',
+    				id:'PipelineRealMonitoringControlDataGridPanel_Id',
     				requires: [
                        	'Ext.grid.selection.SpreadsheetModel',
                        	'Ext.grid.plugin.Clipboard'
@@ -245,16 +245,16 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        }
     			    ]
     			});
-    			Ext.getCmp("PumpRealTimeMonitoringRightControlPanel").add(controlGridPanel);
+    			Ext.getCmp("PipelineRealTimeMonitoringRightControlPanel").add(controlGridPanel);
     		}else{
     			controlGridPanel.reconfigure(controlStore);
     		}
         },
         beforeload: function (store, options) {
-        	var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        	var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var new_params = {
         			wellName: wellName,
-        			deviceType:0
+        			deviceType:1
                 };
            Ext.apply(store.proxy.extraParams, new_params);
         },

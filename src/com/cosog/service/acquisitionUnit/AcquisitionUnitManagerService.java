@@ -271,6 +271,7 @@ private CommonDataService service;
 					pumpTree_json.append("{\"classes\":1,");
 					pumpTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pumpTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
+					pumpTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
 					pumpTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
 					pumpTree_json.append("\"iconCls\": \"Protocol\",");
 					pumpTree_json.append("\"expanded\": true,");
@@ -804,6 +805,11 @@ private CommonDataService service;
 	}
 	public void doModbusProtocolInstanceEdit(T protocolInstance) throws Exception {
 		getBaseDao().updateObject(protocolInstance);
+	}
+	
+	public void doModbusProtocolInstanceBulkDelete(final String ids) throws Exception {
+		final String hql = "DELETE ProtocolInstance u where u.id in (" + ids + ")";
+		super.bulkObjectDelete(hql);
 	}
 	
 	public static String getDataItemsType(String type){

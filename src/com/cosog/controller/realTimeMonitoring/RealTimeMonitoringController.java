@@ -52,6 +52,7 @@ public class RealTimeMonitoringController extends BaseController {
 	private String limit;
 	private String msg = "";
 	private String wellName;
+	private String deviceName;
 	private String deviceType;
 	private String page;
 	private String orgId;
@@ -62,7 +63,7 @@ public class RealTimeMonitoringController extends BaseController {
 	public String getDeviceRealTimeOverview() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		wellName = ParamUtils.getParameter(request, "wellName");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
 		User user=null;
@@ -73,7 +74,7 @@ public class RealTimeMonitoringController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,wellName,deviceType);
+		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,deviceName,deviceType,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -89,7 +90,7 @@ public class RealTimeMonitoringController extends BaseController {
 	public String getDeviceRealMonitorData() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
 		json = realTimeMonitoringService.getDeviceRealMonitorData(deviceName,deviceType);
@@ -104,15 +105,15 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getPumpControlandInfoData")
-	public String getPumpControlandInfoData() throws Exception {
+	@RequestMapping("/getDeviceControlandInfoData")
+	public String getDeviceControlandInfoData() throws Exception {
 		String json = "";
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
 		wellName = ParamUtils.getParameter(request, "wellName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		json = realTimeMonitoringService.getPumpControlandInfoData(wellName,deviceType,user.getUserNo());
+		json = realTimeMonitoringService.getDeviceControlandInfoData(wellName,deviceType,user.getUserNo());
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -220,6 +221,22 @@ public class RealTimeMonitoringController extends BaseController {
 	}
 
 	public void setDevicetype(String deviceType) {
+		this.deviceType = deviceType;
+	}
+
+	public String getDeviceName() {
+		return deviceName;
+	}
+
+	public void setDeviceName(String deviceName) {
+		this.deviceName = deviceName;
+	}
+
+	public String getDeviceType() {
+		return deviceType;
+	}
+
+	public void setDeviceType(String deviceType) {
 		this.deviceType = deviceType;
 	}
 }
