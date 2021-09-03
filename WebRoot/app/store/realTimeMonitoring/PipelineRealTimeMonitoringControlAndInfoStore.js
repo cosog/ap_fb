@@ -44,10 +44,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
 			        }
 			    }
 			});
-        	var deviceInfoGridPanel=Ext.getCmp("PipelineRealMonitoringDeviceInfoDataGridPanel_Id");
+        	var deviceInfoGridPanel=Ext.getCmp("PipelineRealTimeMonitoringDeviceInfoDataGridPanel_Id");
     		if(!isNotVal(deviceInfoGridPanel)){
     			deviceInfoGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'PipelineRealMonitoringDeviceInfoDataGridPanel_Id',
+    				id:'PipelineRealTimeMonitoringDeviceInfoDataGridPanel_Id',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -104,10 +104,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
 			    }
 			});
     		
-    		var controlGridPanel=Ext.getCmp("PipelineRealMonitoringControlDataGridPanel_Id");
+    		var controlGridPanel=Ext.getCmp("PipelineRealTimeMonitoringControlDataGridPanel_Id");
     		if(!isNotVal(controlGridPanel)){
     			controlGridPanel=Ext.create('Ext.grid.Panel', {
-    				id:'PipelineRealMonitoringControlDataGridPanel_Id',
+    				id:'PipelineRealTimeMonitoringControlDataGridPanel_Id',
     				requires: [
                        	'Ext.grid.selection.SpreadsheetModel',
                        	'Ext.grid.plugin.Clipboard'

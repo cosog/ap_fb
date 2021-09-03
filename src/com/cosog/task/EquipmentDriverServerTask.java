@@ -51,7 +51,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -297,6 +297,7 @@ public class EquipmentDriverServerTask {
 		Collections.sort(modbusProtocolConfig.getProtocol());
 		List<String> acquisitionItemColumns=new ArrayList<String>();
 		List<String> acquisitionItemsName=new ArrayList<String>();
+		List<String> dataTypeList=new ArrayList<String>();
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==deviceType){
 				for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
@@ -305,6 +306,7 @@ public class EquipmentDriverServerTask {
 						
 						acquisitionItemColumns.add("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
 						acquisitionItemsName.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle()+(StringManagerUtils.isNotNull(unit)?("("+unit+")"):""));
+						dataTypeList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType());
 					}
 				}
 				break;
@@ -331,13 +333,18 @@ public class EquipmentDriverServerTask {
 			for(int i=0;i<acquisitionItemColumns.size();i++){
 				if(!StringManagerUtils.existOrNot(dataDictionaryItems,acquisitionItemColumns.get(i),false)){
 					maxSortNum+=1;
+					int status=0;
+					if(dataTypeList.get(i).toUpperCase().contains("FLOAT")){
+						status=1;
+					}
 					String addDataDict="insert into tbl_dist_item(sysdataid,cname,ename,sorts,status)"
-							+ " values('"+dataDictionaryId+"','"+acquisitionItemsName.get(i)+"','"+acquisitionItemColumns.get(i)+"',"+(maxSortNum)+",0)";
+							+ " values('"+dataDictionaryId+"','"+acquisitionItemsName.get(i)+"','"+acquisitionItemColumns.get(i)+"',"+(maxSortNum)+","+status+")";
 					pstmt = conn.prepareStatement(addDataDict);
 					pstmt.executeUpdate();
 					result++;
 				}
 			}
+			System.out.println("同步数据字典:"+dataDictionaryId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally{
@@ -378,10 +385,12 @@ public class EquipmentDriverServerTask {
 								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist");
 								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest");
 								initDataDictionary("7f13446d19b4497986980fa16a750f95",0);
+								initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);
 							}else{
-								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);
 								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist");
 								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest");
+								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);
+								initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);
 							}
 							break;
 						}

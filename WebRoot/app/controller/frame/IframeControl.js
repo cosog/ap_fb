@@ -158,7 +158,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		&& module_Code != "ProductionReport"
 		&& module_Code != "ProductionData"
 		&& module_Code != "WellInformation"
-		&& module_Code != "DeviceRealTimeMonitoring") {
+		&& module_Code != "DeviceRealTimeMonitoring"
+		&& module_Code != "DeviceHistoryQuery") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -293,6 +294,24 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
 			}
+		}
+	}else if(module_Code == "DeviceHistoryQuery"){
+		var tabPanel = Ext.getCmp("HistoryQueryTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
+			}
+		}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+//			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+//			if (isNotVal(gridPanel)) {
+//				gridPanel.getStore().load();
+//			}else{
+//				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+//			}
 		}
 	}else {
 		return false;

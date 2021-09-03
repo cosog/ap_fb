@@ -1,4 +1,4 @@
-var pipelineDeviceRealMonitorDataHandsontableHelper=null;
+var pipelineDeviceRealTimeMonitoringDataHandsontableHelper=null;
 Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
     extend: 'Ext.panel.Panel',
     alias: 'widget.pipelineRealTimeMonitoringInfoView',
@@ -31,7 +31,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('RealtimeMonitorPipelineDeviceListComb_Id').getValue();
+                    var wellName = Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: 1,
@@ -45,7 +45,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
         var pipelineDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备列表',
-                    id: "RealtimeMonitorPipelineDeviceListComb_Id",
+                    id: "RealTimeMonitoringPipelineDeviceListComb_Id",
                     labelWidth: 70,
                     width: 180,
                     labelAlign: 'left',
@@ -107,12 +107,12 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         	html:'<div class="PipelineRealTimeMonitoringInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PipelineRealTimeMonitoringInfoDataTableInfoDiv_id"></div></div>',
                             listeners: {
                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                	if(pipelineDeviceRealMonitorDataHandsontableHelper!=null && pipelineDeviceRealMonitorDataHandsontableHelper.hot!=undefined){
+                                	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null && pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
                                 		var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
                                 		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
                                 		if(isNotVal(gridPanel)){
                                 			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                			CreatePipelineDeviceRealMonitorDataTable(selectedItem.data.wellName,1)
+                                			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
                                 		}
                                 	}
                                 }
@@ -171,15 +171,15 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
     }
 });
 
-function CreatePipelineDeviceRealMonitorDataTable(deviceName,deviceType){
+function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/realTimeMonitoringController/getDeviceRealMonitorData',
+		url:context + '/realTimeMonitoringController/getDeviceRealTimeMonitoringData',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
 			
-			if(pipelineDeviceRealMonitorDataHandsontableHelper==null || pipelineDeviceRealMonitorDataHandsontableHelper.hot==undefined){
-				pipelineDeviceRealMonitorDataHandsontableHelper = PipelineDeviceRealMonitorDataHandsontableHelper.createNew("PipelineRealTimeMonitoringInfoDataTableInfoDiv_id");
+			if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper==null || pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot==undefined){
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper = PipelineDeviceRealTimeMonitoringDataHandsontableHelper.createNew("PipelineRealTimeMonitoringInfoDataTableInfoDiv_id");
 				var colHeaders="['名称','变量','名称','变量','名称','变量','名称','变量']";
 				var columns="[" 
 						+"{data:'name1'}," 
@@ -191,34 +191,34 @@ function CreatePipelineDeviceRealMonitorDataTable(deviceName,deviceType){
 						+"{data:'name4'}," 
 						+"{data:'value4'}" 
 						+"]";
-				pipelineDeviceRealMonitorDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
-				pipelineDeviceRealMonitorDataHandsontableHelper.columns=Ext.JSON.decode(columns);
-				pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo=result.CellInfo;
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns=Ext.JSON.decode(columns);
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=result.CellInfo;
 				if(result.totalRoot.length==0){
-					pipelineDeviceRealMonitorDataHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					pipelineDeviceRealTimeMonitoringDataHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					pipelineDeviceRealMonitorDataHandsontableHelper.createTable(result.totalRoot);
+					pipelineDeviceRealTimeMonitoringDataHandsontableHelper.createTable(result.totalRoot);
 				}
 			}else{
-				pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo=result.CellInfo;
-				pipelineDeviceRealMonitorDataHandsontableHelper.hot.loadData(result.totalRoot);
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=result.CellInfo;
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 			
 			//绘制第一个float型变量曲线
-			for(var i=0;i<pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
-					Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnName);
-                	pipelineRealTimeMonitoringCurve(pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnName);
+			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+				if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
+					Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
+                	pipelineRealTimeMonitoringCurve(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
 				}
 			}
 			//添加单元格属性
-			for(var i=0;i<pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-				var row=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row;
-				var col=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col;
-				var column=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].column;
-				var columnDataType=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType;
-				pipelineDeviceRealMonitorDataHandsontableHelper.hot.setCellMeta(row,col,'columnDataType',columnDataType);
+			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+				var row=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
+				var col=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col;
+				var column=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].column;
+				var columnDataType=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
+				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.setCellMeta(row,col,'columnDataType',columnDataType);
 			}
 			
 		},
@@ -232,27 +232,27 @@ function CreatePipelineDeviceRealMonitorDataTable(deviceName,deviceType){
 	});
 };
 
-var PipelineDeviceRealMonitorDataHandsontableHelper = {
+var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 		createNew: function (divid) {
-	        var pipelineDeviceRealMonitorDataHandsontableHelper = {};
-	        pipelineDeviceRealMonitorDataHandsontableHelper.divid = divid;
-	        pipelineDeviceRealMonitorDataHandsontableHelper.validresult=true;//数据校验
-	        pipelineDeviceRealMonitorDataHandsontableHelper.colHeaders=[];
-	        pipelineDeviceRealMonitorDataHandsontableHelper.columns=[];
-	        pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo=[];
+	        var pipelineDeviceRealTimeMonitoringDataHandsontableHelper = {};
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.divid = divid;
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.validresult=true;//数据校验
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=[];
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns=[];
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=[];
 	        
-	        pipelineDeviceRealMonitorDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = '#DC2828';   
 	             td.style.color='#FFFFFF';
 	        }
 	        
-	        pipelineDeviceRealMonitorDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
 	            td.style.backgroundColor = 'rgb(184, 184, 184)';
 	        }
 	        
-	        pipelineDeviceRealMonitorDataHandsontableHelper.addSizeBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
 	        	td.style.fontWeight = 'bold';
 		        td.style.fontSize = '20px';
@@ -260,13 +260,13 @@ var PipelineDeviceRealMonitorDataHandsontableHelper = {
 		        td.style.height = '40px';
 	        }
 	        
-	        pipelineDeviceRealMonitorDataHandsontableHelper.createTable = function (data) {
-	        	$('#'+pipelineDeviceRealMonitorDataHandsontableHelper.divid).empty();
-	        	var hotElement = document.querySelector('#'+pipelineDeviceRealMonitorDataHandsontableHelper.divid);
-	        	pipelineDeviceRealMonitorDataHandsontableHelper.hot = new Handsontable(hotElement, {
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.createTable = function (data) {
+	        	$('#'+pipelineDeviceRealTimeMonitoringDataHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+pipelineDeviceRealTimeMonitoringDataHandsontableHelper.divid);
+	        	pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
 	        		colWidths: [30,20,30,20,30,20,30,20],
-	                columns:pipelineDeviceRealMonitorDataHandsontableHelper.columns,
+	                columns:pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                rowHeaders: false,//显示行头
 	                colHeaders: false,
@@ -282,18 +282,18 @@ var PipelineDeviceRealMonitorDataHandsontableHelper = {
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
 	                    if (visualRowIndex ==0) {
-	                        cellProperties.renderer = pipelineDeviceRealMonitorDataHandsontableHelper.addSizeBg;
+	                        cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg;
 	                    }
 	                    else if ((visualColIndex ==0 || visualColIndex ==2 || visualColIndex ==4 || visualColIndex ==6)&&visualRowIndex>0) {
-							cellProperties.renderer = pipelineDeviceRealMonitorDataHandsontableHelper.addBoldBg;
+							cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg;
 		                }
 	                    
-	                    for(var i=0;i<pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-	                    	if(pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].alarmLevel>0){
-	                    		var row2=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row;
-		        				var col2=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col*2+1;
+	                    for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+	                    	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+	                    		var row2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
+		        				var col2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
 		        				if(visualRowIndex==row2 && visualColIndex==col2 ){
-		        					cellProperties.renderer = pipelineDeviceRealMonitorDataHandsontableHelper.addColBg;
+		        					cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addColBg;
 		        				}
 	                    	}
 	        			}
@@ -311,13 +311,13 @@ var PipelineDeviceRealMonitorDataHandsontableHelper = {
 	                			
 	                		}
 		                	
-		                	var item=pipelineDeviceRealMonitorDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
-		                	var selectecCell=pipelineDeviceRealMonitorDataHandsontableHelper.hot.getCell(relRow,relColumn);
+		                	var item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
+		                	var selectecCell=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getCell(relRow,relColumn);
 		                	var columnDataType='';
 		                	
-		                	for(var i=0;i<pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-		        				if(relRow==pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col*2){
-		        					columnDataType=pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType;
+		                	for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+		        				if(relRow==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
+		        					columnDataType=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					break;
 		        				}
 		        			}
@@ -330,7 +330,7 @@ var PipelineDeviceRealMonitorDataHandsontableHelper = {
 	                }
 	        	});
 	        }
-	        return pipelineDeviceRealMonitorDataHandsontableHelper;
+	        return pipelineDeviceRealTimeMonitoringDataHandsontableHelper;
 	    }
 };
 function pipelineRealTimeMonitoringCurve(item){

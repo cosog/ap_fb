@@ -183,11 +183,11 @@ function websocketOnMessage(evt) {
 					}
 				}
 				//更新实时表
-				if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
+				if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName){
-						pumpDeviceRealMonitorDataHandsontableHelper.CellInfo=data.CellInfo;
-						pumpDeviceRealMonitorDataHandsontableHelper.hot.loadData(data.totalRoot);
+						pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
+						pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
 					}
 				}
 				//更新实时曲线
@@ -247,11 +247,11 @@ function websocketOnMessage(evt) {
 //						  store.commitChanges();
 					}
 					//更新实时表
-					if(isNotVal(pumpDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pumpDeviceRealMonitorDataHandsontableHelper.hot)){
+					if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 						var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 						if(wellName==data.wellName){
 							var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
-							pumpDeviceRealMonitorDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
+							pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
 						}
 					}
 				}
@@ -289,11 +289,11 @@ function websocketOnMessage(evt) {
 					}
 				}
 				//更新实时表
-				if(isNotVal(pipelineDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealMonitorDataHandsontableHelper.hot)){
+				if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName){
-						pipelineDeviceRealMonitorDataHandsontableHelper.CellInfo=data.CellInfo;
-						pipelineDeviceRealMonitorDataHandsontableHelper.hot.loadData(data.totalRoot);
+						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
+						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
 					}
 				}
 				//更新实时曲线
@@ -350,11 +350,11 @@ function websocketOnMessage(evt) {
 						}
 					}
 					//更新实时表
-					if(isNotVal(pipelineDeviceRealMonitorDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealMonitorDataHandsontableHelper.hot)){
+					if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 						var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 						if(wellName==data.wellName){
 							var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
-							pipelineDeviceRealMonitorDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
+							pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
 						}
 					}
 				}

@@ -54,7 +54,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     		Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
                     		var deviceName=record.data.wellName;
                     		var deviceType=0;
-                    		CreatePumpDeviceRealMonitorDataTable(deviceName,deviceType);
+                    		CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
                     		Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStore');
                     	}
                     }
@@ -68,7 +68,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-        	var deviceName=Ext.getCmp('RealtimeMonitorPumpDeviceListComb_Id').getValue();
+        	var deviceName=Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:0,
