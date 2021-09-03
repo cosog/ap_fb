@@ -86,14 +86,14 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getDeviceRealMonitorData")
-	public String getDeviceRealMonitorData() throws Exception {
+	@RequestMapping("/getDeviceRealTimeMonitoringData")
+	public String getDeviceRealTimeMonitoringData() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		json = realTimeMonitoringService.getDeviceRealMonitorData(deviceName,deviceType);
+		json = realTimeMonitoringService.getDeviceRealTimeMonitoringData(deviceName,deviceType);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -214,14 +214,6 @@ public class RealTimeMonitoringController extends BaseController {
 
 	public void setOrgId(String orgId) {
 		this.orgId = orgId;
-	}
-
-	public String getDevicetype() {
-		return deviceType;
-	}
-
-	public void setDevicetype(String deviceType) {
-		this.deviceType = deviceType;
 	}
 
 	public String getDeviceName() {

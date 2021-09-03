@@ -1,4 +1,4 @@
-var pumpDeviceRealMonitorDataHandsontableHelper=null;
+var pumpDeviceRealTimeMonitoringDataHandsontableHelper=null;
 Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
     extend: 'Ext.panel.Panel',
     alias: 'widget.pumpRealTimeMonitoringInfoView',
@@ -32,7 +32,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('RealtimeMonitorPumpDeviceListComb_Id').getValue();
+                    var wellName = Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: 0,
@@ -46,7 +46,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
         var pumpDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备列表',
-                    id: "RealtimeMonitorPumpDeviceListComb_Id",
+                    id: "RealTimeMonitoringPumpDeviceListComb_Id",
                     labelWidth: 70,
                     width: 180,
                     labelAlign: 'left',
@@ -109,12 +109,12 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         	html:'<div class="PumpRealTimeMonitoringInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PumpRealTimeMonitoringInfoDataTableInfoDiv_id"></div></div>',
                             listeners: {
                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                	if(pumpDeviceRealMonitorDataHandsontableHelper!=null && pumpDeviceRealMonitorDataHandsontableHelper.hot!=undefined){
+                                	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper!=null && pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
                                 		var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
                                 		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
                                 		if(isNotVal(gridPanel)){
                                 			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                			CreatePumpDeviceRealMonitorDataTable(selectedItem.data.wellName,0)
+                                			CreatePumpDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,0)
                                 		}
                                 	}
                                 }
@@ -173,15 +173,15 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
     }
 });
 
-function CreatePumpDeviceRealMonitorDataTable(deviceName,deviceType){
+function CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/realTimeMonitoringController/getDeviceRealMonitorData',
+		url:context + '/realTimeMonitoringController/getDeviceRealTimeMonitoringData',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
 			
-			if(pumpDeviceRealMonitorDataHandsontableHelper==null || pumpDeviceRealMonitorDataHandsontableHelper.hot==undefined){
-				pumpDeviceRealMonitorDataHandsontableHelper = PumpDeviceRealMonitorDataHandsontableHelper.createNew("PumpRealTimeMonitoringInfoDataTableInfoDiv_id");
+			if(pumpDeviceRealTimeMonitoringDataHandsontableHelper==null || pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot==undefined){
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper = PumpDeviceRealTimeMonitoringDataHandsontableHelper.createNew("PumpRealTimeMonitoringInfoDataTableInfoDiv_id");
 				var colHeaders="['名称','变量','名称','变量','名称','变量','名称','变量']";
 				var columns="[" 
 						+"{data:'name1'}," 
@@ -193,34 +193,34 @@ function CreatePumpDeviceRealMonitorDataTable(deviceName,deviceType){
 						+"{data:'name4'}," 
 						+"{data:'value4'}" 
 						+"]";
-				pumpDeviceRealMonitorDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
-				pumpDeviceRealMonitorDataHandsontableHelper.columns=Ext.JSON.decode(columns);
-				pumpDeviceRealMonitorDataHandsontableHelper.CellInfo=result.CellInfo;
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper.columns=Ext.JSON.decode(columns);
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=result.CellInfo;
 				if(result.totalRoot.length==0){
-					pumpDeviceRealMonitorDataHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					pumpDeviceRealTimeMonitoringDataHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					pumpDeviceRealMonitorDataHandsontableHelper.createTable(result.totalRoot);
+					pumpDeviceRealTimeMonitoringDataHandsontableHelper.createTable(result.totalRoot);
 				}
 			}else{
-				pumpDeviceRealMonitorDataHandsontableHelper.CellInfo=result.CellInfo;
-				pumpDeviceRealMonitorDataHandsontableHelper.hot.loadData(result.totalRoot);
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=result.CellInfo;
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 			
 			//绘制第一个float型变量曲线
-			for(var i=0;i<pumpDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-				if(pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
-					Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnName);
-                	pumpRealTimeMonitoringCurve(pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnName);
+			for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+				if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
+					Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
+                	pumpRealTimeMonitoringCurve(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
 				}
 			}
 			//添加单元格属性
-			for(var i=0;i<pumpDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-				var row=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row;
-				var col=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col;
-				var column=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].column;
-				var columnDataType=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType;
-				pumpDeviceRealMonitorDataHandsontableHelper.hot.setCellMeta(row,col,'columnDataType',columnDataType);
+			for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+				var row=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
+				var col=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col;
+				var column=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].column;
+				var columnDataType=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
+				pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.setCellMeta(row,col,'columnDataType',columnDataType);
 			}
 			
 		},
@@ -234,27 +234,27 @@ function CreatePumpDeviceRealMonitorDataTable(deviceName,deviceType){
 	});
 };
 
-var PumpDeviceRealMonitorDataHandsontableHelper = {
+var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 		createNew: function (divid) {
-	        var pumpDeviceRealMonitorDataHandsontableHelper = {};
-	        pumpDeviceRealMonitorDataHandsontableHelper.divid = divid;
-	        pumpDeviceRealMonitorDataHandsontableHelper.validresult=true;//数据校验
-	        pumpDeviceRealMonitorDataHandsontableHelper.colHeaders=[];
-	        pumpDeviceRealMonitorDataHandsontableHelper.columns=[];
-	        pumpDeviceRealMonitorDataHandsontableHelper.CellInfo=[];
+	        var pumpDeviceRealTimeMonitoringDataHandsontableHelper = {};
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.divid = divid;
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.validresult=true;//数据校验
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=[];
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.columns=[];
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=[];
 	        
-	        pumpDeviceRealMonitorDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = '#DC2828';   
 	             td.style.color='#FFFFFF';
 	        }
 	        
-	        pumpDeviceRealMonitorDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
 	            td.style.backgroundColor = 'rgb(184, 184, 184)';
 	        }
 	        
-	        pumpDeviceRealMonitorDataHandsontableHelper.addSizeBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
 	        	td.style.fontWeight = 'bold';
 		        td.style.fontSize = '20px';
@@ -262,13 +262,13 @@ var PumpDeviceRealMonitorDataHandsontableHelper = {
 		        td.style.height = '40px';
 	        }
 	        
-	        pumpDeviceRealMonitorDataHandsontableHelper.createTable = function (data) {
-	        	$('#'+pumpDeviceRealMonitorDataHandsontableHelper.divid).empty();
-	        	var hotElement = document.querySelector('#'+pumpDeviceRealMonitorDataHandsontableHelper.divid);
-	        	pumpDeviceRealMonitorDataHandsontableHelper.hot = new Handsontable(hotElement, {
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.createTable = function (data) {
+	        	$('#'+pumpDeviceRealTimeMonitoringDataHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+pumpDeviceRealTimeMonitoringDataHandsontableHelper.divid);
+	        	pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
 	        		colWidths: [30,20,30,20,30,20,30,20],
-	                columns:pumpDeviceRealMonitorDataHandsontableHelper.columns,
+	                columns:pumpDeviceRealTimeMonitoringDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                rowHeaders: false,//显示行头
 	                colHeaders: false,
@@ -284,18 +284,18 @@ var PumpDeviceRealMonitorDataHandsontableHelper = {
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
 	                    if (visualRowIndex ==0) {
-	                        cellProperties.renderer = pumpDeviceRealMonitorDataHandsontableHelper.addSizeBg;
+	                        cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg;
 	                    }
 	                    else if ((visualColIndex ==0 || visualColIndex ==2 || visualColIndex ==4 || visualColIndex ==6)&&visualRowIndex>0) {
-							cellProperties.renderer = pumpDeviceRealMonitorDataHandsontableHelper.addBoldBg;
+							cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg;
 		                }
 	                    
-	                    for(var i=0;i<pumpDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-	                    	if(pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].alarmLevel>0){
-	                    		var row2=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row;
-		        				var col2=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col*2+1;
+	                    for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+	                    	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+	                    		var row2=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
+		        				var col2=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
 		        				if(visualRowIndex==row2 && visualColIndex==col2 ){
-		        					cellProperties.renderer = pumpDeviceRealMonitorDataHandsontableHelper.addColBg;
+		        					cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addColBg;
 		        				}
 	                    	}
 	        			}
@@ -313,13 +313,13 @@ var PumpDeviceRealMonitorDataHandsontableHelper = {
 	                			
 	                		}
 		                	
-		                	var item=pumpDeviceRealMonitorDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
-		                	var selectecCell=pumpDeviceRealMonitorDataHandsontableHelper.hot.getCell(relRow,relColumn);
+		                	var item=pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
+		                	var selectecCell=pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.getCell(relRow,relColumn);
 		                	var columnDataType='';
 		                	
-		                	for(var i=0;i<pumpDeviceRealMonitorDataHandsontableHelper.CellInfo.length;i++){
-		        				if(relRow==pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].col*2){
-		        					columnDataType=pumpDeviceRealMonitorDataHandsontableHelper.CellInfo[i].columnDataType;
+		                	for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+		        				if(relRow==pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
+		        					columnDataType=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					break;
 		        				}
 		        			}
@@ -332,7 +332,7 @@ var PumpDeviceRealMonitorDataHandsontableHelper = {
 	                }
 	        	});
 	        }
-	        return pumpDeviceRealMonitorDataHandsontableHelper;
+	        return pumpDeviceRealTimeMonitoringDataHandsontableHelper;
 	    }
 };
 function pumpRealTimeMonitoringCurve(item){
