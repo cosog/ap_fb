@@ -6,7 +6,7 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
     initComponent: function () {
         var me = this;
         var PumpHistoryQueryInfoView = Ext.create('AP.view.historyQuery.PumpHistoryQueryInfoView');
-//        var PipelineHistoryQueryInfoView = Ext.create('AP.view.historyQuery.PipelineHistoryQueryInfoView');
+        var PipelineHistoryQueryInfoView = Ext.create('AP.view.historyQuery.PipelineHistoryQueryInfoView');
         Ext.apply(me, {
         	items: [{
         		xtype: 'tabpanel',
@@ -23,7 +23,7 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         			},{
         				title: '管设备',
         				id:'PipelineHistoryQueryInfoPanel_Id',
-//        				items: [PipelineHistoryQueryInfoView],
+        				items: [PipelineHistoryQueryInfoView],
         				layout: "fit",
         				border: false
         			}],
@@ -31,19 +31,19 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
         					if(newCard.id=="PumpHistoryQueryInfoPanel_Id"){
-//        						var gridPanel = Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
-//        						if (isNotVal(gridPanel)) {
-//        							gridPanel.getStore().load();
-//        						}else{
-//        							Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
-//        						}
+        						var gridPanel = Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
+        						}
         					}else if(newCard.id=="PipelineHistoryQueryInfoPanel_Id"){
-//        						var gridPanel = Ext.getCmp("PipelineHistoryQueryListGridPanel_Id");
-//        						if (isNotVal(gridPanel)) {
-//        							gridPanel.getStore().load();
-//        						}else{
-//        							Ext.create('AP.store.historyQuery.PipelineHistoryQueryWellListStore');
-//        						}
+        						var gridPanel = Ext.getCmp("PipelineHistoryQueryListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.historyQuery.PipelineHistoryQueryWellListStore');
+        						}
         					}
         				}
         			}
