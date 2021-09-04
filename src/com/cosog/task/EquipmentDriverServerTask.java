@@ -60,41 +60,41 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 		
-		String path="";
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		path=stringManagerUtils.getFilePath("test1.json","test/");
-		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test2.json","test/");
-		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test3.json","test/");
-		String onLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
-		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
-		
-		int i=0;
-		while(true){
-			if(i%2==0){
-				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
-			}else{
-				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
-			}
-			i++;
-			
-//			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
-			
-			Thread.sleep(1000*1);
-		}
+//		String path="";
+//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+//		path=stringManagerUtils.getFilePath("test1.json","test/");
+//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test2.json","test/");
+//		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test3.json","test/");
+//		String onLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+//		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
+//		
+//		int i=0;
+//		while(true){
+//			if(i%2==0){
+//				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+//			}else{
+//				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
+//			}
+//			i++;
+//			
+////			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+//			
+//			Thread.sleep(1000*1);
+//		}
 		
 		
 
-//		loadProtocolConfig();
-//		initServerConfig();
-//		initProtocolConfig("","");
-//		initInstanceConfig(null,"");
-//		initDriverAcquisitionInfoConfig(null,"");
+		loadProtocolConfig();
+		initServerConfig();
+		initProtocolConfig("","");
+		initInstanceConfig(null,"");
+		initDriverAcquisitionInfoConfig(null,"");
 //		do{
 //			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
 //			type = new TypeToken<DriverProbeResponse>() {}.getType();
@@ -384,13 +384,13 @@ public class EquipmentDriverServerTask {
 							if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==0){
 								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist");
 								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest");
-								initDataDictionary("7f13446d19b4497986980fa16a750f95",0);
-								initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);
+								initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
+								initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
 							}else{
 								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist");
 								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest");
-								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);
-								initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);
+								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
+								initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
 							}
 							break;
 						}
@@ -406,7 +406,9 @@ public class EquipmentDriverServerTask {
 					initAcquisitionItemDataBaseColumns();
 					//同步数据字典
 					initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
+					initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
 					initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
+					initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
 				}
 			}
 		}
