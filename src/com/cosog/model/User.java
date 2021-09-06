@@ -54,6 +54,8 @@ public class User implements java.io.Serializable {
 	private String syncOrAsync;
 	private String defaultComboxSize;
 	private String defaultGraghSize;
+	
+	private String loginIp;
 
 	/**
 	 * 组织节点orgCode集合
@@ -355,6 +357,15 @@ public class User implements java.io.Serializable {
 
 	public void setUserOrgNames(String userOrgNames) {
 		this.userOrgNames = userOrgNames;
+	}
+
+	@Transient
+	public String getLoginIp() {
+		return loginIp;
+	}
+
+	public void setLoginIp(String loginIp) {
+		this.loginIp = loginIp;
 	}
 
 	

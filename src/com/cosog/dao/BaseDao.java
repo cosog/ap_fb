@@ -58,6 +58,7 @@ import com.cosog.model.KeyParameter;
 import com.cosog.model.Org;
 import com.cosog.model.ProductionOutWellInfo;
 import com.cosog.model.Pump;
+import com.cosog.model.User;
 import com.cosog.model.WellInformation;
 import com.cosog.model.WellTrajectory;
 import com.cosog.model.Wellorder;
@@ -1065,11 +1066,14 @@ public class BaseDao extends HibernateDaoSupport {
 	}
 	
 	@SuppressWarnings("resource")
-	public Boolean saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgIds,String orgId,int deviceType) throws SQLException {
+	public Boolean saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
 		PreparedStatement ps=null;
 		List<String> initWellList=new ArrayList<String>();
+		List<String> updateWellList=new ArrayList<String>();
+		List<String> addWellList=new ArrayList<String>();
+		List<String> deleteWellList=new ArrayList<String>();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
 			EquipmentDriverServerTask.loadProtocolConfig();
@@ -1098,11 +1102,11 @@ public class BaseDao extends HibernateDaoSupport {
 						
 						cs.setString(14, wellHandsontableChangedData.getUpdatelist().get(i).getVideoUrl());
 						cs.setString(15, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
-						cs.setString(16, orgIds);
+						cs.setString(16, user.getUserorgids());
 						cs.setString(17, orgId);
 						cs.setInt(18, license.getNumber());
 						cs.executeUpdate();
-						
+						updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
@@ -1134,10 +1138,11 @@ public class BaseDao extends HibernateDaoSupport {
 						
 						cs.setString(14, wellHandsontableChangedData.getInsertlist().get(i).getVideoUrl());
 						cs.setString(15, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
-						cs.setString(16, orgIds);
+						cs.setString(16, user.getUserorgids());
 						cs.setString(17, orgId);
 						cs.setInt(18, license.getNumber());
 						cs.executeUpdate();
+						addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
@@ -1151,16 +1156,25 @@ public class BaseDao extends HibernateDaoSupport {
 			if(wellHandsontableChangedData.getDelidslist()!=null){
 				String delIds="";
 				String delSql="";
+				String queryDeleteWellSql="";
 				for(int i=0;i<wellHandsontableChangedData.getDelidslist().size();i++){
 					delIds+=wellHandsontableChangedData.getDelidslist().get(i);
 					if(i<wellHandsontableChangedData.getDelidslist().size()-1){
 						delIds+=",";
 					}
 				}
-				delSql="delete from tbl_wellinformation t where t.id in ("+delIds+")";
+				queryDeleteWellSql="select wellname from tbl_wellinformation t where t.devicetype="+deviceType+" and t.id in ("+StringUtils.join(wellHandsontableChangedData.getDelidslist(), ",")+")";
+				delSql="delete from tbl_wellinformation t where t.devicetype="+deviceType+" and t.id in ("+StringUtils.join(wellHandsontableChangedData.getDelidslist(), ",")+")";
+				List<?> list = this.findCallSql(queryDeleteWellSql);
+				for(int i=0;i<list.size();i++){
+					deleteWellList.add(list.get(i)+"");
+				}
+				
+				
 				ps=conn.prepareStatement(delSql);
 				int result=ps.executeUpdate();
 			}
+			saveDeviceOperationLog(updateWellList,addWellList,deleteWellList,deviceType,user);
 			
 			if(initWellList.size()>0){
 				EquipmentDriverServerTask.initDriverAcquisitionInfoConfig(initWellList,"update");
@@ -1179,6 +1193,80 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
+	public boolean saveDeviceOperationLog(List<String> updateWellList,List<String> addWellList,List<String> deleteWellList,int deviceType,User user) throws SQLException{
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		try {
+			cs = conn.prepareCall("{call prd_save_deviceOperationLog(?,?,?,?,?,?,?)}");
+			String currentTiem=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+			for(int i=0;addWellList!=null && i<addWellList.size();i++){
+				cs.setString(1, currentTiem);
+				cs.setString(2, addWellList.get(i));
+				cs.setInt(3, deviceType);
+				cs.setInt(4, 0);
+				cs.setString(5, user.getUserId());
+				cs.setString(6, user.getLoginIp());
+				cs.setString(7, "");
+				cs.executeUpdate();
+			}
+			for(int i=0;updateWellList!=null && i<updateWellList.size();i++){
+				cs.setString(1, currentTiem);
+				cs.setString(2, updateWellList.get(i));
+				cs.setInt(3, deviceType);
+				cs.setInt(4, 1);
+				cs.setString(5, user.getUserId());
+				cs.setString(6, user.getLoginIp());
+				cs.setString(7, "");
+				cs.executeUpdate();
+			}
+			for(int i=0;deleteWellList!=null && i<deleteWellList.size();i++){
+				cs.setString(1, currentTiem);
+				cs.setString(2, deleteWellList.get(i));
+				cs.setInt(3, deviceType);
+				cs.setInt(4, 2);
+				cs.setString(5, user.getUserId());
+				cs.setString(6, user.getLoginIp());
+				cs.setString(7, "");
+				cs.executeUpdate();
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
+	
+	public boolean saveDeviceControlLog(String wellName,String deviceType,String title,String value,User user) throws SQLException{
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		try {
+			cs = conn.prepareCall("{call prd_save_deviceOperationLog(?,?,?,?,?,?,?)}");
+			String currentTiem=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+			cs.setString(1, currentTiem);
+			cs.setString(2, wellName);
+			cs.setInt(3, StringManagerUtils.stringToInteger(deviceType));
+			cs.setInt(4, 3);
+			cs.setString(5, user.getUserId());
+			cs.setString(6, user.getLoginIp());
+			cs.setString(7, "控制项:"+title+",写入值:"+value);
+			cs.executeUpdate();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
 	
 	public Boolean saveElecInverPumpingUnitData(ElecInverCalculateManagerHandsontableChangedData elecInverCalculateManagerHandsontableChangedData) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();

@@ -288,34 +288,6 @@ public class WellInformationManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
-	
-	
-
-	@RequestMapping("/findByJhList")
-	public String findByJhList() throws Exception {
-		list = new ArrayList<WellInformation>();
-		list = this.wellInformationManagerService.fingWellByJhList();
-		totals = list.size();
-		String json = "";
-		StringBuffer sbf = new StringBuffer();
-		sbf.append("{");
-		sbf.append("\"totals\":" + totals).append(" ,\"list\":[");
-		for (int i = 0; i < list.size(); i++) {
-			sbf.append(" {\"jh\":\"" + list.get(i)).append("\"},");
-			log.debug(" Jh list = " + list.get(i) + " , ");
-		}
-		sbf.append("]}");
-		json = sbf.toString();
-		log.debug(" json = " + json);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
 
 	@RequestMapping("/showWellTypeTree")
 	public String showWellTypeTree() throws Exception {
@@ -375,7 +347,7 @@ public class WellInformationManagerController extends BaseController {
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
-		this.wellInformationManagerService.saveWellEditerGridData(wellHandsontableChangedData, orgids,orgId,StringManagerUtils.stringToInteger(deviceType));
+		this.wellInformationManagerService.saveWellEditerGridData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");

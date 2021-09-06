@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cosog.model.User;
 import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
@@ -75,8 +76,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public void saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgIds,String orgId,int deviceType) throws Exception {
-		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData, orgIds,orgId,deviceType);
+	public void saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
+		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
 	public void editWellName(String oldWellName,String newWellName,String orgid) throws Exception {
