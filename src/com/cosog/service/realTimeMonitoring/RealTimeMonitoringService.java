@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cosog.model.AlarmShowStyle;
+import com.cosog.model.User;
 import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
@@ -462,5 +463,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("]}");
 //		System.out.println(result_json.toString());
 		return result_json.toString();
+	}
+	
+	public void saveDeviceControlLog(String wellName,String deviceType,String title,String value,User user) throws SQLException{
+		getBaseDao().saveDeviceControlLog(wellName,deviceType,title,value,user);
 	}
 }
