@@ -95,33 +95,41 @@ public class EquipmentDriverServerTask {
 		initProtocolConfig("","");
 		initInstanceConfig(null,"");
 		initDriverAcquisitionInfoConfig(null,"");
-//		do{
-//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-//			type = new TypeToken<DriverProbeResponse>() {}.getType();
-//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-//			String Ver="";
-//			if(driverProbeResponse!=null){
-//				if(!driverProbeResponse.getHttpServerInitStatus()){
-//					initServerConfig();
-//				}
-//				if(!driverProbeResponse.getProtocolInitStatus()){
-//					initProtocolConfig("","");
-//				}
-//				if(!driverProbeResponse.getIDInitStatus()){
-//					initDriverAcquisitionInfoConfig(null,"");
-//				}
-//				Ver=driverProbeResponse.getVer();
-//			}else{
-//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-//			}
-//			Thread.sleep(1000*1);
-//		}while(true);
+		do{
+			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+			type = new TypeToken<DriverProbeResponse>() {}.getType();
+			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+			String Ver="";
+			if(driverProbeResponse!=null){
+				if(!driverProbeResponse.getHttpServerInitStatus()){
+					initServerConfig();
+				}
+				if(!driverProbeResponse.getProtocolInitStatus()){
+					initProtocolConfig("","");
+				}
+				if(!driverProbeResponse.getInstanceInitStatus()){
+					initInstanceConfig(null,"");
+				}
+				if(!driverProbeResponse.getIDInitStatus()){
+					initDriverAcquisitionInfoConfig(null,"");
+				}
+				if(!driverProbeResponse.getSMSInitStatus()){
+					
+				}
+				Ver=driverProbeResponse.getVer();
+			}else{
+				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+			}
+			Thread.sleep(1000*1);
+		}while(true);
 	}
 	
 	public static class DriverProbeResponse{
 		public boolean ProtocolInitStatus;
+		public boolean InstanceInitStatus;
 		public boolean IDInitStatus;
 		public boolean HttpServerInitStatus;
+		public boolean SMSInitStatus;
 		public String Ver;
 		
 		public boolean getProtocolInitStatus() {
@@ -147,6 +155,18 @@ public class EquipmentDriverServerTask {
 		}
 		public void setVer(String ver) {
 			Ver = ver;
+		}
+		public boolean getInstanceInitStatus() {
+			return InstanceInitStatus;
+		}
+		public void setInstanceInitStatus(boolean instanceInitStatus) {
+			InstanceInitStatus = instanceInitStatus;
+		}
+		public boolean getSMSInitStatus() {
+			return SMSInitStatus;
+		}
+		public void setSMSInitStatus(boolean sMSInitStatus) {
+			SMSInitStatus = sMSInitStatus;
 		}
 	}
 	

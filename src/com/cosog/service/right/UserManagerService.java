@@ -324,4 +324,8 @@ public class UserManagerService<T> extends BaseService<T> {
 		result_json.append("]");
 		return result_json.toString();
 	}
+	
+	public void saveSystemLog(User user) throws Exception {
+		this.getBaseDao().saveSystemLog(user);
+	}
 }

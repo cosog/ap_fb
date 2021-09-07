@@ -95,16 +95,20 @@
 }
 
 .Report {
-	background-image: url(../images/icon/cbmReport.png) !important;
+	background-image: url(../images/icon/report.png) !important;
 }
 .audit {
 	background-image: url(../images/icon/audit.png) !important;
 }
 .ReportIn {
-	background-image: url(../images/icon/cbmReport.png) !important;
+	background-image: url(../images/icon/report.png) !important;
 }
 .CbmReportRoot {
-	background-image: url(../images/icon/cbmReport.png) !important;
+	background-image: url(../images/icon/report.png) !important;
+}
+
+.Log {
+	background-image: url(../images/icon/log.png) !important;
 }
 
 .CurveRoot {

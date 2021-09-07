@@ -103,7 +103,7 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                             },
                             success: function (response, action) {
                             	if (action.result.flag == false) {
-                            		Ext.getCmp("WellControlCheckPassWindow_Id").close();
+                            		Ext.getCmp("DeviceControlCheckPassWindow_Id").close();
                                     Ext.MessageBox.show({
                                         title: cosog.string.ts,
                                         msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -117,7 +117,7 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                                 } else if (action.result.flag == true && action.result.error == false) {
                                     Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
                                 }  else if (action.result.flag == true && action.result.error == true) {
-                                	Ext.getCmp("WellControlCheckPassWindow_Id").close();
+                                	Ext.getCmp("DeviceControlCheckPassWindow_Id").close();
                                     Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
                                     
                                     var tabPanel = Ext.getCmp("DeviceRealtimeAnalisisPanel");
@@ -131,7 +131,7 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                                 } 
                             },
                             failure: function () {
-                            	Ext.getCmp("WellControlCheckPassWindow_Id").close();
+                            	Ext.getCmp("DeviceControlCheckPassWindow_Id").close();
                                 Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font>】：" + cosog.string.contactadmin + "！")
                             }
                         });
@@ -142,7 +142,7 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                 text: cosog.string.cancel,
                 iconCls: 'cancel',
                 handler: function () {
-                    Ext.getCmp("WellControlCheckPassWindow_Id").close();
+                    Ext.getCmp("DeviceControlCheckPassWindow_Id").close();
                 }
          }]
         });

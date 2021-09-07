@@ -172,62 +172,65 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
-	public String DeviceControlOperation_Mdubus(String protocolCode,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
-		String json="";
-		HttpSession session=request.getSession();
-		User user = (User) session.getAttribute("userLogin");
-		String url=Config.getInstance().configFile.getDriverConfig().getWriteAddr();
-		String readUrl=Config.getInstance().configFile.getDriverConfig().getReadAddr();
-		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		if(equipmentDriveMap.size()==0){
-			EquipmentDriverServerTask.loadProtocolConfig();
-			equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		}
-		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		
-		ModbusProtocolConfig.Protocol protocol=null;
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
-				protocol=modbusProtocolConfig.getProtocol().get(i);
-				break;
+	public boolean DeviceControlOperation_Mdubus(String protocolCode,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
+		boolean result=true;
+		try {
+//			String json="";
+			HttpSession session=request.getSession();
+			User user = (User) session.getAttribute("userLogin");
+			String url=Config.getInstance().configFile.getDriverConfig().getWriteAddr();
+			String readUrl=Config.getInstance().configFile.getDriverConfig().getReadAddr();
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			}
-		}
-		int addr=0;
-		String dataType="";
-		String title="";
-		for(int i=0;i<protocol.getItems().size();i++){
-			if(itemCode.equals(protocol.getItems().get(i).getName())){
-				addr=protocol.getItems().get(i).getAddr();
-				dataType=protocol.getItems().get(i).getIFDataType();
-				title=protocol.getItems().get(i).getTitle();
-				break;
-			}
-		}
-		if(addr>0){
-			String ctrlJson="{"
-					+ "\"ID\":\""+ID+"\","
-					+ "\"Slave\":"+Slave+","
-					+ "\"Addr\":"+addr+","
-					+ "\"Value\":["+StringManagerUtils.objectToString(controlValue, dataType)+"]"
-					+ "}";
-			String readJson="{"
-					+ "\"ID\":\""+ID+"\","
-					+ "\"Slave\":"+Slave+","
-					+ "\"Addr\":"+addr+""
-					+ "}";
-			StringManagerUtils.sendPostMethod(url, ctrlJson,"utf-8");
-			String readResult=StringManagerUtils.sendPostMethod(readUrl, readJson,"utf-8");
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 			
-			try {
+			ModbusProtocolConfig.Protocol protocol=null;
+			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
+					protocol=modbusProtocolConfig.getProtocol().get(i);
+					break;
+				}
+			}
+			int addr=0;
+			String dataType="";
+			String title="";
+			for(int i=0;i<protocol.getItems().size();i++){
+				if(itemCode.equalsIgnoreCase("addr"+protocol.getItems().get(i).getAddr())){
+					addr=protocol.getItems().get(i).getAddr();
+					dataType=protocol.getItems().get(i).getIFDataType();
+					title=protocol.getItems().get(i).getTitle();
+					break;
+				}
+			}
+			if(addr>0){
+				String ctrlJson="{"
+						+ "\"ID\":\""+ID+"\","
+						+ "\"Slave\":"+Slave+","
+						+ "\"Addr\":"+addr+","
+						+ "\"Value\":["+StringManagerUtils.objectToString(controlValue, dataType)+"]"
+						+ "}";
+				String readJson="{"
+						+ "\"ID\":\""+ID+"\","
+						+ "\"Slave\":"+Slave+","
+						+ "\"Addr\":"+addr+""
+						+ "}";
+				String responseStr=StringManagerUtils.sendPostMethod(url, ctrlJson,"utf-8");
+//				readResult=StringManagerUtils.sendPostMethod(readUrl, readJson,"utf-8");
+				if(!StringManagerUtils.isNotNull(responseStr)){
+					result=false;
+				}
 				realTimeMonitoringService.saveDeviceControlLog(wellName,deviceType,title,StringManagerUtils.objectToString(controlValue, dataType),user);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+//				json = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
 			}
-			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result=false;
 		}
-		json = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
-		return json;
+		return result;
 	}
 	
 	@RequestMapping("/deviceControlOperation")
@@ -259,7 +262,12 @@ public class RealTimeMonitoringController extends BaseController {
 					String slave=obj[2]+"";
 					if(StringManagerUtils.isNotNull(protocol) && StringManagerUtils.isNotNull(signinid)){
 						if(StringManagerUtils.isNotNull(slave)){
-							jsonLogin=DeviceControlOperation_Mdubus(protocol,wellName,deviceType,signinid,slave,controlType,controlValue);
+//							jsonLogin=
+							if(DeviceControlOperation_Mdubus(protocol,wellName,deviceType,signinid,slave,controlType,controlValue)){
+								jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
+							}else{
+								jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>命令发送失败。</font>'}";
+							}
 						}
 					}else{
 						jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>协议配置有误，请核查！</font>'}";

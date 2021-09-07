@@ -92,6 +92,33 @@ public class WellInformationManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	@RequestMapping("/loadDeviceTypeComboxList")
+	public String loadDeviceTypeComboxList() throws Exception {
+		this.pager=new Page("pageForm",request);
+		String json = this.wellInformationManagerService.loadDeviceTypeComboxList();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/loadDataDictionaryComboxList")
+	public String loadDataDictionaryComboxList() throws Exception {
+		this.pager=new Page("pageForm",request);
+		String itemCode = ParamUtils.getParameter(request, "itemCode");
+		String json = this.wellInformationManagerService.loadDataDictionaryComboxList(itemCode);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 
 	@RequestMapping("/doWellInformationShow")
 	public String doWellInformationShow() throws IOException {
