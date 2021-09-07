@@ -211,6 +211,7 @@ public class UserLoginManagerController extends BaseController {
 				session.setAttribute("userLogin", user);
 				session.setAttribute("SESSION_USERNAME", username);
 				out.print("{success:true,flag:'normal'}");
+				this.service.saveSystemLog(user);
 			} else {
 				if(locale.equalsIgnoreCase("zh_CN")){
 				out.print("{success:true,flag:false,'msg':'<font color=\"purple\">用户" + username + "的账号或密码错误 !</font>' }");

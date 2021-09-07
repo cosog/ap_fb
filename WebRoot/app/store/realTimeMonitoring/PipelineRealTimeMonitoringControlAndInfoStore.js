@@ -173,44 +173,41 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		                            disabled:hand,
     		                            hidden:hidden,
     		                            handler: function () {
-//    		                            	var operaName="";
-//    		                            	if(text=="停抽"||text=="启抽"||text=="即时采集"||text=="即时刷新"){
-//    		                            		operaName="是否执行"+text+"操作";
-//    		                            	}else{
-//    		                            		operaName="是否执行"+text+item.split("(")[0]+"操作";
-//    		                            	}
-//    		                            	 Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
-//    		                                 Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
-//    		                                 Ext.Msg.confirm("操作确认", operaName, function (btn) {
-//    		                                     if (btn == "yes") {
-//    		                                         var win_Obj = Ext.getCmp("WellControlCheckPassWindow_Id")
-//    		                                         if (win_Obj != undefined) {
-//    		                                             win_Obj.destroy();
-//    		                                         }
-//    		                                         var WellControlCheckPassWindow = Ext.create("AP.view.diagnosis.WellControlCheckPassWindow", {
-//    		                                             title: '控制'
-//    		                                         });
-//    		                                         
-//    		                                         
-//    		                                     	 var wellName  = Ext.getCmp("FSDiagramAnalysisSingleDetails_Id").getSelectionModel().getSelection()[0].data.wellName;
-//    		                                     	 Ext.getCmp("ProductionWellControlWellName_Id").setValue(wellName);
-//    		                                         Ext.getCmp("ProductionWellControlType_Id").setValue(o.data.itemcode);
-//    		                                         Ext.getCmp("ProductionWellControlShowType_Id").setValue(o.data.showType);
-//    		                                         if(o.data.itemcode=="startOrStopWell"){
-//    		                                        	 if(o.data.value=="运行"){
-//    		                                        		 Ext.getCmp("ProductionWellControlValue_Id").setValue(2);
-//    		                                        	 }else if(o.data.value=="停抽" ||o.data.value=="停止"){
-//    		                                        		 Ext.getCmp("ProductionWellControlValue_Id").setValue(1);
-//    		             			        			 }
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").hide();
-//    		                                         }else if(o.data.itemcode=="ImmediatelyAcquisition"){//即时采集
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").setValue(1);
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").hide();
-//    		                                         }else if(o.data.itemcode=="balanceCalculateMode" || o.data.itemcode=="balanceCalculateType" || o.data.itemcode=="balanceControlMode"){
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").setFieldLabel(o.data.item);
+    		                            	var operaName="";
+    		                            	if(text=="停抽"||text=="启抽"||text=="即时采集"||text=="即时刷新"){
+    		                            		operaName="是否执行"+text+"操作";
+    		                            	}else{
+    		                            		operaName="是否执行"+text+item.split("(")[0]+"操作";
+    		                            	}
+    		                            	 Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+    		                                 Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
+    		                                 Ext.Msg.confirm("操作确认", operaName, function (btn) {
+    		                                     if (btn == "yes") {
+    		                                         var win_Obj = Ext.getCmp("DeviceControlCheckPassWindow_Id")
+    		                                         if (win_Obj != undefined) {
+    		                                             win_Obj.destroy();
+    		                                         }
+    		                                         var DeviceControlCheckPassWindow = Ext.create("AP.view.realTimeMonitoring.DeviceControlCheckPassWindow", {
+    		                                             title: '控制'
+    		                                         });
+    		                                         
+    		                                         
+    		                                     	 var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+    		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
+    		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(1);
+    		                                         Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
+    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(o.data.showType);
+    		                                         if(o.data.itemcode=="startOrStopWell"){
+    		                                        	 if(o.data.value=="运行"){
+    		                                        		 Ext.getCmp("DeviceControlValue_Id").setValue(2);
+    		                                        	 }else if(o.data.value=="停抽" ||o.data.value=="停止"){
+    		                                        		 Ext.getCmp("DeviceControlValue_Id").setValue(1);
+    		             			        			 }
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+    		                                         }else if(o.data.itemcode=="balanceCalculateMode" || o.data.itemcode=="balanceCalculateType" || o.data.itemcode=="balanceControlMode"){
+//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
 //    		                                        	 var data=[];
 //    		                                        	 if(o.data.itemcode=="balanceCalculateMode"){
 //    		                                        		 data=[['1', '下行程最大值/上行程最大值'], ['2', '上行程最大值/下行程最大值']];
@@ -224,19 +221,19 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
 //    		                                                 fields: ['boxkey', 'boxval'],
 //    		                                                 data: data
 //    		                                             });
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").setStore(controlTypeStore);
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").setRawValue(o.data.value);
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").show();
-//    		                                         }else{
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").show();
-//    		                                        	 Ext.getCmp("ProductionWellControlValueCombo_Id").hide();
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").setFieldLabel(o.data.item);
-//    		                                        	 Ext.getCmp("ProductionWellControlValue_Id").setValue(o.data.value);
-//    		                                         }
-//    		                                         
-//    		                                         WellControlCheckPassWindow.show();
-//    		                                     }
-//    		                                 });
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
+    		                                         }else{
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
+    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+    		                                         }
+    		                                         
+    		                                         DeviceControlCheckPassWindow.show();
+    		                                     }
+    		                                 });
     		                            }
     		                        });
     		                    }, 50);

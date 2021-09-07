@@ -1268,6 +1268,30 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
+	public boolean saveSystemLog(User user) throws SQLException{
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		try {
+			cs = conn.prepareCall("{call prd_save_systemLog(?,?,?,?,?)}");
+			String currentTiem=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
+			cs.setString(1, currentTiem);
+			cs.setInt(2, 0);
+			cs.setString(3, user.getUserId());
+			cs.setString(4, user.getLoginIp());
+			cs.setString(5, "用户登录");
+			cs.executeUpdate();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
 	public Boolean saveElecInverPumpingUnitData(ElecInverCalculateManagerHandsontableChangedData elecInverCalculateManagerHandsontableChangedData) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		Statement st=null; 

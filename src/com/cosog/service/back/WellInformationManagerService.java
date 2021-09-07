@@ -38,8 +38,9 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		int deviceType=StringManagerUtils.stringToInteger(deviceTypeStr);
 		String sql = " select  t.wellName as wellName,t.wellName as dm from  tbl_wellinformation t  ,tbl_org  g where 1=1 and  t.orgId=g.org_id  and g.org_id in ("
 				+ orgId + ")";
-		sql += " and t.deviceType ="+deviceType;
-		
+		if(StringManagerUtils.isNotNull(deviceTypeStr)){
+			sql += " and t.deviceType ="+deviceType;
+		}
 		if (StringManagerUtils.isNotNull(wellName)) {
 			sql += " and t.wellName like '%" + wellName + "%'";
 		}
@@ -53,6 +54,70 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		try {
 			int totals=this.getTotalCountRows(sql);
 			List<?> list = this.findCallSql(finalsql);
+			result_json.append("{\"totals\":"+totals+",\"list\":[{boxkey:\"\",boxval:\"选择全部\"},");
+			String get_key = "";
+			String get_val = "";
+			if (null != list && list.size() > 0) {
+				for (Object o : list) {
+					Object[] obj = (Object[]) o;
+					get_key = obj[0] + "";
+					get_val = (String) obj[1];
+					result_json.append("{boxkey:\"" + get_key + "\",");
+					result_json.append("boxval:\"" + get_val + "\"},");
+				}
+				if (result_json.toString().endsWith(",")) {
+					result_json.deleteCharAt(result_json.length() - 1);
+				}
+			}
+			result_json.append("]}");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result_json.toString();
+	}
+	
+	public String loadDeviceTypeComboxList() throws Exception {
+		//String orgIds = this.getUserOrgIds(orgId);
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer sqlCuswhere = new StringBuffer();
+		String sql = "select t.itemvalue,t.itemname from TBL_CODE t where upper(t.itemcode)=upper('deviceType') order by t.itemvalue ";
+		
+		try {
+			int totals=this.getTotalCountRows(sql);
+			List<?> list = this.findCallSql(sql);
+			result_json.append("{\"totals\":"+totals+",\"list\":[{boxkey:\"\",boxval:\"选择全部\"},");
+			String get_key = "";
+			String get_val = "";
+			if (null != list && list.size() > 0) {
+				for (Object o : list) {
+					Object[] obj = (Object[]) o;
+					get_key = obj[0] + "";
+					get_val = (String) obj[1];
+					result_json.append("{boxkey:\"" + get_key + "\",");
+					result_json.append("boxval:\"" + get_val + "\"},");
+				}
+				if (result_json.toString().endsWith(",")) {
+					result_json.deleteCharAt(result_json.length() - 1);
+				}
+			}
+			result_json.append("]}");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result_json.toString();
+	}
+	
+	public String loadDataDictionaryComboxList(String itemCode) throws Exception {
+		//String orgIds = this.getUserOrgIds(orgId);
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer sqlCuswhere = new StringBuffer();
+		String sql = "select t.itemvalue,t.itemname from TBL_CODE t where upper(t.itemcode)=upper('"+itemCode+"') order by t.itemvalue ";
+		
+		try {
+			int totals=this.getTotalCountRows(sql);
+			List<?> list = this.findCallSql(sql);
 			result_json.append("{\"totals\":"+totals+",\"list\":[{boxkey:\"\",boxval:\"选择全部\"},");
 			String get_key = "";
 			String get_val = "";

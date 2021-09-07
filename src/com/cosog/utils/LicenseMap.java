@@ -18,7 +18,8 @@ public final class LicenseMap {
 		List<Integer> moduleList0=new ArrayList<Integer>();
 		moduleList0.add(9999);//功能导航
 		moduleList0.add(1998);//实时监控
-		moduleList0.add(2018);//实时监控
+		moduleList0.add(2018);//历史查询
+		moduleList0.add(2038);//日志
 		moduleList0.add(27);//权限管理
 		moduleList0.add(24);//单位管理
 		moduleList0.add(28);//用户管理
