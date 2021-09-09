@@ -11,11 +11,11 @@ Ext.define('AP.controller.acquisitionUnit.AcquisitionUnitInfoControl', {
     }
 });
 
-function addModbusProtocolConfigData() {
-    var ModbusProtocolInfoWindow = Ext.create("AP.view.acquisitionUnit.ModbusProtocolInfoWindow", {
+function addModbusProtocolAddrMappingConfigData() {
+    var window = Ext.create("AP.view.acquisitionUnit.ModbusProtocolAddrMappingInfoWindow", {
         title: '创建协议'
     });
-    ModbusProtocolInfoWindow.show();
+    window.show();
     Ext.getCmp("addFormModbusProtocol_Id").show();
     Ext.getCmp("updateFormaModbusProtocol_Id").hide();
     return false;
@@ -34,7 +34,7 @@ var saveModbusProtocolSubmitBtnForm = function () {
             waitTitle: 'Please Wait...',
             success: function (response, action) {
                 Ext.getCmp('modbusProtocol_editWin_Id').close();
-                Ext.getCmp("ModbusProtocolConfigTreeGridPanel_Id").getStore().load();
+                Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id").getStore().load();
                 if (action.result.msg == true) {
                     Ext.Msg.alert(cosog.string.ts, "<font color=blue>" + cosog.string.success + "</font>");
                 }
@@ -90,7 +90,7 @@ var SaveAcquisitionGroupSubmitBtnForm = function () {
             waitTitle: 'Please Wait...',
             success: function (response, action) {
                 Ext.getCmp('acquisitionGroup_editWin_Id').close();
-                Ext.getCmp("ModbusProtocolConfigTreeGridPanel_Id").getStore().load();
+                Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
                 if (action.result.msg == true) {
                     Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.success + "</font>】，" + cosog.string.dataInfo + "");
                 }
@@ -123,7 +123,7 @@ function UpdateAcquisitionGroupDataInfoSubmitBtnForm() {
             success: function (response, action) {
                 Ext.getCmp("acquisitionGroup_editWin_Id").getEl().unmask();
                 Ext.getCmp('acquisitionGroup_editWin_Id').close();
-                Ext.getCmp("AcquisitionGroupInfoGridPanel_Id").getStore().load();
+                Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
 
                 if (action.result.msg == true) {
                     Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.sucupate + "</font>】，" + cosog.string.dataInfo + "。");
@@ -209,7 +209,7 @@ var SaveAcquisitionUnitSubmitBtnForm = function () {
             waitTitle: 'Please Wait...',
             success: function (response, action) {
                 Ext.getCmp('acquisitionUnit_editWin_Id').close();
-                Ext.getCmp("ModbusProtocolConfigTreeGridPanel_Id").getStore().load();
+                Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
                 if (action.result.msg == true) {
                     Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.success + "</font>】，" + cosog.string.dataInfo + "");
                 }
@@ -436,10 +436,10 @@ showAcquisitionUnitOwnGroups = function (selectedAcquisitionUnitId) {
 
 //为当前采集组安排采集项
 var grantAcquisitionItemsPermission = function () {
-    if (protocolConfigItemsHandsontableHelper == null) {
+    if (protocolAcqGroupConfigItemsHandsontableHelper == null) {
         return false;
     }
-    var driverConfigItemsData = protocolConfigItemsHandsontableHelper.hot.getData();
+    var driverConfigItemsData = protocolAcqGroupConfigItemsHandsontableHelper.hot.getData();
     var addUrl = context + '/acquisitionUnitManagerController/grantAcquisitionItemsPermission'
     // 添加条件
     var addjson = [];
@@ -447,8 +447,8 @@ var grantAcquisitionItemsPermission = function () {
     var matrixDataArr = "";
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
    
-    var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ScadaProtocolModbusConfigSelectRow_Id").getValue();
-    var selectedItem=Ext.getCmp("ModbusProtocolConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
+    var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
+    var selectedItem=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
     
     var groupCode = selectedItem.data.code;
     if (!isNotVal(groupCode)) {
@@ -562,10 +562,10 @@ var grantAcquisitionGroupsPermission = function () {
     return false;
 };
 function addModbusProtocolInstanceConfigData() {
-    var ModbusProtocolInfoWindow = Ext.create("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
+    var window = Ext.create("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
         title: '创建实例'
     });
-    ModbusProtocolInfoWindow.show();
+    window.show();
     Ext.getCmp("addFormModbusProtocolInstance_Id").show();
     Ext.getCmp("updateFormaModbusProtocolInstance_Id").hide();
     return false;

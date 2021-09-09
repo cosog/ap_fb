@@ -1,6 +1,6 @@
-Ext.define("AP.view.acquisitionUnit.ModbusProtocolInfoWindow", {
+Ext.define("AP.view.acquisitionUnit.ModbusProtocolAddrMappingInfoWindow", {
     extend: 'Ext.window.Window',
-    alias: 'widget.modbusProtocolInfoWindow',
+    alias: 'widget.modbusProtocolAddrMappingInfoWindow',
     layout: 'fit',
     iframe: true,
     id: 'modbusProtocol_editWin_Id',

@@ -293,6 +293,19 @@ public class StringManagerUtils {
 		}
 		return flag;
 	}
+	
+	public static boolean existOrNot(List<Integer> list, int key) {
+		boolean flag = false;
+		for (int i=0;i<list.size();i++) {
+			boolean match=false;
+			match=list.get(i)==key;
+			if (match) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
 
 	public static String filterHtml(Object oIn) {
 		// 如果是空对象，返回空字符串

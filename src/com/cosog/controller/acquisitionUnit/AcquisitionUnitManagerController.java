@@ -497,6 +497,22 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getModbusProtocolAlarmItemsConfigData")
+	public String getModbusProtocolAlarmItemsConfigData() throws Exception {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String classes = ParamUtils.getParameter(request, "classes");
+		String code = ParamUtils.getParameter(request, "code");
+		String json = "";
+		json = acquisitionUnitItemManagerService.getModbusProtocolAlarmItemsConfigData(protocolName,classes,code);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/getProtocolInstanceItemsConfigData")
 	public String getProtocolInstanceItemsConfigData() throws Exception {
 		String instanceName = ParamUtils.getParameter(request, "instanceName");
@@ -525,6 +541,18 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/modbusProtocolAddrMappingTreeData")
+	public String modbusProtocolAddrMappingTreeData() throws IOException {
+		String json = acquisitionUnitItemManagerService.modbusProtocolAddrMappingTreeData();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/modbusProtocolAndAcqUnitTreeData")
 	public String modbusProtocolAndAcqUnitTreeData() throws IOException {
 		String deviceType=ParamUtils.getParameter(request, "deviceType");
@@ -537,6 +565,21 @@ public class AcquisitionUnitManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	@RequestMapping("/modbusProtocolAlarmGroupTreeData")
+	public String modbusProtocolAlarmGroupTreeData() throws IOException {
+		String json = acquisitionUnitItemManagerService.modbusProtocolAlarmGroupTreeData();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	
+	
 	
 	@RequestMapping("/modbusInstanceConfigTreeData")
 	public String modbusInstanceConfigTreeData() throws IOException {
@@ -575,8 +618,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/saveModbusProtocolConfigData")
-	public String SaveModbusProtocolConfigData() throws Exception {
+	@RequestMapping("/saveModbusProtocolAddrMappingConfigData")
+	public String SaveModbusProtocolAddrMappingConfigData() throws Exception {
 		String json = "";
 		Gson gson = new Gson();
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
