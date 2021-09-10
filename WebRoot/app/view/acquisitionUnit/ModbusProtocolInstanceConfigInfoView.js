@@ -360,23 +360,23 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 		var selectedItem=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
 		var propertiesData=protocolConfigInstancePropertiesHandsontableHelper.hot.getData();
 		if(selectedItem.data.classes==1){//选中的是实例
+			var saveData={};
+			saveData.id=selectedItem.data.id;
+			saveData.code=selectedItem.data.code;
+			saveData.oldName=selectedItem.data.text;
+			saveData.name=propertiesData[0][2];
+			saveData.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
+			saveData.unitId=selectedItem.data.unitId;
+			saveData.acqProtocolType=propertiesData[2][2];
+			saveData.ctrlProtocolType=propertiesData[3][2];
 			
-			var id=selectedItem.data.id;
-			var code=selectedItem.data.code;
-			var oldName=selectedItem.data.text;
-			var name=propertiesData[0][2];
-			var deviceType=(propertiesData[1][2]=="泵设备"?0:1);
-			var unitId=selectedItem.data.unitId;
-			var acqProtocolType=propertiesData[2][2];
-			var ctrlProtocolType=propertiesData[3][2];
+			saveData.signInPrefix=propertiesData[4][2];
+			saveData.signInSuffix=propertiesData[5][2];
 			
-			var signInPrefix=propertiesData[4][2];
-			var signInSuffix=propertiesData[5][2];
+			saveData.heartbeatPrefix=propertiesData[6][2];
+			saveData.heartbeatSuffix=propertiesData[7][2];
 			
-			var heartbeatPrefix=propertiesData[6][2];
-			var heartbeatSuffix=propertiesData[7][2];
-			
-			var sort=propertiesData[8][2];
+			saveData.sort=propertiesData[8][2];
 			
 			Ext.Ajax.request({
 				method:'POST',
@@ -394,18 +394,7 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 					Ext.MessageBox.alert("信息","请求失败");
 				},
 				params: {
-					id: id,
-					code: code,
-					name: name,
-					deviceType: deviceType,
-					unitId: unitId,
-					acqProtocolType: acqProtocolType,
-					ctrlProtocolType: ctrlProtocolType,
-					signInPrefix: signInPrefix,
-					signInSuffix: signInSuffix,
-					heartbeatPrefix: heartbeatPrefix,
-					heartbeatSuffix: heartbeatSuffix,
-					sort: sort
+					data: JSON.stringify(saveData),
 		        }
 			});
 		}

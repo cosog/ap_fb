@@ -17,15 +17,10 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmGroupConfigInfoView', {
                     hidden: true
                 },'->',{
         			xtype: 'button',
-                    text: '添加报警单元',
-                    iconCls: 'add',
-                    handler: function (v, o) {
-        			}
-        		},"-",{
-        			xtype: 'button',
                     text: '添加报警组',
                     iconCls: 'add',
                     handler: function (v, o) {
+                    	addAlarmGroupInfo();
         			}
         		},"-",{
                 	xtype: 'button',
@@ -33,6 +28,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmGroupConfigInfoView', {
         			text: cosog.string.save,
         			iconCls: 'save',
         			handler: function (v, o) {
+        				SaveModbusProtocolAlarmGroupConfigTreeData();
         			}
                 }],
                 layout: "border",
@@ -96,14 +92,17 @@ function CreateProtocolAlarmGroupItemsConfigInfoTable(protocolName,classes,code)
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmGroupConfigItemsHandsontableHelper==null || protocolAlarmGroupConfigItemsHandsontableHelper.hot==undefined){
 				protocolAlarmGroupConfigItemsHandsontableHelper = ProtocolAlarmGroupConfigItemsHandsontableHelper.createNew("ModbusProtocolAlarmGroupItemsConfigTableInfoDiv_id");
-				var colHeaders="['','序号','名称','地址','上限','下限','报警级别','报警开关']";
+				var colHeaders="['','序号','名称','地址','上限','下限','回差','延时(s)','报警级别','报警使能']";
 				var columns="[{data:'checked',type:'checkbox'},{data:'id'},{data:'title'},"
 					 	+"{data:'addr',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigItemsHandsontableHelper);}},"
 						+"{data:'upperLimit',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigItemsHandsontableHelper);}},"
 						+"{data:'lowerLimit',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigItemsHandsontableHelper);}}," 
 						
+						+"{data:'hystersis',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigItemsHandsontableHelper);}}," 
+						+"{data:'delay',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigItemsHandsontableHelper);}}," 
+						
 						+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
-						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['关','开']}" 
+						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
 						+"]";
 				protocolAlarmGroupConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				protocolAlarmGroupConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
@@ -156,7 +155,7 @@ var ProtocolAlarmGroupConfigItemsHandsontableHelper = {
 	        	var hotElement = document.querySelector('#'+protocolAlarmGroupConfigItemsHandsontableHelper.divid);
 	        	protocolAlarmGroupConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
-	        		colWidths: [25,50,120,80,80,80,80,80,80,80,80],
+	        		colWidths: [25,50,120,80,80,80,80,80,80,80],
 //	                hiddenColumns: {
 //	                    columns: [0],
 //	                    indicators: true
@@ -177,7 +176,7 @@ var ProtocolAlarmGroupConfigItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >=1 || visualColIndex <=3) {
+	                    if (visualColIndex >=1 && visualColIndex <=3) {
 							cellProperties.readOnly = true;
 //							cellProperties.renderer = protocolAlarmGroupConfigItemsHandsontableHelper.addBoldBg;
 		                }
@@ -216,19 +215,7 @@ var ProtocolAlarmGroupConfigItemsHandsontableHelper = {
 
 function CreateProtocolAlarmGroupConfigPropertiesInfoTable(data){
 	var root=[];
-	if(data.classes==2){
-		var item1={};
-		item1.id=1;
-		item1.title='单元名称';
-		item1.value=data.text;
-		root.push(item1);
-		
-		var item2={};
-		item2.id=2;
-		item2.title='备注';
-		item2.value=data.remark;
-		root.push(item2);
-	}else if(data.classes==3){
+	if(data.classes==3){
 		var item1={};
 		item1.id=1;
 		item1.title='组名称';
@@ -236,22 +223,10 @@ function CreateProtocolAlarmGroupConfigPropertiesInfoTable(data){
 		root.push(item1);
 		
 		var item2={};
-		item2.id=2;
-		item2.title='采集周期(s)';
-		item2.value=data.acq_cycle;
+		item2.id=4;
+		item2.title='备注';
+		item2.value=data.remark;
 		root.push(item2);
-		
-		var item3={};
-		item3.id=3;
-		item3.title='保存周期(s)';
-		item3.value=data.save_cycle;
-		root.push(item3);
-		
-		var item4={};
-		item4.id=4;
-		item4.title='备注';
-		item4.value=data.remark;
-		root.push(item4);
 	}
 	
 	if(protocolConfigAlarmGroupPropertiesHandsontableHelper==null || protocolConfigAlarmGroupPropertiesHandsontableHelper.hot==undefined){
@@ -319,20 +294,6 @@ var ProtocolConfigAlarmGroupPropertiesHandsontableHelper = {
 							cellProperties.readOnly = true;
 							cellProperties.renderer = protocolConfigAlarmGroupPropertiesHandsontableHelper.addBoldBg;
 		                }
-	                    if(protocolConfigAlarmGroupPropertiesHandsontableHelper.classes===1){
-	                    	if (visualColIndex === 2 && visualRowIndex===1) {
-		                    	this.type = 'dropdown';
-		                    	this.source = ['泵设备','管设备'];
-		                    	this.strict = true;
-		                    	this.allowInvalid = false;
-		                    }
-//	                    	if (visualColIndex === 2 && visualRowIndex===2) {
-//		                    	this.type = 'dropdown';
-//		                    	this.source = ['modbus-tcp','modbus-rtu'];
-//		                    	this.strict = true;
-//		                    	this.allowInvalid = false;
-//		                    }
-	                    }
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
@@ -348,114 +309,59 @@ var ProtocolConfigAlarmGroupPropertiesHandsontableHelper = {
 };
 
 
-function SaveModbusProtocolAcqGroupConfigTreeData(){
+function SaveModbusProtocolAlarmGroupConfigTreeData(){
 	var selectRow= Ext.getCmp("ModbusProtocolAlarmGroupConfigSelectRow_Id").getValue();
 	if(selectRow!=''){
-		var selectedItem=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+		var selectedItem=Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().getAt(selectRow);
 		var propertiesData=protocolConfigAlarmGroupPropertiesHandsontableHelper.hot.getData();
-		var protocolProperties={};
-		if(selectedItem.data.classes==2){//选中的是采集单元
-			protocolProperties.classes=selectedItem.data.classes;
-			protocolProperties.id=selectedItem.data.id;
-			protocolProperties.unitCode=selectedItem.data.code;
-			protocolProperties.unitName=propertiesData[0][2];
-			protocolProperties.remark=propertiesData[1][2];
-		}else if(selectedItem.data.classes==3){//选中的是采集单元组
-			protocolProperties.classes=selectedItem.data.classes;
-			protocolProperties.id=selectedItem.data.id;
-			protocolProperties.groupCode=selectedItem.data.code;
-			protocolProperties.groupName=propertiesData[0][2];
-			protocolProperties.acqCycle=propertiesData[1][2];
-			protocolProperties.saveCycle=propertiesData[2][2];
-			protocolProperties.remark=propertiesData[3][2];
+		var alarmItemsData = protocolAlarmGroupConfigItemsHandsontableHelper.hot.getData();
+		if(selectedItem.data.classes==3){//选中的是报警组组
+			var saveData={};
+			saveData.id=selectedItem.data.id;
+			saveData.groupCode=selectedItem.data.code;
+			saveData.oldGroupName=selectedItem.data.text;
+			saveData.protocol=selectedItem.data.protocol;
+			saveData.groupName=propertiesData[0][2];
+			saveData.remark=propertiesData[1][2];
+			saveData.alarmItems=[];
+			Ext.Array.each(alarmItemsData, function (name, index, countriesItSelf) {
+				var checked=alarmItemsData[index][0];
+				if(checked){
+					var item={};
+					item.itemName=alarmItemsData[index][2];
+					item.itemAddr=parseInt(alarmItemsData[index][3]);
+					item.upperLimit=alarmItemsData[index][4];
+					item.lowerLimit=alarmItemsData[index][5];
+					item.hystersis=alarmItemsData[index][6];
+					item.delay=alarmItemsData[index][7];
+					item.alarmLevel=alarmItemsData[index][8];
+					item.alarmSign=alarmItemsData[index][9];
+					saveData.alarmItems.push(item);
+				}
+			});
+			SaveModbusProtocolAlarmGroupConfigData(saveData);
 		}
-		if(selectedItem.data.classes==2){//保存采集单元
-			var acqUnitSaveData={};
-			acqUnitSaveData.updatelist=[];
-			acqUnitSaveData.updatelist.push(protocolProperties);
-			saveAcquisitionUnitConfigData(acqUnitSaveData,selectedItem.data.protocol);
-		}
-		
-		if(selectedItem.data.classes==3){//选中的是采集单元组
-			var acqGroupSaveData={};
-			acqGroupSaveData.updatelist=[];
-			acqGroupSaveData.updatelist.push(protocolProperties);
-			
-			saveAcquisitionGroupConfigData(acqGroupSaveData,selectedItem.data.protocol,selectedItem.parentNode.data.id);
-			//给采集组授予采集项
-			grantAcquisitionItemsPermission();
-		}
-		
 	}
 };
 
-function saveModbusProtocolConfigData(configInfo){
+function SaveModbusProtocolAlarmGroupConfigData(saveData){
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/acquisitionUnitManagerController/saveModbusProtocolConfigData',
+		url:context + '/acquisitionUnitManagerController/saveModbusProtocolAlarmGroupData',
 		success:function(response) {
-			var data=Ext.JSON.decode(response.responseText);
-			protocolAlarmGroupConfigItemsHandsontableHelper.clearContainer();
+			data=Ext.JSON.decode(response.responseText);
 			if (data.success) {
+				Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().load();
             	Ext.MessageBox.alert("信息","保存成功");
-            	Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
-            } else {
-            	Ext.MessageBox.alert("信息","数据保存失败");
-            }
-		},
-		failure:function(){
-			Ext.MessageBox.alert("信息","请求失败");
-		},
-		params: {
-			data:JSON.stringify(configInfo)
-        }
-	});
-}
-
-function saveAcquisitionUnitConfigData(acqUnitSaveData,protocol){
-	Ext.Ajax.request({
-		method:'POST',
-		url:context + '/acquisitionUnitManagerController/saveAcquisitionUnitHandsontableData',
-		success:function(response) {
-			rdata=Ext.JSON.decode(response.responseText);
-			if (rdata.success) {
-            	Ext.MessageBox.alert("信息","保存成功");
-            	Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
             } else {
             	Ext.MessageBox.alert("信息","采集单元数据保存失败");
             }
 		},
 		failure:function(){
 			Ext.MessageBox.alert("信息","请求失败");
-            acquisitionUnitConfigHandsontableHelper.clearContainer();
 		},
 		params: {
-        	data: JSON.stringify(acqUnitSaveData),
-        	protocol: protocol
+			data: JSON.stringify(saveData),
         }
 	});
 }
-
-function saveAcquisitionGroupConfigData(acqGroupSaveData,protocol,unitId){
-	Ext.Ajax.request({
-		method:'POST',
-		url:context + '/acquisitionUnitManagerController/saveAcquisitionGroupHandsontableData',
-		success:function(response) {
-			rdata=Ext.JSON.decode(response.responseText);
-			if (rdata.success) {
-            	Ext.MessageBox.alert("信息","保存成功");
-            	Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
-            } else {
-            	Ext.MessageBox.alert("信息","采集组数据保存失败");
-            }
-		},
-		failure:function(){
-			Ext.MessageBox.alert("信息","请求失败");
-		},
-		params: {
-        	data: JSON.stringify(acqGroupSaveData),
-        	protocol: protocol,
-        	unitId: unitId
-        }
-	});
-};

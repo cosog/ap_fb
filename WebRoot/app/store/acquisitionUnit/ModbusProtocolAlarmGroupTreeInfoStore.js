@@ -68,16 +68,16 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                         	if(record.data.classes==3){
 //                        		showAcquisitionGroupOwnItems(record.data.code);
                         	}
-//                        	CreateProtocolAlarmGroupConfigPropertiesInfoTable(record.data);
+                        	CreateProtocolAlarmGroupConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
                         	e.preventDefault();//去掉点击右键是浏览器的菜单
                         	var info='节点';
                         	if(record.data.classes==0 || record.data.classes==1){
                         		return;
                         	}if(record.data.classes==2){
-                        		info='采集单元';
+                        		info='报警单元';
                         	}else if(record.data.classes==3){
-                        		info='采集组';
+                        		info='报警组';
                         	}
                         	var menu = Ext.create('Ext.menu.Menu', {
                                 floating: true,
@@ -88,16 +88,11 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
 //                                        Ext.MessageBox.confirm("确认","您确定要进行删除操作吗?",
 //                                            function(ok){
 //                                                if("yes"==ok) {
-                                                	if(record.data.classes==2){
-                                                		var acqUnitSaveData={};
-                                                		acqUnitSaveData.delidslist=[];
-                                                		acqUnitSaveData.delidslist.push(record.data.id);
-                                                		saveAcquisitionUnitConfigData(acqUnitSaveData,record.data.protocol);
-                                                	}else if(record.data.classes==3){
-                                                		var acqGroupSaveData={};
-                                                		acqGroupSaveData.delidslist=[];
-                                                		acqGroupSaveData.delidslist.push(record.data.id);
-                                                		saveAcquisitionGroupConfigData(acqGroupSaveData,record.data.protocol,record.parentNode.data.id);
+                                                	if(record.data.classes==3){
+                                                		var saveData={};
+                                                		saveData.delidslist=[];
+                                                		saveData.delidslist.push(record.data.id);
+                                                		SaveModbusProtocolAlarmGroupConfigData(saveData);
                                                 	}
 //                                                }
 //                                            }

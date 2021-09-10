@@ -603,3 +603,46 @@ var saveModbusProtocolInstanceSubmitBtnForm = function () {
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
 };
+
+function addAlarmGroupInfo() {
+    var window = Ext.create("AP.view.acquisitionUnit.AlarmGroupInfoWindow", {
+        title: '创建报警组'
+    });
+    window.show();
+    Ext.getCmp("addFormAlarmGroup_Id").show();
+    Ext.getCmp("updateFormaAquisitionUnit_Id").hide();
+    return false;
+};
+
+//窗体创建按钮事件
+var SaveAlarmGroupSubmitBtnForm = function () {
+    var winForm = Ext.getCmp("alarmGroup_editWin_Id").down('form');
+    Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+    if (winForm.getForm().isValid()) {
+        winForm.getForm().submit({
+            url: context + '/acquisitionUnitManagerController/doAlarmGroupAdd',
+            clientValidation: true, // 进行客户端验证
+            method: "POST",
+            waitMsg: cosog.string.sendServer,
+            waitTitle: 'Please Wait...',
+            success: function (response, action) {
+                Ext.getCmp('alarmGroup_editWin_Id').close();
+                Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().load();
+                if (action.result.msg == true) {
+                    Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.success + "</font>】，" + cosog.string.dataInfo + "");
+                }
+                if (action.result.msg == false) {
+                    Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！</font>" + cosog.string.failInfo + "。");
+
+                }
+            },
+            failure: function () {
+                Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font> 】：" + cosog.string.contactadmin + "！");
+            }
+        });
+    } else {
+        Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！" + cosog.string.validdata + ".</font>。");
+    }
+    // 设置返回值 false : 让Extjs4 自动回调 success函数
+    return false;
+};
