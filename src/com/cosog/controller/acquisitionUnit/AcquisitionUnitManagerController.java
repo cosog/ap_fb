@@ -29,6 +29,8 @@ import com.cosog.model.AcquisitionGroup;
 import com.cosog.model.AcquisitionGroupItem;
 import com.cosog.model.AcquisitionUnit;
 import com.cosog.model.AcquisitionUnitGroup;
+import com.cosog.model.AlarmGroup;
+import com.cosog.model.AlarmGroupItem;
 import com.cosog.model.Module;
 import com.cosog.model.ProtocolInstance;
 import com.cosog.model.Role;
@@ -36,6 +38,7 @@ import com.cosog.model.RoleModule;
 import com.cosog.model.User;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusDriverSaveData;
+import com.cosog.model.drive.ModbusProtocolAlarmGroupSaveData;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.drive.ModbusProtocolInstanceSaveData;
 import com.cosog.model.gridmodel.AcquisitionGroupHandsontableChangeData;
@@ -75,12 +78,21 @@ public class AcquisitionUnitManagerController extends BaseController {
 	private AcquisitionUnitManagerService<AcquisitionGroup> acquisitionGroupManagerService;
 	@Autowired
 	private AcquisitionUnitManagerService<AcquisitionGroupItem> acquisitionUnitItemManagerService;
+	
+	@Autowired
+	private AcquisitionUnitManagerService<AlarmGroup> alarmGroupManagerService;
+	
+	@Autowired
+	private AcquisitionUnitManagerService<AlarmGroupItem> alarmGroupItemManagerService;
+	
 	@Autowired
 	private AcquisitionUnitManagerService<ProtocolInstance> protocolInstanceManagerService;
 	@Autowired
 	private CommonDataService service;
 	private AcquisitionUnit acquisitionUnit;
 	private AcquisitionGroup acquisitionGroup;
+	private AlarmGroup alarmGroup;
+	
 	private ProtocolInstance protocolInstance;
 	private String limit;
 	private String msg = "";
@@ -103,6 +115,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@InitBinder("protocolInstance")
 	public void initBinder3(WebDataBinder binder) {
 		binder.setFieldDefaultPrefix("protocolInstance.");
+	}
+	
+	//添加绑定前缀 
+	@InitBinder("alarmGroup")
+	public void initBinder4(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("alarmGroup.");
 	}
 
 	/**<p>描述：采集类型数据显示方法</p>
@@ -785,45 +803,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/saveKafkaDriverConfigData")
-	public String saveKafkaDriverConfigData() throws Exception {
-		String json = "";
-		Gson gson = new Gson();
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		String KafkaData = ParamUtils.getParameter(request, "KafkaData");
-		java.lang.reflect.Type type = new TypeToken<KafkaConfig>() {}.getType();
-		KafkaConfig KafkaConfigSaveData=gson.fromJson(KafkaData, type);
-		if(KafkaConfigSaveData!=null){
-			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-			if(equipmentDriveMap.size()==0){
-				EquipmentDriverServerTask.loadProtocolConfig();
-				equipmentDriveMap = EquipmentDriveMap.getMapObject();
-			}
-			KafkaConfig driveConfig=(KafkaConfig)equipmentDriveMap.get("KafkaDrive");
-			
-			String path=stringManagerUtils.getFilePath("KafkaDriverConfig.json","protocolConfig/");
-			if(driveConfig==null){
-				String driverConfigData=stringManagerUtils.readFile(path,"utf-8");
-				type = new TypeToken<KafkaConfig>() {}.getType();
-				driveConfig=gson.fromJson(driverConfigData, type);
-			}
-			driveConfig.setProtocolName(KafkaConfigSaveData.getProtocolName());
-			driveConfig.setVersion(KafkaConfigSaveData.getVersion());
-			driveConfig.setServer(KafkaConfigSaveData.getServer());
-			driveConfig.setTopic(KafkaConfigSaveData.getTopic());
-			StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(driveConfig)));
-			equipmentDriveMap.put(driveConfig.getProtocolCode(), driveConfig);
-		}
-		json ="{success:true}";
-		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
 	@RequestMapping("/saveAcquisitionUnitHandsontableData")
 	public String saveAcquisitionUnitHandsontableData() throws Exception {
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
@@ -936,77 +915,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	
-	
-	@RequestMapping("/getKafkaDriverConfigData")
-	public String getKafkaDriverConfigData() throws Exception {
-		String json = "";
-		json = acquisitionUnitItemManagerService.getKafkaDriverConfigData();
-		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	@RequestMapping("/getDataSourceConfigData")
-	public String getDataSourceConfigData() throws Exception {
-		String json = "";
-		
-		json = acquisitionUnitItemManagerService.getKafkaConfigWellList();
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	@RequestMapping("/saveDataSourceConfigData")
-	public String SaveDataSourceConfigData() throws Exception {
-		String json = "";
-		Gson gson = new Gson();
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		String dataSourceConfigData = ParamUtils.getParameter(request, "dataSourceConfigData");
-		java.lang.reflect.Type type = new TypeToken<DataSourceConfigSaveData>() {}.getType();
-		DataSourceConfigSaveData dataSourceConfigSaveData=gson.fromJson(dataSourceConfigData, type);
-		if(dataSourceConfigSaveData!=null){
-			String path=stringManagerUtils.getFilePath("config.json","dataSource/");
-			DataSourceConfig dataSourceConfig=DataSourceConfig.getInstance();
-			
-			dataSourceConfig.setIP(dataSourceConfigSaveData.getIP());
-			dataSourceConfig.setPort(StringManagerUtils.stringToInteger(dataSourceConfigSaveData.getPort()));
-			dataSourceConfig.setType((dataSourceConfigSaveData.getType().toLowerCase().indexOf("oracle")>=0)?0:1);
-			dataSourceConfig.setVersion(dataSourceConfigSaveData.getVersion());
-			dataSourceConfig.setInstanceName(dataSourceConfigSaveData.getInstanceName());
-			dataSourceConfig.setUser(dataSourceConfigSaveData.getUser());
-			dataSourceConfig.setPassword(dataSourceConfigSaveData.getPassword());
-			
-			dataSourceConfig.setDiagramTable(dataSourceConfigSaveData.getDiagramTable());
-			dataSourceConfig.setReservoirTable(dataSourceConfigSaveData.getReservoirTable());
-			dataSourceConfig.setRodStringTable(dataSourceConfigSaveData.getRodStringTable());
-			dataSourceConfig.setTubingStringTable(dataSourceConfigSaveData.getTubingStringTable());
-			dataSourceConfig.setCasingStringTable(dataSourceConfigSaveData.getCasingStringTable());
-			dataSourceConfig.setPumpTable(dataSourceConfigSaveData.getPumpTable());
-			dataSourceConfig.setProductionTable(dataSourceConfigSaveData.getProductionTable());
-			
-			StringManagerUtils.writeFile(path,StringManagerUtils.jsonStringFormat(gson.toJson(dataSourceConfig)));
-		}
-		json ="{success:true}";
-		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
 	@RequestMapping("/doModbusProtocolInstanceAdd")
 	public String doModbusProtocolInstanceAdd(@ModelAttribute ProtocolInstance protocolInstance) throws IOException {
 		String result = "";
@@ -1030,22 +938,85 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/doAlarmGroupAdd")
+	public String doAlarmGroupAdd(@ModelAttribute AlarmGroup alarmGroup) throws IOException {
+		String result = "";
+		PrintWriter out = response.getWriter();
+		try {
+			this.alarmGroupManagerService.doAlarmGroupAdd(alarmGroup);
+			result = "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			out.print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+			out.print(result);
+		}
+		return null;
+	}
+	
+	@RequestMapping("/saveModbusProtocolAlarmGroupData")
+	public String saveModbusProtocolAlarmGroupData() throws Exception {
+		Gson gson=new Gson();
+		String json ="{success:true}";
+		String data = ParamUtils.getParameter(request, "data");
+		java.lang.reflect.Type type = new TypeToken<ModbusProtocolAlarmGroupSaveData>() {}.getType();
+		ModbusProtocolAlarmGroupSaveData modbusProtocolAlarmGroupSaveData=gson.fromJson(data, type);
+		
+		if(modbusProtocolAlarmGroupSaveData!=null){
+			if(modbusProtocolAlarmGroupSaveData.getDelidslist()!=null){
+				for(int i=0;i<modbusProtocolAlarmGroupSaveData.getDelidslist().size();i++){
+					this.acquisitionUnitManagerService.doModbusProtocolAlarmGroupDelete(modbusProtocolAlarmGroupSaveData.getDelidslist().get(i));
+				}
+			}
+			
+			if(StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getGroupName())){
+				AlarmGroup alarmGroup=new AlarmGroup();
+				alarmGroup.setId(modbusProtocolAlarmGroupSaveData.getId());
+				alarmGroup.setGroupCode(modbusProtocolAlarmGroupSaveData.getGroupCode());
+				alarmGroup.setGroupName(modbusProtocolAlarmGroupSaveData.getGroupName());
+				alarmGroup.setProtocol(modbusProtocolAlarmGroupSaveData.getProtocol());
+				alarmGroup.setRemark(modbusProtocolAlarmGroupSaveData.getRemark());
+				try {
+					this.alarmGroupManagerService.doAlarmGroupEdit(alarmGroup);
+					
+					this.alarmGroupManagerService.deleteCurrentAlarmGroupOwnItems(modbusProtocolAlarmGroupSaveData.getId()+"");
+					if(modbusProtocolAlarmGroupSaveData.getAlarmItems()!=null){
+						for(int i=0;i<modbusProtocolAlarmGroupSaveData.getAlarmItems().size();i++){
+							AlarmGroupItem alarmGroupItem=new AlarmGroupItem();
+							alarmGroupItem.setItemName(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemName());
+							alarmGroupItem.setItemAddr(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemAddr());
+							alarmGroupItem.setUpperLimit(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getUpperLimit()));
+							alarmGroupItem.setLowerLimit(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getLowerLimit()));
+							alarmGroupItem.setHystersis(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getHystersis()));
+							alarmGroupItem.setDelay(StringManagerUtils.stringToInteger(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getDelay()));
+							alarmGroupItem.setAlarmLevel(alarmLevel);
+							alarmGroupItem.setAlarmSign(alarmSign);
+							this.alarmGroupItemManagerService.grantAlarmItemsPermission(alarmGroupItem);
+						}
+					}
+					
+					json = "{success:true,msg:true}";
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					json = "{success:false,msg:false}";
+				}
+			}
+		}
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		log.warn("jh json is ==" + json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/saveProtocolInstanceData")
 	public String saveProtocolInstanceData() throws Exception {
-		HttpSession session=request.getSession();
-//		String id = ParamUtils.getParameter(request, "id");
-//		String code = ParamUtils.getParameter(request, "code");
-//		String name = ParamUtils.getParameter(request, "name");
-//		String deviceType = ParamUtils.getParameter(request, "deviceType");
-//		String unitId = ParamUtils.getParameter(request, "unitId");
-//		String acqProtocolType = ParamUtils.getParameter(request, "acqProtocolType");
-//		String ctrlProtocolType = ParamUtils.getParameter(request, "ctrlProtocolType");
-//		String signInPrefix = ParamUtils.getParameter(request, "signInPrefix");
-//		String signInSuffix = ParamUtils.getParameter(request, "signInSuffix");
-//		String heartbeatPrefix = ParamUtils.getParameter(request, "heartbeatPrefix");
-//		String heartbeatSuffix = ParamUtils.getParameter(request, "heartbeatSuffix");
-//		String sort = ParamUtils.getParameter(request, "sort");
-		
 		Gson gson=new Gson();
 		String json ="{success:true}";
 		String data = ParamUtils.getParameter(request, "data");
@@ -1055,7 +1026,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 		if(modbusProtocolInstanceSaveData!=null){
 			if(modbusProtocolInstanceSaveData.getDelidslist()!=null){
 				for(int i=0;i<modbusProtocolInstanceSaveData.getDelidslist().size();i++){
-					this.acquisitionUnitManagerService.doAcquisitionGroupBulkDelete(modbusProtocolInstanceSaveData.getDelidslist().get(i));
+					this.acquisitionUnitManagerService.doModbusProtocolInstanceBulkDelete(modbusProtocolInstanceSaveData.getDelidslist().get(i));
 					EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByProtocolInstanceId(modbusProtocolInstanceSaveData.getDelidslist().get(i), "delete");
 				}
 			}
@@ -1177,5 +1148,11 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	public void setProtocolInstance(ProtocolInstance protocolInstance) {
 		this.protocolInstance = protocolInstance;
+	}
+	public AlarmGroup getAlarmGroup() {
+		return alarmGroup;
+	}
+	public void setAlarmGroup(AlarmGroup alarmGroup) {
+		this.alarmGroup = alarmGroup;
 	}
 }
