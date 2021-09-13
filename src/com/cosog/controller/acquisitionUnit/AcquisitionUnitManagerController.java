@@ -32,6 +32,7 @@ import com.cosog.model.AcquisitionUnitGroup;
 import com.cosog.model.AlarmGroup;
 import com.cosog.model.AlarmGroupItem;
 import com.cosog.model.Module;
+import com.cosog.model.ProtocolAlarmInstance;
 import com.cosog.model.ProtocolInstance;
 import com.cosog.model.Role;
 import com.cosog.model.RoleModule;
@@ -39,6 +40,7 @@ import com.cosog.model.User;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusDriverSaveData;
 import com.cosog.model.drive.ModbusProtocolAlarmGroupSaveData;
+import com.cosog.model.drive.ModbusProtocolAlarmInstanceSaveData;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.drive.ModbusProtocolInstanceSaveData;
 import com.cosog.model.gridmodel.AcquisitionGroupHandsontableChangeData;
@@ -87,6 +89,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	@Autowired
 	private AcquisitionUnitManagerService<ProtocolInstance> protocolInstanceManagerService;
+	
+	@Autowired
+	private AcquisitionUnitManagerService<ProtocolAlarmInstance> protocolAlarmInstanceManagerService;
 	@Autowired
 	private CommonDataService service;
 	private AcquisitionUnit acquisitionUnit;
@@ -94,6 +99,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 	private AlarmGroup alarmGroup;
 	
 	private ProtocolInstance protocolInstance;
+	private ProtocolAlarmInstance protocolAlarmInstance;
+	
 	private String limit;
 	private String msg = "";
 	private String unitName;
@@ -121,6 +128,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@InitBinder("alarmGroup")
 	public void initBinder4(WebDataBinder binder) {
 		binder.setFieldDefaultPrefix("alarmGroup.");
+	}
+	
+	//添加绑定前缀 
+	@InitBinder("protocolAlarmInstance")
+	public void initBinder5(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("protocolAlarmInstance.");
 	}
 
 	/**<p>描述：采集类型数据显示方法</p>
@@ -547,6 +560,22 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getProtocolAlarmInstanceItemsConfigData")
+	public String getProtocolAlarmInstanceItemsConfigData() throws Exception {
+		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		String classes = ParamUtils.getParameter(request, "classes");
+		String code = ParamUtils.getParameter(request, "code");
+		String json = "";
+		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceItemsConfigData(instanceName);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/modbusConfigTreeData")
 	public String modbusConfigTreeData() throws IOException {
 		String json = acquisitionUnitItemManagerService.getModbusProtocolConfigTreeData();
@@ -602,6 +631,18 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@RequestMapping("/modbusInstanceConfigTreeData")
 	public String modbusInstanceConfigTreeData() throws IOException {
 		String json = acquisitionUnitItemManagerService.getModbusProtocolInstanceConfigTreeData();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/modbusAlarmInstanceConfigTreeData")
+	public String modbusAlarmInstanceConfigTreeData() throws IOException {
+		String json = acquisitionUnitItemManagerService.getModbusAlarmProtocolInstanceConfigTreeData();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -984,16 +1025,50 @@ public class AcquisitionUnitManagerController extends BaseController {
 					this.alarmGroupManagerService.deleteCurrentAlarmGroupOwnItems(modbusProtocolAlarmGroupSaveData.getId()+"");
 					if(modbusProtocolAlarmGroupSaveData.getAlarmItems()!=null){
 						for(int i=0;i<modbusProtocolAlarmGroupSaveData.getAlarmItems().size();i++){
-							AlarmGroupItem alarmGroupItem=new AlarmGroupItem();
-							alarmGroupItem.setItemName(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemName());
-							alarmGroupItem.setItemAddr(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemAddr());
-							alarmGroupItem.setUpperLimit(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getUpperLimit()));
-							alarmGroupItem.setLowerLimit(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getLowerLimit()));
-							alarmGroupItem.setHystersis(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getHystersis()));
-							alarmGroupItem.setDelay(StringManagerUtils.stringToInteger(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getDelay()));
-							alarmGroupItem.setAlarmLevel(alarmLevel);
-							alarmGroupItem.setAlarmSign(alarmSign);
-							this.alarmGroupItemManagerService.grantAlarmItemsPermission(alarmGroupItem);
+							if(StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemName())
+									&&StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemAddr()+"")
+									&&StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getUpperLimit())
+									&&StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getLowerLimit())){
+								AlarmGroupItem alarmGroupItem=new AlarmGroupItem();
+								alarmGroupItem.setGroupId(modbusProtocolAlarmGroupSaveData.getId());
+								alarmGroupItem.setItemName(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemName());
+								alarmGroupItem.setItemAddr(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getItemAddr());
+								
+								if(StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getUpperLimit())){
+									alarmGroupItem.setUpperLimit(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getUpperLimit()));
+								}
+								if(StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getLowerLimit())){
+									alarmGroupItem.setLowerLimit(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getLowerLimit()));
+								}
+								if(StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getHystersis())){
+									alarmGroupItem.setHystersis(StringManagerUtils.stringToFloat(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getHystersis()));
+								}
+								if(StringManagerUtils.isNotNull(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getDelay())){
+									alarmGroupItem.setDelay(StringManagerUtils.stringToInteger(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getDelay()));
+								}
+								
+								int alarmLevel=0;
+								int alarmSign=0;
+								if("正常".equals(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmLevel())){
+									alarmLevel=0;
+								}else if("一级报警".equals(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmLevel())){
+									alarmLevel=100;
+								}else if("二级报警".equals(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmLevel())){
+									alarmLevel=200;
+								}else if("三级报警".equals(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmLevel())){
+									alarmLevel=300;
+								}
+								
+								if("enable".equalsIgnoreCase(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmSign())){
+									alarmSign=1;
+								}else if("disable".equalsIgnoreCase(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmSign())){
+									alarmSign=0;
+								}
+								
+								alarmGroupItem.setAlarmLevel(alarmLevel);
+								alarmGroupItem.setAlarmSign(alarmSign);
+								this.alarmGroupItemManagerService.grantAlarmItemsPermission(alarmGroupItem);
+							}
 						}
 					}
 					
@@ -1083,6 +1158,73 @@ public class AcquisitionUnitManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	@RequestMapping("/doModbusProtocolAlarmInstanceAdd")
+	public String doModbusProtocolAlarmInstanceAdd(@ModelAttribute ProtocolAlarmInstance protocolAlarmInstance) throws IOException {
+		String result = "";
+		try {
+			this.protocolAlarmInstanceManagerService.doModbusProtocolAlarmInstanceAdd(protocolAlarmInstance);
+			List<String> instanceList=new ArrayList<String>();
+			instanceList.add(protocolInstance.getName());
+			EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
+			result = "{success:true,msg:true}";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+		}
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(result);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/saveProtocolAlarmInstanceData")
+	public String saveProtocolAlarmInstanceData() throws Exception {
+		Gson gson=new Gson();
+		String json ="{success:true}";
+		String data = ParamUtils.getParameter(request, "data");
+		java.lang.reflect.Type type = new TypeToken<ModbusProtocolAlarmInstanceSaveData>() {}.getType();
+		ModbusProtocolAlarmInstanceSaveData modbusProtocolAlarmInstanceSaveData=gson.fromJson(data, type);
+		
+		if(modbusProtocolAlarmInstanceSaveData!=null){
+			if(modbusProtocolAlarmInstanceSaveData.getDelidslist()!=null){
+				for(int i=0;i<modbusProtocolAlarmInstanceSaveData.getDelidslist().size();i++){
+					this.protocolAlarmInstanceManagerService.doModbusProtocolAlarmInstanceBulkDelete(modbusProtocolAlarmInstanceSaveData.getDelidslist().get(i));
+				}
+			}
+			
+			if(StringManagerUtils.isNotNull(modbusProtocolAlarmInstanceSaveData.getName())){
+				ProtocolAlarmInstance protocolAlarmInstance=new ProtocolAlarmInstance();
+				protocolAlarmInstance.setId(modbusProtocolAlarmInstanceSaveData.getId());
+				protocolAlarmInstance.setCode(modbusProtocolAlarmInstanceSaveData.getCode());
+				protocolAlarmInstance.setName(modbusProtocolAlarmInstanceSaveData.getName());
+				protocolAlarmInstance.setDeviceType(modbusProtocolAlarmInstanceSaveData.getDeviceType());
+				protocolAlarmInstance.setAlarmGroupId(modbusProtocolAlarmInstanceSaveData.getAlarmGroupId());
+				protocolAlarmInstance.setSort(modbusProtocolAlarmInstanceSaveData.getSort());
+				
+				try {
+					this.protocolAlarmInstanceManagerService.doModbusProtocolAlarmInstanceEdit(protocolAlarmInstance);
+					json = "{success:true,msg:true}";
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					json = "{success:false,msg:false}";
+				}
+			}
+		}
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		log.warn("jh json is ==" + json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 
 	public String getLimit() {
 		return limit;
@@ -1154,5 +1296,11 @@ public class AcquisitionUnitManagerController extends BaseController {
 	}
 	public void setAlarmGroup(AlarmGroup alarmGroup) {
 		this.alarmGroup = alarmGroup;
+	}
+	public ProtocolAlarmInstance getProtocolAlarmInstance() {
+		return protocolAlarmInstance;
+	}
+	public void setProtocolAlarmInstance(ProtocolAlarmInstance protocolAlarmInstance) {
+		this.protocolAlarmInstance = protocolAlarmInstance;
 	}
 }
