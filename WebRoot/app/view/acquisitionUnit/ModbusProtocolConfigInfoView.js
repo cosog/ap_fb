@@ -1,4 +1,3 @@
-
 Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.modbusProtocolConfigInfoView',

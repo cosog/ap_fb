@@ -1,13 +1,13 @@
-Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
+Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmInstanceTreeInfoStore', {
     extend: 'Ext.data.TreeStore',
-    alias: 'widget.modbusProtocolInstanceTreeInfoStore',
+    alias: 'widget.modbusProtocolAlarmInstanceTreeInfoStore',
     model: 'AP.model.acquisitionUnit.AcquisitionItemsTreeInfoModel',
     autoLoad: true,
     folderSort: false,
     defaultRootId: '0',
     proxy: {
         type: 'ajax',
-        url: context + '/acquisitionUnitManagerController/modbusInstanceConfigTreeData',
+        url: context + '/acquisitionUnitManagerController/modbusAlarmInstanceConfigTreeData',
         actionMethods: {
             read: 'POST'
         },
@@ -20,10 +20,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
         beforeload: function (store, options) {
         },
         load: function (store, options, eOpts) {
-        	var ModbusProtocolInstanceConfigTreeGridPanel = Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
-            if (!isNotVal(ModbusProtocolInstanceConfigTreeGridPanel)) {
-                ModbusProtocolInstanceConfigTreeGridPanel = Ext.create('Ext.tree.Panel', {
-                    id: "ModbusProtocolInstanceConfigTreeGridPanel_Id",
+        	var treeGridPanel = Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
+            if (!isNotVal(treeGridPanel)) {
+                treeGridPanel = Ext.create('Ext.tree.Panel', {
+                    id: "ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id",
 //                    layout: "fit",
                     border: false,
                     animate: true,
@@ -55,15 +55,17 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                         selectionchange ( view, selected, eOpts ){
                         	
                         },select( v, record, index, eOpts ){
-                        	Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").setValue(index);
+                        	Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").setValue(index);
                         	if(record.data.classes==0){
                         		if(isNotVal(record.data.children) && record.data.children.length>0){
-                        			CreateProtocolInstanceItemsConfigInfoTable(record.data.children[0].text);
+                        			CreateProtocolAlarmInstanceItemsConfigInfoTable(record.data.children[0].text);
+                        		}else{
+                        			CreateProtocolAlarmInstanceItemsConfigInfoTable('');
                         		}
                         	}else if(record.data.classes==1){
-                        		CreateProtocolInstanceItemsConfigInfoTable(record.data.text);
+                        		CreateProtocolAlarmInstanceItemsConfigInfoTable(record.data.text);
                         	}
-                        	CreateProtocolInstanceConfigPropertiesInfoTable(record.data);
+                        	CreateProtocolAlarmInstancePropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
                         	e.preventDefault();//去掉点击右键是浏览器的菜单
                         	var info='节点';
@@ -86,7 +88,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                                                 		var configInfo={};
                                             			configInfo.delidslist=[];
                                             			configInfo.delidslist.push(record.data.id);
-                                            			SaveModbusProtocolInstanceConfigTreeData(configInfo);
+                                            			SaveModbusProtocolAlarmInstanceData(configInfo);
                                                 	}
                                                 	
                                                 	
@@ -104,10 +106,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                     }
 
                 });
-                var ModbusProtocolInstanceConfigPanel = Ext.getCmp("ModbusProtocolInstanceConfigPanel_Id");
-                ModbusProtocolInstanceConfigPanel.add(ModbusProtocolInstanceConfigTreeGridPanel);
+                var panel = Ext.getCmp("ModbusProtocolAlarmInstanceConfigPanel_Id");
+                panel.add(treeGridPanel);
             }
-            ModbusProtocolInstanceConfigTreeGridPanel.getSelectionModel().select(0, true);
+            treeGridPanel.getSelectionModel().select(0, true);
         }
     }
 });

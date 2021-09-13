@@ -318,6 +318,60 @@ private CommonDataService service;
 		return result_json.toString();
 	}
 	
+	public String getProtocolAlarmInstanceItemsConfigData(String instanceName){
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
+				+ "{ \"header\":\"上限\",\"dataIndex\":\"upperLimit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"下限\",\"dataIndex\":\"lowerLimit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"回差\",\"dataIndex\":\"hystersis\",width:80 ,children:[] },"
+				+ "{ \"header\":\"延时(s)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		List<Integer> itemAddrsList=new ArrayList<Integer>();
+		
+		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
+				+ "t4.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
+				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
+				+ " and t3.name='"+instanceName+"' "
+				+ " order by t.id";
+		
+		List<?> list=this.findCallSql(itemsSql);
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			result_json.append("{\"id\":"+(i+1)+","
+					+ "\"title\":\""+obj[1]+"\","
+					+ "\"code\":\""+obj[2]+"\","
+					+ "\"addr\":\""+obj[3]+"\","
+					+ "\"upperLimit\":\""+obj[4]+"\","
+					+ "\"lowerLimit\":\""+obj[5]+"\","
+					+ "\"hystersis\":\""+obj[6]+"\","
+					+ "\"delay\":\""+obj[7]+"\","
+					+ "\"alarmLevel\":\""+obj[8]+"\","
+					+ "\"alarmSign\":\""+obj[9]+"\"},");
+		}
+		
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString().replaceAll("null", "");
+	}
+	
 	public String getModbusProtocolConfigTreeData(){
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer pumpTree_json = new StringBuffer();
@@ -751,6 +805,62 @@ private CommonDataService service;
 		return result_json.toString().replaceAll("null", "");
 	}
 	
+	public String getModbusAlarmProtocolInstanceConfigTreeData(){
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer pumpTree_json = new StringBuffer();
+		StringBuffer pipelineTree_json = new StringBuffer();
+		pumpTree_json.append("[");
+		pipelineTree_json.append("[");
+		String sql="select t.id,t.name,t.code,t.alarmGroupId,t.devicetype,t.sort "
+				+ " from tbl_protocolalarminstance t "
+				+ " order by t.devicetype,t.sort";
+		List<?> list=this.findCallSql(sql);
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			if(StringManagerUtils.stringToInteger(obj[4]+"")==0){
+				pumpTree_json.append("{\"classes\":1,");
+				pumpTree_json.append("\"id\":\""+obj[0]+"\",");
+				pumpTree_json.append("\"text\":\""+obj[1]+"\",");
+				pumpTree_json.append("\"code\":\""+obj[2]+"\",");
+				pumpTree_json.append("\"alarmGroupId\":"+obj[3]+",");
+				pumpTree_json.append("\"deviceType\":"+obj[4]+",");
+				pumpTree_json.append("\"sort\":"+obj[5]+",");
+				pumpTree_json.append("\"iconCls\": \"Protocol\",");
+				pumpTree_json.append("\"leaf\": true");
+				pumpTree_json.append("},");
+			}else{
+				pipelineTree_json.append("{\"classes\":1,");
+				pipelineTree_json.append("\"id\":\""+obj[0]+"\",");
+				pipelineTree_json.append("\"text\":\""+obj[1]+"\",");
+				pipelineTree_json.append("\"code\":\""+obj[2]+"\",");
+				pipelineTree_json.append("\"alarmGroupId\":"+obj[3]+",");
+				pipelineTree_json.append("\"deviceType\":"+obj[4]+",");
+				pipelineTree_json.append("\"sort\":"+obj[5]+",");
+				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
+				pipelineTree_json.append("\"leaf\": true");
+				pipelineTree_json.append("},");
+			}
+		}
+		
+		if(pumpTree_json.toString().endsWith(",")){
+			pumpTree_json.deleteCharAt(pumpTree_json.length() - 1);
+		}
+		pumpTree_json.append("]");
+		
+		if(pipelineTree_json.toString().endsWith(",")){
+			pipelineTree_json.deleteCharAt(pipelineTree_json.length() - 1);
+		}
+		pipelineTree_json.append("]");
+		
+		result_json.append("[");
+		
+		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
+		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
+		result_json.append("]");
+//		System.out.println(result_json.toString());
+		return result_json.toString().replaceAll("null", "");
+	}
+	
 	public String getModbusProtoclCombList(){
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -881,7 +991,20 @@ private CommonDataService service;
 	}
 	
 	public void grantAlarmItemsPermission(T alarmGroupItem) throws Exception {
-		getBaseDao().saveOrUpdateObject(alarmGroupItem);
+		getBaseDao().addObject(alarmGroupItem);
+	}
+	
+	public void doModbusProtocolAlarmInstanceEdit(T protocolAlarmInstance) throws Exception {
+		getBaseDao().updateObject(protocolAlarmInstance);
+	}
+	
+	public void doModbusProtocolAlarmInstanceBulkDelete(final String ids) throws Exception {
+		final String hql = "DELETE ProtocolAlarmInstance u where u.id in (" + ids + ")";
+		super.bulkObjectDelete(hql);
+	}
+	
+	public void doModbusProtocolAlarmInstanceAdd(T protocolAlarmInstance) throws Exception {
+		getBaseDao().addObject(protocolAlarmInstance);
 	}
 	
 	public static String getDataItemsType(String type){

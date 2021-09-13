@@ -646,3 +646,46 @@ var SaveAlarmGroupSubmitBtnForm = function () {
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
 };
+
+function addModbusProtocolAlarmInstanceConfigData() {
+    var window = Ext.create("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
+        title: '创建报警实例'
+    });
+    window.show();
+    Ext.getCmp("addFormModbusProtocolAlarmInstance_Id").show();
+    Ext.getCmp("updateFormaModbusProtocolAlarmInstance_Id").hide();
+    return false;
+};
+
+//协议实例配置窗体创建按钮事件
+var saveModbusProtocolAlarmInstanceSubmitBtnForm = function () {
+    var winForm = Ext.getCmp("modbusProtocolAlarmInstanceInfoWindow_Id").down('form');
+    Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+    if (winForm.getForm().isValid()) {
+        winForm.getForm().submit({
+            url: context + '/acquisitionUnitManagerController/doModbusProtocolAlarmInstanceAdd',
+            clientValidation: true, // 进行客户端验证
+            method: "POST",
+            waitMsg: cosog.string.sendServer,
+            waitTitle: 'Please Wait...',
+            success: function (response, action) {
+                Ext.getCmp('modbusProtocolAlarmInstanceInfoWindow_Id').close();
+                Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id").getStore().load();
+                if (action.result.msg == true) {
+                    Ext.Msg.alert(cosog.string.ts, "<font color=blue>" + cosog.string.success + "</font>");
+                }
+                if (action.result.msg == false) {
+                    Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.failInfo + "</font>");
+
+                }
+            },
+            failure: function () {
+                Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font> 】：" + cosog.string.contactadmin + "！");
+            }
+        });
+    } else {
+        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+    }
+    // 设置返回值 false : 让Extjs4 自动回调 success函数
+    return false;
+};
