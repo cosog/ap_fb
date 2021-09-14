@@ -33,8 +33,7 @@ public class ProtocolAlarmInstance implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public ProtocolAlarmInstance(Integer id, String name, String code, Integer deviceType, Integer alarmGroupId,
-			Integer sort) {
+	public ProtocolAlarmInstance(Integer id, String name, String code, Integer deviceType, Integer alarmGroupId,Integer sort) {
 		super();
 		this.id = id;
 		this.name = name;

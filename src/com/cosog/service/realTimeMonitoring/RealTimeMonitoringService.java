@@ -130,15 +130,18 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_pipelineacqdata_latest";
 		}
-		
 		String itemsSql="select t.wellname,t3.protocol, listagg(t6.itemname, ',') within group(order by t6.id ) key "
 				+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
 				+ " group by t.wellname,t3.protocol";
-		
-		
+		String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+				+ " from tbl_wellinformation t, tbl_alarm_item2group_conf t2,tbl_alarm_group_conf t3,tbl_protocolalarminstance t4 "
+				+ " where t.alarminstancecode=t4.code and t4.alarmgroupid=t3.id and t3.id=t2.groupid "
+				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " order by t2.id";
 		List<?> itemsList = this.findCallSql(itemsSql);
+		List<?> alarmItemsList = this.findCallSql(alarmItemsSql);
 		String columns = "[";
 		for(int i=1;i<=items;i++){
 			columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
@@ -172,20 +175,25 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			if(protocol!=null && StringManagerUtils.isNotNull(itemsObj[2]+"")){
 				String acqColumns="";
 				String[] itemsArr=(itemsObj[2]+"").split(",");
+				List<Integer> addrList=new ArrayList<Integer>();
 				List<String> columnsList=new ArrayList<String>();
 				List<String> columnsNameList=new ArrayList<String>();
 				List<String> columnsDataTypeList=new ArrayList<String>();
 				List<Integer> alarmLevelList=new ArrayList<Integer>();
 				
-				for(int j=0;j<itemsArr.length;j++){
-					for(int k=0;k<protocol.getItems().size();k++){
-						if(itemsArr[j].equalsIgnoreCase(protocol.getItems().get(k).getTitle())){
-							String column="ADDR"+protocol.getItems().get(k).getAddr();
-							String columnName=protocol.getItems().get(k).getTitle();
-							columnsList.add(column);
-							columnsNameList.add(columnName);
-							columnsDataTypeList.add(protocol.getItems().get(k).getIFDataType());
-							break;
+				
+				for(int j=0;j<protocol.getItems().size();j++){
+					if(!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false)){
+						for(int k=0;k<itemsArr.length;k++){
+							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
+								String column="ADDR"+protocol.getItems().get(j).getAddr();
+								String columnName=protocol.getItems().get(j).getTitle();
+								addrList.add(protocol.getItems().get(j).getAddr());
+								columnsList.add(column);
+								columnsNameList.add(columnName);
+								columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
+								break;
+							}
 						}
 					}
 				}
@@ -210,29 +218,42 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 					
 					for(int j=1;j<row;j++){
 						//记录每一行的详细信息
-						
 						result_json.append("{");
-						
-						
 						for(int k=0;k<items;k++){
 							int index=items*(j-1)+k;
 							String columnName="";
 							String value="";
+							String addr="";
 							String column="";
 							String columnDataType="";
 							int alarmLevel=0;
 							if(index<columnsNameList.size()){
 								columnName=columnsNameList.get(index);
+								addr=addrList.get(index)+"";
 								value=obj[index+6]+"";
 								column=columnsList.get(index);
 								columnDataType=columnsDataTypeList.get(index);
-							}
-							if(StringManagerUtils.stringToFloat(value)>2){
-								alarmLevel=100;
+								for(int l=0;l<alarmItemsList.size();l++){
+									Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
+//									String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+//											+ " from tbl_wellinformation t, tbl_alarm_item2group_conf t2,tbl_alarm_group_conf t3,tbl_protocolalarminstance t4 "
+//											+ " where t.alarminstancecode=t4.code and t4.alarmgroupid=t3.id and t3.id=t2.groupid "
+//											+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+//											+ " order by t2.id";
+									if(addrList.get(index)==StringManagerUtils.stringToInteger(alarmItemObj[2]+"")){
+										float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[5]+"");
+										if((StringManagerUtils.isNotNull(alarmItemObj[3]+"") && StringManagerUtils.stringToFloat(value)>StringManagerUtils.stringToFloat(alarmItemObj[3]+"")+hystersis)
+												||(StringManagerUtils.isNotNull(alarmItemObj[4]+"") && StringManagerUtils.stringToFloat(value)<StringManagerUtils.stringToFloat(alarmItemObj[4]+"")-hystersis)
+												){
+											alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[7]+"");
+											break;
+										}
+									}
+								}
 							}
 							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
 							result_json.append("\"value"+(k+1)+"\":\""+value+"\",");
-							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"addr\":\""+addr+"\",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
 							
 						}
 						if(result_json.toString().endsWith(",")){

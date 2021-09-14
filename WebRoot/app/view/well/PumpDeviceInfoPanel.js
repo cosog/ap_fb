@@ -190,6 +190,16 @@ function CreateAndLoadPumpDeviceInfoTable(isNew){
 	            		}
 	            		source+="]";
 	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:"+source+"}";
+	            	}else if(result.columns[i].dataIndex.toUpperCase()==="alarmInstanceName".toUpperCase()){
+	            		var source="[";
+	            		for(var j=0;j<result.alarmInstanceDropdownData.length;j++){
+	            			source+="\'"+result.alarmInstanceDropdownData[j]+"\'";
+	            			if(j<result.alarmInstanceDropdownData.length-1){
+	            				source+=",";
+	            			}
+	            		}
+	            		source+="]";
+	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:"+source+"}";
 	            	}else if(result.columns[i].dataIndex.toUpperCase()==="sortNum".toUpperCase()){
 	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,pumpDeviceInfoHandsontableHelper);}}";
 	            	}else{

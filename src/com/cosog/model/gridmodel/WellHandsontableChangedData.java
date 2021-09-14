@@ -38,6 +38,8 @@ public class WellHandsontableChangedData {
 	    private String wellName="";
 
 	    private String instanceName="";
+	    
+	    private String alarmInstanceName="";
 
 	    private String signInId="";
 
@@ -179,6 +181,14 @@ public class WellHandsontableChangedData {
 
 		public void setInstanceName(String instanceName) {
 			this.instanceName = instanceName;
+		}
+
+		public String getAlarmInstanceName() {
+			return alarmInstanceName;
+		}
+
+		public void setAlarmInstanceName(String alarmInstanceName) {
+			this.alarmInstanceName = alarmInstanceName;
 		}
 	    
 	}
