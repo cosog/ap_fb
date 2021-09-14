@@ -104,7 +104,6 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmInstanceTreeInfoStore', 
                             menu.showAt(xy[0] + 100, xy[1]);
                         }
                     }
-
                 });
                 var panel = Ext.getCmp("ModbusProtocolAlarmInstanceConfigPanel_Id");
                 panel.add(treeGridPanel);

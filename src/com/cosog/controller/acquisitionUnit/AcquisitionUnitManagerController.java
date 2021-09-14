@@ -613,6 +613,19 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/modbusProtocolAndAlarmGroupTreeData")
+	public String modbusProtocolAndAlarmGroupTreeData() throws IOException {
+		String deviceType=ParamUtils.getParameter(request, "deviceType");
+		String json = acquisitionUnitItemManagerService.modbusProtocolAndAlarmGroupTreeData(deviceType);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/modbusProtocolAlarmGroupTreeData")
 	public String modbusProtocolAlarmGroupTreeData() throws IOException {
 		String json = acquisitionUnitItemManagerService.modbusProtocolAlarmGroupTreeData();
@@ -1164,9 +1177,6 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String result = "";
 		try {
 			this.protocolAlarmInstanceManagerService.doModbusProtocolAlarmInstanceAdd(protocolAlarmInstance);
-			List<String> instanceList=new ArrayList<String>();
-			instanceList.add(protocolInstance.getName());
-			EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
 			result = "{success:true,msg:true}";
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

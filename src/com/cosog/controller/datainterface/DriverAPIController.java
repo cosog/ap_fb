@@ -365,6 +365,7 @@ public class DriverAPIController extends BaseController{
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		boolean save=false;
 		boolean alarm=false;
+		boolean sendMessage=false;
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
 			EquipmentDriverServerTask.initAlarmStyle();
@@ -392,6 +393,11 @@ public class DriverAPIController extends BaseController{
 					+ " where t.id=t2.wellid and t.instancecode=t3.code and t3.unitid=t4.id and t4.id=t5.unitid and t5.groupid=t6.id"
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t6.id";
+			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+					+ " from tbl_wellinformation t, tbl_alarm_item2group_conf t2,tbl_alarm_group_conf t3,tbl_protocolalarminstance t4 "
+					+ " where t.alarminstancecode=t4.code and t4.alarmgroupid=t3.id and t3.id=t2.groupid "
+					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
+					+ " order by t2.id";
 			List list = commonDataService.findCallSql(sql);
 			if(list.size()>0){
 				Object[] obj=(Object[]) list.get(0);
@@ -427,6 +433,7 @@ public class DriverAPIController extends BaseController{
 					}
 				}
 				if(protocol!=null){
+					List<?> alarmItemsList = commonDataService.findCallSql(alarmItemsSql);
 					//通信计算
 					CommResponseData commResponseData=null;
 					String commRequest="{"
@@ -481,6 +488,19 @@ public class DriverAPIController extends BaseController{
 									insertHistColumns+=","+columnName;
 									insertHistValue+=",'"+value+"'";
 									
+									int alarmLevel=0;
+									for(int l=0;l<alarmItemsList.size();l++){
+										Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
+										if(protocol.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(alarmItemObj[2]+"")){
+											float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[5]+"");
+											if((StringManagerUtils.isNotNull(alarmItemObj[3]+"") && StringManagerUtils.stringToFloat(value)>StringManagerUtils.stringToFloat(alarmItemObj[3]+"")+hystersis)
+													||(StringManagerUtils.isNotNull(alarmItemObj[4]+"") && StringManagerUtils.stringToFloat(value)<StringManagerUtils.stringToFloat(alarmItemObj[4]+"")-hystersis)
+													){
+												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[7]+"");
+											}
+											break;
+										}
+									}
 									AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
 									acquisitionItemInfo.setAddr(protocol.getItems().get(j).getAddr());
 									acquisitionItemInfo.setColumn(columnName);
@@ -488,7 +508,7 @@ public class DriverAPIController extends BaseController{
 									acquisitionItemInfo.setTitle(protocol.getItems().get(j).getTitle());
 									acquisitionItemInfo.setUnit(protocol.getItems().get(j).getUnit());
 									acquisitionItemInfo.setDataType(protocol.getItems().get(j).getIFDataType());
-									acquisitionItemInfo.setAlarmLevel(StringManagerUtils.stringToFloat(value)>2?100:0);
+									acquisitionItemInfo.setAlarmLevel(alarmLevel);
 									acquisitionItemInfoList.add(acquisitionItemInfo);
 									
 									if(acquisitionItemInfo.getAlarmLevel()>0){

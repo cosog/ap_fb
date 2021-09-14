@@ -62,7 +62,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
                 },
             	select: function (picker,record,eOpts) {
                 	if(record.data.classes==1){
-                		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择采集单元！</font>");
+                		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择报警组！</font>");
                 	}else{
                 		Ext.getCmp("modbusInstanceAlarmGroup_Id").setValue(record.data.id);
                 	}

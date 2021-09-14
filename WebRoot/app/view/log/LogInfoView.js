@@ -15,7 +15,7 @@ Ext.define("AP.view.log.LogInfoView", {
         		border: false,
         		tabPosition: 'bottom',
         		items: [{
-        				title: '设备操作日志',
+        				title: '设备日志',
         				id:'DeviceOperationLogInfoPanel_Id',
         				items: [DeviceOperationLogInfoView],
         				layout: "fit",

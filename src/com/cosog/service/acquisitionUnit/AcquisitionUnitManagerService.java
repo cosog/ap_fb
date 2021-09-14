@@ -636,6 +636,67 @@ private CommonDataService service;
 		return result_json.toString();
 	}
 	
+	
+	public String modbusProtocolAndAlarmGroupTreeData(String deviceTypeStr){
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		
+		int deviceType=0;
+		if(StringManagerUtils.stringToInteger(deviceTypeStr)>0){
+			deviceType=1;
+		}
+		
+		result_json.append("[");
+		if(modbusProtocolConfig!=null){
+			String alarmGroupSql="select t.id,t.group_code,t.group_name,t.remark,t.protocol from tbl_alarm_group_conf t order by t.protocol,t.id";
+			List<?> alarmGroupList=this.findCallSql(alarmGroupSql);
+			//排序
+			Collections.sort(modbusProtocolConfig.getProtocol());
+			
+			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==deviceType){
+					result_json.append("{\"classes\":1,");
+					result_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
+					result_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
+					result_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
+					result_json.append("\"iconCls\": \"Protocol\",");
+					result_json.append("\"expanded\": true,");
+					result_json.append("\"disabled\": true,");
+					result_json.append("\"children\": [");
+					for(int j=0;j<alarmGroupList.size();j++){
+						Object[] unitObj = (Object[]) alarmGroupList.get(j);
+						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(unitObj[unitObj.length-1]+"")){
+							result_json.append("{\"classes\":2,");
+							result_json.append("\"id\":"+unitObj[0]+",");
+							result_json.append("\"code\":\""+unitObj[1]+"\",");
+							result_json.append("\"text\":\""+unitObj[2]+"\",");
+							result_json.append("\"remark\":\""+unitObj[3]+"\",");
+							result_json.append("\"protocol\":\""+unitObj[4]+"\",");
+							result_json.append("\"iconCls\": \"AcqGroup\",");
+							result_json.append("\"leaf\": true},");
+						}
+					}
+					if(result_json.toString().endsWith(",")){
+						result_json.deleteCharAt(result_json.length() - 1);
+					}
+					result_json.append("]},");
+				}
+			}
+			if(result_json.toString().endsWith(",")){
+				result_json.deleteCharAt(result_json.length() - 1);
+			}
+		}
+		result_json.append("]");
+//		System.out.println(result_json.toString());
+		return result_json.toString();
+	}
+	
+	
 	public String modbusProtocolAlarmGroupTreeData(){
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer pumpTree_json = new StringBuffer();

@@ -179,7 +179,6 @@ function CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 		url:context + '/realTimeMonitoringController/getDeviceRealTimeMonitoringData',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			
 			if(pumpDeviceRealTimeMonitoringDataHandsontableHelper==null || pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot==undefined){
 				pumpDeviceRealTimeMonitoringDataHandsontableHelper = PumpDeviceRealTimeMonitoringDataHandsontableHelper.createNew("PumpRealTimeMonitoringInfoDataTableInfoDiv_id");
 				var colHeaders="['名称','变量','名称','变量','名称','变量','名称','变量']";
