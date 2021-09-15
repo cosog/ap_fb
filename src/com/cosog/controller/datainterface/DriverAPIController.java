@@ -489,19 +489,31 @@ public class DriverAPIController extends BaseController{
 									insertHistValue+=",'"+value+"'";
 									
 									int alarmLevel=0;
+									AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
 									for(int l=0;l<alarmItemsList.size();l++){
 										Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
 										if(protocol.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(alarmItemObj[2]+"")){
 											float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[5]+"");
-											if((StringManagerUtils.isNotNull(alarmItemObj[3]+"") && StringManagerUtils.stringToFloat(value)>StringManagerUtils.stringToFloat(alarmItemObj[3]+"")+hystersis)
-													||(StringManagerUtils.isNotNull(alarmItemObj[4]+"") && StringManagerUtils.stringToFloat(value)<StringManagerUtils.stringToFloat(alarmItemObj[4]+"")-hystersis)
-													){
+											boolean upperAlarm=StringManagerUtils.isNotNull(alarmItemObj[3]+"") && StringManagerUtils.stringToFloat(value)>StringManagerUtils.stringToFloat(alarmItemObj[3]+"")+hystersis;
+											boolean lowerAlarm=StringManagerUtils.isNotNull(alarmItemObj[4]+"") && StringManagerUtils.stringToFloat(value)<StringManagerUtils.stringToFloat(alarmItemObj[4]+"")-hystersis;
+											
+											if(upperAlarm){
 												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[7]+"");
+												acquisitionItemInfo.setAlarmInfo("高报");
+												acquisitionItemInfo.setHystersis(hystersis);
+												acquisitionItemInfo.setAlarmType(1);
+												acquisitionItemInfo.setAlarmLimit(StringManagerUtils.stringToFloat(alarmItemObj[3]+""));
+											}else if(lowerAlarm){
+												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[7]+"");
+												acquisitionItemInfo.setAlarmInfo("低报");
+												acquisitionItemInfo.setHystersis(hystersis);
+												acquisitionItemInfo.setAlarmType(1);
+												acquisitionItemInfo.setAlarmLimit(StringManagerUtils.stringToFloat(alarmItemObj[4]+""));
 											}
 											break;
 										}
 									}
-									AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
+									
 									acquisitionItemInfo.setAddr(protocol.getItems().get(j).getAddr());
 									acquisitionItemInfo.setColumn(columnName);
 									acquisitionItemInfo.setValue(value);
@@ -532,6 +544,11 @@ public class DriverAPIController extends BaseController{
 						commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
 						commonDataService.getBaseDao().updateOrDeleteBySql(insertHistSql);
 						
+						//报警项
+						if(alarm){
+							calculateDataService.saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
+						}
+						
 						//更新clob类型数据  运行区间
 						if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 							List<String> clobCont=new ArrayList<String>();
@@ -543,6 +560,7 @@ public class DriverAPIController extends BaseController{
 							result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRunRangeClobSql_Hist,clobCont);
 						}
 					}
+					
 					
 					//处理websocket推送
 					int items=4;
