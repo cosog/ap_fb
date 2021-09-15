@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.cosog.model.calculate.CommResponseData;
 import com.cosog.model.calculate.TimeEffResponseData;
 import com.cosog.model.drive.AcquisitionGroupResolutionData;
+import com.cosog.model.drive.AcquisitionItemInfo;
 import com.cosog.service.base.BaseService;
 import com.cosog.utils.Config;
 import com.cosog.utils.Config2;
@@ -44,6 +45,10 @@ public class CalculateDataService<T> extends BaseService<T> {
 		List<?> list = this.findCallSql(sql);
 		
 		return list.get(0).toString();
+	}
+	
+	public void saveAlarmInfo(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException{
+		getBaseDao().saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
 	}
 	
 }

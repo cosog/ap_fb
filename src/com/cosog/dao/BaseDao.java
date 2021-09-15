@@ -72,6 +72,7 @@ import com.cosog.model.calculate.TimeEffResponseData;
 import com.cosog.model.calculate.TimeEffTotalResponseData;
 import com.cosog.model.calculate.WellAcquisitionData;
 import com.cosog.model.drive.AcquisitionGroupResolutionData;
+import com.cosog.model.drive.AcquisitionItemInfo;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.gridmodel.CalculateManagerHandsontableChangedData;
@@ -1902,6 +1903,39 @@ public class BaseDao extends HibernateDaoSupport {
 			if(cs!=null){
 				cs.close();
 			}
+			conn.close();
+		}
+		return true;
+	}
+	
+	
+	public Boolean saveAlarmInfo(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException {
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		
+		try {
+			cs = conn.prepareCall("{call prd_save_alarminfo(?,?,?,?,?,?,?,?,?,?)}");
+			for(int i=0;i<acquisitionItemInfoList.size();i++){
+				if(acquisitionItemInfoList.get(i).getAlarmLevel()>0){
+					cs.setString(1, wellName);
+					cs.setString(2, deviceType);
+					cs.setString(3, acqTime);
+					cs.setString(4, acquisitionItemInfoList.get(i).getTitle());
+					cs.setInt(5, acquisitionItemInfoList.get(i).getAlarmType());
+					cs.setString(6, acquisitionItemInfoList.get(i).getValue());
+					cs.setString(7, acquisitionItemInfoList.get(i).getAlarmInfo());
+					cs.setFloat(8, acquisitionItemInfoList.get(i).getAlarmLimit());
+					cs.setFloat(9, acquisitionItemInfoList.get(i).getHystersis());
+					cs.setInt(10, acquisitionItemInfoList.get(i).getAlarmLevel());
+					cs.executeUpdate();
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			if(cs!=null)
+				cs.close();
 			conn.close();
 		}
 		return true;

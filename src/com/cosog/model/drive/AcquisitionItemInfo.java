@@ -9,11 +9,17 @@ public class AcquisitionItemInfo {
 	public String dataType;
 	public String unit;
 	public int alarmLevel;
+	
+	public float alarmLimit;
+	public float hystersis;
+	public String alarmInfo;
+	public int alarmType;
 	public AcquisitionItemInfo() {
 		super();
 	}
+
 	public AcquisitionItemInfo(int addr, String column, String title, String value, String dataType, String unit,
-			int alarmLevel) {
+			int alarmLevel, float alarmLimit, float hystersis, String alarmInfo, int alarmType) {
 		super();
 		this.addr = addr;
 		this.column = column;
@@ -22,7 +28,14 @@ public class AcquisitionItemInfo {
 		this.dataType = dataType;
 		this.unit = unit;
 		this.alarmLevel = alarmLevel;
+		this.alarmLimit = alarmLimit;
+		this.hystersis = hystersis;
+		this.alarmInfo = alarmInfo;
+		this.alarmType = alarmType;
 	}
+
+
+
 	public int getAddr() {
 		return addr;
 	}
@@ -64,6 +77,38 @@ public class AcquisitionItemInfo {
 	}
 	public void setAlarmLevel(int alarmLevel) {
 		this.alarmLevel = alarmLevel;
+	}
+
+	public float getAlarmLimit() {
+		return alarmLimit;
+	}
+
+	public void setAlarmLimit(float alarmLimit) {
+		this.alarmLimit = alarmLimit;
+	}
+
+	public float getHystersis() {
+		return hystersis;
+	}
+
+	public void setHystersis(float hystersis) {
+		this.hystersis = hystersis;
+	}
+
+	public String getAlarmInfo() {
+		return alarmInfo;
+	}
+
+	public void setAlarmInfo(String alarmInfo) {
+		this.alarmInfo = alarmInfo;
+	}
+
+	public int getAlarmType() {
+		return alarmType;
+	}
+
+	public void setAlarmType(int alarmType) {
+		this.alarmType = alarmType;
 	}
 	
 }
