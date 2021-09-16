@@ -291,6 +291,18 @@ public class DriverAPIController extends BaseController{
 					
 					int result=commonDataService.getBaseDao().updateOrDeleteBySql(updateRealData);
 					result=commonDataService.getBaseDao().updateOrDeleteBySql(updateHistData);
+					String commAlarm="";
+					if(acqOnline.getStatus()){
+						commAlarm="update tbl_alarminfo t set t.recoverytime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss') "
+								+ " where t.alarmtime=( select max(t2.alarmtime) from tbl_alarminfo t2 where t2.alarmtype=0 and t2.wellid=t.wellid ) "
+								+ " and t.wellid= "+wellId
+								+ " and t.alarmtype=0"
+								+ " and t.recoverytime is null";
+					}else{
+						commAlarm="insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
+								+ "values("+wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),'通信状态',0,0,'离线',100)";
+					}
+					result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
 					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRealCommRangeClobSql,clobCont);
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateHistCommRangeClobSql,clobCont);

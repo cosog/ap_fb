@@ -159,7 +159,9 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		&& module_Code != "ProductionData"
 		&& module_Code != "WellInformation"
 		&& module_Code != "DeviceRealTimeMonitoring"
-		&& module_Code != "DeviceHistoryQuery") {
+		&& module_Code != "DeviceHistoryQuery"
+		&& module_Code != "LogQuery"
+		&& module_Code != "AlarmQuery") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -306,6 +308,49 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 				Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
 			}
 		}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+			}
+		}
+	}else if(module_Code == "LogQuery"){
+		var tabPanel = Ext.getCmp("LogQueryTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="DeviceOperationLogInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("DeviceOperationLogGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.log.DeviceOperationLogStore');
+			}
+		}else if(activeId=="SystemLogInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("SystemLogGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.log.SystemLogStore');
+			}
+		}
+	}else if(module_Code == "AlarmQuery"){
+		var tabPanel = Ext.getCmp("AlarmQueryTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="CommunicationAlarmInfoPanel_Id"){
+			var gridPanel = Ext.getCmp("CommunicationAlarmGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getStore().load();
+			}else{
+				Ext.create('AP.store.alarmQuery.CommunicationAlarmStore');
+			}
+		}else if(activeId=="NumericValueAlarmInfoPanel_Id"){
+//			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+//			if (isNotVal(gridPanel)) {
+//				gridPanel.getStore().load();
+//			}else{
+//				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+//			}
+		}else if(activeId=="SwitchingValueAlarmInfoPanel_Id"){
 //			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
 //			if (isNotVal(gridPanel)) {
 //				gridPanel.getStore().load();

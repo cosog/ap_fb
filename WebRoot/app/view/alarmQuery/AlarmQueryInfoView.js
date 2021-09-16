@@ -5,8 +5,9 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
-        var LimitAlarmInfoView = Ext.create('AP.view.alarmQuery.LimitAlarmInfoView');
         var CommunicationAlarmInfoView = Ext.create('AP.view.alarmQuery.CommunicationAlarmInfoView');
+        var NumericValueAlarmInfoView = Ext.create('AP.view.alarmQuery.NumericValueAlarmInfoView');
+        var SwitchingValueAlarmInfoView = Ext.create('AP.view.alarmQuery.SwitchingValueAlarmInfoView');
         Ext.apply(me, {
         	items: [{
         		xtype: 'tabpanel',
@@ -15,34 +16,47 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
         		border: false,
         		tabPosition: 'bottom',
         		items: [{
-        				title: '限值报警',
-        				id:'LimitAlarmInfoPanel_Id',
-//        				items: [LimitAlarmInfoView],
+        				title: '通信状态报警',
+        				id:'CommunicationAlarmInfoPanel_Id',
+        				items: [CommunicationAlarmInfoView],
         				layout: "fit",
         				border: false
         			},{
-        				title: '通信报警',
-        				id:'CommunicationAlarmInfoPanel_Id',
-//        				items: [CommunicationAlarmInfoView],
+        				title: '数值量报警',
+        				id:'NumericValueAlarmInfoPanel_Id',
+        				items: [NumericValueAlarmInfoView],
+        				layout: "fit",
+        				border: false
+        			},{
+        				title: '开关量报警',
+        				id:'SwitchingValueAlarmInfoPanel_Id',
+        				items: [SwitchingValueAlarmInfoView],
         				layout: "fit",
         				border: false
         			}],
         			listeners: {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
-        					if(newCard.id=="LimitAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("LimitAlarmGridPanel_Id");
-        						if (isNotVal(gridPanel)) {
-        							gridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.alarmQuery.LimitAlarmListStore');
-        						}
-        					}else if(newCard.id=="CommunicationAlarmInfoPanel_Id"){
+        					if(newCard.id=="CommunicationAlarmInfoPanel_Id"){
         						var gridPanel = Ext.getCmp("CommunicationAlarmGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.CommunicationAlarmListStore');
+        							Ext.create('AP.store.alarmQuery.CommunicationAlarmStore');
+        						}
+        					}else if(newCard.id=="NumericValueAlarmInfoPanel_Id"){
+        						var gridPanel = Ext.getCmp("NumericValueAlarmGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.alarmQuery.NumericValueAlarmStore');
+        						}
+        					}else if(newCard.id=="SwitchingValueAlarmInfoPanel_Id"){
+        						var gridPanel = Ext.getCmp("SwitchingValueAlarmGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.alarmQuery.SwitchingValueAlarmStore');
         						}
         					}
         				}
@@ -51,12 +65,10 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
         });
         me.callParent(arguments);
     }
-
 });
 
 function createAlarmQueryColumn(columnInfo) {
     var myArr = columnInfo;
-
     var myColumns = "[";
     for (var i = 0; i < myArr.length; i++) {
         var attr = myArr[i];
@@ -74,10 +86,10 @@ function createAlarmQueryColumn(columnInfo) {
         }
         myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_;
         if (attr.dataIndex.toUpperCase() == 'id'.toUpperCase()) {
-            myColumns += ",xtype: 'rownumberer',sortable : false,locked:true";
+            myColumns += ",xtype: 'rownumberer',sortable : false,locked:false";
         }
         else if (attr.dataIndex.toUpperCase()=='wellName'.toUpperCase()) {
-            myColumns += ",sortable : false,locked:true,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
+            myColumns += ",sortable : false,locked:false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
         }
         else if (attr.dataIndex.toUpperCase()=='commStatusName'.toUpperCase()) {
             myColumns += ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceCommStatusColor(value,o,p,e);}";
@@ -85,7 +97,7 @@ function createAlarmQueryColumn(columnInfo) {
         else if (attr.dataIndex.toUpperCase()=='runStatusName'.toUpperCase()) {
             myColumns += ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceRunStatusColor(value,o,p,e);}";
         }
-        else if (attr.dataIndex.toUpperCase() == 'acqTime'.toUpperCase()) {
+        else if (attr.dataIndex.toUpperCase() == 'alarmtime'.toUpperCase() || attr.dataIndex.toUpperCase() == 'recoverytime'.toUpperCase()) {
             myColumns += ",sortable : false,locked:false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceTimeFormat(value,o,p,e);}";
         } 
         else {
