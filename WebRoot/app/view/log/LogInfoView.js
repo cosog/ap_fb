@@ -10,7 +10,7 @@ Ext.define("AP.view.log.LogInfoView", {
         Ext.apply(me, {
         	items: [{
         		xtype: 'tabpanel',
-        		id:"OperationLogTabPanel",
+        		id:"LogQueryTabPanel",
         		activeTab: 0,
         		border: false,
         		tabPosition: 'bottom',

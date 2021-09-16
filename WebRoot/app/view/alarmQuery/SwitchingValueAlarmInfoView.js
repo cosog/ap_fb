@@ -1,12 +1,12 @@
-Ext.define('AP.view.log.DeviceOperationLogInfoView', {
+Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.deviceOperationLogInfoView',
+    alias: 'widget.SwitchingValueAlarmInfoView',
     layout: "fit",
-    id: "DeviceOperationLogView_Id",
+    id: "SwitchingValueAlarmInfoView_Id",
     border: false,
     //forceFit : true,
     initComponent: function () {
-    	var DeviceOperationLogStore= Ext.create('AP.store.log.DeviceOperationLogStore');
+//    	var SwitchingValueAlarmStore= Ext.create('AP.store.alarmQuery.SwitchingValueAlarmStore');
     	var deviceTypeCombStore = new Ext.data.JsonStore({
         	pageSize:defaultWellComboxSize,
             fields: [{
@@ -42,7 +42,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
         var deviceTypeCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备类型',
-                    id: "DeviceOperationLogDeviceTypeListComb_Id",
+                    id: "SwitchingValueAlarmDeviceTypeListComb_Id",
                     labelWidth: 60,
                     width: 170,
                     labelAlign: 'left',
@@ -50,7 +50,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
                     typeAhead: true,
                     store: deviceTypeCombStore,
                     autoSelect: false,
-                    editable: true,
+                    editable: false,
                     triggerAction: 'all',
                     displayField: "boxval",
                     valueField: "boxkey",
@@ -63,8 +63,8 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
                             deviceTypeCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("DeviceOperationLogDeviceListComb_Id").setValue('');
-                        	Ext.getCmp("DeviceOperationLogGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("SwitchingValueAlarmDeviceListComb_Id").setValue('');
+                        	Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
@@ -94,8 +94,8 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('DeviceOperationLogDeviceListComb_Id').getValue();
-                    var deviceType = Ext.getCmp('DeviceOperationLogDeviceTypeListComb_Id').getValue();
+                    var wellName = Ext.getCmp('SwitchingValueAlarmDeviceListComb_Id').getValue();
+                    var deviceType = Ext.getCmp('SwitchingValueAlarmDeviceTypeListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: deviceType,
@@ -109,7 +109,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备',
-                    id: "DeviceOperationLogDeviceListComb_Id",
+                    id: "SwitchingValueAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
                     labelAlign: 'left',
@@ -130,86 +130,51 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("DeviceOperationLogGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
-        
-        var operationTypeCombStore = new Ext.data.JsonStore({
-        	pageSize:defaultWellComboxSize,
-            fields: [{
-                name: "boxkey",
-                type: "string"
-            }, {
-                name: "boxval",
-                type: "string"
-            }],
-            proxy: {
-            	url: context + '/wellInformationManagerController/loadDataDictionaryComboxList',
-                type: "ajax",
-                actionMethods: {
-                    read: 'POST'
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'totals'
-                }
-            },
-            autoLoad: true,
-            listeners: {
-                beforeload: function (store, options) {
-                    var new_params = {
-                    	itemCode: 'action'
-                    };
-                    Ext.apply(store.proxy.extraParams,new_params);
-                }
-            }
-        });
-    	
-        var operationTypeCombo = Ext.create(
-                'Ext.form.field.ComboBox', {
-                    fieldLabel: '操作',
-                    id: "DeviceOperationLogOperationTypeListComb_Id",
-                    labelWidth: 35,
-                    width: 145,
-                    labelAlign: 'left',
-                    queryMode: 'remote',
-                    typeAhead: true,
-                    store: operationTypeCombStore,
-                    autoSelect: false,
-                    editable: true,
-                    triggerAction: 'all',
-                    displayField: "boxval",
-                    valueField: "boxkey",
-                    pageSize:comboxPagingStatus,
-                    minChars:0,
-                    emptyText: cosog.string.all,
-                    blankText: cosog.string.all,
-                    listeners: {
-                        expand: function (sm, selections) {
-                        	operationTypeCombo.getStore().loadPage(1); // 加载井下拉框的store
-                        },
-                        select: function (combo, record, index) {
-                        	Ext.getCmp("DeviceOperationLogGridPanel_Id").getStore().loadPage(1);
-                        }
-                    }
-                });
-        
     	Ext.apply(this, {
-            tbar: [deviceTypeCombo,'-',deviceCombo,'-',operationTypeCombo,'-',{
+            tbar: [deviceTypeCombo,'-',deviceCombo,'-','-',{
+            	xtype : "combobox",
+				fieldLabel : '报警级别',
+				id : 'SwitchingValueAlarmLevelComb_Id',
+				labelWidth: 60,
+                width: 170,
+                labelAlign: 'left',
+				triggerAction : 'all',
+				displayField: "boxval",
+                valueField: "boxkey",
+				selectOnFocus : true,
+			    forceSelection : true,
+			    value:'',
+			    allowBlank: false,
+				editable : false,
+				emptyText: cosog.string.all,
+                blankText: cosog.string.all,
+				store : new Ext.data.SimpleStore({
+							fields : ['boxkey', 'boxval'],
+							data : [['', '选择全部'],[100, '一级报警'],[200, '二级报警'],[300, '三级报警']]
+						}),
+				queryMode : 'local',
+				listeners : {
+					select:function(v,o){
+						Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+					}
+				}
+            },'-',{
                 xtype: 'datefield',
                 anchor: '100%',
 //                hidden: true,
                 fieldLabel: '区间',
                 labelWidth: 30,
-                width: 120,
+                width: 130,
                 format: 'Y-m-d ',
                 value: '',
-                id: 'DeviceOperationLogQueryStartDate_Id',
+                id: 'SwitchingValueAlarmQueryStartDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("DeviceOperationLogGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             },{
@@ -218,14 +183,14 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
 //                hidden: true,
                 fieldLabel: '至',
                 labelWidth: 15,
-                width: 105,
+                width: 115,
                 format: 'Y-m-d ',
                 value: '',
 //                value: new Date(),
-                id: 'DeviceOperationLogQueryEndDate_Id',
+                id: 'SwitchingValueAlarmQueryEndDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("DeviceOperationLogGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             }]

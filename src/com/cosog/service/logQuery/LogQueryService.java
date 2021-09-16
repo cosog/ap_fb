@@ -48,9 +48,9 @@ public class LogQueryService<T> extends BaseService<T>  {
 		}
 		sql+=" order by t.createtime desc";
 		int maxvalue=pager.getLimit()+pager.getStart();
-		String sqlAll="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		
-		String getResult = this.findCustomPageBySqlEntity(sqlAll,sql, columns, 20 + "", pager);
+		String getResult = this.findCustomPageBySqlEntity(sql,finalSql, columns, 20 + "", pager);
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 	
@@ -69,9 +69,9 @@ public class LogQueryService<T> extends BaseService<T>  {
 		}
 		sql+=" order by t.createtime desc";
 		int maxvalue=pager.getLimit()+pager.getStart();
-		String sqlAll="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		
-		String getResult = this.findCustomPageBySqlEntity(sqlAll,sql, columns, 20 + "", pager);
+		String getResult = this.findCustomPageBySqlEntity(sql,finalSql, columns, 20 + "", pager);
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 }
