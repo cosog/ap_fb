@@ -87,8 +87,11 @@ private CommonDataService service;
 	public String getRoleList(Map map,Page pager) {
 		String roleName = (String) map.get("roleName");
 		StringBuffer sqlBuffer = new StringBuffer();
-		sqlBuffer.append(" select roleCode,roleName,roleFlag,roleFlagName,roleId,remark from ( ");
-		sqlBuffer.append(" select role_code as roleCode,role_name as roleName,role_flag as roleFlag,decode(u.role_flag,1,'是','否') as roleFlagName,role_id as roleId,remark from  tbl_role u where 1=1");
+		sqlBuffer.append(" select roleCode,roleName,roleFlag,roleFlagName,receiveSMS,receiveSMSName,roleId,remark from ( ");
+		sqlBuffer.append(" select role_code as roleCode,role_name as roleName,"
+				+ "role_flag as roleFlag,decode(u.role_flag,1,'是','否') as roleFlagName,"
+				+ "receiveSMS as receiveSMS,decode(u.receiveSMS,1,'是','否') as receiveSMSName,"
+				+ "role_id as roleId,remark from  tbl_role u where 1=1");
 		if (StringManagerUtils.isNotNull(roleName)) {
 			sqlBuffer.append(" and u.role_Name like '%" + roleName + "%' ");
 		}

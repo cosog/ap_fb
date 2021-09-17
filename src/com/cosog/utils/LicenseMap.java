@@ -27,7 +27,8 @@ public final class LicenseMap {
 		moduleList0.add(29);//角色管理
 		moduleList0.add(31);//数据配置
 		moduleList0.add(1777);//数据源
-		moduleList0.add(34);//井名信息
+		moduleList0.add(34);//设备管理
+		moduleList0.add(2078);//短信设备管理
 		moduleList0.add(23);//系统配置
 		moduleList0.add(26);//模块配置
 		moduleList0.add(894);//字典配置
