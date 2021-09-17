@@ -410,8 +410,10 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}
 		if(deviceType==0){
 			ddicName="pumpDeviceManager";
-		}else{
-			ddicName="tubingDeviceManager";
+		}else if(deviceType==1){
+			ddicName="pipelineDeviceManager";
+		}else if(deviceType==2){
+			ddicName="SMSDeviceManager";
 		}
 		
 		String columns=service.showTableHeadersColumns(ddicName);
@@ -419,10 +421,13 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
-				+ WellInformation_Str
-				+ " and t.orgid in ("+orgId+" )  "
-				+ " and t.devicetype="+deviceType
-			    + " order by t.sortnum,t.wellname ";
+				+ WellInformation_Str;
+		if(deviceType!=2){
+			sql+= " and t.orgid in ("+orgId+" )  ";
+		}
+				
+		sql+= " and t.devicetype="+deviceType;
+		sql+= " order by t.sortnum,t.wellname ";
 		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype="+deviceType+" order by t.sort";
 		String alarmInstanceSql="select t.name from tbl_protocolalarminstance t where t.devicetype="+deviceType+" order by t.sort";
 		List<?> instanceList = this.findCallSql(instanceSql);

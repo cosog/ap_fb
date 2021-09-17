@@ -22,7 +22,8 @@ public class Role implements java.io.Serializable {
 	private Integer roleId;
 	private String roleCode;
 	private String roleName;
-	private String roleFlag;
+	private Integer roleFlag;
+	private Integer receiveSMS;
 	private String remark;
 
 	// Constructors
@@ -32,11 +33,14 @@ public class Role implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Role(String roleCode, String roleName, String roleFlag,String remark) {
+	public Role(Integer roleId, String roleCode, String roleName, Integer roleFlag, Integer receiveSMS, String remark) {
+		super();
+		this.roleId = roleId;
 		this.roleCode = roleCode;
 		this.roleName = roleName;
 		this.roleFlag = roleFlag;
-		this.remark=remark;
+		this.receiveSMS = receiveSMS;
+		this.remark = remark;
 	}
 
 	@Id
@@ -69,11 +73,11 @@ public class Role implements java.io.Serializable {
 	}
 
 	@Column(name = "ROLE_FLAG", nullable = false, length = 10)
-	public String getRoleFlag() {
+	public Integer getRoleFlag() {
 		return this.roleFlag;
 	}
 
-	public void setRoleFlag(String roleFlag) {
+	public void setRoleFlag(Integer roleFlag) {
 		this.roleFlag = roleFlag;
 	}
 	
@@ -84,6 +88,15 @@ public class Role implements java.io.Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	@Column(name = "receiveSMS", nullable = false, length = 10)
+	public Integer getReceiveSMS() {
+		return receiveSMS;
+	}
+
+	public void setReceiveSMS(Integer receiveSMS) {
+		this.receiveSMS = receiveSMS;
 	}
 
 }

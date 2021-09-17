@@ -135,7 +135,7 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceTypeCombo,'-',deviceCombo,'-','-',{
+            tbar: [deviceTypeCombo,'-',deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '报警级别',
 				id : 'NumericValueAlarmLevelComb_Id',
@@ -155,6 +155,33 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
 				store : new Ext.data.SimpleStore({
 							fields : ['boxkey', 'boxval'],
 							data : [['', '选择全部'],[100, '一级报警'],[200, '二级报警'],[300, '三级报警']]
+						}),
+				queryMode : 'local',
+				listeners : {
+					select:function(v,o){
+						Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
+					}
+				}
+            },'-',{
+            	xtype : "combobox",
+				fieldLabel : '是否发送短信',
+				id : 'NumericValueAlarmIsSendMessageComb_Id',
+				labelWidth: 80,
+                width: 190,
+                labelAlign: 'left',
+				triggerAction : 'all',
+				displayField: "boxval",
+                valueField: "boxkey",
+				selectOnFocus : true,
+			    forceSelection : true,
+			    value:'',
+			    allowBlank: false,
+				editable : false,
+				emptyText: cosog.string.all,
+                blankText: cosog.string.all,
+				store : new Ext.data.SimpleStore({
+							fields : ['boxkey', 'boxval'],
+							data : [['', '选择全部'],[1, '是'],[0, '否']]
 						}),
 				queryMode : 'local',
 				listeners : {
