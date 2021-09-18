@@ -34,6 +34,7 @@ import com.cosog.model.AlarmGroupItem;
 import com.cosog.model.Module;
 import com.cosog.model.ProtocolAlarmInstance;
 import com.cosog.model.ProtocolInstance;
+import com.cosog.model.ProtocolSMSInstance;
 import com.cosog.model.Role;
 import com.cosog.model.RoleModule;
 import com.cosog.model.User;
@@ -92,8 +93,13 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	@Autowired
 	private AcquisitionUnitManagerService<ProtocolAlarmInstance> protocolAlarmInstanceManagerService;
+	
+	@Autowired
+	private AcquisitionUnitManagerService<ProtocolSMSInstance> protocolSMSInstanceManagerService;
+	
 	@Autowired
 	private CommonDataService service;
+	
 	private AcquisitionUnit acquisitionUnit;
 	private AcquisitionGroup acquisitionGroup;
 	private AlarmGroup alarmGroup;
@@ -134,6 +140,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@InitBinder("protocolAlarmInstance")
 	public void initBinder5(WebDataBinder binder) {
 		binder.setFieldDefaultPrefix("protocolAlarmInstance.");
+	}
+	
+	//添加绑定前缀 
+	@InitBinder("protocolSMSInstance")
+	public void initBinder6(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("protocolSMSInstance.");
 	}
 
 	/**<p>描述：采集类型数据显示方法</p>
@@ -664,6 +676,25 @@ public class AcquisitionUnitManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	
+	@RequestMapping("/getSMSInstanceList")
+	public String getSMSInstanceList() throws Exception {
+		String json = "";
+		String name = ParamUtils.getParameter(request, "name");
+		this.pager = new Page("pagerForm", request);
+		json = acquisitionUnitItemManagerService.getSMSInstanceList(name,pager);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	
 	@RequestMapping("/getModbusProtoclCombList")
 	public String getModbusProtoclCombList() throws IOException {
@@ -1233,6 +1264,44 @@ public class AcquisitionUnitManagerController extends BaseController {
 		log.warn("jh json is ==" + json);
 		pw.flush();
 		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/doModbusProtocolSMSInstanceAdd")
+	public String doModbusProtocolSMSInstanceAdd(@ModelAttribute ProtocolSMSInstance protocolSMSInstance) throws IOException {
+		String result = "";
+		try {
+			this.protocolSMSInstanceManagerService.doModbusProtocolSMSInstanceAdd(protocolSMSInstance);
+//			List<String> instanceList=new ArrayList<String>();
+//			instanceList.add(protocolInstance.getName());
+//			EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
+			result = "{success:true,msg:true}";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+		}
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(result);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/doModbusProtocolSMSInstanceDelete")
+	public String doModbusProtocolSMSInstanceDelete() {
+		try {
+			String ids = ParamUtils.getParameter(request, "paramsId");
+			this.acquisitionUnitManagerService.doModbusProtocolSMSInstanceDelete(ids);
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			String result = "{success:true,flag:true}";
+			response.getWriter().print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 

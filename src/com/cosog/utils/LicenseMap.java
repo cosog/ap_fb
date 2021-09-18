@@ -25,14 +25,16 @@ public final class LicenseMap {
 		moduleList0.add(24);//单位管理
 		moduleList0.add(28);//用户管理
 		moduleList0.add(29);//角色管理
-		moduleList0.add(31);//数据配置
-		moduleList0.add(1777);//数据源
-		moduleList0.add(34);//设备管理
+		moduleList0.add(31);//设备管理
+		moduleList0.add(34);//泵设备管理
+		moduleList0.add(2098);//管设备管理
 		moduleList0.add(2078);//短信设备管理
 		moduleList0.add(23);//系统配置
 		moduleList0.add(26);//模块配置
 		moduleList0.add(894);//字典配置
 		moduleList0.add(47);//报警配置
+		
+		moduleList0.add(1777);//数据源
 		moduleMap.put(0, moduleList0);
 		
 		List<Integer> moduleList1=new ArrayList<Integer>();//自动化采集

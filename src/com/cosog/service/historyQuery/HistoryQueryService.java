@@ -184,18 +184,35 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				List<String> columnsDataTypeList=new ArrayList<String>();
 				List<Integer> alarmLevelList=new ArrayList<Integer>();
 				
-				for(int j=0;j<itemsArr.length;j++){
-					for(int k=0;k<protocol.getItems().size();k++){
-						if(itemsArr[j].equalsIgnoreCase(protocol.getItems().get(k).getTitle())){
-							String column="ADDR"+protocol.getItems().get(k).getAddr();
-							String columnName=protocol.getItems().get(k).getTitle();
-							columnsList.add(column);
-							columnsNameList.add(columnName);
-							columnsDataTypeList.add(protocol.getItems().get(k).getIFDataType());
-							break;
+//				for(int j=0;j<itemsArr.length;j++){
+//					for(int k=0;k<protocol.getItems().size();k++){
+//						if(itemsArr[j].equalsIgnoreCase(protocol.getItems().get(k).getTitle())){
+//							String column="ADDR"+protocol.getItems().get(k).getAddr();
+//							String columnName=protocol.getItems().get(k).getTitle();
+//							columnsList.add(column);
+//							columnsNameList.add(columnName);
+//							columnsDataTypeList.add(protocol.getItems().get(k).getIFDataType());
+//							break;
+//						}
+//					}
+//				}
+				
+				for(int j=0;j<protocol.getItems().size();j++){
+					if(!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false)){
+						for(int k=0;k<itemsArr.length;k++){
+							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
+								String column="ADDR"+protocol.getItems().get(j).getAddr();
+								String columnName=protocol.getItems().get(j).getTitle();
+								columnsList.add(column);
+								columnsNameList.add(columnName);
+								columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
+								break;
+							}
 						}
 					}
 				}
+				
+				
 				
 				String sql="select t.id,t.wellname,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'), t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
 				for(int j=0;j<columnsList.size();j++){
