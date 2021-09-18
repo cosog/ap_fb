@@ -158,6 +158,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		&& module_Code != "ProductionReport"
 		&& module_Code != "ProductionData"
 		&& module_Code != "WellInformation"
+		&& module_Code != "PumpDeviceManager"
+		&& module_Code != "PipelineDeviceManager"
 		&& module_Code != "SMSDeviceManager"
 		&& module_Code != "DeviceRealTimeMonitoring"
 		&& module_Code != "DeviceHistoryQuery"
@@ -280,6 +282,10 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		}else if(activeId=="PipelineDeviceManagerPanel"){
 			CreateAndLoadPipelineDeviceInfoTable();
 		}
+	}else if(module_Code == "PumpDeviceManager"){
+		CreateAndLoadPumpDeviceInfoTable(true);
+	}else if(module_Code == "PipelineDeviceManager"){
+		CreateAndLoadPipelineDeviceInfoTable(true);
 	}else if(module_Code == "SMSDeviceManager"){
 		CreateAndLoadSMSDeviceInfoTable(true);
 	}else if(module_Code == "DeviceRealTimeMonitoring"){

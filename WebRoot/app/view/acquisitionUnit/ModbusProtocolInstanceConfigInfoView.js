@@ -8,6 +8,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolInstanceConfigInfoView', {
     	var me = this;
     	var ModbusProtocolAcqInstanceConfigInfoView = Ext.create('AP.view.acquisitionUnit.ModbusProtocolAcqInstanceConfigInfoView');
     	var ModbusProtocolAlarmInstanceConfigInfoView = Ext.create('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView');
+    	var ModbusProtocolSMSInstanceConfigInfoView = Ext.create('AP.view.acquisitionUnit.ModbusProtocolSMSInstanceConfigInfoView');
     	Ext.apply(me, {
     		items: [{
     			xtype: 'tabpanel',
@@ -27,6 +28,12 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolInstanceConfigInfoView', {
                 	items: [ModbusProtocolAlarmInstanceConfigInfoView],
     				layout: "fit",
     				border: false
+                },{
+                	title:'短信实例',
+                	id:'ModbusProtocolSMSInstanceConfigTabPanel_Id',
+                	items: [ModbusProtocolSMSInstanceConfigInfoView],
+    				layout: "fit",
+    				border: false
                 }],
                 listeners: {
                     tabchange: function (tabPanel, newCard, oldCard, obj) {
@@ -38,6 +45,13 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolInstanceConfigInfoView', {
                     			treePanel.getStore().load();
                     		}else{
                     			Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmInstanceTreeInfoStore');
+                    		}
+                    	}else if(newCard.id=="ModbusProtocolSMSInstanceConfigTabPanel_Id"){
+                    		var gridPanel=Ext.getCmp("ModbusProtocolSMSInstanceGridPanel_Id");
+                    		if(isNotVal(gridPanel)){
+                    			gridPanel.getStore().load();
+                    		}else{
+                    			Ext.create('AP.store.acquisitionUnit.ModbusProtocolSMSInstanceStore');
                     		}
                     	}
                     },afterrender: function (comp,eOpts) {

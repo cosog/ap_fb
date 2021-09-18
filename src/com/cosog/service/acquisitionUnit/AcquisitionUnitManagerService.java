@@ -1,5 +1,7 @@
 package com.cosog.service.acquisitionUnit;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,11 +15,15 @@ import org.springframework.stereotype.Service;
 import com.cosog.model.AcquisitionGroup;
 import com.cosog.model.AcquisitionGroupItem;
 import com.cosog.model.AcquisitionUnitGroup;
+import com.cosog.model.AlarmShowStyle;
+import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
+import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.DataModelMap;
 import com.cosog.utils.DataSourceConfig;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.Page;
@@ -37,7 +43,9 @@ import com.google.gson.reflect.TypeToken;
 @SuppressWarnings("rawtypes")
 public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 	@Autowired
-private CommonDataService service;
+	private CommonDataService service;
+	@Autowired
+	private DataitemsInfoService dataitemsInfoService;
 
 	public String getAcquisitionUnitList(Map map,Page pager) {
 		String protocolName = (String) map.get("protocolName");
@@ -945,6 +953,55 @@ private CommonDataService service;
 		return result_json.toString();
 	}
 	
+	public String getSMSInstanceList(String name,Page pager) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		
+//		String ddicName="pumpRealTimeOverview";
+//		DataDictionary ddic = null;
+//		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+//		String columns = ddic.getTableHeader();
+		
+		String columns = "["
+		+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+		+ "{ \"header\":\"实例名称\",\"dataIndex\":\"name\" ,children:[] },"
+		+ "{ \"header\":\"采集协议类型\",\"dataIndex\":\"acqprotocolType\" ,children:[] },"
+		+ "{ \"header\":\"控制协议类型\",\"dataIndex\":\"ctrlprotocolType\" ,children:[] },"
+		+ "{ \"header\":\"排序\",\"dataIndex\":\"sort\",children:[] }"
+		+ "]";
+		
+		String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.sort from tbl_protocolsmsinstance t where 1=1";
+		if(StringManagerUtils.isNotNull(name)){
+			sql+=" and t.name like '%"+name+"%'";
+		}
+		sql+=" order by t.sort";
+		
+		int maxvalue=pager.getLimit()+pager.getStart();
+		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		finalSql=sql;
+		
+		int totals=this.getTotalCountRows(sql);
+		List<?> list = this.findCallSql(finalSql);
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalCount\":"+totals+",");
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"name\":\""+obj[1]+"\",");
+			result_json.append("\"code\":\""+obj[2]+"\",");
+			result_json.append("\"acqprotocolType\":\""+obj[3]+"\",");
+			result_json.append("\"ctrlprotocolType\":\""+obj[4]+"\",");
+			result_json.append("\"sort\":\""+obj[5]+"\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
+	
+	
 	public String getAcquisitionUnitCombList(String protocol){
 		StringBuffer result_json = new StringBuffer();
 		String sql="select t.id,t.unit_name from TBL_ACQ_UNIT_CONF t where 1=1";
@@ -1066,6 +1123,15 @@ private CommonDataService service;
 	
 	public void doModbusProtocolAlarmInstanceAdd(T protocolAlarmInstance) throws Exception {
 		getBaseDao().addObject(protocolAlarmInstance);
+	}
+	
+	public void doModbusProtocolSMSInstanceAdd(T protocolSMSInstance) throws Exception {
+		getBaseDao().addObject(protocolSMSInstance);
+	}
+	
+	public void doModbusProtocolSMSInstanceDelete(final String ids) throws Exception {
+		final String hql = "DELETE ProtocolSMSInstance u where u.id in (" + ids + ")";
+		super.bulkObjectDelete(hql);
 	}
 	
 	public static String getDataItemsType(String type){
