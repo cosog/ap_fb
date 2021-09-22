@@ -82,29 +82,6 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
                 		tpl: cosog.string.totalCount + ': {count}',
                 		style: 'margin-right:15px'
     				}, '->', {
-            			xtype: 'button',
-            			text: cosog.string.exportExcel,
-                        pressed: true,
-            			hidden:false,
-            			handler: function (v, o) {
-            				var fields = "";
-            			    var heads = "";
-            			    var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-            				var wellInformationName = Ext.getCmp('SMSDeviceListComb_Id').getValue();
-            				var url=context + '/wellInformationManagerController/exportWellInformationData';
-            				for(var i=0;i<smsDeviceInfoHandsontableHelper.colHeaders.length;i++){
-            					fields+=smsDeviceInfoHandsontableHelper.columns[i].data+",";
-            					heads+=smsDeviceInfoHandsontableHelper.colHeaders[i]+","
-            				}
-            				if (isNotVal(fields)) {
-            			        fields = fields.substring(0, fields.length - 1);
-            			        heads = heads.substring(0, heads.length - 1);
-            			    }
-            				
-            			    var param = "&fields=" + fields +"&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id+ "&deviceType=0&wellInformationName=" + URLencode(URLencode(wellInformationName)) +"&recordCount=10000"+ "&fileName="+URLencode(URLencode("泵设备"))+ "&title="+URLencode(URLencode("泵设备"));
-            			    openExcelWindow(url + '?flag=true' + param);
-            			}
-            		},'-',{
                         xtype: 'button',
                         iconCls: 'note-refresh',
                         text: cosog.string.refresh,
@@ -125,18 +102,6 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
             			iconCls: 'save',
             			handler: function (v, o) {
             				smsDeviceInfoHandsontableHelper.saveData();
-            			}
-            		},'-', {
-            			xtype: 'button',
-            			itemId: 'editSMSDeviceNameBtnId',
-            			id: 'editSMSDeviceNameBtn_Id',
-            			disabled: false,
-            			hidden:false,
-            			pressed: true,
-            			text: '修改设备名称',
-            			iconCls: 'edit',
-            			handler: function (v, o) {
-            				smsDeviceInfoHandsontableHelper.editWellName();
             			}
             		}],
             		html:'<div class="SMSDeviceContainer" style="width:100%;height:100%;"><div class="con" id="SMSDeviceTableDiv_id"></div></div>',
@@ -171,29 +136,11 @@ function CreateAndLoadSMSDeviceInfoTable(isNew){
 		       
 	            for(var i=0;i<result.columns.length;i++){
 	            	colHeaders+="'"+result.columns[i].header+"'";
-	            	if(result.columns[i].dataIndex.toUpperCase()==="orgName".toUpperCase()){
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Org(val, callback,this.row, this.col,smsDeviceInfoHandsontableHelper);}}";
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="liftingTypeName".toUpperCase()){
-	            		if(pcpHidden){
-	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机']}";
-	            		}else{
-	            			columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机', '螺杆泵']}";
-	            		}
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="instanceName".toUpperCase()){
+	            	if(result.columns[i].dataIndex.toUpperCase()==="instanceName".toUpperCase()){
 	            		var source="[";
-	            		for(var j=0;j<result.instanceDropdownData.length;j++){
-	            			source+="\'"+result.instanceDropdownData[j]+"\'";
-	            			if(j<result.instanceDropdownData.length-1){
-	            				source+=",";
-	            			}
-	            		}
-	            		source+="]";
-	            		columns+="{data:'"+result.columns[i].dataIndex+"',type:'dropdown',strict:true,allowInvalid:false,source:"+source+"}";
-	            	}else if(result.columns[i].dataIndex.toUpperCase()==="alarmInstanceName".toUpperCase()){
-	            		var source="[";
-	            		for(var j=0;j<result.alarmInstanceDropdownData.length;j++){
-	            			source+="\'"+result.alarmInstanceDropdownData[j]+"\'";
-	            			if(j<result.alarmInstanceDropdownData.length-1){
+	            		for(var j=0;j<result.SMSInstanceDropdownData.length;j++){
+	            			source+="\'"+result.SMSInstanceDropdownData[j]+"\'";
+	            			if(j<result.SMSInstanceDropdownData.length-1){
 	            				source+=",";
 	            			}
 	            		}
@@ -425,7 +372,6 @@ var SMSDeviceInfoHandsontableHelper = {
 
         		//插入的数据的获取
 	        	smsDeviceInfoHandsontableHelper.insertExpressCount();
-	        	var orgId=IframeViewSelection[0].data.orgId;
 	            if (JSON.stringify(smsDeviceInfoHandsontableHelper.AllData) != "{}" && smsDeviceInfoHandsontableHelper.validresult) {
 	            	Ext.Ajax.request({
 	            		method:'POST',
@@ -448,7 +394,6 @@ var SMSDeviceInfoHandsontableHelper = {
 	            		},
 	            		params: {
 	                    	data: JSON.stringify(smsDeviceInfoHandsontableHelper.AllData),
-	                    	orgId:orgId,
 	                    	deviceType:2
 	                    }
 	            	}); 

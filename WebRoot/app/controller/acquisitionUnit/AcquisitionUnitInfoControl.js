@@ -700,6 +700,46 @@ function addModbusProtocolSMSInstanceConfigData() {
     return false;
 };
 
+function modifyModbusProtocolSMSInstanceConfigData() {
+    var gridPanel = Ext.getCmp("ModbusProtocolSMSInstanceGridPanel_Id");
+    var selectedModel = gridPanel.getSelectionModel();
+    var _record = selectedModel.getSelection();
+    if (_record.length > 0) {
+        var editWindow = Ext.create("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
+            title: '编辑短信实例'
+        });
+        editWindow.show();
+        Ext.getCmp("addFormModbusprotocolSMSInstance_Id").hide();
+        Ext.getCmp("updateFormaModbusprotocolSMSInstance_Id").show();
+        SelectModbusProtocolSMSInstanceGridPanel();
+    } else {
+        Ext.Msg.alert(cosog.string.deleteCommand, cosog.string.checkOne);
+    }
+    return false;
+}
+
+SelectModbusProtocolSMSInstanceGridPanel = function () {
+    var dataattr_row = Ext.getCmp("ModbusProtocolSMSInstanceGridPanel_Id").getSelectionModel().getSelection();
+    var id = dataattr_row[0].data.id;
+    var name = dataattr_row[0].data.name;
+    var code = dataattr_row[0].data.code;
+    var acqProtocolType = dataattr_row[0].data.acqProtocolType;
+    var ctrlProtocolType = dataattr_row[0].data.ctrlProtocolType;
+    var sort = dataattr_row[0].data.sort;
+    Ext.getCmp('formModbusprotocolSMSInstance_Id').setValue(id);
+    Ext.getCmp('formModbusprotocolSMSInstanceName_Id').setValue(name);
+    Ext.getCmp('formModbusprotocolSMSInstanceCode_Id').setValue(code);
+    Ext.getCmp('modbusSMSInstanceAcqProtocolType_Id').setValue(acqProtocolType);
+    Ext.getCmp('modbusInstanceAcqProtocolTypeComb_Id').setValue(acqProtocolType);
+    Ext.getCmp('modbusInstanceAcqProtocolTypeComb_Id').setRawValue(acqProtocolType);
+    
+    Ext.getCmp('modbusSMSInstanceCtrlProtocolType_Id').setValue(ctrlProtocolType);
+    Ext.getCmp('modbusInstanceCtrlProtocolTypeComb_Id').setValue(ctrlProtocolType);
+    Ext.getCmp('modbusInstanceCtrlProtocolTypeComb_Id').setRawValue(ctrlProtocolType);
+    
+    Ext.getCmp('modbusProtocolSMSInstanceSort_Id').setValue(sort);
+};
+
 //短信实例配置窗体创建按钮事件
 var saveModbusProtocolSMSInstanceSubmitBtnForm = function () {
     var winForm = Ext.getCmp("modbusProtocolSMSInstanceInfoWindow_Id").down('form');
@@ -719,7 +759,6 @@ var saveModbusProtocolSMSInstanceSubmitBtnForm = function () {
                 }
                 if (action.result.msg == false) {
                     Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.failInfo + "</font>");
-
                 }
             },
             failure: function () {
@@ -730,6 +769,32 @@ var saveModbusProtocolSMSInstanceSubmitBtnForm = function () {
         Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
+    return false;
+};
+
+function UpdateModbusProtocolSMSInstanceSubmitBtnForm() {
+    var winForm = Ext.getCmp("modbusProtocolSMSInstanceInfoWindow_Id").down('form');
+    Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+    if (winForm.getForm().isValid()) {
+        winForm.getForm().submit({
+            url: context + '/acquisitionUnitManagerController/doModbusProtocolSMSInstanceEdit',
+            clientValidation: true, // 进行客户端验证
+            method: "POST",
+            success: function (response, action) {
+            	Ext.getCmp('modbusProtocolSMSInstanceInfoWindow_Id').close();
+                Ext.getCmp("ModbusProtocolSMSInstanceGridPanel_Id").getStore().load();
+                if (action.result.msg == true) {
+                    Ext.Msg.alert(cosog.string.ts, "<font color=blue>" + cosog.string.sucupate + "</font>");
+                }
+                if (action.result.msg == false) {
+                    Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.failInfo + "</font>");
+                }
+            },
+            failure: function () {
+                Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + " </font>】：" + cosog.string.contactadmin + "！");
+            }
+        });
+    }
     return false;
 };
 

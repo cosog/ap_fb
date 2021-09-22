@@ -2384,9 +2384,12 @@ public class StringManagerUtils {
 	    	long result=0;
 	    	try {
 	    		SimpleDateFormat simpleDateFormat=new SimpleDateFormat(format);
-	    		Date fromDate=simpleDateFormat.parse(fromDateStr);
+	    		long from=0;
+	    		if(StringManagerUtils.isNotNull(fromDateStr)){
+	    			Date fromDate=simpleDateFormat.parse(fromDateStr);
+	    			from=fromDate.getTime();
+	    		}
 	    		Date toDate=simpleDateFormat.parse(toDateStr);
-	    		long from=fromDate.getTime();
 	    		long to=toDate.getTime();
 	    		result=to-from;
 			} catch (ParseException e) {

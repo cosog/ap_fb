@@ -464,8 +464,10 @@ public class ConfigFile {
 		private String protocol;
 		private String instance;
 		private String id;
+		private String SMS;
 		private String readAddr;
 		private String writeAddr;
+		private String writeSMS;
 		private String probe;
 		public String getServer() {
 			return server;
@@ -508,6 +510,18 @@ public class ConfigFile {
 		}
 		public void setInstance(String instance) {
 			this.instance = instance;
+		}
+		public String getSMS() {
+			return SMS;
+		}
+		public void setSMS(String sMS) {
+			SMS = sMS;
+		}
+		public String getWriteSMS() {
+			return writeSMS;
+		}
+		public void setWriteSMS(String writeSMS) {
+			this.writeSMS = writeSMS;
 		}
 	}
 	
