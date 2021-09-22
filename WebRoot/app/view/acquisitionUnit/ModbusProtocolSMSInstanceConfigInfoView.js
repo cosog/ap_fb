@@ -15,10 +15,17 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolSMSInstanceConfigInfoView', {
                     hidden: true
                 },'->',{
         			xtype: 'button',
-                    text: '添加实例',
+                    text: '创建',
                     iconCls: 'add',
                     handler: function (v, o) {
         				addModbusProtocolSMSInstanceConfigData();
+        			}
+        		},"-",{
+        			xtype: 'button',
+                    text: '修改',
+                    iconCls: 'edit',
+                    handler: function (v, o) {
+                    	modifyModbusProtocolSMSInstanceConfigData();
         			}
         		}, "-", {
                     xtype: 'button',

@@ -50,7 +50,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolSMSInstanceStore', {
                     		
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    	}
+                    	},
+                    	itemdblclick: function () {
+                    		modifyModbusProtocolSMSInstanceConfigData();
+                        }
                     }
                 });
                 var panel = Ext.getCmp("modbusProtocolSMSInstanceConfigPanelId");

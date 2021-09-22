@@ -1272,9 +1272,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String result = "";
 		try {
 			this.protocolSMSInstanceManagerService.doModbusProtocolSMSInstanceAdd(protocolSMSInstance);
-//			List<String> instanceList=new ArrayList<String>();
-//			instanceList.add(protocolInstance.getName());
-//			EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
+			List<String> instanceList=new ArrayList<String>();
+			instanceList.add(protocolSMSInstance.getName());
+			EquipmentDriverServerTask.initSMSInstanceConfig(instanceList, "update");
 			result = "{success:true,msg:true}";
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1287,6 +1287,30 @@ public class AcquisitionUnitManagerController extends BaseController {
 		pw.print(result);
 		pw.flush();
 		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/doModbusProtocolSMSInstanceEdit")
+	public String doModbusProtocolSMSInstanceEdit(@ModelAttribute ProtocolSMSInstance protocolSMSInstance) {
+		String result ="{success:true,msg:false}";
+		try {
+			this.protocolSMSInstanceManagerService.doModbusProtocolSMSInstanceEdit(protocolSMSInstance);
+			List<String> instanceList=new ArrayList<String>();
+			instanceList.add(protocolSMSInstance.getName());
+			EquipmentDriverServerTask.initSMSInstanceConfig(instanceList, "update");
+			EquipmentDriverServerTask.initSMSDeviceByInstanceId(protocolSMSInstance.getId()+"", "update");
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			response.setHeader("Cache-Control", "no-cache");
+			PrintWriter pw = response.getWriter();
+			result= "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			response.getWriter().print(result);
+			pw.flush();
+			pw.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

@@ -372,6 +372,7 @@ public class DriverAPIController extends BaseController{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
+		
 		StringBuffer webSocketSendData = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -559,6 +560,9 @@ public class DriverAPIController extends BaseController{
 						//报警项
 						if(alarm){
 							calculateDataService.saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
+							
+							
+							
 						}
 						
 						//更新clob类型数据  运行区间

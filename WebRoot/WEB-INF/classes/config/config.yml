@@ -69,8 +69,10 @@ driverConfig:
    protocol: http://8.130.30.138:19200/api/init/protocol
    instance: http://8.130.30.138:19200/api/init/instance
    id: http://8.130.30.138:19200/api/init/id
+   SMS: http://8.130.30.138:19200/api/init/sms
    readAddr: http://8.130.30.138:19200/api/read/addr
    writeAddr: http://8.130.30.138:19200/api/write/addr
+   writeSMS: http://8.130.30.138:19200/api/write/sms
    probe: http://8.130.30.138:19200/api/probe/init
 others:
    cache: false

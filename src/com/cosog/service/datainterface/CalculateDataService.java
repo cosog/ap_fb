@@ -25,6 +25,7 @@ import com.cosog.model.calculate.TimeEffResponseData;
 import com.cosog.model.drive.AcquisitionGroupResolutionData;
 import com.cosog.model.drive.AcquisitionItemInfo;
 import com.cosog.service.base.BaseService;
+import com.cosog.utils.AlarmInfoMap;
 import com.cosog.utils.Config;
 import com.cosog.utils.Config2;
 import com.cosog.utils.OracleJdbcUtis;
@@ -51,4 +52,58 @@ public class CalculateDataService<T> extends BaseService<T> {
 		getBaseDao().saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
 	}
 	
+	public void sendAlarmSMS(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException{
+		boolean isSend=false;
+		
+		StringBuffer SMSContent = new StringBuffer();
+		SMSContent.append("设备"+wellName+"于"+acqTime+"发生报警:");
+		Map<String, String> alarmInfoMap=AlarmInfoMap.getMapObject();
+		for(int i=0;i<acquisitionItemInfoList.size();i++){
+			if(acquisitionItemInfoList.get(i).getAlarmLevel()>0){
+				String key=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle()+","+acquisitionItemInfoList.get(i).getAlarmInfo();
+				String lastAlarmTime=alarmInfoMap.get(key);
+				
+				long timeDiff=StringManagerUtils.getTimeDifference(lastAlarmTime, acqTime, "yyyy-MM-dd HH:mm:ss");
+				if(timeDiff>acquisitionItemInfoList.get(i).getHystersis()*1000){
+					isSend=true;
+					SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
+							+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
+							+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
+				}
+				alarmInfoMap.put(key, acqTime);
+			}else{
+				String keyIndex=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle();
+				boolean reset=false;
+				 for (String key : alarmInfoMap.keySet()) {
+					 if(key.indexOf(keyIndex)>=0){
+						 reset=true;
+						 alarmInfoMap.remove(key);
+						 break;
+					 }
+				 }
+				 if(reset){
+					 
+				 }
+			}
+		}
+		if(isSend){
+			sendAlarmSMS(wellName,deviceType,SMSContent.toString());
+		}
+	}
+	
+	public void sendAlarmSMS(String wellName,String deviceType,String SMSContent) throws SQLException{
+		String SMSUrl=Config.getInstance().configFile.getDriverConfig().getWriteSMS();
+		String userSql="select u.user_id,u.user_phone,r.receivesms "
+				+ " from tbl_user u,tbl_role r "
+				+ " where u.user_type=r.role_id and (u.user_orgid in (select org_id from tbl_org t start with org_id=( select t2.orgid from tbl_wellinformation t2 where t2.wellname='POC1' and t2.devicetype=0 ) connect by prior  org_parent=org_id) or u.user_orgid=0)";
+		List<?> list = this.findCallSql(userSql);
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			if("1".equalsIgnoreCase(obj[2]+"") && StringManagerUtils.isNotNull(obj[1]+"")){
+				StringBuffer sendContent = new StringBuffer();
+				sendContent.append("{\"Mobile\":\""+obj[1]+"\",\"Value\":\""+SMSContent+"\"}");
+				StringManagerUtils.sendPostMethod(SMSUrl, sendContent.toString(), "utf-8");
+			}
+		}
+	}
 }

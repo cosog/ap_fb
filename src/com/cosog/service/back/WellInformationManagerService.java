@@ -395,6 +395,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer instanceDropdownData = new StringBuffer();
 		StringBuffer alarmInstanceDropdownData = new StringBuffer();
+		StringBuffer SMSInstanceDropdownData = new StringBuffer();
 		String ddicName="pumpDeviceManager";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -430,32 +431,45 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		sql+= " order by t.sortnum,t.wellname ";
 		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype="+deviceType+" order by t.sort";
 		String alarmInstanceSql="select t.name from tbl_protocolalarminstance t where t.devicetype="+deviceType+" order by t.sort";
-		List<?> instanceList = this.findCallSql(instanceSql);
-		List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
+		String SMSInstanceSql="select t.name from tbl_protocolsmsinstance t order by t.sort";
 		instanceDropdownData.append("[");
-		for(int i=0;i<instanceList.size();i++){
-			instanceDropdownData.append("'"+instanceList.get(i)+"',");
-		}
-		if(instanceDropdownData.toString().endsWith(",")){
-			instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+		SMSInstanceDropdownData.append("[");
+		alarmInstanceDropdownData.append("[");
+		if(deviceType==2){
+			List<?> SMSInstanceList = this.findCallSql(SMSInstanceSql);
+			for(int i=0;i<SMSInstanceList.size();i++){
+				SMSInstanceDropdownData.append("'"+SMSInstanceList.get(i)+"',");
+			}
+			if(SMSInstanceDropdownData.toString().endsWith(",")){
+				SMSInstanceDropdownData.deleteCharAt(SMSInstanceDropdownData.length() - 1);
+			}
+		}else{
+			List<?> instanceList = this.findCallSql(instanceSql);
+			List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
+			
+			for(int i=0;i<instanceList.size();i++){
+				instanceDropdownData.append("'"+instanceList.get(i)+"',");
+			}
+			if(instanceDropdownData.toString().endsWith(",")){
+				instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+			}
+			for(int i=0;i<alarmInstanceList.size();i++){
+				alarmInstanceDropdownData.append("'"+alarmInstanceList.get(i)+"',");
+			}
+			if(alarmInstanceDropdownData.toString().endsWith(",")){
+				alarmInstanceDropdownData.deleteCharAt(alarmInstanceDropdownData.length() - 1);
+			}
 		}
 		instanceDropdownData.append("]");
-		
-		alarmInstanceDropdownData.append("[");
-		for(int i=0;i<alarmInstanceList.size();i++){
-			alarmInstanceDropdownData.append("'"+alarmInstanceList.get(i)+"',");
-		}
-		if(alarmInstanceDropdownData.toString().endsWith(",")){
-			alarmInstanceDropdownData.deleteCharAt(alarmInstanceDropdownData.length() - 1);
-		}
 		alarmInstanceDropdownData.append("]");
+		SMSInstanceDropdownData.append("]");
 		
 		
 		String json = "";
 		
 		List<?> list = this.findCallSql(sql);
 		
-		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"instanceDropdownData\":"+instanceDropdownData.toString()+",\"alarmInstanceDropdownData\":"+alarmInstanceDropdownData.toString()+",\"columns\":"+columns+",\"totalRoot\":[");
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"instanceDropdownData\":"+instanceDropdownData.toString()+",\"alarmInstanceDropdownData\":"+alarmInstanceDropdownData.toString()+",\"SMSInstanceDropdownData\":"+SMSInstanceDropdownData.toString()+",\"columns\":"+columns+",\"totalRoot\":[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
 			

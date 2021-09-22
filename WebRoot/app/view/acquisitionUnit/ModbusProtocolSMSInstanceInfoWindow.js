@@ -33,6 +33,14 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
+            }, {
+                id: 'formModbusprotocolSMSInstanceCode_Id',
+                name: "protocolSMSInstance.code",
+                fieldLabel: '实例代码',
+                hidden: true,
+                allowBlank: true,
+                anchor: '100%',
+                value: ''
             },{
 				xtype : "hidden",
 				id : 'modbusSMSInstanceAcqProtocolType_Id',
@@ -118,14 +126,14 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
                 hidden: true,
                 iconCls: 'edit',
                 handler: function () {
-//                	UpdatemodbusProtocolDataInfoSubmitBtnForm();
+                	UpdateModbusProtocolSMSInstanceSubmitBtnForm();
                 }
          }, {
         	 	xtype: 'button',   
         	 	text: cosog.string.cancel,
                 iconCls: 'cancel',
                 handler: function () {
-                    Ext.getCmp("modbusprotocolSMSInstanceInfoWindow_Id").close();
+                    Ext.getCmp("modbusProtocolSMSInstanceInfoWindow_Id").close();
                 }
          }]
         });

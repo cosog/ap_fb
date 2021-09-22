@@ -16,6 +16,8 @@ import com.cosog.model.AcquisitionGroup;
 import com.cosog.model.AcquisitionGroupItem;
 import com.cosog.model.AcquisitionUnitGroup;
 import com.cosog.model.AlarmShowStyle;
+import com.cosog.model.ProtocolAlarmInstance;
+import com.cosog.model.ProtocolSMSInstance;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
@@ -964,8 +966,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		String columns = "["
 		+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
 		+ "{ \"header\":\"实例名称\",\"dataIndex\":\"name\" ,children:[] },"
-		+ "{ \"header\":\"采集协议类型\",\"dataIndex\":\"acqprotocolType\" ,children:[] },"
-		+ "{ \"header\":\"控制协议类型\",\"dataIndex\":\"ctrlprotocolType\" ,children:[] },"
+		+ "{ \"header\":\"采集协议类型\",\"dataIndex\":\"acqProtocolType\" ,children:[] },"
+		+ "{ \"header\":\"控制协议类型\",\"dataIndex\":\"ctrlProtocolType\" ,children:[] },"
 		+ "{ \"header\":\"排序\",\"dataIndex\":\"sort\",children:[] }"
 		+ "]";
 		
@@ -989,8 +991,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"name\":\""+obj[1]+"\",");
 			result_json.append("\"code\":\""+obj[2]+"\",");
-			result_json.append("\"acqprotocolType\":\""+obj[3]+"\",");
-			result_json.append("\"ctrlprotocolType\":\""+obj[4]+"\",");
+			result_json.append("\"acqProtocolType\":\""+obj[3]+"\",");
+			result_json.append("\"ctrlProtocolType\":\""+obj[4]+"\",");
 			result_json.append("\"sort\":\""+obj[5]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
@@ -1127,6 +1129,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 	
 	public void doModbusProtocolSMSInstanceAdd(T protocolSMSInstance) throws Exception {
 		getBaseDao().addObject(protocolSMSInstance);
+	}
+	
+	public void doModbusProtocolSMSInstanceEdit(ProtocolSMSInstance protocolSMSInstance) throws Exception {
+		getBaseDao().updateObject(protocolSMSInstance);
 	}
 	
 	public void doModbusProtocolSMSInstanceDelete(final String ids) throws Exception {
