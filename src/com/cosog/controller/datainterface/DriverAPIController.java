@@ -301,6 +301,8 @@ public class DriverAPIController extends BaseController{
 					}else{
 						commAlarm="insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
 								+ "values("+wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),'通信状态',0,0,'离线',100)";
+						String alarmSMSContent="设备"+wellName+"于"+currentTime+"离线";
+						calculateDataService.sendAlarmSMS(wellName, devicetype, alarmSMSContent);
 					}
 					result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
 					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
@@ -560,9 +562,7 @@ public class DriverAPIController extends BaseController{
 						//报警项
 						if(alarm){
 							calculateDataService.saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
-							
-							
-							
+							calculateDataService.sendAlarmSMS(wellName,deviceType,acqTime,acquisitionItemInfoList);
 						}
 						
 						//更新clob类型数据  运行区间

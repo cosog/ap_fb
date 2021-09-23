@@ -322,13 +322,17 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
                     fieldLabel: cosog.string.userPhone,
                     id: 'userPhone_Id',
                     anchor: '100%',
-                    name: "user.userPhone"
+                    name: "user.userPhone",
+                    regex: /^((13[0-9])|(14[0,1,4-9])|(15[0-3,5-9])|(16[2,5,6,7])|(17[0-8])|(18[0-9])|(19[0-3,5-9]))\d{8}$/,
+                    regexText : '您输入的手机号码格式不正确'
          },{
                     fieldLabel: cosog.string.userInEmail,
                     id: 'userInEmail_Id',
                     anchor: '100%',
-                    //vtype : 'email',
-                    //vtypeText : '您输入的邮箱格式不正确',
+//                    vtype : 'email',
+//                    vtypeText : '您输入的邮箱格式不正确',
+                    regex: /^([a-z0-9A-Z]+[-|\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\.)+[a-zA-Z]{2,}$/,
+                    regexText : '您输入的邮箱格式不正确',
                     name: "user.userInEmail"
          },UserTitleCombox, {
                     xtype:'datetimefield',

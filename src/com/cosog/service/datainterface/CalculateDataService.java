@@ -91,19 +91,26 @@ public class CalculateDataService<T> extends BaseService<T> {
 		}
 	}
 	
-	public void sendAlarmSMS(String wellName,String deviceType,String SMSContent) throws SQLException{
+	public void sendAlarmSMS(String wellName,String deviceType,String content) throws SQLException{
 		String SMSUrl=Config.getInstance().configFile.getDriverConfig().getWriteSMS();
-		String userSql="select u.user_id,u.user_phone,r.receivesms "
+		String userSql="select u.user_id,u.user_phone,r.receivesms,u.user_in_email,r.receivemail "
 				+ " from tbl_user u,tbl_role r "
-				+ " where u.user_type=r.role_id and (u.user_orgid in (select org_id from tbl_org t start with org_id=( select t2.orgid from tbl_wellinformation t2 where t2.wellname='POC1' and t2.devicetype=0 ) connect by prior  org_parent=org_id) or u.user_orgid=0)";
+				+ " where u.user_type=r.role_id and (u.user_orgid in (select org_id from tbl_org t start with org_id=( select t2.orgid from tbl_wellinformation t2 where t2.wellname='"+wellName+"' and t2.devicetype="+deviceType+" ) connect by prior  org_parent=org_id) or u.user_orgid=0)";
 		List<?> list = this.findCallSql(userSql);
+		List<String> receivingEMailAccount=new ArrayList<String>();
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
-			if("1".equalsIgnoreCase(obj[2]+"") && StringManagerUtils.isNotNull(obj[1]+"")){
+			if("1".equalsIgnoreCase(obj[2]+"") && StringManagerUtils.isNotNull(obj[1]+"") && StringManagerUtils.isPhoneLegal(obj[1]+"")){
 				StringBuffer sendContent = new StringBuffer();
-				sendContent.append("{\"Mobile\":\""+obj[1]+"\",\"Value\":\""+SMSContent+"\"}");
+				sendContent.append("{\"Mobile\":\""+obj[1]+"\",\"Value\":\""+content+"\"}");
 				StringManagerUtils.sendPostMethod(SMSUrl, sendContent.toString(), "utf-8");
 			}
+			if("1".equalsIgnoreCase(obj[4]+"") && StringManagerUtils.isNotNull(obj[3]+"") && StringManagerUtils.isMailLegal(obj[3]+"")){
+				receivingEMailAccount.add(obj[3]+"");
+			}
+		}
+		if(receivingEMailAccount.size()>0){
+			StringManagerUtils.sendEMail(("1".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"报警", content, receivingEMailAccount);
 		}
 	}
 }
