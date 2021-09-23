@@ -96,16 +96,21 @@ SelectroleDataAttrInfoGridPanel = function () {
     var roleFlagName = dataattr_row[0].data.roleFlagName;
     var receiveSMS = dataattr_row[0].data.receiveSMS;
     var receiveSMSName = dataattr_row[0].data.receiveSMSName;
+    var receiveMail = dataattr_row[0].data.receiveMail;
+    var receiveMailName = dataattr_row[0].data.receiveMailName;
     var roleCode = dataattr_row[0].data.roleCode;
     Ext.getCmp('role_Id').setValue(roleId);
     Ext.getCmp('role_Name_Id').setValue(roleName);
     Ext.getCmp('roleCode_Id').setValue(roleCode);
     Ext.getCmp('roleFlag_Id').setValue(roleFlag);
     Ext.getCmp('receiveSMS_Id').setValue(receiveSMS);
+    Ext.getCmp('receiveMail_Id').setValue(receiveMail);
     Ext.getCmp('roleFlagComboxfield_Id').setValue(roleFlag);
     Ext.getCmp('roleFlagComboxfield_Id').setRawValue(roleFlagName);
     Ext.getCmp('receiveSMSComboxfield_Id').setValue(receiveSMS);
     Ext.getCmp('receiveSMSComboxfield_Id').setRawValue(receiveSMSName);
+    Ext.getCmp('receiveMailComboxfield_Id').setValue(receiveMail);
+    Ext.getCmp('receiveMailComboxfield_Id').setRawValue(receiveMailName);
     Ext.getCmp('roleRemark_Id').setValue(dataattr_row[0].data.remark);
 };
 

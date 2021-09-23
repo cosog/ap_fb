@@ -75,6 +75,35 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 }
             }
         });
+        
+        var receiveMailStore = new Ext.data.SimpleStore({
+        	autoLoad : false,
+            fields: ['boxkey', 'boxval'],
+            data: [['0', '否'], ['1', '是']]
+        });
+        
+        var receiveMailCombox = new Ext.form.ComboBox({
+            id: 'receiveMailComboxfield_Id',
+            value: 0,
+            fieldLabel: '接收报警短信',
+            typeAhead : true,
+            allowBlank: false,
+            autoSelect:true,
+            editable:false,
+            anchor: '100%',
+            emptyText: '--请选择--',
+            triggerAction: 'all',
+            store: receiveMailStore,
+            displayField: 'boxval',
+            valueField: 'boxkey',
+            queryMode : 'local',
+            listeners: {
+            	select: function (v,o) {
+					Ext.getCmp("receiveMail_Id").setValue(this.value);
+                }
+            }
+        });
+        
         var postroleEditForm = Ext.create('Ext.form.Panel', {
             baseCls: 'x-plain',
             defaultType: 'textfield',
@@ -95,6 +124,11 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 id: 'receiveSMS_Id',
                 value: 0
             }, {
+                xtype: "hidden",
+                name: 'role.receiveMail',
+                id: 'receiveMail_Id',
+                value: 0
+            }, {
                 fieldLabel: cosog.string.roleName,
                 anchor: '100%',
                 id: 'role_Name_Id',
@@ -105,7 +139,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 anchor: '100%',
                 value: '',
                 name: "role.roleCode"
-            },RoleTypeCombox,receiveSMSCombox, {
+            },RoleTypeCombox,receiveSMSCombox,receiveMailCombox, {
                 fieldLabel: '角色描述',
                 id: 'roleRemark_Id',
                 anchor: '100',
