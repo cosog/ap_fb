@@ -56,7 +56,7 @@ public class CalculateDataService<T> extends BaseService<T> {
 		boolean isSend=false;
 		
 		StringBuffer SMSContent = new StringBuffer();
-		SMSContent.append("设备"+wellName+"于"+acqTime+"发生报警:");
+		SMSContent.append(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"于"+acqTime+"发生报警:");
 		Map<String, String> alarmInfoMap=AlarmInfoMap.getMapObject();
 		for(int i=0;i<acquisitionItemInfoList.size();i++){
 			if(acquisitionItemInfoList.get(i).getAlarmLevel()>0){
@@ -110,7 +110,7 @@ public class CalculateDataService<T> extends BaseService<T> {
 			}
 		}
 		if(receivingEMailAccount.size()>0){
-			StringManagerUtils.sendEMail(("1".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"报警", content, receivingEMailAccount);
+			StringManagerUtils.sendEMail(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"报警", content, receivingEMailAccount);
 		}
 	}
 }
