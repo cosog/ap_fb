@@ -64,6 +64,15 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingTreeInfoStore', {
                         		CreateModbusProtocolAddrMappingItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
                         	}
                         	CreateProtocolConfigAddrMappingPropertiesInfoTable(record.data);
+                        	
+                        	var gridPanel = Ext.getCmp("ModbusProtocolAddrMappingEnumItemsGridPanel_Id");
+                            if (isNotVal(gridPanel)) {
+                            	gridPanel.getStore().load();
+                            }else{
+                            	Ext.create("AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore");
+                            }
+                        	
+                        	
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
                         	e.preventDefault();//去掉点击右键是浏览器的菜单
                         	var info='节点';
