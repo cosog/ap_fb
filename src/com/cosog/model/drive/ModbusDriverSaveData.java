@@ -90,6 +90,8 @@ public class ModbusDriverSaveData {
 	    private String AcqMode="";
 	    
 	    private String RWType="";
+	    
+	    private String ResolutionMode;
 
 		public String getName() {
 			return Name;
@@ -169,6 +171,14 @@ public class ModbusDriverSaveData {
 
 		public void setTitle(String title) {
 			Title = title;
+		}
+
+		public String getResolutionMode() {
+			return ResolutionMode;
+		}
+
+		public void setResolutionMode(String resolutionMode) {
+			ResolutionMode = resolutionMode;
 		}
 	}
 	public String getProtocolCode() {

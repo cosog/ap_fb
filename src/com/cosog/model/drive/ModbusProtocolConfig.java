@@ -34,6 +34,8 @@ public class ModbusProtocolConfig {
 	    private String RWType;
 
 	    private String Unit;
+	    
+	    private int ResolutionMode;
 
 	    private String AcqMode;
 
@@ -96,6 +98,14 @@ public class ModbusProtocolConfig {
 		}
 		public void setIFDataType(String IFDataType) {
 			this.IFDataType = IFDataType;
+		}
+		
+
+		public int getResolutionMode() {
+			return ResolutionMode;
+		}
+		public void setResolutionMode(int resolutionMode) {
+			ResolutionMode = resolutionMode;
 		}
 		
 		public String toString(){
