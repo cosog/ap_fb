@@ -3,7 +3,7 @@
         {
             "Name": "飞舟泵产品协议",
             "Code": "飞舟泵产品协议",
-            "DeviceType":0,
+            "DeviceType": 0,
             "Sort": 1,
             "Items": [
                 {
@@ -15,7 +15,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "ResolutionMode": 1,
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -28,7 +28,23 @@
                     "RWType": "r",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "正转运行中"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "反转运行中"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "变频停机中"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "变频故障中"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "变频POFF状态"
+                    }]
                 },
                 {
                     "Title": "变频器故障代码",
@@ -40,7 +56,104 @@
                     "RWType": "r",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "无故障"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "逆变单元U相保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "逆变单元V相保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "逆变单元W相保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "加速过电流"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "减速过电流"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "恒速过电流"
+                    }, {
+                        "Value": 7,
+                        "Meaning": "加速过电压"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "减速过电压"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "恒速过电压"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "母线欠压故障"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "电机过载"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "变频器过载"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "输入侧缺相"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "输出侧缺相"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "整流模块过热"
+                    }, {
+                        "Value": 16,
+                        "Meaning": "逆变模块过热"
+                    }, {
+                        "Value": 17,
+                        "Meaning": "外部故障"
+                    }, {
+                        "Value": 18,
+                        "Meaning": "485通讯故障"
+                    }, {
+                        "Value": 19,
+                        "Meaning": "电流检测故障"
+                    }, {
+                        "Value": 20,
+                        "Meaning": "电机自学习故障"
+                    }, {
+                        "Value": 21,
+                        "Meaning": "EEPROM操作故障"
+                    }, {
+                        "Value": 22,
+                        "Meaning": "PID反馈断线故障"
+                    }, {
+                        "Value": 23,
+                        "Meaning": "制动单元故障"
+                    }, {
+                        "Value": 24,
+                        "Meaning": "运行时间达到"
+                    }, {
+                        "Value": 25,
+                        "Meaning": "电子过载"
+                    }, {
+                        "Value": 26,
+                        "Meaning": "键盘通讯故障"
+                    }, {
+                        "Value": 27,
+                        "Meaning": "参数上传错误"
+                    }, {
+                        "Value": 28,
+                        "Meaning": "参数下载错误"
+                    }, {
+                        "Value": 32,
+                        "Meaning": "对地短路故障1"
+                    }, {
+                        "Value": 33,
+                        "Meaning": "对地短路故障2"
+                    }, {
+                        "Value": 36,
+                        "Meaning": "欠载故障"
+                    }]
                 },
                 {
                     "Title": "A相电压",
@@ -316,7 +429,50 @@
                     "RWType": "r",
                     "Unit": "位数组",
                     "ResolutionMode": 0,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "外置井下温度开关"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力开关"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力开关"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置井下温度开关"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "外置液面保护开关"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "内置液面保护开关"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护开关"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护开关"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护开关"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护开关"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护开关"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护开关"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度开关"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力开关"
+                    }]
                 },
                 {
                     "Title": "保护执行状态",
@@ -328,7 +484,50 @@
                     "RWType": "r",
                     "Unit": "位数组",
                     "ResolutionMode": 0,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "井下温度保护"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "外置液面保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置液面保护"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "内置井下温度保护"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度保护"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力保护"
+                    }]
                 },
                 {
                     "Title": "欠压保护值",
@@ -676,7 +875,26 @@
                     "RWType": "r",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "手动控制"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "流压闭环控制"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "间歇自动控制"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "流压自动控制"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "液面自动控制"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "液面闭环控制"
+                    }]
                 },
                 {
                     "Title": "间歇运行时间",
@@ -815,7 +1033,7 @@
         {
             "Name": "飞舟管产品协议",
             "Code": "飞舟管产品协议",
-            "DeviceType":1,
+            "DeviceType": 1,
             "Sort": 2,
             "Items": [
                 {
@@ -827,7 +1045,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "ResolutionMode": 1,
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -840,7 +1058,23 @@
                     "RWType": "r",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "正转运行中"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "反转运行中"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "变频停机中"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "变频故障中"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "变频POFF状态"
+                    }]
                 },
                 {
                     "Title": "变频器故障代码",
@@ -852,7 +1086,104 @@
                     "RWType": "r",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "无故障"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "逆变单元U相保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "逆变单元V相保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "逆变单元W相保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "加速过电流"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "减速过电流"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "恒速过电流"
+                    }, {
+                        "Value": 7,
+                        "Meaning": "加速过电压"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "减速过电压"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "恒速过电压"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "母线欠压故障"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "电机过载"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "变频器过载"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "输入侧缺相"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "输出侧缺相"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "整流模块过热"
+                    }, {
+                        "Value": 16,
+                        "Meaning": "逆变模块过热"
+                    }, {
+                        "Value": 17,
+                        "Meaning": "外部故障"
+                    }, {
+                        "Value": 18,
+                        "Meaning": "485通讯故障"
+                    }, {
+                        "Value": 19,
+                        "Meaning": "电流检测故障"
+                    }, {
+                        "Value": 20,
+                        "Meaning": "电机自学习故障"
+                    }, {
+                        "Value": 21,
+                        "Meaning": "EEPROM操作故障"
+                    }, {
+                        "Value": 22,
+                        "Meaning": "PID反馈断线故障"
+                    }, {
+                        "Value": 23,
+                        "Meaning": "制动单元故障"
+                    }, {
+                        "Value": 24,
+                        "Meaning": "运行时间达到"
+                    }, {
+                        "Value": 25,
+                        "Meaning": "电子过载"
+                    }, {
+                        "Value": 26,
+                        "Meaning": "键盘通讯故障"
+                    }, {
+                        "Value": 27,
+                        "Meaning": "参数上传错误"
+                    }, {
+                        "Value": 28,
+                        "Meaning": "参数下载错误"
+                    }, {
+                        "Value": 32,
+                        "Meaning": "对地短路故障1"
+                    }, {
+                        "Value": 33,
+                        "Meaning": "对地短路故障2"
+                    }, {
+                        "Value": 36,
+                        "Meaning": "欠载故障"
+                    }]
                 },
                 {
                     "Title": "A相电压",
@@ -1128,7 +1459,50 @@
                     "RWType": "r",
                     "Unit": "位数组",
                     "ResolutionMode": 0,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "外置井下温度开关"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力开关"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力开关"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置井下温度开关"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "外置液面保护开关"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "内置液面保护开关"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护开关"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护开关"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护开关"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护开关"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护开关"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护开关"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度开关"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力开关"
+                    }]
                 },
                 {
                     "Title": "保护执行状态",
@@ -1140,7 +1514,50 @@
                     "RWType": "r",
                     "Unit": "位数组",
                     "ResolutionMode": 0,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "井下温度保护"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "外置液面保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置液面保护"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "内置井下温度保护"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度保护"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力保护"
+                    }]
                 },
                 {
                     "Title": "欠压保护值",
@@ -1488,7 +1905,26 @@
                     "RWType": "r",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "手动控制"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "流压闭环控制"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "间歇自动控制"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "流压自动控制"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "液面自动控制"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "液面闭环控制"
+                    }]
                 },
                 {
                     "Title": "间歇运行时间",

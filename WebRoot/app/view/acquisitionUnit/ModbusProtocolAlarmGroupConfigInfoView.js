@@ -68,14 +68,56 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmGroupConfigInfoView', {
 //                    flex: 4,
                 	region: 'center',
                     title:'报警项配置',
-                    id:"ModbusProtocolAlarmGroupItemsConfigTableInfoPanel_Id",
-                    layout: 'fit',
-                    html:'<div class="ModbusProtocolAlarmGroupItemsConfigTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmGroupItemsConfigTableInfoDiv_id"></div></div>',
-                    listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        	
+                    xtype: 'tabpanel',
+                    id:"ModbusProtocolAlarmGroupItemsConfigTabPanel_Id",
+                    activeTab: 0,
+                    border: false,
+                    tabPosition: 'top',
+                    items: [{
+                    	title:'数据量',
+                    	id:"ModbusProtocolAlarmGroupNumItemsConfigTableInfoPanel_Id",
+                        layout: 'fit',
+                        html:'<div class="ModbusProtocolAlarmGroupItemsConfigTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmGroupItemsConfigTableInfoDiv_id"></div></div>',
+                        listeners: {
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            	
+                            }
                         }
-                    }
+                    },{
+                    	title:'开关量',
+                    	id:"ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoPanel_Id",
+                    	layout: "border",
+                        border: true,
+                        items:[{
+                        	region: 'west',
+                        	width:'25%',
+                        	collapsible: true,
+                            split: true,
+                        	title:'开关量列表'
+                        },{
+                        	region: 'center',
+                            title:'开关量报警项配置'
+                        }]
+                    },{
+                    	title:'枚举量',
+                    	id:"ModbusProtocolAlarmGroupEnumItemsConfigTableInfoPanel_Id",
+                    	layout: "border",
+                        border: true,
+                        items:[{
+                        	region: 'west',
+                        	width:'25%',
+                        	collapsible: true,
+                            split: true,
+                        	title:'枚举量列表'
+                        },{
+                        	region: 'center',
+                            title:'枚举量报警项配置'
+                        }]
+                    }]
+                    
+                    
+                    
+                    
                 }]
             }]
     	});
@@ -86,7 +128,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmGroupConfigInfoView', {
 function CreateProtocolAlarmGroupItemsConfigInfoTable(protocolName,classes,code){
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/acquisitionUnitManagerController/getModbusProtocolAlarmItemsConfigData',
+		url:context + '/acquisitionUnitManagerController/getModbusProtocolNumAlarmItemsConfigData',
 		success:function(response) {
 //			Ext.getCmp("DriverItemsConfigTableInfoPanel_Id").setTitle(protocolName+"采控项配置");
 			var result =  Ext.JSON.decode(response.responseText);

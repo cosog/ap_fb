@@ -15,6 +15,34 @@ public class ModbusProtocolConfig {
         return this.Protocol;
     }
     
+    public static class ItemsMeaning implements Comparable<ItemsMeaning>
+    {
+    	private int Value;
+    	
+    	private String Meaning;
+
+		public int getValue() {
+			return Value;
+		}
+
+		public void setValue(int value) {
+			Value = value;
+		}
+
+		public String getMeaning() {
+			return Meaning;
+		}
+
+		public void setMeaning(String meaning) {
+			Meaning = meaning;
+		}
+    	
+		@Override
+		public int compareTo(ItemsMeaning itemsMeaning) {     //重写Comparable接口的compareTo方法
+			return this.Value-itemsMeaning.getValue();   // 根据值或者位升序排列，降序修改相减顺序即可
+		}
+    }
+    
 	public static class Items implements Comparable<Items>
 	{
 	    private String Name;
@@ -38,6 +66,8 @@ public class ModbusProtocolConfig {
 	    private int ResolutionMode;
 
 	    private String AcqMode;
+	    
+	    private List<ItemsMeaning> Meaning;
 
 	    public void setName(String Name){
 	        this.Name = Name;
@@ -99,13 +129,19 @@ public class ModbusProtocolConfig {
 		public void setIFDataType(String IFDataType) {
 			this.IFDataType = IFDataType;
 		}
-		
 
 		public int getResolutionMode() {
 			return ResolutionMode;
 		}
 		public void setResolutionMode(int resolutionMode) {
 			ResolutionMode = resolutionMode;
+		}
+
+		public List<ItemsMeaning> getMeaning() {
+			return Meaning;
+		}
+		public void setMeaning(List<ItemsMeaning> meaning) {
+			Meaning = meaning;
 		}
 		
 		public String toString(){

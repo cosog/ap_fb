@@ -233,6 +233,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 	
 	public String getProtocolEnumItemMeaningConfigData(String protocolCode,String itemAddr){
 		StringBuffer result_json = new StringBuffer();
+		StringBuffer totalRoot = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -240,37 +241,55 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		int resolutionMode=0;
+		String title="";
+		totalRoot.append("[");
+		
+		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
+			if(protocolCode.equalsIgnoreCase(protocolConfig.getCode())){
+				for(int j=0;j<protocolConfig.getItems().size();j++){
+					if(protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
+						resolutionMode=protocolConfig.getItems().get(j).getResolutionMode();
+						title=protocolConfig.getItems().get(j).getTitle();
+						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
+							totalRoot.append("{\"id\":"+(k+1)+","
+									+ "\"value\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"\","
+									+ "\"meaning\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\"},");
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+		if(totalRoot.toString().endsWith(",")){
+			totalRoot.deleteCharAt(totalRoot.length() - 1);
+		}
+		
+		
+		totalRoot.append("]");
+		
 		String columns = "["
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
-				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] }"
+				+ "{ \"header\":\"值\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"含义\",\"dataIndex\":\"addr\",width:80 ,children:[] }"
 				+ "]";
-		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
-		result_json.append("\"totalRoot\":[");
-		
-		List<String> itemsList=new ArrayList<String>();
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-//			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
-//			if(code.equalsIgnoreCase(protocolConfig.getCode())){
-//				for(int j=0;j<protocolConfig.getItems().size();j++){
-//					if(protocolConfig.getItems().get(j).getResolutionMode()==1){
-//						result_json.append("{\"id\":"+(j+1)+","
-//								+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
-//								+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+"},");
-//					}
-//				}
-//				break;
-//			}
+		if(resolutionMode==0){
+			columns = "["
+					+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+					+ "{ \"header\":\"位\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+					+ "{ \"header\":\"含义\",\"dataIndex\":\"addr\",width:80 ,children:[] }"
+					+ "]";
 		}
-		if(result_json.toString().endsWith(",")){
-			result_json.deleteCharAt(result_json.length() - 1);
-		}
-		result_json.append("]");
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",\"itemResolutionMode\":"+resolutionMode+",\"itemTitle\":\""+title+"\",");
+		result_json.append("\"totalRoot\":"+totalRoot+"");
 		result_json.append("}");
+		
 		return result_json.toString();
 	}
 	
-	public String getModbusProtocolAlarmItemsConfigData(String protocolName,String classes,String code){
+	public String getModbusProtocolNumAlarmItemsConfigData(String protocolName,String classes,String code){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -309,32 +328,36 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				int index=1;
 				for(int j=0;j<protocolConfig.getItems().size();j++){
-					String upperLimit="",lowerLimit="",hystersis="",delay="",alarmLevel="",alarmSign="";
-					boolean checked=false;
-					for(int k=0;k<itemAddrsList.size();k++){
-						Object[] obj = (Object[]) list.get(k);
-						if(itemAddrsList.get(k)==protocolConfig.getItems().get(j).getAddr()){
-							checked=true;
-							upperLimit=obj[3]+"";
-							lowerLimit=obj[4]+"";
-							hystersis=obj[5]+"";
-							delay=obj[6]+"";
-							alarmLevel=obj[7]+"";
-							alarmSign=obj[8]+"";
-							break;
+					if(protocolConfig.getItems().get(j).getResolutionMode()==2){
+						String upperLimit="",lowerLimit="",hystersis="",delay="",alarmLevel="",alarmSign="";
+						boolean checked=false;
+						for(int k=0;k<itemAddrsList.size();k++){
+							Object[] obj = (Object[]) list.get(k);
+							if(itemAddrsList.get(k)==protocolConfig.getItems().get(j).getAddr()){
+								checked=true;
+								upperLimit=obj[3]+"";
+								lowerLimit=obj[4]+"";
+								hystersis=obj[5]+"";
+								delay=obj[6]+"";
+								alarmLevel=obj[7]+"";
+								alarmSign=obj[8]+"";
+								break;
+							}
 						}
+						result_json.append("{\"checked\":"+checked+","
+								+ "\"id\":"+(index)+","
+								+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
+								+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
+								+ "\"upperLimit\":\""+upperLimit+"\","
+								+ "\"lowerLimit\":\""+lowerLimit+"\","
+								+ "\"hystersis\":\""+hystersis+"\","
+								+ "\"delay\":\""+delay+"\","
+								+ "\"alarmLevel\":\""+alarmLevel+"\","
+								+ "\"alarmSign\":\""+alarmSign+"\"},");
+						index++;
 					}
-					result_json.append("{\"checked\":"+checked+","
-							+ "\"id\":"+(j+1)+","
-							+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
-							+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
-							+ "\"upperLimit\":\""+upperLimit+"\","
-							+ "\"lowerLimit\":\""+lowerLimit+"\","
-							+ "\"hystersis\":\""+hystersis+"\","
-							+ "\"delay\":\""+delay+"\","
-							+ "\"alarmLevel\":\""+alarmLevel+"\","
-							+ "\"alarmSign\":\""+alarmSign+"\"},");
 				}
 				break;
 			}

@@ -65,12 +65,12 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingTreeInfoStore', {
                         	}
                         	CreateProtocolConfigAddrMappingPropertiesInfoTable(record.data);
                         	
-                        	var gridPanel = Ext.getCmp("ModbusProtocolAddrMappingEnumItemsGridPanel_Id");
-                            if (isNotVal(gridPanel)) {
-                            	gridPanel.getStore().load();
-                            }else{
-                            	Ext.create("AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore");
-                            }
+//                        	var gridPanel = Ext.getCmp("ModbusProtocolAddrMappingEnumItemsGridPanel_Id");
+//                            if (isNotVal(gridPanel)) {
+//                            	gridPanel.getStore().load();
+//                            }else{
+//                            	Ext.create("AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore");
+//                            }
                         	
                         	
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件

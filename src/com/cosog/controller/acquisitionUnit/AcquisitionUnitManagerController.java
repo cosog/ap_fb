@@ -569,13 +569,13 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getModbusProtocolAlarmItemsConfigData")
-	public String getModbusProtocolAlarmItemsConfigData() throws Exception {
+	@RequestMapping("/getModbusProtocolNumAlarmItemsConfigData")
+	public String getModbusProtocolNumAlarmItemsConfigData() throws Exception {
 		String protocolName = ParamUtils.getParameter(request, "protocolName");
 		String classes = ParamUtils.getParameter(request, "classes");
 		String code = ParamUtils.getParameter(request, "code");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getModbusProtocolAlarmItemsConfigData(protocolName,classes,code);
+		json = acquisitionUnitItemManagerService.getModbusProtocolNumAlarmItemsConfigData(protocolName,classes,code);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
