@@ -43,6 +43,7 @@ import com.cosog.model.drive.ModbusDriverSaveData;
 import com.cosog.model.drive.ModbusProtocolAlarmGroupSaveData;
 import com.cosog.model.drive.ModbusProtocolAlarmInstanceSaveData;
 import com.cosog.model.drive.ModbusProtocolConfig;
+import com.cosog.model.drive.ModbusProtocolConfig.ItemsMeaning;
 import com.cosog.model.drive.ModbusProtocolInstanceSaveData;
 import com.cosog.model.gridmodel.AcquisitionGroupHandsontableChangeData;
 import com.cosog.model.gridmodel.AcquisitionUnitHandsontableChangeData;
@@ -524,11 +525,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getProtocolEnumItemsConfigData")
-	public String getProtocolEnumItemsConfigData() throws Exception {
+	@RequestMapping("/getProtocolEnumOrSwitchItemsConfigData")
+	public String getProtocolEnumOrSwitchItemsConfigData() throws Exception {
 		String protocolCode = ParamUtils.getParameter(request, "protocolCode");
+		String resolutionMode = ParamUtils.getParameter(request, "resolutionMode");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolEnumItemsConfigData(protocolCode);
+		json = acquisitionUnitItemManagerService.getProtocolEnumOrSwitchItemsConfigData(protocolCode,resolutionMode);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -576,6 +578,25 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String code = ParamUtils.getParameter(request, "code");
 		String json = "";
 		json = acquisitionUnitItemManagerService.getModbusProtocolNumAlarmItemsConfigData(protocolName,classes,code);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getModbusProtocolEnumAlarmItemsConfigData")
+	public String getModbusProtocolEnumAlarmItemsConfigData() throws Exception {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String classes = ParamUtils.getParameter(request, "classes");
+		String groupCode = ParamUtils.getParameter(request, "groupCode");
+		String itemAddr = ParamUtils.getParameter(request, "itemAddr");
+		String itemResolutionMode = ParamUtils.getParameter(request, "itemResolutionMode");
+		
+		String json = "";
+		json = acquisitionUnitItemManagerService.getModbusProtocolEnumAlarmItemsConfigData(protocolName,classes,groupCode,itemAddr,itemResolutionMode);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -826,6 +847,16 @@ public class AcquisitionUnitManagerController extends BaseController {
 									modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setRWType(RWType);
 									modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setResolutionMode(resolutionMode);
 									modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setAcqMode(acqMode);
+									
+									if(modbusDriverSaveData.getDataConfig().get(j).getMeaning()!=null && modbusDriverSaveData.getDataConfig().get(j).getMeaning().size()>0){
+										modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setMeaning(new ArrayList<ItemsMeaning>());
+										for(int m=0;m<modbusDriverSaveData.getDataConfig().get(j).getMeaning().size();m++){
+											ItemsMeaning itemsMeaning=new ItemsMeaning();
+											itemsMeaning.setValue(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getValue());
+											itemsMeaning.setMeaning(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getMeaning());
+											modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning().add(itemsMeaning);
+										}
+									}
 									break;
 								}
 							}
@@ -842,6 +873,15 @@ public class AcquisitionUnitManagerController extends BaseController {
 								item.setRWType(RWType);
 								item.setResolutionMode(resolutionMode);
 								item.setAcqMode(acqMode);
+								if(modbusDriverSaveData.getDataConfig().get(j).getMeaning()!=null && modbusDriverSaveData.getDataConfig().get(j).getMeaning().size()>0){
+									item.setMeaning(new ArrayList<ItemsMeaning>());
+									for(int m=0;m<modbusDriverSaveData.getDataConfig().get(j).getMeaning().size();m++){
+										ItemsMeaning itemsMeaning=new ItemsMeaning();
+										itemsMeaning.setValue(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getValue());
+										itemsMeaning.setMeaning(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getMeaning());
+										item.getMeaning().add(itemsMeaning);
+									}
+								}
 								modbusProtocolConfig.getProtocol().get(i).getItems().add(item);
 							}
 						}
@@ -904,6 +944,15 @@ public class AcquisitionUnitManagerController extends BaseController {
 						item.setIFDataType(modbusDriverSaveData.getDataConfig().get(i).getIFDataType());
 						item.setRWType(RWType);
 						item.setAcqMode(acqMode);
+						if(modbusDriverSaveData.getDataConfig().get(i).getMeaning()!=null && modbusDriverSaveData.getDataConfig().get(i).getMeaning().size()>0){
+							item.setMeaning(new ArrayList<ItemsMeaning>());
+							for(int m=0;m<modbusDriverSaveData.getDataConfig().get(i).getMeaning().size();m++){
+								ItemsMeaning itemsMeaning=new ItemsMeaning();
+								itemsMeaning.setValue(modbusDriverSaveData.getDataConfig().get(i).getMeaning().get(m).getValue());
+								itemsMeaning.setMeaning(modbusDriverSaveData.getDataConfig().get(i).getMeaning().get(m).getMeaning());
+								item.getMeaning().add(itemsMeaning);
+							}
+						}
 						protocol.getItems().add(item);
 					}
 					modbusProtocolConfig.getProtocol().add(protocol);

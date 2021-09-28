@@ -2,6 +2,8 @@ package com.cosog.model.drive;
 
 import java.util.List;
 
+import com.cosog.model.drive.ModbusProtocolConfig.Items;
+import com.cosog.model.drive.ModbusProtocolConfig.ItemsMeaning;
 import com.cosog.utils.StringManagerUtils;
 
 import java.util.ArrayList;
@@ -68,8 +70,36 @@ public class ModbusDriverSaveData {
     		}
     	}
     }
+    
+    public static class ItemsMeaning implements Comparable<ItemsMeaning>
+    {
+    	private int Value;
+    	
+    	private String Meaning;
+
+		public int getValue() {
+			return Value;
+		}
+
+		public void setValue(int value) {
+			Value = value;
+		}
+
+		public String getMeaning() {
+			return Meaning;
+		}
+
+		public void setMeaning(String meaning) {
+			Meaning = meaning;
+		}
+    	
+		@Override
+		public int compareTo(ItemsMeaning itemsMeaning) {     //重写Comparable接口的compareTo方法
+			return this.Value-itemsMeaning.getValue();   // 根据值或者位升序排列，降序修改相减顺序即可
+		}
+    }
 	
-	public static class DataConfig
+	public static class DataConfig implements Comparable<DataConfig>
 	{
 	    private String Name;
 	    
@@ -92,6 +122,8 @@ public class ModbusDriverSaveData {
 	    private String RWType="";
 	    
 	    private String ResolutionMode;
+	    
+	    private List<ItemsMeaning> Meaning;
 
 		public String getName() {
 			return Name;
@@ -179,6 +211,19 @@ public class ModbusDriverSaveData {
 
 		public void setResolutionMode(String resolutionMode) {
 			ResolutionMode = resolutionMode;
+		}
+
+		public List<ItemsMeaning> getMeaning() {
+			return Meaning;
+		}
+
+		public void setMeaning(List<ItemsMeaning> meaning) {
+			Meaning = meaning;
+		}
+		
+		@Override
+		public int compareTo(DataConfig dataConfig) {     //重写Comparable接口的compareTo方法
+			return this.Addr-dataConfig.getAddr();   // 根据地址升序排列，降序修改相减顺序即可
 		}
 	}
 	public String getProtocolCode() {

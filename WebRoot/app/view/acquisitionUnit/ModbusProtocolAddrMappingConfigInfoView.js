@@ -18,7 +18,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAddrMappingConfigInfoView', {
                     value: 0,
                     hidden: true
                 },{
-                    id: 'ModbusProtocolAddrMappingEnumItemsSelectRow_Id',
+                    id: 'ModbusProtocolAddrMappingItemsSelectRow_Id',
                     xtype: 'textfield',
                     value: 0,
                     hidden: true
@@ -148,6 +148,26 @@ function CreateModbusProtocolAddrMappingItemsConfigInfoTable(protocolName,classe
 					protocolConfigAddrMappingItemsHandsontableHelper.hot.loadData(result.totalRoot);
 				}
 			}
+			if(result.totalRoot.length==0){
+				Ext.getCmp("ModbusProtocolAddrMappingItemsSelectRow_Id").setValue('');
+				CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable('','',true);
+			}else{
+				Ext.getCmp("ModbusProtocolAddrMappingItemsSelectRow_Id").setValue(0);
+				var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+				var protocolCode="";
+        		if(ScadaDriverModbusConfigSelectRow!=''){
+        			var selectedProtocol=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
+            		if(selectedProtocol.data.classes==1){//选中的是协议
+            			protocolCode=selectedProtocol.data.code;
+            		}else if(selectedProtocol.data.classes==0 && isNotVal(selectedProtocol.data.children) && selectedProtocol.data.children.length>0){
+            			protocolCode=selectedProtocol.data.children[0].code;
+            		}
+            		
+            		var row1=protocolConfigAddrMappingItemsHandsontableHelper.hot.getDataAtRow(0);
+            		var itemAddr=row1[2];
+            		CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode,itemAddr,true);
+        		}
+			}
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
@@ -252,9 +272,8 @@ var ProtocolConfigAddrMappingItemsHandsontableHelper = {
 	                },
 	                afterSelectionEnd : function (row, column, row2, column2, selectionLayerLevel) {
 	                	if(row==row2 && column==column2){
-	                		
+	                		Ext.getCmp("ModbusProtocolAddrMappingItemsSelectRow_Id").setValue(row);
 	                		var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
-	                		
 	                		var protocolCode="";
 	                		if(ScadaDriverModbusConfigSelectRow!=''){
 	                			var selectedProtocol=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
@@ -263,14 +282,10 @@ var ProtocolConfigAddrMappingItemsHandsontableHelper = {
 	                    		}else if(selectedProtocol.data.classes==0 && isNotVal(selectedProtocol.data.children) && selectedProtocol.data.children.length>0){
 	                    			protocolCode=selectedProtocol.data.children[0].code;
 	                    		}
-	                    		
 	                    		var row1=protocolConfigAddrMappingItemsHandsontableHelper.hot.getDataAtRow(row);
 	                    		var itemAddr=row1[2];
-	                    		if(itemAddr!=''){
-	    	                		CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode,itemAddr,true);
-	                    		}
+	                    		CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode,itemAddr,true);
 	                		}
-
 	                	}
 	                },
 //	                afterOnCellMouseDown : function (event, coords, TD){
@@ -417,6 +432,7 @@ var ProtocolConfigAddrMaooingPropertiesHandsontableHelper = {
 
 function SaveModbusProtocolAddrMappingConfigTreeData(){
 	var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+	var AddrMappingItemsSelectRow= Ext.getCmp("ModbusProtocolAddrMappingItemsSelectRow_Id").getValue();
 	if(ScadaDriverModbusConfigSelectRow!='' && protocolConfigAddrMaooingPropertiesHandsontableHelper!=null && protocolConfigAddrMaooingPropertiesHandsontableHelper.hot!=null){
 		var selectedItem=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
 		var protocolConfigData={};
@@ -452,6 +468,18 @@ function SaveModbusProtocolAddrMappingConfigTreeData(){
 						item.Ratio=parseFloat(driverConfigItemsData[i][8]);
 						item.ResolutionMode=driverConfigItemsData[i][9];
 						item.AcqMode=driverConfigItemsData[i][10];
+						if(i==AddrMappingItemsSelectRow && (driverConfigItemsData[i][9]=='开关量' || driverConfigItemsData[i][9]=='枚举量') ){
+							item.Meaning=[];
+							var itemsMeaningData=protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot.getData();
+							for(var j=0;j<itemsMeaningData.length;j++){
+								if(isNotVal(itemsMeaningData[j][0]) && isNotVal(itemsMeaningData[j][1])){
+									var meaning={};
+									meaning.Value=itemsMeaningData[j][0];
+									meaning.Meaning=itemsMeaningData[j][1];
+									item.Meaning.push(meaning);
+								}
+							}
+						}
 						configInfo.DataConfig.push(item);
 					}
 				}
@@ -636,39 +664,4 @@ var ProtocolAddrMappingItemsMeaningConfigHandsontableHelper = {
 	        }
 	        return protocolAddrMappingItemsMeaningConfigHandsontableHelper;
 	    }
-};
-
-
-
-function createModbusProtocolAddrMappingEnumItemsColumn(columnInfo) {
-    var myArr = columnInfo;
-    var myColumns = "[";
-    for (var i = 0; i < myArr.length; i++) {
-        var attr = myArr[i];
-        var width_ = "";
-        var lock_ = "";
-        var hidden_ = "";
-        if (attr.hidden == true) {
-            hidden_ = ",hidden:true";
-        }
-        if (isNotVal(attr.lock)) {
-            //lock_ = ",locked:" + attr.lock;
-        }
-        if (isNotVal(attr.width)) {
-            width_ = ",width:" + attr.width;
-        }
-        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_;
-        if (attr.dataIndex.toUpperCase() == 'id'.toUpperCase()) {
-            myColumns += ",xtype: 'rownumberer',sortable : false,locked:false";
-        }else {
-            myColumns += hidden_ + lock_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
-            //        	myColumns += hidden_ + lock_ + width_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "'";
-        }
-        myColumns += "}";
-        if (i < myArr.length - 1) {
-            myColumns += ",";
-        }
-    }
-    myColumns += "]";
-    return myColumns;
 };
