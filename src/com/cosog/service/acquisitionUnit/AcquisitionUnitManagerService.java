@@ -192,7 +192,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getProtocolEnumItemsConfigData(String code){
+	public String getProtocolEnumOrSwitchItemsConfigData(String protocolCode,String resolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -212,10 +212,11 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<String> itemsList=new ArrayList<String>();
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
-			if(code.equalsIgnoreCase(protocolConfig.getCode())){
+			if(protocolCode.equalsIgnoreCase(protocolConfig.getCode())){
 				for(int j=0;j<protocolConfig.getItems().size();j++){
-					if(protocolConfig.getItems().get(j).getResolutionMode()==1){
+					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(resolutionMode)){
 						result_json.append("{\"id\":"+(j+1)+","
+								+ "\"protocolCode\":\""+protocolCode+"\","
 								+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
 								+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+"},");
 					}
@@ -244,7 +245,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		int resolutionMode=0;
 		String title="";
 		totalRoot.append("[");
-		
+		int totolCount=0;
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolCode.equalsIgnoreCase(protocolConfig.getCode())){
@@ -253,6 +254,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 						resolutionMode=protocolConfig.getItems().get(j).getResolutionMode();
 						title=protocolConfig.getItems().get(j).getTitle();
 						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
+							totolCount=k+1;
 							totalRoot.append("{\"id\":"+(k+1)+","
 									+ "\"value\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"\","
 									+ "\"meaning\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\"},");
@@ -263,13 +265,15 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				break;
 			}
 		}
+		if(totolCount<30){
+			for(int i=totolCount;i<50;i++){
+				totalRoot.append("{},");
+			}
+		}
 		if(totalRoot.toString().endsWith(",")){
 			totalRoot.deleteCharAt(totalRoot.length() - 1);
 		}
-		
-		
 		totalRoot.append("]");
-		
 		String columns = "["
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
 				+ "{ \"header\":\"值\",\"dataIndex\":\"title\",width:120 ,children:[] },"
@@ -285,7 +289,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",\"itemResolutionMode\":"+resolutionMode+",\"itemTitle\":\""+title+"\",");
 		result_json.append("\"totalRoot\":"+totalRoot+"");
 		result_json.append("}");
-		
 		return result_json.toString();
 	}
 	
@@ -317,7 +320,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
 					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
-					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+code+"' "
+					+ " where t.type=2 and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+code+"' "
 					+ " order by t.id";
 			list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
@@ -357,6 +360,84 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								+ "\"alarmLevel\":\""+alarmLevel+"\","
 								+ "\"alarmSign\":\""+alarmSign+"\"},");
 						index++;
+					}
+				}
+				break;
+			}
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString();
+	}
+	
+	public String getModbusProtocolEnumAlarmItemsConfigData(String protocolName,String classes,String groupCode,String itemAddr,String itemResolutionMode){
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+//				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
+				+ "{ \"header\":\"上限\",\"dataIndex\":\"upperLimit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"下限\",\"dataIndex\":\"lowerLimit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		
+		List<Integer> itemValueList=new ArrayList<Integer>();
+		List<?> list=null;
+		if("3".equalsIgnoreCase(classes)){
+			String sql="select t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
+					+ " where t.type="+itemResolutionMode+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
+					+ " order by t.id";
+			list=this.findCallSql(sql);
+			for(int i=0;i<list.size();i++){
+				Object[] obj = (Object[]) list.get(i);
+				itemValueList.add(StringManagerUtils.stringToInteger(obj[3]+""));
+			}
+		}
+		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
+			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				int index=1;
+				for(int j=0;j<protocolConfig.getItems().size();j++){
+					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(itemResolutionMode)
+							&& protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
+						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
+							String value="",delay="",alarmLevel="",alarmSign="";
+							boolean checked=false;
+							for(int m=0;m<itemValueList.size();m++){
+								Object[] obj = (Object[]) list.get(m);
+								if(itemValueList.get(m)==protocolConfig.getItems().get(j).getMeaning().get(k).getValue()){
+									checked=true;
+									delay=obj[4]+"";
+									alarmLevel=obj[5]+"";
+									alarmSign=obj[6]+"";
+									break;
+								}
+							}
+							result_json.append("{\"checked\":"+checked+","
+									+ "\"id\":"+(index)+","
+									+ "\"value\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"\","
+									+ "\"meaning\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\","
+									+ "\"delay\":\""+delay+"\","
+									+ "\"alarmLevel\":\""+alarmLevel+"\","
+									+ "\"alarmSign\":\""+alarmSign+"\"},");
+							index++;
+						}
 					}
 				}
 				break;

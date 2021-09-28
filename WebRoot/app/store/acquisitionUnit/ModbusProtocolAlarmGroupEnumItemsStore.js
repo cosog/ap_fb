@@ -1,12 +1,12 @@
-Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore', {
+Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupEnumItemsStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.modbusProtocolAddrMappingEnumItemsStore',
+    alias: 'widget.modbusProtocolAlarmGroupEnumItemsStore',
     fields: ['id','title','code','itemAddr'],
     autoLoad: true,
     pageSize: 10000,
     proxy: {
         type: 'ajax',
-        url: context + '/acquisitionUnitManagerController/getProtocolEnumItemsConfigData',
+        url: context + '/acquisitionUnitManagerController/getProtocolEnumOrSwitchItemsConfigData',
         actionMethods: {
             read: 'POST'
         },
@@ -22,12 +22,12 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
-            var gridPanel = Ext.getCmp("ModbusProtocolAddrMappingEnumItemsGridPanel_Id");
+            var gridPanel = Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createModbusProtocolAddrMappingEnumItemsColumn(arrColumns);
+                var column = createModbusProtocolAddrMappingEnumOrSwitchItemsColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "ModbusProtocolAddrMappingEnumItemsGridPanel_Id",
+                    id: "ModbusProtocolAlarmGroupEnumItemsGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     columnLines: true,
@@ -42,12 +42,25 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore', {
                     		
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		Ext.getCmp("ModbusProtocolAddrMappingEnumItemsSelectRow_Id").setValue(index);
-//                    		CreateModbusProtocolAddrMappingEnumItemsConfigInfoTable(record.data.protocolCode,record.data.addr);
+                    		Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsSelectRow_Id").setValue(index);
+                    		
+                    		var selectGroupRow= Ext.getCmp("ModbusProtocolAlarmGroupConfigSelectRow_Id").getValue();
+                    		var selectedGroup=Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().getAt(selectGroupRow);
+                    		
+                    		if(selectedGroup.data.classes==0){
+                    			if(isNotVal(selectedGroup.data.children) && selectedGroup.data.children.length>0){
+                    				CreateProtocolAlarmGroupEnumItemsConfigInfoTable(selectedGroup.data.children[0].text,selectedGroup.data.children[0].classes,selectedGroup.data.children[0].code,record.data.addr);
+                    			}
+                    			
+                    		}else if(selectedGroup.data.classes==1){
+                    			CreateProtocolAlarmGroupEnumItemsConfigInfoTable(selectedGroup.data.text,selectedGroup.data.classes,selectedGroup.data.code,record.data.addr);
+                        	}else if(selectedGroup.data.classes==2||selectedGroup.data.classes==3){
+                        		CreateProtocolAlarmGroupEnumItemsConfigInfoTable(selectedGroup.data.protocol,selectedGroup.data.classes,selectedGroup.data.code,record.data.addr);
+                        	}
                     	}
                     }
                 });
-                var panel = Ext.getCmp("ModbusProtocolAddrMappingEnumItemsPanel_Id");
+                var panel = Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsPanel_Id");
                 panel.add(gridPanel);
             }
             if(get_rawData.totalRoot.length>0){
@@ -67,7 +80,8 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingEnumItemsStore', {
         		}
         	}
             var new_params = {
-            		protocolCode: protocolCode
+            		protocolCode: protocolCode,
+            		resolutionMode: 1
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },
