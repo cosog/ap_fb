@@ -58,12 +58,12 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmInstanceTreeInfoStore', 
                         	Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").setValue(index);
                         	if(record.data.classes==0){
                         		if(isNotVal(record.data.children) && record.data.children.length>0){
-                        			CreateProtocolAlarmInstanceItemsConfigInfoTable(record.data.children[0].text);
+                        			CreateProtocolAlarmInstanceNumItemsConfigInfoTable(record.data.children[0].text);
                         		}else{
-                        			CreateProtocolAlarmInstanceItemsConfigInfoTable('');
+                        			CreateProtocolAlarmInstanceNumItemsConfigInfoTable('');
                         		}
                         	}else if(record.data.classes==1){
-                        		CreateProtocolAlarmInstanceItemsConfigInfoTable(record.data.text);
+                        		CreateProtocolAlarmInstanceNumItemsConfigInfoTable(record.data.text);
                         	}
                         	CreateProtocolAlarmInstancePropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件

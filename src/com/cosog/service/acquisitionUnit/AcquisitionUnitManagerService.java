@@ -21,6 +21,7 @@ import com.cosog.model.ProtocolSMSInstance;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
+import com.cosog.model.drive.ModbusProtocolConfig.Protocol;
 import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
@@ -401,7 +402,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
 					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
-					+ " where t.type="+itemResolutionMode+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
+					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
 					+ " order by t.id";
 			list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
@@ -433,6 +434,89 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"id\":"+(index)+","
 									+ "\"value\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"\","
 									+ "\"meaning\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\","
+									+ "\"delay\":\""+delay+"\","
+									+ "\"alarmLevel\":\""+alarmLevel+"\","
+									+ "\"alarmSign\":\""+alarmSign+"\"},");
+							index++;
+						}
+					}
+				}
+				break;
+			}
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString();
+	}
+	
+	public String getModbusProtocolSwitchAlarmItemsConfigData(String protocolName,String classes,String groupCode,String itemAddr,String itemResolutionMode){
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"位\",\"dataIndex\":\"bitIndex\",width:120 ,children:[] },"
+				+ "{ \"header\":\"含义\",\"dataIndex\":\"meaning\",width:80 ,children:[] },"
+				+ "{ \"header\":\"触发状态\",\"dataIndex\":\"value\",width:80 ,children:[] },"
+				+ "{ \"header\":\"延时(S)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		
+		List<Integer> itemValueList=new ArrayList<Integer>();
+		List<?> list=null;
+		if("3".equalsIgnoreCase(classes)){
+			String sql="select t.itemname,t.itemcode,t.itemaddr,t.bitindex,t.value,t.delay,"
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
+					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
+					+ " order by t.id";
+			list=this.findCallSql(sql);
+			for(int i=0;i<list.size();i++){
+				Object[] obj = (Object[]) list.get(i);
+				itemValueList.add(StringManagerUtils.stringToInteger(obj[3]+""));
+			}
+		}
+		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
+			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				int index=1;
+				for(int j=0;j<protocolConfig.getItems().size();j++){
+					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(itemResolutionMode)
+							&& protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
+						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
+							String value="",delay="",alarmLevel="",alarmSign="";
+							boolean checked=false;
+							for(int m=0;m<itemValueList.size();m++){
+								Object[] obj = (Object[]) list.get(m);
+								if(itemValueList.get(m)==protocolConfig.getItems().get(j).getMeaning().get(k).getValue()){
+									checked=true;
+									if("0".equals(obj[4]+"")){
+										value="关";
+									}else if("1".equals(obj[4]+"")){
+										value="开";
+									}
+									delay=obj[5]+"";
+									alarmLevel=obj[6]+"";
+									alarmSign=obj[7]+"";
+									break;
+								}
+							}
+							result_json.append("{\"checked\":"+checked+","
+									+ "\"id\":"+(index)+","
+									+ "\"bitIndex\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"\","
+									+ "\"meaning\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\","
+									+ "\"value\":\""+value+"\","
 									+ "\"delay\":\""+delay+"\","
 									+ "\"alarmLevel\":\""+alarmLevel+"\","
 									+ "\"alarmSign\":\""+alarmSign+"\"},");
@@ -518,7 +602,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getProtocolAlarmInstanceItemsConfigData(String instanceName){
+	public String getProtocolAlarmInstanceNumItemsConfigData(String instanceName,String resolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -547,7 +631,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.name='"+instanceName+"' "
-				+ " order by t.id";
+				+ " and t.type="+resolutionMode
+				+ " order by t.itemaddr";
 		
 		List<?> list=this.findCallSql(itemsSql);
 		for(int i=0;i<list.size();i++){
@@ -562,6 +647,166 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					+ "\"delay\":\""+obj[7]+"\","
 					+ "\"alarmLevel\":\""+obj[8]+"\","
 					+ "\"alarmSign\":\""+obj[9]+"\"},");
+		}
+		
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString().replaceAll("null", "");
+	}
+	
+	public String getProtocolAlarmInstanceSwitchItemsConfigData(String instanceName,String resolutionMode){
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
+				+ "{ \"header\":\"位\",\"dataIndex\":\"bitIndex\",width:80 ,children:[] },"
+				+ "{ \"header\":\"含义\",\"dataIndex\":\"meaning\",width:80 ,children:[] },"
+				+ "{ \"header\":\"触发状态\",\"dataIndex\":\"value\",width:80 ,children:[] },"
+				+ "{ \"header\":\"延时(s)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		List<Integer> itemAddrsList=new ArrayList<Integer>();
+		
+		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.bitIndex,t.value,t.delay,"
+				+ " t4.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable'),t2.protocol "
+				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
+				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
+				+ " and t3.name='"+instanceName+"' "
+				+ " and t.type="+resolutionMode
+				+ " order by t.itemaddr,t.bitindex";
+		
+		List<?> list=this.findCallSql(itemsSql);
+		String protocolName="";
+		Protocol protocol=null;
+		if(list.size()>0){
+			Object[] obj = (Object[]) list.get(0);
+			protocolName=obj[obj.length-1]+"";
+			for (int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(protocolName.equals(modbusProtocolConfig.getProtocol().get(i).getName())){
+					protocol=modbusProtocolConfig.getProtocol().get(i);
+					break;
+				}
+			}
+		}
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			int itemAddr=StringManagerUtils.stringToInteger(obj[3]+"");
+			int bitIndex=StringManagerUtils.stringToInteger(obj[4]+"");
+			String meaning="";
+			for(int j=0;protocol!=null&&j<protocol.getItems().size();j++){
+				if(itemAddr==protocol.getItems().get(j).getAddr()&&protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
+					for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
+						if(bitIndex==protocol.getItems().get(j).getMeaning().get(k).getValue()){
+							meaning=protocol.getItems().get(j).getMeaning().get(k).getMeaning();
+							break;
+						}
+					}
+					break;
+				}
+			}
+			result_json.append("{\"id\":"+(i+1)+","
+					+ "\"title\":\""+obj[1]+"\","
+					+ "\"code\":\""+obj[2]+"\","
+					+ "\"addr\":\""+obj[3]+"\","
+					+ "\"bitIndex\":\""+obj[4]+"\","
+					+ "\"meaning\":\""+meaning+"\","
+					+ "\"value\":\""+("1".equalsIgnoreCase(obj[5]+"")?"开":"关")+"\","
+					+ "\"delay\":\""+obj[6]+"\","
+					+ "\"alarmLevel\":\""+obj[7]+"\","
+					+ "\"alarmSign\":\""+obj[8]+"\"},");
+		}
+		
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString().replaceAll("null", "");
+	}
+	
+	public String getProtocolAlarmInstanceEnumItemsConfigData(String instanceName,String resolutionMode){
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
+				+ "{ \"header\":\"值\",\"dataIndex\":\"value\",width:80 ,children:[] },"
+				+ "{ \"header\":\"含义\",\"dataIndex\":\"meaning\",width:80 ,children:[] },"
+				+ "{ \"header\":\"延时(s)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		List<Integer> itemAddrsList=new ArrayList<Integer>();
+		
+		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
+				+ " t4.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable'),t2.protocol "
+				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
+				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
+				+ " and t3.name='"+instanceName+"' "
+				+ " and t.type="+resolutionMode
+				+ " order by t.itemaddr,t.bitindex";
+		
+		List<?> list=this.findCallSql(itemsSql);
+		String protocolName="";
+		Protocol protocol=null;
+		if(list.size()>0){
+			Object[] obj = (Object[]) list.get(0);
+			protocolName=obj[obj.length-1]+"";
+			for (int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(protocolName.equals(modbusProtocolConfig.getProtocol().get(i).getName())){
+					protocol=modbusProtocolConfig.getProtocol().get(i);
+					break;
+				}
+			}
+		}
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			int itemAddr=StringManagerUtils.stringToInteger(obj[3]+"");
+			int value=StringManagerUtils.stringToInteger(obj[4]+"");
+			String meaning="";
+			for(int j=0;protocol!=null&&j<protocol.getItems().size();j++){
+				if(itemAddr==protocol.getItems().get(j).getAddr()&&protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
+					for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
+						if(value==protocol.getItems().get(j).getMeaning().get(k).getValue()){
+							meaning=protocol.getItems().get(j).getMeaning().get(k).getMeaning();
+							break;
+						}
+					}
+					break;
+				}
+			}
+			result_json.append("{\"id\":"+(i+1)+","
+					+ "\"title\":\""+obj[1]+"\","
+					+ "\"code\":\""+obj[2]+"\","
+					+ "\"addr\":\""+obj[3]+"\","
+					+ "\"value\":\""+obj[4]+"\","
+					+ "\"meaning\":\""+meaning+"\","
+					+ "\"delay\":\""+obj[5]+"\","
+					+ "\"alarmLevel\":\""+obj[6]+"\","
+					+ "\"alarmSign\":\""+obj[7]+"\"},");
 		}
 		
 		if(result_json.toString().endsWith(",")){
@@ -1295,8 +1540,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		super.bulkObjectDelete(hql);
 	}
 	
-	public void deleteCurrentAlarmGroupOwnItems(final String groupId) throws Exception {
-		final String hql = "DELETE AlarmGroupItem u where u.groupId ="+groupId+"";
+	public void deleteCurrentAlarmGroupOwnItems(final String groupId,final int resolutionMode) throws Exception {
+		final String hql = "DELETE AlarmGroupItem u where u.groupId ="+groupId+" and u.type="+resolutionMode;
 		getBaseDao().bulkObjectDelete(hql);
 	}
 	

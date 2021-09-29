@@ -39,7 +39,9 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupSwitchItemsStore', 
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		
+                    		if(selected.length>0){
+                    			
+                    		}
                     	},
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsSelectRow_Id").setValue(index);

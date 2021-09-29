@@ -5,6 +5,7 @@ import java.util.List;
 public class ModbusProtocolAlarmGroupSaveData {
 
 	int id;
+	int resolutionMode;
 	String groupCode;
 	String groupName;
 	String oldGroupName;
@@ -32,6 +33,12 @@ public class ModbusProtocolAlarmGroupSaveData {
 	    private String alarmLevel;
 
 	    private String alarmSign;
+	    
+	    private int type;
+	    
+	    private String value;
+	    
+	    private int bitIndex;
 
 	    public void setItemName(String itemName){
 	        this.itemName = itemName;
@@ -81,6 +88,24 @@ public class ModbusProtocolAlarmGroupSaveData {
 	    public String getAlarmSign(){
 	        return this.alarmSign;
 	    }
+		public int getType() {
+			return type;
+		}
+		public void setType(int type) {
+			this.type = type;
+		}
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+		public int getBitIndex() {
+			return bitIndex;
+		}
+		public void setBitIndex(int bitIndex) {
+			this.bitIndex = bitIndex;
+		}
 	}
 
 	public int getId() {
@@ -145,5 +170,13 @@ public class ModbusProtocolAlarmGroupSaveData {
 
 	public void setAlarmItems(List<AlarmItems> alarmItems) {
 		this.alarmItems = alarmItems;
+	}
+
+	public int getResolutionMode() {
+		return resolutionMode;
+	}
+
+	public void setResolutionMode(int resolutionMode) {
+		this.resolutionMode = resolutionMode;
 	}
 }
