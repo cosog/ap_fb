@@ -145,7 +145,17 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmGroupConfigInfoView', {
                     listeners: {
                     	tabchange: function (tabPanel, newCard, oldCard, obj) {
                     		if(newCard.id=="ModbusProtocolAlarmGroupNumItemsConfigTableInfoPanel_Id"){
-//                        		loadFSDiagramAnalysisSingleStatData();
+                    			var selectRow= Ext.getCmp("ModbusProtocolAlarmGroupConfigSelectRow_Id").getValue();
+                    			var selectedItem=Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+                    			if(selectedItem.data.classes==0){
+                            		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                            			CreateProtocolAlarmGroupNumItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
+                            		}
+                            	}else if(selectedItem.data.classes==1){
+                            		CreateProtocolAlarmGroupNumItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
+                            	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
+                            		CreateProtocolAlarmGroupNumItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
+                            	}
                         	}else if(newCard.id=="ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoPanel_Id"){
                         		var treePanel=Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id");
                         		if(isNotVal(treePanel)){
@@ -531,10 +541,11 @@ function CreateProtocolAlarmGroupSwitchItemsConfigInfoTable(protocolName,classes
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmGroupConfigSwitchItemsHandsontableHelper==null || protocolAlarmGroupConfigSwitchItemsHandsontableHelper.hot==undefined){
 				protocolAlarmGroupConfigSwitchItemsHandsontableHelper = ProtocolAlarmGroupConfigSwitchItemsHandsontableHelper.createNew("ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoDiv_id");
-				var colHeaders="['','序号','位','含义','延时(s)','报警级别','报警使能']";
+				var colHeaders="['','序号','位','含义','触发状态','延时(s)','报警级别','报警使能']";
 				var columns="[{data:'checked',type:'checkbox'},{data:'id'}," 
-					+"{data:'value',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigSwitchItemsHandsontableHelper);}}," 
+					+"{data:'bitIndex',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigSwitchItemsHandsontableHelper);}}," 
 					+"{data:'meaning'},"
+					+"{data:'value',type:'dropdown',strict:true,allowInvalid:false,source:['开','关']},"
 					+"{data:'delay',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigSwitchItemsHandsontableHelper);}}," 
 					+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
 					+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
@@ -664,19 +675,56 @@ function SaveModbusProtocolAlarmGroupConfigTreeData(){
 			saveData.protocol=selectedItem.data.protocol;
 			saveData.groupName=propertiesData[0][2];
 			saveData.remark=propertiesData[1][2];
+			var activeId = Ext.getCmp("ModbusProtocolAlarmGroupItemsConfigTabPanel_Id").getActiveTab().id;
+			if(activeId=="ModbusProtocolAlarmGroupNumItemsConfigTableInfoPanel_Id"){
+				saveData.resolutionMode=2;
+				alarmItemsData = protocolAlarmGroupConfigNumItemsHandsontableHelper.hot.getData();
+        	}else if(activeId=="ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoPanel_Id"){
+        		saveData.resolutionMode=0;
+        		alarmItemsData = protocolAlarmGroupConfigSwitchItemsHandsontableHelper.hot.getData();
+        	}else if(activeId=="ModbusProtocolAlarmGroupEnumItemsConfigTableInfoPanel_Id"){
+        		saveData.resolutionMode=1;
+        		alarmItemsData = protocolAlarmGroupConfigEnumItemsHandsontableHelper.hot.getData();
+        	}
 			saveData.alarmItems=[];
 			Ext.Array.each(alarmItemsData, function (name, index, countriesItSelf) {
 				var checked=alarmItemsData[index][0];
 				if(checked){
 					var item={};
-					item.itemName=alarmItemsData[index][2];
-					item.itemAddr=parseInt(alarmItemsData[index][3]);
-					item.upperLimit=alarmItemsData[index][4];
-					item.lowerLimit=alarmItemsData[index][5];
-					item.hystersis=alarmItemsData[index][6];
-					item.delay=alarmItemsData[index][7];
-					item.alarmLevel=alarmItemsData[index][8];
-					item.alarmSign=alarmItemsData[index][9];
+					if(saveData.resolutionMode==2){//数据量
+						item.itemName=alarmItemsData[index][2];
+						item.itemAddr=parseInt(alarmItemsData[index][3]);
+						item.upperLimit=alarmItemsData[index][4];
+						item.lowerLimit=alarmItemsData[index][5];
+						item.hystersis=alarmItemsData[index][6];
+						item.delay=alarmItemsData[index][7];
+						item.alarmLevel=alarmItemsData[index][8];
+						item.alarmSign=alarmItemsData[index][9];
+					}else if(saveData.resolutionMode==0){//开关量
+						var selectRow= Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsSelectRow_Id").getValue();
+						var selectedItem=Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id").getStore().getAt(selectRow);
+						item.bitIndex=alarmItemsData[index][2];
+						item.itemName=selectedItem.data.title;
+						item.itemAddr=selectedItem.data.addr;
+						if(alarmItemsData[index][4]=='开'){
+							item.value=1;
+						}if(alarmItemsData[index][4]=='关'){
+							item.value=0;
+						}
+						item.delay=alarmItemsData[index][5];
+						item.alarmLevel=alarmItemsData[index][6];
+						item.alarmSign=alarmItemsData[index][7];
+					}else if(saveData.resolutionMode==1){//枚举量
+						
+						var selectRow= Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsSelectRow_Id").getValue();
+						var selectedItem=Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsGridPanel_Id").getStore().getAt(selectRow);
+						item.itemName=selectedItem.data.title;
+						item.itemAddr=selectedItem.data.addr;
+						item.value=alarmItemsData[index][2];
+						item.delay=alarmItemsData[index][4];
+						item.alarmLevel=alarmItemsData[index][5];
+						item.alarmSign=alarmItemsData[index][6];
+					}
 					saveData.alarmItems.push(item);
 				}
 			});

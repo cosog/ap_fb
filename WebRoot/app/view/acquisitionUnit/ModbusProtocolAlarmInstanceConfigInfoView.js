@@ -1,4 +1,6 @@
-var protocolAlarmInstanceConfigItemsHandsontableHelper=null;
+var protocolAlarmInstanceConfigNumItemsHandsontableHelper=null;
+var protocolAlarmInstanceConfigSwitchItemsHandsontableHelper=null;
+var protocolAlarmInstanceConfigEnumItemsHandsontableHelper=null;
 var protocolAlarmInstancePropertiesHandsontableHelper=null;
 Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', {
     extend: 'Ext.panel.Panel',
@@ -74,26 +76,89 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                 	border: true,
                 	region: 'center',
                     title:'所含报警项',
-                    id:"ModbusProtocolAlarmInstanceItemsTableInfoPanel_Id",
-                    layout: 'fit',
-                    html:'<div class="ModbusProtocolAlarmInstanceItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmInstanceItemsConfigTableInfoDiv_id"></div></div>',
-                    listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        	if(protocolAlarmInstancePropertiesHandsontableHelper!=null && protocolAlarmInstancePropertiesHandsontableHelper.hot!=undefined){
-                        		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
-                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
-                        		if(isNotVal(gridPanel)){
-                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            	    if(selectedItem.data.classes==0){
-                            	    	if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                                			CreateProtocolAlarmInstanceItemsConfigInfoTable(selectedItem.data.children[0].text);
-                                		}
-                                	}else if(selectedItem.data.classes==1){
-                                		CreateProtocolAlarmInstanceItemsConfigInfoTable(selectedItem.data.text);
-                                	}
-                        		}
-                        	}
+                    xtype: 'tabpanel',
+                    id:"ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id",
+                    activeTab: 0,
+                    border: false,
+                    tabPosition: 'top',
+                    items: [{
+                    	title:'数据量',
+                    	id:"ModbusProtocolAlarmInstanceNumItemsTableInfoPanel_Id",
+                        layout: 'fit',
+                        html:'<div class="ModbusProtocolAlarmInstanceNumItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmInstanceNumItemsConfigTableInfoDiv_id"></div></div>',
+                        listeners: {
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            	if(protocolAlarmInstanceConfigNumItemsHandsontableHelper!=null && protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                                	    if(selectedItem.data.classes==0){
+                                	    	if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                                    			CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.children[0].text);
+                                    		}
+                                    	}else if(selectedItem.data.classes==1){
+                                    		CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.text);
+                                    	}
+                            		}
+                            	}
+                            }
                         }
+                    },{
+                    	title:'开关量',
+                    	id:"ModbusProtocolAlarmInstanceSwitchItemsTableInfoPanel_Id",
+                        layout: 'fit',
+                        html:'<div class="ModbusProtocolAlarmInstanceSwitchItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmInstanceSwitchItemsConfigTableInfoDiv_id"></div></div>',
+                        listeners: {
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            	
+                            }
+                        }
+                    },{
+                    	title:'枚举量',
+                    	id:"ModbusProtocolAlarmInstanceEnumItemsTableInfoPanel_Id",
+                        layout: 'fit',
+                        html:'<div class="ModbusProtocolAlarmInstanceEnumItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmInstanceEnumItemsConfigTableInfoDiv_id"></div></div>',
+                        listeners: {
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        }
+                    }],
+                    listeners: {
+                    	tabchange: function (tabPanel, newCard, oldCard, obj) {
+                    		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
+                			var selectedItem=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+                    		if(newCard.id=="ModbusProtocolAlarmInstanceNumItemsTableInfoPanel_Id"){
+                    			if(selectedItem.data.classes==0){
+                            		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                            			CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.children[0].text);
+                            		}else{
+                            			CreateProtocolAlarmInstanceNumItemsConfigInfoTable('');
+                            		}
+                            	}else if(record.data.classes==1){
+                            		CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.text);
+                            	}
+                        	}else if(newCard.id=="ModbusProtocolAlarmInstanceSwitchItemsTableInfoPanel_Id"){
+                        		if(selectedItem.data.classes==0){
+                            		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                            			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.children[0].text);
+                            		}else{
+                            			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable('');
+                            		}
+                            	}else if(record.data.classes==1){
+                            		CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.text);
+                            	}
+                        	}else if(newCard.id=="ModbusProtocolAlarmInstanceEnumItemsTableInfoPanel_Id"){
+                        		if(selectedItem.data.classes==0){
+                            		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                            			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.children[0].text);
+                            		}else{
+                            			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable('');
+                            		}
+                            	}else if(record.data.classes==1){
+                            		CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.text);
+                            	}
+                        	}
+                    	}
                     }
                 }]
             }]
@@ -206,16 +271,16 @@ var ProtocolAlarmInstancePropertiesHandsontableHelper = {
 	    }
 };
 
-function CreateProtocolAlarmInstanceItemsConfigInfoTable(instanceName){
+function CreateProtocolAlarmInstanceNumItemsConfigInfoTable(instanceName){
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceItemsConfigData',
+		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceNumItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsTableInfoPanel_Id").setTitle(instanceName+"所含报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"所含报警项");
 			
 			var result =  Ext.JSON.decode(response.responseText);
-			if(protocolAlarmInstanceConfigItemsHandsontableHelper==null || protocolAlarmInstanceConfigItemsHandsontableHelper.hot==undefined){
-				protocolAlarmInstanceConfigItemsHandsontableHelper = ProtocolAlarmInstanceConfigItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceItemsConfigTableInfoDiv_id");
+			if(protocolAlarmInstanceConfigNumItemsHandsontableHelper==null || protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot==undefined){
+				protocolAlarmInstanceConfigNumItemsHandsontableHelper = ProtocolAlarmInstanceConfigNumItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceNumItemsConfigTableInfoDiv_id");
 				var colHeaders="['序号','名称','地址','上限','下限','回差','延时(s)','报警级别','报警使能']";
 				var columns="[{data:'id'},{data:'title'},"
 					 	+"{data:'addr'},"
@@ -226,18 +291,18 @@ function CreateProtocolAlarmInstanceItemsConfigInfoTable(instanceName){
 						+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
 						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
 						+"]";
-				protocolAlarmInstanceConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
-				protocolAlarmInstanceConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
+				protocolAlarmInstanceConfigNumItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				protocolAlarmInstanceConfigNumItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
 				if(result.totalRoot.length==0){
-					protocolAlarmInstanceConfigItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					protocolAlarmInstanceConfigNumItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					protocolAlarmInstanceConfigItemsHandsontableHelper.createTable(result.totalRoot);
+					protocolAlarmInstanceConfigNumItemsHandsontableHelper.createTable(result.totalRoot);
 				}
 			}else{
 				if(result.totalRoot.length==0){
-					protocolAlarmInstanceConfigItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					protocolAlarmInstanceConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
+					protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot.loadData(result.totalRoot);
 				}
 			}
 		},
@@ -245,42 +310,43 @@ function CreateProtocolAlarmInstanceItemsConfigInfoTable(instanceName){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			instanceName:instanceName
+			instanceName:instanceName,
+			resolutionMode:2
         }
 	});
 };
 
-var ProtocolAlarmInstanceConfigItemsHandsontableHelper = {
+var ProtocolAlarmInstanceConfigNumItemsHandsontableHelper = {
 		createNew: function (divid) {
-	        var protocolAlarmInstanceConfigItemsHandsontableHelper = {};
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.hot1 = '';
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.divid = divid;
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.validresult=true;//数据校验
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.colHeaders=[];
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.columns=[];
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.AllData=[];
+	        var protocolAlarmInstanceConfigNumItemsHandsontableHelper = {};
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot1 = '';
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.divid = divid;
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.validresult=true;//数据校验
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.colHeaders=[];
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.columns=[];
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.AllData=[];
 	        
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
 	        }
 	        
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
 	            td.style.backgroundColor = 'rgb(184, 184, 184)';
 	        }
 	        
-	        protocolAlarmInstanceConfigItemsHandsontableHelper.createTable = function (data) {
-	        	$('#'+protocolAlarmInstanceConfigItemsHandsontableHelper.divid).empty();
-	        	var hotElement = document.querySelector('#'+protocolAlarmInstanceConfigItemsHandsontableHelper.divid);
-	        	protocolAlarmInstanceConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        protocolAlarmInstanceConfigNumItemsHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolAlarmInstanceConfigNumItemsHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolAlarmInstanceConfigNumItemsHandsontableHelper.divid);
+	        	protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
 	        		colWidths: [50,120,80,80,80,80,80,80,80],
-	                columns:protocolAlarmInstanceConfigItemsHandsontableHelper.columns,
+	                columns:protocolAlarmInstanceConfigNumItemsHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
 	                rowHeaders: false,//显示行头
-	                colHeaders:protocolAlarmInstanceConfigItemsHandsontableHelper.colHeaders,//显示列头
+	                colHeaders:protocolAlarmInstanceConfigNumItemsHandsontableHelper.colHeaders,//显示列头
 	                columnSorting: true,//允许排序
 	                sortIndicator: true,
 	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
@@ -300,10 +366,204 @@ var ProtocolAlarmInstanceConfigItemsHandsontableHelper = {
 	                }
 	        	});
 	        }
-	        return protocolAlarmInstanceConfigItemsHandsontableHelper;
+	        return protocolAlarmInstanceConfigNumItemsHandsontableHelper;
 	    }
 };
 
+function CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(instanceName){
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceSwitchItemsConfigData',
+		success:function(response) {
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"所含报警项");
+			var result =  Ext.JSON.decode(response.responseText);
+			if(protocolAlarmInstanceConfigSwitchItemsHandsontableHelper==null || protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot==undefined){
+				protocolAlarmInstanceConfigSwitchItemsHandsontableHelper = ProtocolAlarmInstanceConfigSwitchItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceSwitchItemsConfigTableInfoDiv_id");
+				var colHeaders="['序号','名称','地址','位','含义','触发状态','延时(s)','报警级别','报警使能']";
+				var columns="[{data:'id'},{data:'title'},"
+					 	+"{data:'addr'},"
+						+"{data:'bitIndex'},"
+						+"{data:'meaning'}," 
+						+"{data:'value'}," 
+						+"{data:'delay'}," 
+						+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
+						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
+						+"]";
+				protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			instanceName:instanceName,
+			resolutionMode:0
+        }
+	});
+};
+
+var ProtocolAlarmInstanceConfigSwitchItemsHandsontableHelper = {
+		createNew: function (divid) {
+	        var protocolAlarmInstanceConfigSwitchItemsHandsontableHelper = {};
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot1 = '';
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.divid = divid;
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.validresult=true;//数据校验
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.colHeaders=[];
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.columns=[];
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.AllData=[];
+	        
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	             Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
+	        }
+	        
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(184, 184, 184)';
+	        }
+	        
+	        protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.divid);
+	        	protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		data: data,
+	        		colWidths: [50,120,80,80,80,80,80,80,80],
+	                columns:protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.columns,
+	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: false,//显示行头
+	                colHeaders:protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.colHeaders,//显示列头
+	                columnSorting: true,//允许排序
+	                sortIndicator: true,
+	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                	var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+
+	                    cellProperties.readOnly = true;
+	                    return cellProperties;
+	                },
+	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
+	                }
+	        	});
+	        }
+	        return protocolAlarmInstanceConfigSwitchItemsHandsontableHelper;
+	    }
+};
+
+function CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(instanceName){
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceEnumItemsConfigData',
+		success:function(response) {
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"所含报警项");
+			var result =  Ext.JSON.decode(response.responseText);
+			if(protocolAlarmInstanceConfigEnumItemsHandsontableHelper==null || protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot==undefined){
+				protocolAlarmInstanceConfigEnumItemsHandsontableHelper = ProtocolAlarmInstanceConfigEnumItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceEnumItemsConfigTableInfoDiv_id");
+				var colHeaders="['序号','名称','地址','值','含义','延时(s)','报警级别','报警使能']";
+				var columns="[{data:'id'},{data:'title'},"
+					 	+"{data:'addr'},"
+					 	+"{data:'value'}," 
+						+"{data:'meaning'},"
+						+"{data:'delay'}," 
+						+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
+						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
+						+"]";
+				protocolAlarmInstanceConfigEnumItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				protocolAlarmInstanceConfigEnumItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					protocolAlarmInstanceConfigEnumItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					protocolAlarmInstanceConfigEnumItemsHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			instanceName:instanceName,
+			resolutionMode:1
+        }
+	});
+};
+
+var ProtocolAlarmInstanceConfigEnumItemsHandsontableHelper = {
+		createNew: function (divid) {
+	        var protocolAlarmInstanceConfigEnumItemsHandsontableHelper = {};
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot1 = '';
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.divid = divid;
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.validresult=true;//数据校验
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.colHeaders=[];
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.columns=[];
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.AllData=[];
+	        
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	             Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
+	        }
+	        
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(184, 184, 184)';
+	        }
+	        
+	        protocolAlarmInstanceConfigEnumItemsHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolAlarmInstanceConfigEnumItemsHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolAlarmInstanceConfigEnumItemsHandsontableHelper.divid);
+	        	protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		data: data,
+	        		colWidths: [50,120,80,80,80,80,80,80],
+	                columns:protocolAlarmInstanceConfigEnumItemsHandsontableHelper.columns,
+	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: false,//显示行头
+	                colHeaders:protocolAlarmInstanceConfigEnumItemsHandsontableHelper.colHeaders,//显示列头
+	                columnSorting: true,//允许排序
+	                sortIndicator: true,
+	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize:true,//当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                	var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+
+	                    cellProperties.readOnly = true;
+	                    return cellProperties;
+	                },
+	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
+	                }
+	        	});
+	        }
+	        return protocolAlarmInstanceConfigEnumItemsHandsontableHelper;
+	    }
+};
 
 function SaveModbusProtocolAlarmInstanceConfigTreeData(){
 	var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();

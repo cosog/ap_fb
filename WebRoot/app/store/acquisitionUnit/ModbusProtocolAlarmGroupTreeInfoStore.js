@@ -56,17 +56,33 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                         	
                         },select( v, record, index, eOpts ){
                         	Ext.getCmp("ModbusProtocolAlarmGroupConfigSelectRow_Id").setValue(index);
-                        	if(record.data.classes==0){
-                        		if(isNotVal(record.data.children) && record.data.children.length>0){
-                        			CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
+                        	var activeId = Ext.getCmp("ModbusProtocolAlarmGroupItemsConfigTabPanel_Id").getActiveTab().id;
+                			if(activeId=="ModbusProtocolAlarmGroupNumItemsConfigTableInfoPanel_Id"){
+                				if(record.data.classes==0){
+                            		if(isNotVal(record.data.children) && record.data.children.length>0){
+                            			CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
+                            		}
+                            	}else if(record.data.classes==1){
+                            		CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
+                            	}else if(record.data.classes==2||record.data.classes==3){
+                            		CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
+                            	}
+                        	}else if(activeId=="ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoPanel_Id"){
+                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id");
+                        		if(isNotVal(gridPanel)){
+                        			gridPanel.getSelectionModel().deselectAll(true);
+                        			gridPanel.getStore().load();
+                        		}else{
+                        			ModbusProtocolTreeInfoStore = Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupSwitchItemsStore');
                         		}
-                        	}else if(record.data.classes==1){
-                        		CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
-                        	}else if(record.data.classes==2||record.data.classes==3){
-                        		CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
-                        	}
-                        	if(record.data.classes==3){
-//                        		showAcquisitionGroupOwnItems(record.data.code);
+                        	}else if(activeId=="ModbusProtocolAlarmGroupEnumItemsConfigTableInfoPanel_Id"){
+                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsGridPanel_Id");
+                        		if(isNotVal(gridPanel)){
+                        			gridPanel.getSelectionModel().deselectAll(true);
+                        			gridPanel.getStore().load();
+                        		}else{
+                        			ModbusProtocolTreeInfoStore = Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupEnumItemsStore');
+                        		}
                         	}
                         	CreateProtocolAlarmGroupConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件

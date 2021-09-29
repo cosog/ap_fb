@@ -18,6 +18,9 @@ public class AlarmGroupItem implements java.io.Serializable {
 	private String itemName;
 	private String itemCode;
 	private Integer itemAddr;
+	private Integer type;
+	private Float value;
+	private Integer bitIndex;
 	private Float upperLimit;
 	private Float lowerLimit;
 	private Float hystersis;
@@ -32,8 +35,8 @@ public class AlarmGroupItem implements java.io.Serializable {
 
 	/** full constructor */
 	public AlarmGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
-			Integer itemAddr, Float upperLimit, Float lowerLimit, Float hystersis, Integer delay, Integer alarmLevel,
-			Integer alarmSign) {
+			Integer itemAddr, Integer type, Float value, Integer bitIndex, Float upperLimit, Float lowerLimit,
+			Float hystersis, Integer delay, Integer alarmLevel, Integer alarmSign) {
 		super();
 		this.id = id;
 		this.groupId = groupId;
@@ -41,6 +44,9 @@ public class AlarmGroupItem implements java.io.Serializable {
 		this.itemName = itemName;
 		this.itemCode = itemCode;
 		this.itemAddr = itemAddr;
+		this.type = type;
+		this.value = value;
+		this.bitIndex = bitIndex;
 		this.upperLimit = upperLimit;
 		this.lowerLimit = lowerLimit;
 		this.hystersis = hystersis;
@@ -156,6 +162,33 @@ public class AlarmGroupItem implements java.io.Serializable {
 
 	public void setAlarmSign(Integer alarmSign) {
 		this.alarmSign = alarmSign;
+	}
+
+	@Column(name = "type", nullable = true, precision = 22, scale = 0)
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	@Column(name = "value")
+	public Float getValue() {
+		return value;
+	}
+
+	public void setValue(Float value) {
+		this.value = value;
+	}
+
+	@Column(name = "bitIndex", nullable = true, precision = 22, scale = 0)
+	public Integer getBitIndex() {
+		return bitIndex;
+	}
+
+	public void setBitIndex(Integer bitIndex) {
+		this.bitIndex = bitIndex;
 	}
 
 	
