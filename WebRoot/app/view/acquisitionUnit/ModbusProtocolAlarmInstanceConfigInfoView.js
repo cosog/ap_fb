@@ -134,7 +134,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                             		}else{
                             			CreateProtocolAlarmInstanceNumItemsConfigInfoTable('');
                             		}
-                            	}else if(record.data.classes==1){
+                            	}else if(selectedItem.data.classes==1){
                             		CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.text);
                             	}
                         	}else if(newCard.id=="ModbusProtocolAlarmInstanceSwitchItemsTableInfoPanel_Id"){
@@ -144,7 +144,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                             		}else{
                             			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable('');
                             		}
-                            	}else if(record.data.classes==1){
+                            	}else if(selectedItem.data.classes==1){
                             		CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.text);
                             	}
                         	}else if(newCard.id=="ModbusProtocolAlarmInstanceEnumItemsTableInfoPanel_Id"){
@@ -154,7 +154,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                             		}else{
                             			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable('');
                             		}
-                            	}else if(record.data.classes==1){
+                            	}else if(selectedItem.data.classes==1){
                             		CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.text);
                             	}
                         	}
