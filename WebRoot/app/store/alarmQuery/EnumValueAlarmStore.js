@@ -1,6 +1,6 @@
-Ext.define('AP.store.alarmQuery.SwitchingValueAlarmStore', {
+Ext.define('AP.store.alarmQuery.EnumValueAlarmStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.SwitchingValueAlarmStore',
+    alias: 'widget.EnumValueAlarmStore',
     fields: ['id','deviceType','deviceTypeName','wellName','createTime','user_id','loginIp','action','actionName','remark'],
     autoLoad: true,
     pageSize: 50,
@@ -22,7 +22,7 @@ Ext.define('AP.store.alarmQuery.SwitchingValueAlarmStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
-            var gridPanel = Ext.getCmp("SwitchingValueAlarmGridPanel_Id");
+            var gridPanel = Ext.getCmp("EnumValueAlarmGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var column = createAlarmQueryColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
@@ -34,7 +34,7 @@ Ext.define('AP.store.alarmQuery.SwitchingValueAlarmStore', {
     	        });
                 
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "SwitchingValueAlarmGridPanel_Id",
+                    id: "EnumValueAlarmGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     bbar: bbar,
@@ -52,26 +52,26 @@ Ext.define('AP.store.alarmQuery.SwitchingValueAlarmStore', {
                     	select: function(grid, record, index, eOpts) {}
                     }
                 });
-                var panel = Ext.getCmp("SwitchingValueAlarmInfoView_Id");
+                var panel = Ext.getCmp("EnumValueAlarmInfoView_Id");
                 panel.add(gridPanel);
             }
             
-            var startDate=Ext.getCmp('SwitchingValueAlarmQueryStartDate_Id');
+            var startDate=Ext.getCmp('EnumValueAlarmQueryStartDate_Id');
             if(startDate.rawValue==''||null==startDate.rawValue){
             	startDate.setValue(get_rawData.start_date);
             }
-            var endDate=Ext.getCmp('SwitchingValueAlarmQueryEndDate_Id');
+            var endDate=Ext.getCmp('EnumValueAlarmQueryEndDate_Id');
             if(endDate.rawValue==''||null==endDate.rawValue){
             	endDate.setValue(get_rawData.end_date);
             }
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-        	var deviceType=Ext.getCmp('SwitchingValueAlarmDeviceTypeListComb_Id').getValue();
-        	var deviceName=Ext.getCmp('SwitchingValueAlarmDeviceListComb_Id').getValue();
-        	var alarmLevel=Ext.getCmp('SwitchingValueAlarmLevelComb_Id').getValue();
-        	var startDate=Ext.getCmp('SwitchingValueAlarmQueryStartDate_Id').rawValue;
-            var endDate=Ext.getCmp('SwitchingValueAlarmQueryEndDate_Id').rawValue;
+        	var deviceType=Ext.getCmp('EnumValueAlarmDeviceTypeListComb_Id').getValue();
+        	var deviceName=Ext.getCmp('EnumValueAlarmDeviceListComb_Id').getValue();
+        	var alarmLevel=Ext.getCmp('EnumValueAlarmLevelComb_Id').getValue();
+        	var startDate=Ext.getCmp('EnumValueAlarmQueryStartDate_Id').rawValue;
+            var endDate=Ext.getCmp('EnumValueAlarmQueryEndDate_Id').rawValue;
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
@@ -79,7 +79,7 @@ Ext.define('AP.store.alarmQuery.SwitchingValueAlarmStore', {
                     alarmLevel:alarmLevel,
                     startDate:startDate,
                     endDate:endDate,
-                    alarmType:3
+                    alarmType:2
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

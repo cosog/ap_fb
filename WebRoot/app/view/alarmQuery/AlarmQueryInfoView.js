@@ -7,6 +7,7 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
         var me = this;
         var CommunicationAlarmInfoView = Ext.create('AP.view.alarmQuery.CommunicationAlarmInfoView');
         var NumericValueAlarmInfoView = Ext.create('AP.view.alarmQuery.NumericValueAlarmInfoView');
+        var EnumValueAlarmInfoView = Ext.create('AP.view.alarmQuery.EnumValueAlarmInfoView');
         var SwitchingValueAlarmInfoView = Ext.create('AP.view.alarmQuery.SwitchingValueAlarmInfoView');
         Ext.apply(me, {
         	items: [{
@@ -25,6 +26,12 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
         				title: '数值量报警',
         				id:'NumericValueAlarmInfoPanel_Id',
         				items: [NumericValueAlarmInfoView],
+        				layout: "fit",
+        				border: false
+        			},{
+        				title: '枚举量报警',
+        				id:'EnumValueAlarmInfoPanel_Id',
+        				items: [EnumValueAlarmInfoView],
         				layout: "fit",
         				border: false
         			},{
@@ -50,6 +57,13 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
         							gridPanel.getStore().load();
         						}else{
         							Ext.create('AP.store.alarmQuery.NumericValueAlarmStore');
+        						}
+        					}else if(newCard.id=="EnumValueAlarmInfoPanel_Id"){
+        						var gridPanel = Ext.getCmp("EnumValueAlarmGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.alarmQuery.EnumValueAlarmStore');
         						}
         					}else if(newCard.id=="SwitchingValueAlarmInfoPanel_Id"){
         						var gridPanel = Ext.getCmp("SwitchingValueAlarmGridPanel_Id");

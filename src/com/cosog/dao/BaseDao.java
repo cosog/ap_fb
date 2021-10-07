@@ -1922,10 +1922,10 @@ public class BaseDao extends HibernateDaoSupport {
 					cs.setString(3, acqTime);
 					cs.setString(4, acquisitionItemInfoList.get(i).getTitle());
 					cs.setInt(5, acquisitionItemInfoList.get(i).getAlarmType());
-					cs.setString(6, acquisitionItemInfoList.get(i).getValue());
+					cs.setString(6, acquisitionItemInfoList.get(i).getRawValue());
 					cs.setString(7, acquisitionItemInfoList.get(i).getAlarmInfo());
-					cs.setFloat(8, acquisitionItemInfoList.get(i).getAlarmLimit());
-					cs.setFloat(9, acquisitionItemInfoList.get(i).getHystersis());
+					cs.setString(8, acquisitionItemInfoList.get(i).getAlarmLimit()+"");
+					cs.setString(9, acquisitionItemInfoList.get(i).getHystersis()+"");
 					cs.setInt(10, acquisitionItemInfoList.get(i).getAlarmLevel());
 					cs.executeUpdate();
 				}

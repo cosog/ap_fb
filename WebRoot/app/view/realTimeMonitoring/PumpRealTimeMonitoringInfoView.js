@@ -207,7 +207,7 @@ function CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 			
 			//绘制第一个float型变量曲线
 			for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-				if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
+				if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode==2){
 					Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	pumpRealTimeMonitoringCurve(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	break;

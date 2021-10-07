@@ -64,7 +64,7 @@ public class CalculateDataService<T> extends BaseService<T> {
 				String lastAlarmTime=alarmInfoMap.get(key);
 				
 				long timeDiff=StringManagerUtils.getTimeDifference(lastAlarmTime, acqTime, "yyyy-MM-dd HH:mm:ss");
-				if(timeDiff>acquisitionItemInfoList.get(i).getHystersis()*1000){
+				if(timeDiff>acquisitionItemInfoList.get(i).getAlarmDelay()*1000){
 					isSend=true;
 					SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
 							+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()

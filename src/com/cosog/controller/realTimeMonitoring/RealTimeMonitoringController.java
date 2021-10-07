@@ -197,11 +197,13 @@ public class RealTimeMonitoringController extends BaseController {
 			int addr=0;
 			String dataType="";
 			String title="";
+			float ratio=0;
 			for(int i=0;i<protocol.getItems().size();i++){
 				if(itemCode.equalsIgnoreCase("addr"+protocol.getItems().get(i).getAddr())){
 					addr=protocol.getItems().get(i).getAddr();
 					dataType=protocol.getItems().get(i).getIFDataType();
 					title=protocol.getItems().get(i).getTitle();
+					ratio=protocol.getItems().get(i).getRatio();
 					break;
 				}
 			}
