@@ -33,6 +33,8 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		if(StringManagerUtils.stringToInteger(alarmType)==1){
 			ddicName="numericValueAlarm";
 		}else if(StringManagerUtils.stringToInteger(alarmType)==2){
+			ddicName="enumValueAlarm";
+		}else if(StringManagerUtils.stringToInteger(alarmType)==3){
 			ddicName="switchingValueAlarm";
 		}
 		DataDictionary ddic = null;

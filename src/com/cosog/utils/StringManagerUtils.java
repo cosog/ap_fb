@@ -2386,9 +2386,9 @@ public class StringManagerUtils {
 	    
 	    public static String objectToString(Object obj,String dataType){
 	    	String result="";
-	    	if("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType)){
+	    	if("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType) || dataType.contains("int")){
 	    		result=StringManagerUtils.stringToInteger(obj+"")+"";
-	    	}else if("float32".equalsIgnoreCase(dataType)){
+	    	}else if("float32".equalsIgnoreCase(dataType) || "float".equalsIgnoreCase(dataType)){
 	    		result=StringManagerUtils.stringToFloat(obj+"")+"";
 	    	}else if("float64".equalsIgnoreCase(dataType)){
 	    		result=StringManagerUtils.stringToDouble(obj+"")+"";
@@ -2404,10 +2404,39 @@ public class StringManagerUtils {
 	    	return result;
 	    }
 	    
+	    public static String objectToString(Object obj,String dataType,float ratio){
+	    	String result="";
+	    	if("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType) || dataType.contains("int")){
+	    		result=StringManagerUtils.stringToInteger(obj+"")+"";
+	    		if(ratio!=0){
+	    			result=StringManagerUtils.stringToInteger(obj+"")/ratio+"";
+	    		}
+	    	}else if("float32".equalsIgnoreCase(dataType) || "float".equalsIgnoreCase(dataType)){
+	    		result=StringManagerUtils.stringToFloat(obj+"")+"";
+	    		if(ratio!=0){
+	    			result=StringManagerUtils.stringToFloat(obj+"")/ratio+"";
+	    		}
+	    	}else if("float64".equalsIgnoreCase(dataType)){
+	    		result=StringManagerUtils.stringToDouble(obj+"")+"";
+	    		if(ratio!=0){
+	    			result=StringManagerUtils.stringToDouble(obj+"")/ratio+"";
+	    		}
+	    	}else if("string".equalsIgnoreCase(dataType)){
+	    		result=obj+"";
+	    	}else if("bool".equalsIgnoreCase(dataType)||"boolean".equalsIgnoreCase(dataType)){
+	    		result=StringManagerUtils.stringToBoolean(obj+"")+"";
+	    	}else if("asc".equalsIgnoreCase(dataType)){
+	    		result=obj+"";
+	    	}else if("bcd".equalsIgnoreCase(dataType)){
+	    		result=obj+"";
+	    	}
+	    	return result;
+	    }
+	    
 	    public static String objectListToString(List<Object> list,String dataType){
 	    	StringBuffer jsonBuffer = new StringBuffer();
 	    	for(int i=0;i<list.size();i++){
-	    		if("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType)){
+	    		if("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType) || dataType.contains("int")){
 	    			jsonBuffer.append(StringManagerUtils.stringToInteger(list.get(i)+"")+",");
 		    	}else if("float32".equalsIgnoreCase(dataType)){
 		    		jsonBuffer.append(StringManagerUtils.stringToFloat(list.get(i)+"")+",");

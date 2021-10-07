@@ -86,7 +86,7 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                 	if (form.getForm().isValid()) {
                 		var controlValue=Ext.getCmp('DeviceControlValue_Id').getValue();
                 		var controlShowType=Ext.getCmp("DeviceControlShowType_Id").getValue();
-                		if(controlShowType==2){
+                		if(controlShowType!=2){
                 			controlValue=Ext.getCmp('DeviceControlValueCombo_Id').getValue();
                 		}
                 		form.getForm().submit({

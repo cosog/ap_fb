@@ -1027,6 +1027,92 @@
                     "Unit": "0.01方/天",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
+                },
+                {
+                    "Title": "欠压保护开关",
+                    "Addr": 40201,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "uint16",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "rw",
+                    "Unit": "",
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "启用"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "禁用"
+                    }]
+                },
+                {
+                    "Title": "设定欠压保护值",
+                    "Addr": 40202,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "uint16",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "rw",
+                    "Unit": "",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active"
+                },
+                {
+                    "Title": "设定欠压保护延时值",
+                    "Addr": 40203,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "uint16",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "rw",
+                    "Unit": "",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active"
+                },
+                {
+                    "Title": "设定工作模式",
+                    "Addr": 40243,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "uint16",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "rw",
+                    "Unit": "",
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "手动控制"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "流压闭环控制"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "间歇自动控制"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "流压自动控制"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "液面自动控制"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "液面闭环控制"
+                    }]
+                },
+                {
+                    "Title": "设定运行频率",
+                    "Addr": 40251,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "float32",
+                    "Quantity": 1,
+                    "Ratio": 0.01,
+                    "RWType": "rw",
+                    "Unit": "Hz",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active"
                 }
             ]
         },

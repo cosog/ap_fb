@@ -20,6 +20,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         load: function (store, record, f, op, o) {
         	var get_rawData = store.proxy.reader.rawData;
         	var isControl=get_rawData.isControl;
+        	var commStatus=get_rawData.commStatus;
         	var deviceInfoDataList=get_rawData.deviceInfoDataList;
         	var deviceControlList=get_rawData.deviceControlList;
         	
@@ -83,7 +84,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         	//控制
         	var controlDataStr="{\"items\":[";
         	for(var i=0;i<deviceControlList.length;i++){
-        		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name+"\",\"value\":\""+deviceControlList[i].value+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1},";
+        		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name+"\",\"resolutionMode\":"+deviceControlList[i].resolutionMode+",\"value\":\""+deviceControlList[i].value+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1,\"commStatus\":"+commStatus+"},";
         	}
         	if(stringEndWith(controlDataStr,",")){
     			controlDataStr = controlDataStr.substring(0, controlDataStr.length - 1);
@@ -122,27 +123,27 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
                     ],
     				border: false,
     				columnLines: true,
-    				forceFit: false,
+    				forceFit: true,
     				store: controlStore,
     			    columns: [
     			        { 
     			        	header: '操作项',  
     			        	dataIndex: 'item',
     			        	align:'left',
-    			        	flex:9,
+    			        	flex:12,
     			        	renderer:function(value){
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
     			        },
-    			        { 
-    			        	header: '变量', 
-    			        	dataIndex: 'value',
-    			        	align:'center',
-    			        	flex:3,
-    			        	renderer:function(value){
-    			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
-    			        	}
-    			        },
+//    			        { 
+//    			        	header: '变量', 
+//    			        	dataIndex: 'value',
+//    			        	align:'center',
+//    			        	flex:3,
+//    			        	renderer:function(value){
+//    			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
+//    			        	}
+//    			        },
     			        { 	header: '操作', 
     			        	dataIndex: 'operation',
     			        	align:'center',
@@ -151,11 +152,13 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		var id = e.record.id;
     			        		var item=o.data.item;
     			        		var itemcode=o.data.itemcode;
-    			        		var isControl=o.data.isControl
+    			        		var isControl=o.data.isControl;
+    			        		var commStatus = o.data.commStatus;
+    			        		var resolutionMode=o.data.resolutionMode;
     			        		var text="";
     			        		var hand=false;
     			        		var hidden=false;
-    			        		if(isControl==1){
+    			        		if(commStatus==1&&isControl==1){
     			        			hand=false;
     			        		}else{
     			        			hand=true;
@@ -168,7 +171,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		                        Ext.widget('button', {
     		                            renderTo: id,
     		                            height: 18,
-    		                            width: 60,
+    		                            width: 50,
     		                            text: text,
     		                            disabled:hand,
     		                            hidden:hidden,
@@ -196,42 +199,49 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
     		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
     		                                         Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
-    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(o.data.showType);
-    		                                         if(o.data.itemcode=="startOrStopWell"){
-    		                                        	 if(o.data.value=="运行"){
-    		                                        		 Ext.getCmp("DeviceControlValue_Id").setValue(2);
-    		                                        	 }else if(o.data.value=="停抽" ||o.data.value=="停止"){
-    		                                        		 Ext.getCmp("DeviceControlValue_Id").setValue(1);
-    		             			        			 }
-    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-    		                                         }else if(o.data.itemcode=="balanceCalculateMode" || o.data.itemcode=="balanceCalculateType" || o.data.itemcode=="balanceControlMode"){
-    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
-    		                                        	 var data=[];
-    		                                        	 if(o.data.itemcode=="balanceCalculateMode"){
-    		                                        		 data=[['1', '下行程最大值/上行程最大值'], ['2', '上行程最大值/下行程最大值']];
-    		                                        	 }else if(o.data.itemcode=="balanceCalculateType"){
-    		                                        		 data=[['1', '电流法'], ['2', '功率法']];
-    		                                        	 }else if(o.data.itemcode=="balanceControlMode"){
-    		                                        		 data=[['0', '手动'], ['1', '自动']];
-    		                                        	 }
-    		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
-    		                                             	autoLoad : false,
-    		                                                 fields: ['boxkey', 'boxval'],
-    		                                                 data: data
-    		                                             });
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
-    		                                         }else{
-    		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
-    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
-    		                                         }
+    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
+    		                                         
+    		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
+    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+    		                                         
+    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(2);
+    		                                         Ext.getCmp("DeviceControlValue_Id").show();
+		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
+		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+    		                                         
+//    		                                         if(resolutionMode==0){//开关量
+//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+//    		                                         }else if(resolutionMode==1){//枚举量
+//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
+//    		                                        	 var data=[];
+//    		                                        	 if(o.data.itemcode=="balanceCalculateMode"){
+//    		                                        		 data=[['1', '下行程最大值/上行程最大值'], ['2', '上行程最大值/下行程最大值']];
+//    		                                        	 }else if(o.data.itemcode=="balanceCalculateType"){
+//    		                                        		 data=[['1', '电流法'], ['2', '功率法']];
+//    		                                        	 }else if(o.data.itemcode=="balanceControlMode"){
+//    		                                        		 data=[['0', '手动'], ['1', '自动']];
+//    		                                        	 }
+//    		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
+//    		                                             	autoLoad : false,
+//    		                                                 fields: ['boxkey', 'boxval'],
+//    		                                                 data: data
+//    		                                             });
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
+//    		                                         }else{
+//    		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
+//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+//    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
+//    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+//    		                                         }
     		                                         
     		                                         DeviceControlCheckPassWindow.show();
+    		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
+    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
     		                                     }
     		                                 });
     		                            }

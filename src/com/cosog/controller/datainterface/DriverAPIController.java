@@ -52,6 +52,7 @@ import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.ParamUtils;
+import com.cosog.utils.ProtocolItemResolutionData;
 import com.cosog.utils.StringManagerUtils;
 import com.cosog.websocket.config.WebSocketByJavax;
 import com.cosog.websocket.handler.SpringWebSocketHandler;
@@ -408,11 +409,21 @@ public class DriverAPIController extends BaseController{
 					+ " where t.id=t2.wellid and t.instancecode=t3.code and t3.unitid=t4.id and t4.id=t5.unitid and t5.groupid=t6.id"
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t6.id";
-			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+//			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,"
+//					+ "t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+//					+ " from tbl_wellinformation t, tbl_alarm_item2group_conf t2,tbl_alarm_group_conf t3,tbl_protocolalarminstance t4 "
+//					+ " where t.alarminstancecode=t4.code and t4.alarmgroupid=t3.id and t3.id=t2.groupid "
+//					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
+//					+ " order by t2.id";
+			
+			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
+					+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
 					+ " from tbl_wellinformation t, tbl_alarm_item2group_conf t2,tbl_alarm_group_conf t3,tbl_protocolalarminstance t4 "
 					+ " where t.alarminstancecode=t4.code and t4.alarmgroupid=t3.id and t3.id=t2.groupid "
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t2.id";
+			
+			
 			List list = commonDataService.findCallSql(sql);
 			if(list.size()>0){
 				Object[] obj=(Object[]) list.get(0);
@@ -487,73 +498,147 @@ public class DriverAPIController extends BaseController{
 						insertHistValue+=","+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime();
 					}
 					
-//					List<String> columnsNameList=new ArrayList<String>();
-//					List<String> valueList=new ArrayList<String>();
-//					List<String> columnsDataTypeList=new ArrayList<String>();
-					
 					List<AcquisitionItemInfo> acquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
+					List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 					
 					for(int i=0;acqGroup.getAddr()!=null && acqGroup.getValue()!=null  &&i<acqGroup.getAddr().size();i++){
 						for(int j=0;acqGroup.getValue().get(i)!=null && j<protocol.getItems().size();j++){
 							if(acqGroup.getAddr().get(i)==protocol.getItems().get(j).getAddr()){
 								String columnName="ADDR"+protocol.getItems().get(j).getAddr();
 								String value=StringManagerUtils.objectListToString(acqGroup.getValue().get(i), protocol.getItems().get(j).getIFDataType());
+								String rawValue=value;
+								String addr=protocol.getItems().get(j).getAddr()+"";
+								String title=protocol.getItems().get(j).getTitle();
+								String columnDataType=protocol.getItems().get(j).getIFDataType();
+								String resolutionMode=protocol.getItems().get(j).getResolutionMode()+"";
+								String bitIndex="";
+								int alarmLevel=0;
 								if(StringManagerUtils.existOrNot(columnsList, columnName, false)){
 									updateRealtimeData+=",t."+columnName+"='"+value+"'";
 									insertHistColumns+=","+columnName;
 									insertHistValue+=",'"+value+"'";
-									
-									int alarmLevel=0;
-									AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
-									for(int l=0;l<alarmItemsList.size();l++){
-										Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
-										if(protocol.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(alarmItemObj[2]+"")){
-											float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[5]+"");
-											boolean upperAlarm=StringManagerUtils.isNotNull(alarmItemObj[3]+"") && StringManagerUtils.stringToFloat(value)>StringManagerUtils.stringToFloat(alarmItemObj[3]+"")+hystersis;
-											boolean lowerAlarm=StringManagerUtils.isNotNull(alarmItemObj[4]+"") && StringManagerUtils.stringToFloat(value)<StringManagerUtils.stringToFloat(alarmItemObj[4]+"")-hystersis;
-											
-											if(upperAlarm){
-												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[7]+"");
-												acquisitionItemInfo.setAlarmInfo("高报");
-												acquisitionItemInfo.setHystersis(hystersis);
-												acquisitionItemInfo.setAlarmType(1);
-												acquisitionItemInfo.setAlarmLimit(StringManagerUtils.stringToFloat(alarmItemObj[3]+""));
-											}else if(lowerAlarm){
-												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[7]+"");
-												acquisitionItemInfo.setAlarmInfo("低报");
-												acquisitionItemInfo.setHystersis(hystersis);
-												acquisitionItemInfo.setAlarmType(1);
-												acquisitionItemInfo.setAlarmLimit(StringManagerUtils.stringToFloat(alarmItemObj[4]+""));
+									if(protocol.getItems().get(j).getResolutionMode()==1){//如果是枚举量
+										boolean isMatch=false;
+										if(protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
+											for(int l=0;l<protocol.getItems().get(j).getMeaning().size();l++){
+												if(value.equals(protocol.getItems().get(j).getMeaning().get(l).getValue()+"")){
+													isMatch=true;
+													value=protocol.getItems().get(j).getMeaning().get(l).getMeaning();
+													break;
+												}
 											}
-											break;
 										}
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+										protocolItemResolutionDataList.add(protocolItemResolutionData);
+									}else if(protocol.getItems().get(j).getResolutionMode()==0){//如果是开关量
+										boolean isMatch=false;
+										if(protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
+											String[] valueArr=value.split(",");
+											for(int l=0;l<protocol.getItems().get(j).getMeaning().size();l++){
+												title=protocol.getItems().get(j).getMeaning().get(l).getMeaning();
+												if(StringManagerUtils.isNotNull(value)){
+													for(int m=0;valueArr!=null&&m<valueArr.length;m++){
+														if(m==protocol.getItems().get(j).getMeaning().get(l).getValue()  ){
+															isMatch=true;
+															bitIndex=m+"";
+															if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
+																value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
+																rawValue=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"1":"0";
+															}else{
+																value=valueArr[m];
+															}
+															
+															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+															protocolItemResolutionDataList.add(protocolItemResolutionData);
+															break;
+														}
+													}
+												}else{
+													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+													protocolItemResolutionDataList.add(protocolItemResolutionData);
+												}
+											}
+										}else{
+											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+											protocolItemResolutionDataList.add(protocolItemResolutionData);
+										}
+									}else{
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
-									
-									acquisitionItemInfo.setAddr(protocol.getItems().get(j).getAddr());
-									acquisitionItemInfo.setColumn(columnName);
-									acquisitionItemInfo.setValue(value);
-									acquisitionItemInfo.setTitle(protocol.getItems().get(j).getTitle());
-									acquisitionItemInfo.setUnit(protocol.getItems().get(j).getUnit());
-									acquisitionItemInfo.setDataType(protocol.getItems().get(j).getIFDataType());
-									acquisitionItemInfo.setAlarmLevel(alarmLevel);
-									acquisitionItemInfoList.add(acquisitionItemInfo);
-									
-									if(acquisitionItemInfo.getAlarmLevel()>0){
-										alarm=true;
-									}
-//									columnsNameList.add(protocol.getItems().get(j).getTitle());
-//									valueList.add(value);
-//									columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
 								}
-								
 								break;
 							}
 						}
 					}
 					
 					updateRealtimeData+=" where t.wellId= "+wellId;
-					
 					insertHistSql="insert into "+historyTable+"("+insertHistColumns+")values("+insertHistValue+")";
+					
+					//报警判断
+					for(int i=0;i<protocolItemResolutionDataList.size();i++){
+						int alarmLevel=0;
+						AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
+						acquisitionItemInfo.setAddr(StringManagerUtils.stringToInteger(protocolItemResolutionDataList.get(i).getAddr()));
+						acquisitionItemInfo.setColumn(protocolItemResolutionDataList.get(i).getColumn());
+						acquisitionItemInfo.setTitle(protocolItemResolutionDataList.get(i).getColumnName());
+						acquisitionItemInfo.setValue(protocolItemResolutionDataList.get(i).getValue());
+						acquisitionItemInfo.setRawValue(protocolItemResolutionDataList.get(i).getRawValue());
+						acquisitionItemInfo.setDataType(protocolItemResolutionDataList.get(i).getColumnDataType());
+						acquisitionItemInfo.setResolutionMode(protocolItemResolutionDataList.get(i).getResolutionMode());
+						acquisitionItemInfo.setBitIndex(protocolItemResolutionDataList.get(i).getBitIndex());
+						acquisitionItemInfo.setAlarmLevel(alarmLevel);
+						for(int l=0;l<alarmItemsList.size();l++){
+							Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
+							if((acquisitionItemInfo.getAddr()+"").equals(alarmItemObj[2]+"")){
+								int alarmType=StringManagerUtils.stringToInteger(alarmItemObj[3]+"");
+								if(alarmType==2 && StringManagerUtils.isNotNull(acquisitionItemInfo.getRawValue())){//数据量报警
+									float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[8]+"");
+									if(StringManagerUtils.isNotNull(alarmItemObj[6]+"") && StringManagerUtils.stringToFloat(acquisitionItemInfo.getRawValue())>StringManagerUtils.stringToFloat(alarmItemObj[6]+"")+hystersis){
+										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+										acquisitionItemInfo.setAlarmLevel(alarmLevel);
+										acquisitionItemInfo.setHystersis(hystersis);
+										acquisitionItemInfo.setAlarmLimit(StringManagerUtils.stringToFloat(alarmItemObj[6]+""));
+										acquisitionItemInfo.setAlarmInfo("高报");
+										acquisitionItemInfo.setAlarmType(1);
+										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+									}else if((StringManagerUtils.isNotNull(alarmItemObj[7]+"") && StringManagerUtils.stringToFloat(acquisitionItemInfo.getRawValue())<StringManagerUtils.stringToFloat(alarmItemObj[7]+"")-hystersis)){
+										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+										acquisitionItemInfo.setAlarmLevel(alarmLevel);
+										acquisitionItemInfo.setHystersis(hystersis);
+										acquisitionItemInfo.setAlarmLimit(StringManagerUtils.stringToFloat(alarmItemObj[7]+""));
+										acquisitionItemInfo.setAlarmInfo("低报");
+										acquisitionItemInfo.setAlarmType(1);
+										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+									}
+									break;
+								}else if(alarmType==0){//开关量报警
+									if(StringManagerUtils.isNotNull(acquisitionItemInfo.getBitIndex())){
+										if(acquisitionItemInfo.getBitIndex().equals(alarmItemObj[4]+"") && StringManagerUtils.stringToInteger(acquisitionItemInfo.getRawValue())==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+											alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+											acquisitionItemInfo.setAlarmLevel(alarmLevel);
+											acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getTitle()+":"+acquisitionItemInfo.getValue());
+											acquisitionItemInfo.setAlarmType(3);
+											acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+										}
+									}
+								}else if(alarmType==1){//枚举量报警
+									if(StringManagerUtils.stringToInteger(acquisitionItemInfo.getRawValue())==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+										acquisitionItemInfo.setAlarmLevel(alarmLevel);
+										acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getTitle()+":"+acquisitionItemInfo.getValue());
+										acquisitionItemInfo.setAlarmType(2);
+										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+									}
+								}
+							}
+						}
+						if(acquisitionItemInfo.getAlarmLevel()>0){
+							alarm=true;
+						}
+						acquisitionItemInfoList.add(acquisitionItemInfo);
+					}
+					
 					
 					if(save || alarm){//如果满足保存周期或者有报警，保存数据
 						commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
@@ -637,7 +722,7 @@ public class DriverAPIController extends BaseController{
 					webSocketSendData.append("]");
 					webSocketSendData.append(",\"CellInfo\":"+info_json);
 					webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
-//					System.out.println(webSocketSendData.toString());
+					System.out.println(webSocketSendData.toString());
 					infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
 					infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 				}
