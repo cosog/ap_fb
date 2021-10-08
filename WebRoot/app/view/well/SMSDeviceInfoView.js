@@ -110,7 +110,15 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
                         	if(smsDeviceInfoHandsontableHelper!=null&&smsDeviceInfoHandsontableHelper.hot!=null&&smsDeviceInfoHandsontableHelper.hot!=undefined){
                         		CreateAndLoadSMSDeviceInfoTable();
                         	}
-                        }
+                        },
+                        beforeclose: function ( panel, eOpts) {
+            				if(smsDeviceInfoHandsontableHelper!=null){
+            					if(smsDeviceInfoHandsontableHelper.hot!=undefined){
+            						smsDeviceInfoHandsontableHelper.hot.destroy();
+            					}
+            					smsDeviceInfoHandsontableHelper=null;
+            				}
+            			}
                     }
         })
         this.callParent(arguments);

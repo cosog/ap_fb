@@ -162,7 +162,7 @@ function websocketOnMessage(evt) {
 					var store = PumpRealTimeMonitoringListGrid.getStore();
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
-						if(record.data.wellName=data.wellName){
+						if(record.data.wellName==data.wellName){
 							record.set("commStatusName","在线");
 							record.set("commStatus",1);
 							record.set("commAlarmLevel",0);
@@ -182,43 +182,44 @@ function websocketOnMessage(evt) {
 						}
 					}
 				}
-				//更新实时表
+				//更新实时表和实时曲线
 				if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName){
 						pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
 						pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
-					}
-				}
-				//更新实时曲线
-				var selectedItem= Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").getValue();
-				var acqTime=data.acqTime;
-				var value='';
-				if(isNotVal(selectedItem)){
-					for(var i=1;i<data.totalRoot.length;i++){
-						if(selectedItem==data.totalRoot[i].name1){
-							value=data.totalRoot[i].value1;
-							break;
+						
+						//更新实时曲线
+						var selectedItem= Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").getValue();
+						var acqTime=data.acqTime;
+						var value='';
+						if(isNotVal(selectedItem)){
+							for(var i=1;i<data.totalRoot.length;i++){
+								if(selectedItem==data.totalRoot[i].name1){
+									value=data.totalRoot[i].value1;
+									break;
+								}
+								if(selectedItem==data.totalRoot[i].name2){
+									value=data.totalRoot[i].value2;
+									break;
+								}
+								if(selectedItem==data.totalRoot[i].name3){
+									value=data.totalRoot[i].value3;
+									break;
+								}
+								if(selectedItem==data.totalRoot[i].name4){
+									value=data.totalRoot[i].value4;
+									break;
+								}
+							}
 						}
-						if(selectedItem==data.totalRoot[i].name2){
-							value=data.totalRoot[i].value2;
-							break;
+						if(isNotVal(value)){
+							var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
+							if(isNotVal(chart)){
+								var series=chart.series[0];
+								series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
+							}
 						}
-						if(selectedItem==data.totalRoot[i].name3){
-							value=data.totalRoot[i].value3;
-							break;
-						}
-						if(selectedItem==data.totalRoot[i].name4){
-							value=data.totalRoot[i].value4;
-							break;
-						}
-					}
-				}
-				if(isNotVal(value)){
-					var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
-					if(isNotVal(chart)){
-						var series=chart.series[0];
-						series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
 					}
 				}
 			}
@@ -234,7 +235,7 @@ function websocketOnMessage(evt) {
 					//更新概览表
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
-						if(record.data.wellName=data.wellName){
+						if(record.data.wellName==data.wellName){
 							record.set("commStatusName",(data.commStatus==1?"在线":"离线"));
 							record.set("commStatus",data.commStatus);
 							record.set("commAlarmLevel",(data.commStatus==1?0:100));
@@ -268,7 +269,7 @@ function websocketOnMessage(evt) {
 					var store = gridPanel.getStore();
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
-						if(record.data.wellName=data.wellName){
+						if(record.data.wellName==data.wellName){
 							record.set("commStatusName","在线");
 							record.set("commStatus",1);
 							record.set("commAlarmLevel",0);
@@ -288,43 +289,43 @@ function websocketOnMessage(evt) {
 						}
 					}
 				}
-				//更新实时表
+				//更新实时表和实时曲线
 				if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName){
 						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
 						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
-					}
-				}
-				//更新实时曲线
-				var selectedItem= Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
-				var acqTime=data.acqTime;
-				var value='';
-				if(isNotVal(selectedItem)){
-					for(var i=1;i<data.totalRoot.length;i++){
-						if(selectedItem==data.totalRoot[i].name1){
-							value=data.totalRoot[i].value1;
-							break;
+						//更新实时曲线
+						var selectedItem= Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
+						var acqTime=data.acqTime;
+						var value='';
+						if(isNotVal(selectedItem)){
+							for(var i=1;i<data.totalRoot.length;i++){
+								if(selectedItem==data.totalRoot[i].name1){
+									value=data.totalRoot[i].value1;
+									break;
+								}
+								if(selectedItem==data.totalRoot[i].name2){
+									value=data.totalRoot[i].value2;
+									break;
+								}
+								if(selectedItem==data.totalRoot[i].name3){
+									value=data.totalRoot[i].value3;
+									break;
+								}
+								if(selectedItem==data.totalRoot[i].name4){
+									value=data.totalRoot[i].value4;
+									break;
+								}
+							}
 						}
-						if(selectedItem==data.totalRoot[i].name2){
-							value=data.totalRoot[i].value2;
-							break;
+						if(isNotVal(value)){
+							var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
+							if(isNotVal(chart)){
+								var series=chart.series[0];
+								series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
+							}
 						}
-						if(selectedItem==data.totalRoot[i].name3){
-							value=data.totalRoot[i].value3;
-							break;
-						}
-						if(selectedItem==data.totalRoot[i].name4){
-							value=data.totalRoot[i].value4;
-							break;
-						}
-					}
-				}
-				if(isNotVal(value)){
-					var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
-					if(isNotVal(chart)){
-						var series=chart.series[0];
-						series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
 					}
 				}
 			}
@@ -340,7 +341,7 @@ function websocketOnMessage(evt) {
 					//更新概览表
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
-						if(record.data.wellName=data.wellName){
+						if(record.data.wellName==data.wellName){
 							record.set("commStatusName",(data.commStatus==1?"在线":"离线"));
 							record.set("commStatus",data.commStatus);
 							record.set("commAlarmLevel",(data.commStatus==1?0:100));

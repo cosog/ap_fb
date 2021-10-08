@@ -63,7 +63,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqInstanceConfigInfoView', {
                             		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
                             		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
                             		if(isNotVal(gridPanel)){
-                            			var selectedItem=gridPanel.getStore().getAt(gridPanel);
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
                             			CreateProtocolInstanceConfigPropertiesInfoTable(selectedItem.data);
                             		}
                             	}
@@ -79,7 +79,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqInstanceConfigInfoView', {
                     html:'<div class="ModbusProtocolInstanceItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolInstanceItemsConfigTableInfoDiv_id"></div></div>',
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        	if(protocolConfigInstancePropertiesHandsontableHelper!=null && protocolConfigInstancePropertiesHandsontableHelper.hot!=undefined){
+                        	if(protocolInstanceConfigItemsHandsontableHelper!=null && protocolInstanceConfigItemsHandsontableHelper.hot!=undefined){
                         		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
                         		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
                         		if(isNotVal(gridPanel)){

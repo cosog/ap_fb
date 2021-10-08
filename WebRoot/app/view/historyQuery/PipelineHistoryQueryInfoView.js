@@ -134,6 +134,7 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                     autoScroll: true,
                     split: true,
                     collapsible: true,
+                    header: false,
                     layout: 'border',
                     border: false,
                     items: [{
@@ -225,9 +226,9 @@ function CreatePipelineDeviceHistoryQueryDataTable(recordId,deviceName,deviceTyp
 				pipelineDeviceHistoryQueryDataHandsontableHelper.hot.setCellMeta(row,col,'columnDataType',columnDataType);
 			}
 			
-			//绘制第一个float型变量曲线
+			//绘制第一个数据型变量曲线
 			for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
+				if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].resolutionMode==2){
 					Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").setValue(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
                 	pipelineHistoryQueryCurve(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
@@ -256,6 +257,39 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
 	        pipelineDeviceHistoryQueryDataHandsontableHelper.colHeaders=[];
 	        pipelineDeviceHistoryQueryDataHandsontableHelper.columns=[];
 	        pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo=[];
+	        
+	        pipelineDeviceHistoryQueryDataHandsontableHelper.addFirstAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
+	        	var Opacity=AlarmShowStyle.FirstLevel.Opacity;
+	     		
+	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = BackgroundColor;   
+	             td.style.color=Color;
+	        }
+	        
+	        pipelineDeviceHistoryQueryDataHandsontableHelper.addSecondAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
+	        	var Opacity=AlarmShowStyle.SecondLevel.Opacity;
+	     		
+	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = BackgroundColor;   
+	             td.style.color=Color;
+	        }
+	        
+	        pipelineDeviceHistoryQueryDataHandsontableHelper.addThirdAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
+	        	var Opacity=AlarmShowStyle.ThirdLevel.Opacity;
+	     		
+	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = BackgroundColor;   
+	             td.style.color=Color;
+	        }
 	        
 	        pipelineDeviceHistoryQueryDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -309,7 +343,13 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
 	                    		var row2=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].row;
 		        				var col2=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].col*2+1;
 		        				if(visualRowIndex==row2 && visualColIndex==col2 ){
-		        					cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addColBg;
+		        					if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==100){
+		        						cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addFirstAlarmLevelColBg;
+		        					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==200){
+		        						cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addSecondAlarmLevelColBg;
+		        					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==300){
+		        						cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addThirdAlarmLevelColBg;
+		        					}
 		        				}
 	                    	}
 	        			}
@@ -330,15 +370,16 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
 		                	var item=pipelineDeviceHistoryQueryDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
 		                	var selectecCell=pipelineDeviceHistoryQueryDataHandsontableHelper.hot.getCell(relRow,relColumn);
 		                	var columnDataType='';
-		                	
+		                	var resolutionMode=0;
 		                	for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
 		        				if(relRow==pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].col*2){
 		        					columnDataType=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType;
+		        					resolutionMode=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].resolutionMode;
 		        					break;
 		        				}
 		        			}
 		                	
-		                	if(isNotVal(item)&&columnDataType.includes('float')){
+		                	if(isNotVal(item)&&resolutionMode==2){
 		                		Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").setValue(item);
 			                	pipelineHistoryQueryCurve(item);
 		                	}

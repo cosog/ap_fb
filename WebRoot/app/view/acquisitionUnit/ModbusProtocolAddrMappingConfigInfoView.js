@@ -66,7 +66,14 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAddrMappingConfigInfoView', {
                         html:'<div class="ModbusProtocolAddrMappingPropertiesTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAddrMappingPropertiesTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	
+                            	if(protocolConfigAddrMaooingPropertiesHandsontableHelper!=null && protocolConfigAddrMaooingPropertiesHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			CreateProtocolConfigAddrMappingPropertiesInfoTable(selectedItem.data);
+                            		}
+                            	}
                             }
                         }
                     }]
@@ -86,7 +93,20 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAddrMappingConfigInfoView', {
                         html:'<div class="ModbusProtocolAddrMappingItemsConfigTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAddrMappingItemsConfigTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	
+                            	if(protocolConfigAddrMappingItemsHandsontableHelper!=null && protocolConfigAddrMappingItemsHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			if(selectedItem.data.classes==0){
+                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                                    			CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
+                                    		}
+                                    	}else if(selectedItem.data.classes==1){
+                                    		CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
+                                    	}
+                            		}
+                            	}
                             }
                         }
                     },{
@@ -101,7 +121,21 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAddrMappingConfigInfoView', {
                         html:'<div class="ModbusProtocolAddrMappingItemsMeaningTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAddrMappingItemsMeaningTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	
+//                            	var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+//                            	var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
+//                            	if(isNotVal(gridPanel)){
+//                            		var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                            		var protocolCode="";
+//                            		if(selectedProtocol.data.classes==1){//选中的是协议
+//                            			protocolCode=selectedProtocol.data.code;
+//                            		}else if(selectedProtocol.data.classes==0 && isNotVal(selectedProtocol.data.children) && selectedProtocol.data.children.length>0){
+//                            			protocolCode=selectedProtocol.data.children[0].code;
+//                            		}
+//                            		var AddrMappingItemsSelectRow= Ext.getCmp("ModbusProtocolAddrMappingItemsSelectRow_Id").getValue();
+//                            		var row1=protocolConfigAddrMappingItemsHandsontableHelper.hot.getDataAtRow(AddrMappingItemsSelectRow);
+//                            		var itemAddr=row1[2];
+//                            		CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode,itemAddr,true);
+//                            	}
                             }
                         }
                     	

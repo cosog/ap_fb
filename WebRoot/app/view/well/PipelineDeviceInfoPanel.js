@@ -154,7 +154,15 @@ Ext.define('AP.view.well.PipelineDeviceInfoPanel', {
                         	if(pipelineDeviceInfoHandsontableHelper!=null&&pipelineDeviceInfoHandsontableHelper.hot!=null&&pipelineDeviceInfoHandsontableHelper.hot!=undefined){
                         		CreateAndLoadPipelineDeviceInfoTable();
                         	}
-                        }
+                        },
+                        beforeclose: function ( panel, eOpts) {
+            				if(pipelineDeviceInfoHandsontableHelper!=null){
+            					if(pipelineDeviceInfoHandsontableHelper.hot!=undefined){
+            						pipelineDeviceInfoHandsontableHelper.hot.destroy();
+            					}
+            					pipelineDeviceInfoHandsontableHelper=null;
+            				}
+            			}
                     }
         })
         this.callParent(arguments);
