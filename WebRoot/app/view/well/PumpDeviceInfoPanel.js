@@ -146,7 +146,15 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                         	if(pumpDeviceInfoHandsontableHelper!=null&&pumpDeviceInfoHandsontableHelper.hot!=null&&pumpDeviceInfoHandsontableHelper.hot!=undefined){
                         		CreateAndLoadPumpDeviceInfoTable();
                         	}
-                        }
+                        },
+                        beforeclose: function ( panel, eOpts) {
+                        	if(pumpDeviceInfoHandsontableHelper!=null){
+            					if(pumpDeviceInfoHandsontableHelper.hot!=undefined){
+            						pumpDeviceInfoHandsontableHelper.hot.destroy();
+            					}
+            					pumpDeviceInfoHandsontableHelper=null;
+            				}
+            			}
                     }
         })
         this.callParent(arguments);

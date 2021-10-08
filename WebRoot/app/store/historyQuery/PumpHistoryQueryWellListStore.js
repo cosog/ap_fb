@@ -50,6 +50,25 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
                     	selectionchange: function (view, selected, o) {
                     		
                     	},
+                    	itemdblclick: function (view,record,item,index,e,eOpts) {
+                    		var wellName=Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').getValue();
+                    		if(wellName==null||wellName==""){
+                    			Ext.getCmp("PumpHistoryQueryStartDate_Id").show();
+                            	Ext.getCmp("PumpHistoryQueryEndDate_Id").show();
+                            	
+                            	Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue(record.data.wellName);
+                            	Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue(record.data.wellName);
+                            	
+                            	Ext.getCmp('PumpHistoryQueryStartDate_Id').setValue('');
+                            	Ext.getCmp('PumpHistoryQueryStartDate_Id').setRawValue('');
+                            	
+                            	Ext.getCmp('PumpHistoryQueryEndDate_Id').setValue('');
+                            	Ext.getCmp('PumpHistoryQueryEndDate_Id').setRawValue('');
+                            	
+                            	
+                            	Ext.getCmp("PumpHistoryQueryListGridPanel_Id").getStore().loadPage(1);
+                    		}
+                    	},
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").setValue(index);
                     		var deviceName=record.data.wellName;

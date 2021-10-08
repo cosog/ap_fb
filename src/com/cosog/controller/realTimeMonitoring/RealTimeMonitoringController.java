@@ -100,8 +100,7 @@ public class RealTimeMonitoringController extends BaseController {
 		this.pager = new Page("pagerForm", request);
 		json = realTimeMonitoringService.getDeviceRealTimeMonitoringData(deviceName,deviceType);
 		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
 		pw.print(json);

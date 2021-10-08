@@ -50,6 +50,25 @@ Ext.define('AP.store.historyQuery.PipelineHistoryQueryWellListStore', {
                     	selectionchange: function (view, selected, o) {
                     		
                     	},
+                    	itemdblclick: function (view,record,item,index,e,eOpts) {
+                    		var wellName=Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').getValue();
+                    		if(wellName==null||wellName==""){
+                    			Ext.getCmp("PipelineHistoryQueryStartDate_Id").show();
+                            	Ext.getCmp("PipelineHistoryQueryEndDate_Id").show();
+                            	
+                            	Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue(record.data.wellName);
+                            	Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue(record.data.wellName);
+                            	
+                            	Ext.getCmp('PipelineHistoryQueryStartDate_Id').setValue('');
+                            	Ext.getCmp('PipelineHistoryQueryStartDate_Id').setRawValue('');
+                            	
+                            	Ext.getCmp('PipelineHistoryQueryEndDate_Id').setValue('');
+                            	Ext.getCmp('PipelineHistoryQueryEndDate_Id').setRawValue('');
+                            	
+                            	
+                            	Ext.getCmp("PipelineHistoryQueryListGridPanel_Id").getStore().loadPage(1);
+                    		}
+                    	},
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("PipelineHistoryQueryInfoDeviceListSelectRow_Id").setValue(index);
                     		var deviceName=record.data.wellName;

@@ -693,17 +693,19 @@ public class DriverAPIController extends BaseController{
 							String value="";
 							String column="";
 							String columnDataType="";
+							String resolutionMode="";
 							int alarmLevel=0;
 							if(index<acquisitionItemInfoList.size()){
 								columnName=acquisitionItemInfoList.get(index).getTitle();
 								value=acquisitionItemInfoList.get(index).getValue();
 								column=acquisitionItemInfoList.get(index).getColumn();
 								columnDataType=acquisitionItemInfoList.get(index).getDataType();
+								resolutionMode=acquisitionItemInfoList.get(index).getResolutionMode()+"";
 								alarmLevel=acquisitionItemInfoList.get(index).getAlarmLevel();
 							}
 							webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
 							webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
-							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"resolutionMode\":\""+resolutionMode+"\",\"alarmLevel\":"+alarmLevel+"},");
 						}
 						if(webSocketSendData.toString().endsWith(",")){
 							webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);

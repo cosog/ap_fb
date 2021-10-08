@@ -2141,19 +2141,19 @@ color16ToRgba = function(sColor,Opacity){
  	if (alarmLevel == 0) {
  		BackgroundColor='#'+AlarmShowStyle.Normal.BackgroundColor;
  		Colorr='#'+AlarmShowStyle.Normal.Color;
- 		Opacity=AlarmShowStyle.Normal.Opacity
+ 		Opacity=AlarmShowStyle.Normal.Opacity;
 	}else if (alarmLevel == 100) {
 		BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
  		Colorr='#'+AlarmShowStyle.FirstLevel.Color;
- 		Opacity=AlarmShowStyle.FirstLevel.Opacity
+ 		Opacity=AlarmShowStyle.FirstLevel.Opacity;
 	}else if (alarmLevel == 200) {
 		BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
  		Colorr='#'+AlarmShowStyle.SecondLevel.Color;
- 		Opacity=AlarmShowStyle.SecondLevel.Opacity
+ 		Opacity=AlarmShowStyle.SecondLevel.Opacity;
 	}else if (alarmLevel == 300) {
 		BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
  		Colorr='#'+AlarmShowStyle.ThirdLevel.Color;
- 		Opacity=AlarmShowStyle.ThirdLevel.Opacity
+ 		Opacity=AlarmShowStyle.ThirdLevel.Opacity;
 	}
  	var rgba=color16ToRgba(BackgroundColor,Opacity);
  	o.style='background-color:'+rgba+';color:'+Colorr+';';

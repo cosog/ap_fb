@@ -541,6 +541,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String column="";
 		String unit="";
 		String dataType="";
+		int resolutionMode=0;
 		String tableName="tbl_pumpacqdata_hist";
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
 			tableName="tbl_pipelineacqdata_hist";
@@ -561,6 +562,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 								column="ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr();
 								unit=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getUnit();
 								dataType=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType();
+								resolutionMode=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getResolutionMode();
 								break;
 							}
 						}
@@ -570,8 +572,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		
-		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"list\":[");
-		if(dataType.toUpperCase().contains("FLOAT")){//只查询float类型数据的曲线
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"resolutionMode\":"+resolutionMode+",\"list\":[");
+		if(resolutionMode==2){//只查询数据量的曲线
 			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss'), t."+column+" "
 					+ " from "+tableName +" t,tbl_wellinformation t2 "
 					+ " where t.wellid=t2.id "

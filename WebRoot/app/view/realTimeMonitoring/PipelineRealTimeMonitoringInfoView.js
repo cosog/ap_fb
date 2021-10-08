@@ -147,6 +147,9 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                     	id:"PipelineRealTimeMonitoringRightTabPanel",
                 		activeTab: 0,
                 		border: false,
+                		split: true,
+                        collapsible: true,
+                        header: false,
                 		tabPosition: 'top',
                 		items: [{
                 			title:'控制',
@@ -204,9 +207,9 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 			
-			//绘制第一个float型变量曲线
+			//绘制第一个数据型变量曲线
 			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.includes('float')){
+				if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode==2){
 					Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	pipelineRealTimeMonitoringCurve(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
@@ -245,6 +248,39 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = '#DC2828';   
 	             td.style.color='#FFFFFF';
+	        }
+	        
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addFirstAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
+	        	var Opacity=AlarmShowStyle.FirstLevel.Opacity;
+	     		
+	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = BackgroundColor;   
+	             td.style.color=Color;
+	        }
+	        
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addSecondAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
+	        	var Opacity=AlarmShowStyle.SecondLevel.Opacity;
+	     		
+	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = BackgroundColor;   
+	             td.style.color=Color;
+	        }
+	        
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addThirdAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
+	        	var Opacity=AlarmShowStyle.ThirdLevel.Opacity;
+	     		
+	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
+	             td.style.backgroundColor = BackgroundColor;   
+	             td.style.color=Color;
 	        }
 	        
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
@@ -293,7 +329,13 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	                    		var row2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
 		        				var col2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
 		        				if(visualRowIndex==row2 && visualColIndex==col2 ){
-		        					cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addColBg;
+		        					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
+		        						cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addFirstAlarmLevelColBg;
+		        					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
+		        						cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addSecondAlarmLevelColBg;
+		        					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
+		        						cellProperties.renderer = pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addThirdAlarmLevelColBg;
+		        					}
 		        				}
 	                    	}
 	        			}
@@ -314,15 +356,16 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 		                	var item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
 		                	var selectecCell=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getCell(relRow,relColumn);
 		                	var columnDataType='';
-		                	
+		                	var resolutionMode=0;
 		                	for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 		        				if(relRow==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
 		        					columnDataType=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
+		        					resolutionMode=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode;
 		        					break;
 		        				}
 		        			}
 		                	
-		                	if(isNotVal(item)&&columnDataType.includes('float')){
+		                	if(isNotVal(item)&&resolutionMode==2){ //columnDataType.includes('float')
 		                		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(item);
 			                	pipelineRealTimeMonitoringCurve(item);
 		                	}

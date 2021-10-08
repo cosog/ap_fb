@@ -61,14 +61,14 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                         html:'<div class="ProtocolAlarmInstancePropertiesTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ProtocolAlarmInstancePropertiesTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-//                            	if(protocolAlarmInstancePropertiesHandsontableHelper!=null && protocolAlarmInstancePropertiesHandsontableHelper.hot!=undefined){
-//                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
-//                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
-//                            		if(isNotVal(gridPanel)){
-//                            			var selectedItem=gridPanel.getStore().getAt(gridPanel);
-//                            			CreateProtocolAlarmInstancePropertiesInfoTable(selectedItem.data);
-//                            		}
-//                            	}
+                            	if(protocolAlarmInstancePropertiesHandsontableHelper!=null && protocolAlarmInstancePropertiesHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			CreateProtocolAlarmInstancePropertiesInfoTable(selectedItem.data);
+                            		}
+                            	}
                             }
                         }
                     }]
@@ -111,7 +111,22 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                         html:'<div class="ModbusProtocolAlarmInstanceSwitchItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmInstanceSwitchItemsConfigTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	
+                            	if(protocolAlarmInstanceConfigSwitchItemsHandsontableHelper!=null && protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			if(selectedItem.data.classes==0){
+                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                                    			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.children[0].text);
+                                    		}else{
+                                    			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable('');
+                                    		}
+                                    	}else if(selectedItem.data.classes==1){
+                                    		CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.text);
+                                    	}
+                            		}
+                            	}
                             }
                         }
                     },{
@@ -120,7 +135,24 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                         layout: 'fit',
                         html:'<div class="ModbusProtocolAlarmInstanceEnumItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAlarmInstanceEnumItemsConfigTableInfoDiv_id"></div></div>',
                         listeners: {
-                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                            resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            	if(protocolAlarmInstanceConfigEnumItemsHandsontableHelper!=null && protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmInstanceTreeSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			if(selectedItem.data.classes==0){
+                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                                    			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.children[0].text);
+                                    		}else{
+                                    			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable('');
+                                    		}
+                                    	}else if(selectedItem.data.classes==1){
+                                    		CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.text);
+                                    	}
+                            		}
+                            	}
+                            }
                         }
                     }],
                     listeners: {

@@ -66,7 +66,14 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
                         html:'<div class="ModbusProtocolAcqGroupPropertiesTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAcqGroupPropertiesTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	
+                            	if(protocolConfigAcqGroupPropertiesHandsontableHelper!=null && protocolConfigAcqGroupPropertiesHandsontableHelper.hot!=undefined){
+                            		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
+                            		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
+                            		if(isNotVal(gridPanel)){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			CreateProtocolAcqGroupConfigPropertiesInfoTable(selectedItem.data);
+                            		}
+                            	}
                             }
                         }
                     }]
@@ -80,7 +87,22 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
                     html:'<div class="ModbusProtocolAcqGroupItemsConfigTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAcqGroupItemsConfigTableInfoDiv_id"></div></div>',
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        	
+                        	if(protocolAcqGroupConfigItemsHandsontableHelper!=null && protocolAcqGroupConfigItemsHandsontableHelper.hot!=undefined){
+                        		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
+                        		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
+                        		if(isNotVal(gridPanel)){
+                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                        			if(selectedItem.data.classes==0){
+                                		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+                                			CreateProtocolAcqGroupItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
+                                		}
+                                	}else if(selectedItem.data.classes==1){
+                                		CreateProtocolAcqGroupItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
+                                	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
+                                		CreateProtocolAcqGroupItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
+                                	}
+                        		}
+                        	}
                         }
                     }
                 }]

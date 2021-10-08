@@ -164,7 +164,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		&& module_Code != "DeviceRealTimeMonitoring"
 		&& module_Code != "DeviceHistoryQuery"
 		&& module_Code != "LogQuery"
-		&& module_Code != "AlarmQuery") {
+		&& module_Code != "AlarmQuery"
+		&& module_Code != "AlarmSet") {
 		if (modules.length > 2) {
 			if(secondTab_Code!= modules[2]){
 				modules[2]=secondTab_Code;
@@ -367,6 +368,8 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 //				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
 //			}
 		}
+	}else if(module_Code == "AlarmSet"){
+		getAlarmLevelColor();
 	}else {
 		return false;
 	}

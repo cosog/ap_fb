@@ -5,23 +5,12 @@ Ext.define("AP.view.alarmSet.AlarmSetInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
-        var AlarmSetInfoGridPanel = Ext.create("AP.view.alarmSet.AlarmSetInfoGridPanel");
         Ext.applyIf(me, {
             items: [{
                 border: false,
                 layout: 'border',
                 id: 'alarmSetGlobalPanel_Id',
                 items: [{
-                    region: 'west',
-                    width: '50%',
-                    split: true,
-                    border: false,
-                    // collapsible: true,
-                    height: '100%',
-                    layout: 'fit',
-                    autoScroll: false,
-                    items: AlarmSetInfoGridPanel
-                }, {
                     region: 'center',
                     height: '100%',
                     layout: 'fit',

@@ -47,7 +47,24 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         					}
         				}
         			}
-            	}]
+            	}],
+        		listeners: {
+        			beforeclose: function ( panel, eOpts) {
+        				if(pumpDeviceHistoryQueryDataHandsontableHelper!=null){
+        					if(pumpDeviceHistoryQueryDataHandsontableHelper.hot!=undefined){
+        						pumpDeviceHistoryQueryDataHandsontableHelper.hot.destroy();
+        					}
+        					pumpDeviceHistoryQueryDataHandsontableHelper=null;
+        				}
+        				if(pipelineDeviceHistoryQueryDataHandsontableHelper!=null){
+        					if(pipelineDeviceHistoryQueryDataHandsontableHelper.hot!=undefined){
+        						pipelineDeviceHistoryQueryDataHandsontableHelper.hot.destroy();
+        					}
+        					pipelineDeviceHistoryQueryDataHandsontableHelper=null;
+        				}
+        			},
+        			afterrender: function ( panel, eOpts) {}
+        		}
         });
         me.callParent(arguments);
     }

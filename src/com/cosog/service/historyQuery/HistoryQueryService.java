@@ -19,6 +19,7 @@ import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.Page;
+import com.cosog.utils.ProtocolItemResolutionData;
 import com.cosog.utils.StringManagerUtils;
 import com.google.gson.Gson;
 
@@ -143,9 +144,15 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
 				+ " group by t.wellname,t3.protocol";
-		
+		String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
+				+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+				+ " from tbl_wellinformation t, tbl_alarm_item2group_conf t2,tbl_alarm_group_conf t3,tbl_protocolalarminstance t4 "
+				+ " where t.alarminstancecode=t4.code and t4.alarmgroupid=t3.id and t3.id=t2.groupid "
+				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " order by t2.id";
 		
 		List<?> itemsList = this.findCallSql(itemsSql);
+		List<?> alarmItemsList = this.findCallSql(alarmItemsSql);
 		String columns = "[";
 		for(int i=1;i<=items;i++){
 			columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
@@ -179,85 +186,189 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			if(protocol!=null && StringManagerUtils.isNotNull(itemsObj[2]+"")){
 				String acqColumns="";
 				String[] itemsArr=(itemsObj[2]+"").split(",");
-				List<String> columnsList=new ArrayList<String>();
+//				List<Integer> addrList=new ArrayList<Integer>();
+//				List<String> columnsList=new ArrayList<String>();
 				List<String> columnsNameList=new ArrayList<String>();
-				List<String> columnsDataTypeList=new ArrayList<String>();
-				List<Integer> alarmLevelList=new ArrayList<Integer>();
-				
-//				for(int j=0;j<itemsArr.length;j++){
-//					for(int k=0;k<protocol.getItems().size();k++){
-//						if(itemsArr[j].equalsIgnoreCase(protocol.getItems().get(k).getTitle())){
-//							String column="ADDR"+protocol.getItems().get(k).getAddr();
-//							String columnName=protocol.getItems().get(k).getTitle();
-//							columnsList.add(column);
-//							columnsNameList.add(columnName);
-//							columnsDataTypeList.add(protocol.getItems().get(k).getIFDataType());
-//							break;
-//						}
-//					}
-//				}
-				
+//				List<String> columnsDataTypeList=new ArrayList<String>();
+				List<ModbusProtocolConfig.Items> protocolItems=new ArrayList<ModbusProtocolConfig.Items>();
+				List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 				for(int j=0;j<protocol.getItems().size();j++){
 					if(!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false)){
 						for(int k=0;k<itemsArr.length;k++){
 							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
 								String column="ADDR"+protocol.getItems().get(j).getAddr();
 								String columnName=protocol.getItems().get(j).getTitle();
-								columnsList.add(column);
+//								addrList.add(protocol.getItems().get(j).getAddr());
+//								columnsList.add(column);
 								columnsNameList.add(columnName);
-								columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
+//								columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
+								protocolItems.add(protocol.getItems().get(j));
 								break;
 							}
 						}
 					}
 				}
 				
-				
-				
 				String sql="select t.id,t.wellname,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'), t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
-				for(int j=0;j<columnsList.size();j++){
-					sql+=",t2."+columnsList.get(j);
+//				for(int j=0;j<columnsList.size();j++){
+//					sql+=",t2."+columnsList.get(j);
+//				}
+				for(int j=0;j<protocolItems.size();j++){
+					sql+=",t2.ADDR"+protocolItems.get(j).getAddr();
 				}
 				sql+= " from tbl_wellinformation t "
-						+ " left outer join "+table+" t2 on t2.wellid=t.id"
-						+ " where  t2.id="+recordId;
+						+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
+						+ " where  t.wellName='"+deviceName+"' and t.devicetype="+deviceType;
 				List<?> list = this.findCallSql(sql);
 				if(list.size()>0){
 					int row=1;
 					Object[] obj=(Object[]) list.get(0);
-					if(columnsList.size()%items==0){
-						row=columnsList.size()/items+1;
+					for(int j=0;j<protocolItems.size();j++){
+						String columnName="";
+						String value=obj[j+6]+"";
+						String rawValue=obj[j+6]+"";
+						String addr="";
+						String column="";
+						String columnDataType="";
+						String resolutionMode="";
+						String bitIndex="";
+						if(protocolItems.get(j).getResolutionMode()==1){//如果是枚举量
+							boolean isMatch=false;
+							columnName=protocolItems.get(j).getTitle();
+							addr=protocolItems.get(j).getAddr()+"";
+							column="ADDR"+addr;
+							columnDataType=protocolItems.get(j).getIFDataType();
+							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
+							if(protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
+								for(int l=0;l<protocolItems.get(j).getMeaning().size();l++){
+									if(value.equals(protocolItems.get(j).getMeaning().get(l).getValue()+"")){
+										isMatch=true;
+										value=protocolItems.get(j).getMeaning().get(l).getMeaning();
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+										protocolItemResolutionDataList.add(protocolItemResolutionData);
+										break;
+									}
+								}
+							}
+							if(!isMatch){
+								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+								protocolItemResolutionDataList.add(protocolItemResolutionData);
+							}
+						}else if(protocolItems.get(j).getResolutionMode()==0){//如果是开关量
+							boolean isMatch=false;
+							columnName=protocolItems.get(j).getTitle();
+							addr=protocolItems.get(j).getAddr()+"";
+							column="ADDR"+addr;
+							columnDataType=protocolItems.get(j).getIFDataType();
+							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
+							
+							if(protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
+								String[] valueArr=value.split(",");
+								for(int l=0;l<protocolItems.get(j).getMeaning().size();l++){
+									columnName=protocolItems.get(j).getMeaning().get(l).getMeaning();
+									if(StringManagerUtils.isNotNull(value)){
+										for(int m=0;valueArr!=null&&m<valueArr.length;m++){
+											if(m==protocolItems.get(j).getMeaning().get(l).getValue()  ){
+												isMatch=true;
+												bitIndex=m+"";
+												if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
+													value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
+													rawValue=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"1":"0";
+												}else{
+													value=valueArr[m];
+												}
+												
+												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+												protocolItemResolutionDataList.add(protocolItemResolutionData);
+												break;
+											}
+										}
+									}else{
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+										protocolItemResolutionDataList.add(protocolItemResolutionData);
+									}
+								}
+							}else{
+								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+								protocolItemResolutionDataList.add(protocolItemResolutionData);
+							}
+						}else{//如果是数据量
+							columnName=protocolItems.get(j).getTitle();
+							addr=protocolItems.get(j).getAddr()+"";
+							column="ADDR"+addr;
+							columnDataType=protocolItems.get(j).getIFDataType();
+							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
+							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+							protocolItemResolutionDataList.add(protocolItemResolutionData);
+						} 
+					}
+					
+					if(protocolItemResolutionDataList.size()%items==0){
+						row=protocolItemResolutionDataList.size()/items+1;
 					}else{
-						row=columnsList.size()/items+2;
+						row=protocolItemResolutionDataList.size()/items+2;
 					}
 					result_json.append("{\"name1\":\""+(obj[1]+":"+obj[2]+","+obj[4])+"\"},");
 					
 					for(int j=1;j<row;j++){
 						//记录每一行的详细信息
-						
 						result_json.append("{");
-						
-						
 						for(int k=0;k<items;k++){
 							int index=items*(j-1)+k;
 							String columnName="";
 							String value="";
+							String rawValue="";
+							String addr="";
 							String column="";
 							String columnDataType="";
+							String resolutionMode="";
+							String bitIndex="";
 							int alarmLevel=0;
-							if(index<columnsNameList.size()){
-								columnName=columnsNameList.get(index);
-								value=obj[index+6]+"";
-								column=columnsList.get(index);
-								columnDataType=columnsDataTypeList.get(index);
-							}
-							if(StringManagerUtils.stringToFloat(value)>2){
-								alarmLevel=100;
+							if(index<protocolItemResolutionDataList.size()){
+								columnName=protocolItemResolutionDataList.get(index).getColumnName();
+								value=protocolItemResolutionDataList.get(index).getValue();
+								rawValue=protocolItemResolutionDataList.get(index).getRawValue();
+								addr=protocolItemResolutionDataList.get(index).getAddr();
+								column=protocolItemResolutionDataList.get(index).getColumn();
+								columnDataType=protocolItemResolutionDataList.get(index).getColumnDataType();
+								resolutionMode=protocolItemResolutionDataList.get(index).getResolutionMode();
+								bitIndex=protocolItemResolutionDataList.get(index).getBitIndex();
+								for(int l=0;l<alarmItemsList.size();l++){
+									Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
+									if(protocolItemResolutionDataList.get(index).getAddr().equals(alarmItemObj[2]+"")){
+										int alarmType=StringManagerUtils.stringToInteger(alarmItemObj[3]+"");
+										if(alarmType==2 && StringManagerUtils.isNotNull(rawValue)){//数据量报警
+											float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[8]+"");
+											if((StringManagerUtils.isNotNull(alarmItemObj[6]+"") && StringManagerUtils.stringToFloat(rawValue)>StringManagerUtils.stringToFloat(alarmItemObj[6]+"")+hystersis)
+													||(StringManagerUtils.isNotNull(alarmItemObj[7]+"") && StringManagerUtils.stringToFloat(rawValue)<StringManagerUtils.stringToFloat(alarmItemObj[7]+"")-hystersis)
+													){
+												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+												
+											}
+											break;
+										}else if(alarmType==0){//开关量报警
+											if(StringManagerUtils.isNotNull(bitIndex)){
+												if(bitIndex.equals(alarmItemObj[4]+"") && StringManagerUtils.stringToInteger(rawValue)==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+													alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+												}
+											}
+										}else if(alarmType==1){//枚举量报警
+											if(StringManagerUtils.stringToInteger(rawValue)==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+												alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+											}
+										}
+									}
+								}
 							}
 							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
 							result_json.append("\"value"+(k+1)+"\":\""+value+"\",");
-							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"alarmLevel\":"+alarmLevel+"},");
-							
+							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"addr\":\""+addr+"\","
+									+ "\"columnName\":\""+columnName+"\","
+									+ "\"column\":\""+column+"\","
+									+ "\"value\":\""+value+"\","
+									+ "\"columnDataType\":\""+columnDataType+"\","
+									+ "\"resolutionMode\":\""+resolutionMode+"\","
+									+ "\"alarmLevel\":"+alarmLevel+"},");
 						}
 						if(result_json.toString().endsWith(",")){
 							result_json.deleteCharAt(result_json.length() - 1);
@@ -291,6 +402,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		String column="";
 		String unit="";
 		String dataType="";
+		int resolutionMode=0;
 		String tableName="tbl_pumpacqdata_hist";
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
 			tableName="tbl_pipelineacqdata_hist";
@@ -311,6 +423,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 								column="ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr();
 								unit=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getUnit();
 								dataType=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType();
+								resolutionMode=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getResolutionMode();
 								break;
 							}
 						}
@@ -320,8 +433,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			}
 		}
 		
-		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"list\":[");
-		if(dataType.toUpperCase().contains("FLOAT")){//只查询float类型数据的曲线
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"resolutionMode\":"+resolutionMode+",\"list\":[");
+		if(resolutionMode==2){//只查询数据量的曲线
 			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss'), t."+column+" "
 					+ " from "+tableName +" t,tbl_wellinformation t2 "
 					+ " where t.wellid=t2.id "
