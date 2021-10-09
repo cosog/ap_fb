@@ -308,7 +308,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 					}else{
 						row=protocolItemResolutionDataList.size()/items+2;
 					}
-					result_json.append("{\"name1\":\""+(obj[1]+":"+obj[2]+","+obj[4])+"\"},");
+					result_json.append("{\"name1\":\""+(obj[1]+":"+obj[2]+" "+obj[4])+"\"},");
 					
 					for(int j=1;j<row;j++){
 						//记录每一行的详细信息

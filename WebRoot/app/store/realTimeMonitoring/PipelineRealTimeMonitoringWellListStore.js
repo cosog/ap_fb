@@ -38,6 +38,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     autoLoad: true,
                     columnLines: true,
                     forceFit: false,
+                    stripeRows: true,
                     bbar: bbar,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"

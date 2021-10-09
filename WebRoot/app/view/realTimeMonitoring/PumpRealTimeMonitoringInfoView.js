@@ -154,7 +154,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'控制',
+                			title:'设备控制',
                 			id: 'PumpRealTimeMonitoringRightControlPanel',
                             border: false,
                             layout: 'fit',
@@ -247,40 +247,64 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	        
 	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addFirstAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
+//	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+//	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
+	        	var Color='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
 	        	var Opacity=AlarmShowStyle.FirstLevel.Opacity;
 	     		
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
+//	             td.style.backgroundColor = BackgroundColor;   
 	             td.style.color=Color;
+	             td.style.fontWeight = 'bold';
+	             td.style.fontFamily = 'SimHei';
+	             if(row%2==1){
+	            	 td.style.backgroundColor = '#E6E6E6';
+	             }
 	        }
 	        
 	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addSecondAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
+//	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+//	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
+	        	var Color='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
 	        	var Opacity=AlarmShowStyle.SecondLevel.Opacity;
 	     		
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
+//	             td.style.backgroundColor = BackgroundColor;   
 	             td.style.color=Color;
+	             td.style.fontWeight = 'bold';
+	             td.style.fontFamily = 'SimHei';
+	             if(row%2==1){
+	            	 td.style.backgroundColor = '#E6E6E6';
+	             }
+	             
 	        }
 	        
 	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addThirdAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
+//	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+//	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
+	        	var Color='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
 	        	var Opacity=AlarmShowStyle.ThirdLevel.Opacity;
 	     		
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
+//	             td.style.backgroundColor = BackgroundColor;   
 	             td.style.color=Color;
+	             td.style.fontWeight = 'bold';
+	             td.style.fontFamily = 'SimHei';
+	             if(row%2==1){
+	            	 td.style.backgroundColor = '#E6E6E6';
+	             }
 	        }
 	        
 	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
-	            td.style.backgroundColor = 'rgb(184, 184, 184)';
+	            td.style.backgroundColor = '#E6E6E6';
+	        }
+	        
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addItenmNameColStyle = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.fontWeight = 'bold';
 	        }
 	        
 	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg = function (instance, td, row, col, prop, value, cellProperties) {
@@ -289,6 +313,44 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 		        td.style.fontSize = '20px';
 		        td.style.fontFamily = 'SimSun';
 		        td.style.height = '40px';
+	        }
+	        
+	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.addCellStyle = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	            if (row ==0) {
+	            	Handsontable.renderers.TextRenderer.apply(this, arguments);
+		        	td.style.fontWeight = 'bold';
+			        td.style.fontSize = '20px';
+			        td.style.fontFamily = 'SimSun';
+			        td.style.height = '40px';
+	            }
+	            if (row%2==1&&row>0) {
+	            	td.style.backgroundColor = '#f5f5f5';
+                }
+	            if (col%2==0) {
+	            	td.style.fontWeight = 'bold';
+                }else{
+                	td.style.fontFamily = 'SimHei';
+                }
+	            for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+                	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+                		var row2=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
+        				var col2=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
+        				if(row==row2 && col==col2 ){
+        					td.style.fontWeight = 'bold';
+   			             	td.style.fontFamily = 'SimHei';
+        					if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
+        						td.style.color='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+        					}else if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
+        						td.style.color='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+        					}else if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
+        						td.style.color='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+        					}
+        					
+        				}
+                	}
+    			}
 	        }
 	        
 	        pumpDeviceRealTimeMonitoringDataHandsontableHelper.createTable = function (data) {
@@ -312,29 +374,7 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualRowIndex ==0) {
-	                        cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg;
-	                    }
-	                    else if ((visualColIndex ==0 || visualColIndex ==2 || visualColIndex ==4 || visualColIndex ==6)&&visualRowIndex>0) {
-							cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg;
-		                }
-	                    
-	                    for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-	                    	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
-	                    		var row2=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
-		        				var col2=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
-		        				if(visualRowIndex==row2 && visualColIndex==col2 ){
-		        					if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-		        						cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addFirstAlarmLevelColBg;
-		        					}else if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-		        						cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addSecondAlarmLevelColBg;
-		        					}else if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-		        						cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addThirdAlarmLevelColBg;
-		        					}
-		        					
-		        				}
-	                    	}
-	        			}
+	                    cellProperties.renderer = pumpDeviceRealTimeMonitoringDataHandsontableHelper.addCellStyle;
 	                    
 	                    cellProperties.readOnly = true;
 	                    return cellProperties;

@@ -299,7 +299,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 					}else{
 						row=protocolItemResolutionDataList.size()/items+2;
 					}
-					result_json.append("{\"name1\":\""+(obj[1]+":"+obj[2]+","+obj[4])+"\"},");
+					result_json.append("{\"name1\":\""+(obj[1]+":"+obj[2]+" "+obj[4])+"\"},");
 					
 					for(int j=1;j<row;j++){
 						//记录每一行的详细信息
@@ -405,6 +405,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		List<String> controlItems=new ArrayList<String>();
 		List<String> controlColumns=new ArrayList<String>();
 		List<Integer> controlItemResolutionMode=new ArrayList<Integer>();
+		List<String> controlItemMeaningList=new ArrayList<String>();
 		StringBuffer deviceInfoDataList=new StringBuffer();
 		StringBuffer deviceControlList=new StringBuffer();
 		deviceInfoDataList.append("[");
@@ -431,6 +432,25 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 										controlItems.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle());
 										controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr());
 										controlItemResolutionMode.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode());
+										if(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode()==2){//数据量
+											controlItemMeaningList.add("[]");
+										}else if(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode()==1){//枚举量
+											if(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getMeaning()!=null && modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getMeaning().size()>0){
+												StringBuffer itemMeaning_buff = new StringBuffer();
+												itemMeaning_buff.append("[");
+												for(int n=0;n<modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getMeaning().size();n++){
+													itemMeaning_buff.append("["+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getMeaning().get(n).getValue()+",'"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getMeaning().get(n).getMeaning()+"'],");
+												}
+												if(itemMeaning_buff.toString().endsWith(",")){
+													itemMeaning_buff.deleteCharAt(itemMeaning_buff.length() - 1);
+												}
+												itemMeaning_buff.append("]");
+												controlItemMeaningList.add(itemMeaning_buff.toString());
+											}else{
+												controlItemMeaningList.add("[]");
+											}
+											
+										}
 									}
 									break;
 								}
@@ -471,7 +491,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				deviceInfoDataList.append(",{\"title\":\"管体长度(m)\",\"name\":\"pipelinelength\",\"value\":\""+obj[7+controlColumns.size()]+"\"}");
 			}
 			for(int i=0;i<controlColumns.size();i++){
-				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[7+i]+"\"},");
+				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[7+i]+"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
 			}
 			if(deviceControlList.toString().endsWith(",")){
 				deviceControlList.deleteCharAt(deviceControlList.length() - 1);

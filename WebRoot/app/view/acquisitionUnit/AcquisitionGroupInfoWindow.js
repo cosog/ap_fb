@@ -161,7 +161,8 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
                 name: "acquisitionGroup.acqCycle",
                 fieldLabel: '采集周期(s)',
                 anchor: '100%',
-                value: ''
+                hidden: true,
+                value: 300
                 
             }, {
                 id: 'formAcquisitionGroupSaveCycle_Id',

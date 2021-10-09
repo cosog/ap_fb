@@ -41,6 +41,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     bbar: bbar,
                     columnLines: true,
                     forceFit: false,
+//                    stripeRows: true,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
