@@ -64,17 +64,19 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
 //              allowBlank: false,
                 value: '',
                 hidden: true
-            },controlTypeCombo,{
-            	id: "checkPassFromPassword_id",
-                inputType: 'password',
-                fieldLabel: '请输入密码',
-                //vtype:"loginnum_",
-                allowBlank: false,
-                emptyText: '请输入密码',
-                labelWidth: 120,
-                msgTarget: 'side',
-                blankText: '请输入密码'
-            }],
+            },controlTypeCombo
+//            ,{
+//            	id: "checkPassFromPassword_id",
+//                inputType: 'password',
+//                fieldLabel: '请输入密码',
+//                //vtype:"loginnum_",
+//                allowBlank: false,
+//                emptyText: '请输入密码',
+//                labelWidth: 120,
+//                msgTarget: 'side',
+//                blankText: '请输入密码'
+//            }
+            ],
             buttons: [{
                 xtype: 'button',
                 id: 'checkPassFromSaveBtn_Id',
@@ -86,18 +88,18 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                 	if (form.getForm().isValid()) {
                 		var controlValue=Ext.getCmp('DeviceControlValue_Id').getValue();
                 		var controlShowType=Ext.getCmp("DeviceControlShowType_Id").getValue();
-                		if(controlShowType!=2){
+                		if(controlShowType==1){
                 			controlValue=Ext.getCmp('DeviceControlValueCombo_Id').getValue();
                 		}
                 		form.getForm().submit({
-                            url: context + '/realTimeMonitoringController/deviceControlOperation',
+                            url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
                             method: "POST",
                             waitMsg: cosog.string.updatewait,
                             waitTitle: 'Please Wait...',
                             params: {
                             	wellName: Ext.getCmp('DeviceControlWellName_Id').getValue(),
                             	deviceType: Ext.getCmp('DeviceControlDeviceType_Id').getValue(),
-                                password: Ext.getCmp('checkPassFromPassword_id').getValue(),
+//                                password: Ext.getCmp('checkPassFromPassword_id').getValue(),
                                 controlType:Ext.getCmp('DeviceControlType_Id').getValue(),
                                 controlValue:controlValue
                             },

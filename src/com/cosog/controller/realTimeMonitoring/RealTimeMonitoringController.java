@@ -219,12 +219,10 @@ public class RealTimeMonitoringController extends BaseController {
 						+ "\"Addr\":"+addr+""
 						+ "}";
 				String responseStr=StringManagerUtils.sendPostMethod(url, ctrlJson,"utf-8");
-//				readResult=StringManagerUtils.sendPostMethod(readUrl, readJson,"utf-8");
 				if(!StringManagerUtils.isNotNull(responseStr)){
 					result=false;
 				}
 				realTimeMonitoringService.saveDeviceControlLog(wellName,deviceType,title,StringManagerUtils.objectToString(controlValue, dataType),user);
-//				json = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -280,6 +278,59 @@ public class RealTimeMonitoringController extends BaseController {
 				jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>数据有误，请检查输入数据！</font>'}";
 			} else {
 				jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>您输入的密码有误！</font>'}";
+			}
+
+		} else {
+			jsonLogin = "{success:true,flag:false}";
+		}
+		// 处理乱码。
+		response.setCharacterEncoding("utf-8");
+		// 输出json数据。
+		out.print(jsonLogin);
+		return null;
+	}
+	
+	@RequestMapping("/deviceControlOperationWhitoutPass")
+	public String deviceControlOperationWhitoutPass() throws Exception {
+		response.setContentType("text/html;charset=utf-8");
+		PrintWriter out = response.getWriter();
+		
+		String wellName = request.getParameter("wellName");
+		String deviceType = request.getParameter("deviceType");
+		String controlType = request.getParameter("controlType");
+		String controlValue = request.getParameter("controlValue");
+		String jsonLogin = "";
+		String clientIP=StringManagerUtils.getIpAddr(request);
+		User userInfo = (User) request.getSession().getAttribute("userLogin");
+		// 用户不存在
+		if (null != userInfo) {
+			if (StringManagerUtils.isNumber(controlValue)) {
+				String sql="select t3.protocol, t.signinid,to_number(t.slave) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
+						+ " and t.wellname='"+wellName+"' and t.deviceType="+deviceType;
+				List list = this.service.findCallSql(sql);
+				if(list.size()>0){
+					Object[] obj=(Object[]) list.get(0);
+					String protocol=obj[0]+"";
+					String signinid=obj[1]+"";
+					String slave=obj[2]+"";
+					if(StringManagerUtils.isNotNull(protocol) && StringManagerUtils.isNotNull(signinid)){
+						if(StringManagerUtils.isNotNull(slave)){
+//							jsonLogin=
+							if(DeviceControlOperation_Mdubus(protocol,wellName,deviceType,signinid,slave,controlType,controlValue)){
+								jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
+							}else{
+								jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>命令发送失败。</font>'}";
+							}
+						}
+					}else{
+						jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>协议配置有误，请核查！</font>'}";
+					}
+				}else{
+					jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>该井不存在，请核查！</font>'}";
+				}
+			}else {
+				jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>数据有误，请检查输入数据！</font>'}";
 			}
 
 		} else {

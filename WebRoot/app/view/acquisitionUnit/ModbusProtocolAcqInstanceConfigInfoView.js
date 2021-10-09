@@ -73,7 +73,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqInstanceConfigInfoView', {
                 },{
                 	border: true,
                 	region: 'center',
-                    title:'所含采控项',
+                    title:'采控项',
                     id:"ModbusProtocolInstanceItemsTableInfoPanel_Id",
                     layout: 'fit',
                     html:'<div class="ModbusProtocolInstanceItemsTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolInstanceItemsConfigTableInfoDiv_id"></div></div>',
@@ -259,7 +259,7 @@ function CreateProtocolInstanceItemsConfigInfoTable(instanceName){
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolInstanceItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolInstanceItemsTableInfoPanel_Id").setTitle(instanceName+"所含采控项");
+			Ext.getCmp("ModbusProtocolInstanceItemsTableInfoPanel_Id").setTitle(instanceName+"/采控项");
 			
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolInstanceConfigItemsHandsontableHelper==null || protocolInstanceConfigItemsHandsontableHelper.hot==undefined){

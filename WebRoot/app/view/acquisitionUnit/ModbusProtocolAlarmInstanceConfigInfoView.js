@@ -75,7 +75,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                 },{
                 	border: true,
                 	region: 'center',
-                    title:'所含报警项',
+                    title:'报警项',
                     xtype: 'tabpanel',
                     id:"ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id",
                     activeTab: 0,
@@ -308,7 +308,7 @@ function CreateProtocolAlarmInstanceNumItemsConfigInfoTable(instanceName){
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceNumItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"所含报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"/数据量报警项");
 			
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmInstanceConfigNumItemsHandsontableHelper==null || protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot==undefined){
@@ -407,7 +407,7 @@ function CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(instanceName){
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceSwitchItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"所含报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"/开关量报警项");
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmInstanceConfigSwitchItemsHandsontableHelper==null || protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot==undefined){
 				protocolAlarmInstanceConfigSwitchItemsHandsontableHelper = ProtocolAlarmInstanceConfigSwitchItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceSwitchItemsConfigTableInfoDiv_id");
@@ -505,7 +505,7 @@ function CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(instanceName){
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceEnumItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"所含报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"/枚举量报警项");
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmInstanceConfigEnumItemsHandsontableHelper==null || protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot==undefined){
 				protocolAlarmInstanceConfigEnumItemsHandsontableHelper = ProtocolAlarmInstanceConfigEnumItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceEnumItemsConfigTableInfoDiv_id");

@@ -84,7 +84,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         	//控制
         	var controlDataStr="{\"items\":[";
         	for(var i=0;i<deviceControlList.length;i++){
-        		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name+"\",\"resolutionMode\":"+deviceControlList[i].resolutionMode+",\"value\":\""+deviceControlList[i].value+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1,\"commStatus\":"+commStatus+"},";
+        		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name
+        		+"\",\"resolutionMode\":"+deviceControlList[i].resolutionMode
+        		+",\"itemMeaning\":"+deviceControlList[i].itemMeaning
+        		+",\"value\":\""+deviceControlList[i].value+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1,\"commStatus\":"+commStatus+"},";
         	}
         	if(stringEndWith(controlDataStr,",")){
     			controlDataStr = controlDataStr.substring(0, controlDataStr.length - 1);
@@ -147,7 +150,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        { 	header: '操作', 
     			        	dataIndex: 'operation',
     			        	align:'center',
-    			        	flex:4,
+    			        	flex:3,
     			        	renderer :function(value,e,o){
     			        		var id = e.record.id;
     			        		var item=o.data.item;
@@ -155,6 +158,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		var isControl=o.data.isControl;
     			        		var commStatus = o.data.commStatus;
     			        		var resolutionMode=o.data.resolutionMode;
+    			        		var itemMeaning=o.data.itemMeaning;
     			        		var text="";
     			        		var hand=false;
     			        		var hidden=false;
@@ -171,7 +175,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		                        Ext.widget('button', {
     		                            renderTo: id,
     		                            height: 18,
-    		                            width: 50,
+    		                            width: 38,
     		                            text: text,
     		                            disabled:hand,
     		                            hidden:hidden,
@@ -198,11 +202,12 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		                                     	 var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
     		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
     		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
-    		                                         Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
+    		                                         
+    		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
     		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
     		                                         
     		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+//    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
     		                                         
     		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(2);
     		                                         Ext.getCmp("DeviceControlValue_Id").show();
@@ -210,38 +215,35 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
 		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
 		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
     		                                         
-//    		                                         if(resolutionMode==0){//开关量
+    		                                         if(resolutionMode==0){//开关量
 //    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
 //    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-//    		                                         }else if(resolutionMode==1){//枚举量
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
-//    		                                        	 var data=[];
-//    		                                        	 if(o.data.itemcode=="balanceCalculateMode"){
-//    		                                        		 data=[['1', '下行程最大值/上行程最大值'], ['2', '上行程最大值/下行程最大值']];
-//    		                                        	 }else if(o.data.itemcode=="balanceCalculateType"){
-//    		                                        		 data=[['1', '电流法'], ['2', '功率法']];
-//    		                                        	 }else if(o.data.itemcode=="balanceControlMode"){
-//    		                                        		 data=[['0', '手动'], ['1', '自动']];
-//    		                                        	 }
-//    		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
-//    		                                             	autoLoad : false,
-//    		                                                 fields: ['boxkey', 'boxval'],
-//    		                                                 data: data
-//    		                                             });
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
+    		                                         }else if(resolutionMode==1&&itemMeaning.length>0){//枚举量
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+    		                                        	 Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
+    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
+    		                                        	 var data=[];
+    		                                        	 for(var k=0;k<itemMeaning.length;k++){
+    		                                        		 data.push(itemMeaning[k]);
+    		                                        	 }
+    		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
+    		                                             	autoLoad : false,
+    		                                                 fields: ['boxkey', 'boxval'],
+    		                                                 data: data
+    		                                             });
+    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
 //    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
-//    		                                         }else{
+    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
+    		                                         }else{
 //    		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
 //    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
 //    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
 //    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
-//    		                                         }
+    		                                         }
     		                                         
     		                                         DeviceControlCheckPassWindow.show();
     		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+//    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
     		                                     }
     		                                 });
     		                            }

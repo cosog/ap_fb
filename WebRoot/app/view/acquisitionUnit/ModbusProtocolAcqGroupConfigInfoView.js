@@ -262,11 +262,11 @@ function CreateProtocolAcqGroupConfigPropertiesInfoTable(data){
 		item1.value=data.text;
 		root.push(item1);
 		
-		var item2={};
-		item2.id=2;
-		item2.title='采集周期(s)';
-		item2.value=data.acq_cycle;
-		root.push(item2);
+//		var item2={};
+//		item2.id=2;
+//		item2.title='采集周期(s)';
+//		item2.value=data.acq_cycle;
+//		root.push(item2);
 		
 		var item3={};
 		item3.id=3;
@@ -392,9 +392,9 @@ function SaveModbusProtocolAcqGroupConfigTreeData(){
 			protocolProperties.id=selectedItem.data.id;
 			protocolProperties.groupCode=selectedItem.data.code;
 			protocolProperties.groupName=propertiesData[0][2];
-			protocolProperties.acqCycle=propertiesData[1][2];
-			protocolProperties.saveCycle=propertiesData[2][2];
-			protocolProperties.remark=propertiesData[3][2];
+			protocolProperties.acqCycle=300;
+			protocolProperties.saveCycle=propertiesData[1][2];
+			protocolProperties.remark=propertiesData[2][2];
 		}
 		if(selectedItem.data.classes==2){//保存采集单元
 			var acqUnitSaveData={};

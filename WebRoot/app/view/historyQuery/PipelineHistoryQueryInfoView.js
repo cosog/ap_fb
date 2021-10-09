@@ -310,6 +310,44 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
 		        td.style.height = '40px';
 	        }
 	        
+	        pipelineDeviceHistoryQueryDataHandsontableHelper.addCellStyle = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
+	            if (row ==0) {
+	            	Handsontable.renderers.TextRenderer.apply(this, arguments);
+		        	td.style.fontWeight = 'bold';
+			        td.style.fontSize = '20px';
+			        td.style.fontFamily = 'SimSun';
+			        td.style.height = '40px';
+	            }
+	            if (row%2==1&&row>0) {
+	            	td.style.backgroundColor = '#f5f5f5';
+                }
+	            if (col%2==0) {
+	            	td.style.fontWeight = 'bold';
+                }else{
+                	td.style.fontFamily = 'SimHei';
+                }
+	            for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
+                	if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+                		var row2=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].row;
+        				var col2=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].col*2+1;
+        				if(row==row2 && col==col2 ){
+        					td.style.fontWeight = 'bold';
+   			             	td.style.fontFamily = 'SimHei';
+        					if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==100){
+        						td.style.color='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+        					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==200){
+        						td.style.color='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+        					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==300){
+        						td.style.color='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+        					}
+        					
+        				}
+                	}
+    			}
+	        }
+	        
 	        pipelineDeviceHistoryQueryDataHandsontableHelper.createTable = function (data) {
 	        	$('#'+pipelineDeviceHistoryQueryDataHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+pipelineDeviceHistoryQueryDataHandsontableHelper.divid);
@@ -331,28 +369,7 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualRowIndex ==0) {
-	                        cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addSizeBg;
-	                    }
-	                    else if ((visualColIndex ==0 || visualColIndex ==2 || visualColIndex ==4 || visualColIndex ==6)&&visualRowIndex>0) {
-							cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addBoldBg;
-		                }
-	                    
-	                    for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
-	                    	if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel>0){
-	                    		var row2=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].row;
-		        				var col2=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].col*2+1;
-		        				if(visualRowIndex==row2 && visualColIndex==col2 ){
-		        					if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-		        						cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addFirstAlarmLevelColBg;
-		        					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-		        						cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addSecondAlarmLevelColBg;
-		        					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-		        						cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addThirdAlarmLevelColBg;
-		        					}
-		        				}
-	                    	}
-	        			}
+	                    cellProperties.renderer = pipelineDeviceHistoryQueryDataHandsontableHelper.addCellStyle;
 	                    
 	                    cellProperties.readOnly = true;
 	                    return cellProperties;

@@ -116,7 +116,9 @@ public class DriverAPIController extends BaseController{
 					+ "t.devicetype,t.id from TBL_WELLINFORMATION t "
 					+ " left outer join tbl_pumpacqdata_latest  t2 on t.id=t2.wellid "
 					+ " left outer join tbl_pipelineacqdata_latest t3 on t.id =t3.wellid"
-					+ " where t.protocolcode in("+protocols+")"
+					+ " left outer join tbl_protocolinstance t4 on t.instancecode=t4.code"
+					+ " left outer join tbl_acq_unit_conf t5 on t4.unitid=t5.id"
+					+ " where t5.protocol in("+protocols+")"
 					+ " and decode(t.devicetype,0,t2.commstatus,t3.commstatus)=1";
 			List list = this.commonDataService.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
@@ -677,7 +679,7 @@ public class DriverAPIController extends BaseController{
 					webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"acqTime\":\""+acqTime+"\",\"columns\":"+columns+",");
 					webSocketSendData.append("\"totalRoot\":[");
 					info_json.append("[");
-					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+",在线\"},");
+					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+" 在线\"},");
 					int row=1;
 					if(acquisitionItemInfoList.size()%items==0){
 						row=acquisitionItemInfoList.size()/items+1;

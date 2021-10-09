@@ -20,6 +20,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         load: function (store, record, f, op, o) {
         	var get_rawData = store.proxy.reader.rawData;
         	var isControl=get_rawData.isControl;
+        	var commStatus=get_rawData.commStatus;
         	var deviceInfoDataList=get_rawData.deviceInfoDataList;
         	var deviceControlList=get_rawData.deviceControlList;
         	
@@ -83,7 +84,12 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         	//控制
         	var controlDataStr="{\"items\":[";
         	for(var i=0;i<deviceControlList.length;i++){
-        		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name+"\",\"value\":\""+deviceControlList[i].value+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1,\"commStatus\":"+commStatus+"},";
+        		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name
+        		+"\",\"resolutionMode\":"+deviceControlList[i].resolutionMode
+        		+",\"itemMeaning\":"+deviceControlList[i].itemMeaning
+        		+",\"value\":\""+deviceControlList[i].value
+        		+"\",\"operation\":true,\"isControl\":"+isControl
+        		+",\"showType\":1,\"commStatus\":"+commStatus+"},";
         	}
         	if(stringEndWith(controlDataStr,",")){
     			controlDataStr = controlDataStr.substring(0, controlDataStr.length - 1);
@@ -152,11 +158,12 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			        		var item=o.data.item;
     			        		var itemcode=o.data.itemcode;
     			        		var isControl=o.data.isControl;
+    			        		var commStatus = o.data.commStatus;
     			        		var resolutionMode=o.data.resolutionMode;
     			        		var text="";
     			        		var hand=false;
     			        		var hidden=false;
-    			        		if(isControl==1){
+    			        		if(commStatus==1&&isControl==1){
     			        			hand=false;
     			        		}else{
     			        			hand=true;
@@ -191,55 +198,51 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		                                         var DeviceControlCheckPassWindow = Ext.create("AP.view.realTimeMonitoring.DeviceControlCheckPassWindow", {
     		                                             title: '控制'
     		                                         });
-    		                                         
-    		                                         
-    		                                     	 var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+    		                                     	 var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
     		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
-    		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(1);
-    		                                         Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
-    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
-    		                                         
-    		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
-    		                                         
-    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(2);
-    		                                         Ext.getCmp("DeviceControlValue_Id").show();
+    		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
+   		                                         
+    		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
+    		                                     	 Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
+   		                                         
+    		                                     	 Ext.getCmp("DeviceControlValue_Id").setValue("");
+//   		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+   		                                         
+    		                                     	 Ext.getCmp("DeviceControlShowType_Id").setValue(2);
+    		                                     	 Ext.getCmp("DeviceControlValue_Id").show();
 		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
 		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
 		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
-    		                                         
-//    		                                         if(resolutionMode==0){//开关量
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-//    		                                         }else if(resolutionMode==1){//枚举量
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
-//    		                                        	 var data=[];
-//    		                                        	 if(o.data.itemcode=="balanceCalculateMode"){
-//    		                                        		 data=[['1', '下行程最大值/上行程最大值'], ['2', '上行程最大值/下行程最大值']];
-//    		                                        	 }else if(o.data.itemcode=="balanceCalculateType"){
-//    		                                        		 data=[['1', '电流法'], ['2', '功率法']];
-//    		                                        	 }else if(o.data.itemcode=="balanceControlMode"){
-//    		                                        		 data=[['0', '手动'], ['1', '自动']];
-//    		                                        	 }
-//    		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
-//    		                                             	autoLoad : false,
-//    		                                                 fields: ['boxkey', 'boxval'],
-//    		                                                 data: data
-//    		                                             });
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
-//    		                                         }else{
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
-//    		                                         }
+   		                                         
+		                                        	 if(resolutionMode==0){//开关量
+//   		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+//   		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+		                                        	 }else if(resolutionMode==1&&itemMeaning.length>0){//枚举量
+		                                        		 Ext.getCmp("DeviceControlValue_Id").hide();
+		                                        		 Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
+		                                        		 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
+		                                        		 var data=[];
+		                                        		 for(var k=0;k<itemMeaning.length;k++){
+		                                        			 data.push(itemMeaning[k]);
+		                                        		 }
+		                                        		 var controlTypeStore = new Ext.data.SimpleStore({
+		                                        			 autoLoad : false,
+		                                        			 fields: ['boxkey', 'boxval'],
+		                                        			 data: data
+		                                        		 });
+		                                        		 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
+//   		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
+		                                        		 Ext.getCmp("DeviceControlValueCombo_Id").show();
+		                                        	 }else{
+//   		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
+//   		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+//   		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
+//   		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+		                                        	 }
     		                                         
     		                                         DeviceControlCheckPassWindow.show();
     		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+//    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
     		                                     }
     		                                 });
     		                            }
