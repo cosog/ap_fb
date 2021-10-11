@@ -53,6 +53,9 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
                     	itemdblclick: function (view,record,item,index,e,eOpts) {
                     		var wellName=Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').getValue();
                     		if(wellName==null||wellName==""){
+                    			Ext.getCmp("PumpHistoryQueryHisBtn_Id").hide();
+                            	Ext.getCmp("PumpHistoryQueryAllBtn_Id").show();
+                    			
                     			Ext.getCmp("PumpHistoryQueryStartDate_Id").show();
                             	Ext.getCmp("PumpHistoryQueryEndDate_Id").show();
                             	

@@ -193,7 +193,7 @@ public class RealTimeMonitoringController extends BaseController {
 					break;
 				}
 			}
-			int addr=0;
+			int addr=-99;
 			String dataType="";
 			String title="";
 			float ratio=0;
@@ -206,7 +206,7 @@ public class RealTimeMonitoringController extends BaseController {
 					break;
 				}
 			}
-			if(addr>0){
+			if(StringManagerUtils.isNotNull(title) && addr!=-99){
 				String ctrlJson="{"
 						+ "\"ID\":\""+ID+"\","
 						+ "\"Slave\":"+Slave+","

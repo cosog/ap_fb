@@ -319,7 +319,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<?> list=null;
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
-					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
 					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
 					+ " where t.type=2 and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+code+"' "
 					+ " order by t.id";
@@ -400,7 +400,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<?> list=null;
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
-					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
 					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
 					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
 					+ " order by t.id";
@@ -477,7 +477,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<?> list=null;
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.bitindex,t.value,t.delay,"
-					+ " t3.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
 					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
 					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
 					+ " order by t.id";
@@ -627,7 +627,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<Integer> itemAddrsList=new ArrayList<Integer>();
 		
 		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
-				+ "t4.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable') "
+				+ "t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.name='"+instanceName+"' "
@@ -682,7 +682,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<Integer> itemAddrsList=new ArrayList<Integer>();
 		
 		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.bitIndex,t.value,t.delay,"
-				+ " t4.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable'),t2.protocol "
+				+ " t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.name='"+instanceName+"' "
@@ -762,7 +762,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<Integer> itemAddrsList=new ArrayList<Integer>();
 		
 		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
-				+ " t4.itemname as alarmLevel,decode(t.alarmsign,0,'disable','enable'),t2.protocol "
+				+ " t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.name='"+instanceName+"' "

@@ -1235,9 +1235,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 									alarmLevel=300;
 								}
 								
-								if("enable".equalsIgnoreCase(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmSign())){
+								if("使能".equalsIgnoreCase(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmSign())){
 									alarmSign=1;
-								}else if("disable".equalsIgnoreCase(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmSign())){
+								}else if("失效".equalsIgnoreCase(modbusProtocolAlarmGroupSaveData.getAlarmItems().get(i).getAlarmSign())){
 									alarmSign=0;
 								}
 								

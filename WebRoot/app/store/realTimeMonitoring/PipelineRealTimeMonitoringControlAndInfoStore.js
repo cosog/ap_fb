@@ -189,8 +189,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		                            	}
     		                            	 Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
     		                                 Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
-    		                                 Ext.Msg.confirm("操作确认", operaName, function (btn) {
-    		                                     if (btn == "yes") {
+//    		                                 Ext.Msg.confirm("操作确认", operaName, function (btn) {
+//    		                                     if (btn == "yes") {
     		                                         var win_Obj = Ext.getCmp("DeviceControlCheckPassWindow_Id")
     		                                         if (win_Obj != undefined) {
     		                                             win_Obj.destroy();
@@ -200,7 +200,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		                                         });
     		                                     	 var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
     		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
-    		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
+    		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(1);
    		                                         
     		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
     		                                     	 Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
@@ -243,8 +243,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		                                         DeviceControlCheckPassWindow.show();
     		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
 //    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
-    		                                     }
-    		                                 });
+//    		                                     }
+//    		                                 });
     		                            }
     		                        });
     		                    }, 50);
