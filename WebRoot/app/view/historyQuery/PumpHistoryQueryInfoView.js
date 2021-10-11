@@ -45,10 +45,10 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
         
         var pumpDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备列表',
+                    fieldLabel: '井号',
                     id: "HistoryQueryPumpDeviceListComb_Id",
-                    labelWidth: 70,
-                    width: 180,
+                    labelWidth: 35,
+                    width: 145,
                     labelAlign: 'left',
                     queryMode: 'remote',
                     typeAhead: true,
@@ -68,9 +68,15 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         },
                         select: function (combo, record, index) {
                         	if(combo.value==""){
+                        		Ext.getCmp("PumpHistoryQueryHisBtn_Id").show();
+                            	Ext.getCmp("PumpHistoryQueryAllBtn_Id").hide();
+                        		
                         		Ext.getCmp("PumpHistoryQueryStartDate_Id").hide();
                         		Ext.getCmp("PumpHistoryQueryEndDate_Id").hide();
                         	}else{
+                        		Ext.getCmp("PumpHistoryQueryHisBtn_Id").hide();
+                            	Ext.getCmp("PumpHistoryQueryAllBtn_Id").show();
+                        		
                         		Ext.getCmp("PumpHistoryQueryStartDate_Id").show();
                         		Ext.getCmp("PumpHistoryQueryEndDate_Id").show();
                         	}
@@ -127,6 +133,63 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         		Ext.getCmp("PumpHistoryQueryListGridPanel_Id").getStore().loadPage(1);
                             }
                         }
+                    }, '->', {
+                    	xtype: 'button',
+                        text:'查看历史',
+                        tooltip:'点击按钮或者双击表格，查看历史数据',
+                        id:'PumpHistoryQueryHisBtn_Id',
+                        pressed: true,
+                        hidden: false,
+                        handler: function (v, o) {
+                        	var selectRow= Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").getValue();
+                    		var gridPanel=Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
+                    		if(isNotVal(gridPanel)){
+                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                    			var deviceName=selectedItem.data.wellName;
+                    			Ext.getCmp("PumpHistoryQueryHisBtn_Id").hide();
+                    			Ext.getCmp("PumpHistoryQueryAllBtn_Id").show();
+                    			
+                    			Ext.getCmp("PumpHistoryQueryStartDate_Id").show();
+                            	Ext.getCmp("PumpHistoryQueryEndDate_Id").show();
+                            	
+                            	Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue(deviceName);
+                            	Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue(deviceName);
+                            	
+                            	Ext.getCmp('PumpHistoryQueryStartDate_Id').setValue('');
+                            	Ext.getCmp('PumpHistoryQueryStartDate_Id').setRawValue('');
+                            	
+                            	Ext.getCmp('PumpHistoryQueryEndDate_Id').setValue('');
+                            	Ext.getCmp('PumpHistoryQueryEndDate_Id').setRawValue('');
+                            	
+                            	
+                            	Ext.getCmp("PumpHistoryQueryListGridPanel_Id").getStore().loadPage(1);
+                    		}
+                        }
+                    },{
+                    	xtype: 'button',
+                        text:'返回概览',
+                        id:'PumpHistoryQueryAllBtn_Id',
+                        pressed: true,
+                        hidden: true,
+                        handler: function (v, o) {
+                        	Ext.getCmp("PumpHistoryQueryHisBtn_Id").show();
+                        	Ext.getCmp("PumpHistoryQueryAllBtn_Id").hide();
+                        	
+                			Ext.getCmp("PumpHistoryQueryStartDate_Id").hide();
+                        	Ext.getCmp("PumpHistoryQueryEndDate_Id").hide();
+                        	
+                        	Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
+                        	Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
+                        	
+                        	Ext.getCmp('PumpHistoryQueryStartDate_Id').setValue('');
+                        	Ext.getCmp('PumpHistoryQueryStartDate_Id').setRawValue('');
+                        	
+                        	Ext.getCmp('PumpHistoryQueryEndDate_Id').setValue('');
+                        	Ext.getCmp('PumpHistoryQueryEndDate_Id').setRawValue('');
+                        	
+                        	
+                        	Ext.getCmp("PumpHistoryQueryListGridPanel_Id").getStore().loadPage(1);
+                        }
                     }]
                 }, {
                 	region: 'east',
@@ -139,7 +202,7 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                     border: false,
                     items: [{
                     	region: 'center',
-                    	title: '数据详情',
+                    	title: '历史数据',
                     	id: "PumpHistoryQueryInfoDataPanel_Id",
                     	layout: 'fit',
                     	html:'<div class="PumpHistoryQueryInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PumpHistoryQueryInfoDataTableInfoDiv_id"></div></div>',
@@ -236,7 +299,7 @@ function CreatePumpDeviceHistoryQueryDataTable(recordId,deviceName,deviceType,is
 			
 			//绘制第一个数据型变量曲线
 			for(var i=0;i<pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
-				if(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].resolutionMode==2){
+				if(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
 					Ext.getCmp("PumpHistoryQuerySelectedCurve_Id").setValue(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
                 	pumpHistoryQueryCurve(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
@@ -437,14 +500,15 @@ function pumpHistoryQueryCurve(item){
 				var result =  Ext.JSON.decode(response.responseText);
 			    var data = result.list;
 			    var tickInterval = 1;
-			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
-			    if(tickInterval<10){
-			    	tickInterval=10;
+			    tickInterval = Math.floor(data.length / 10) + 1;
+			    if(tickInterval<100){
+			    	tickInterval=100;
 			    }
-			    tickInterval=1000;
-//			    if(){
-//			    	
+//			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
+//			    if(tickInterval<10){
+//			    	tickInterval=10;
 //			    }
+//			    tickInterval=1000;
 			    var title = result.deviceName  + result.item + "曲线";
 			    var xTitle='采集时间';
 			    var yTitle=result.item;

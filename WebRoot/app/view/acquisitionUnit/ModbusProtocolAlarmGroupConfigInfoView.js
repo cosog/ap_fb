@@ -258,7 +258,7 @@ function CreateProtocolAlarmGroupNumItemsConfigInfoTable(protocolName,classes,co
 						+"{data:'delay',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigNumItemsHandsontableHelper);}}," 
 						
 						+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
-						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
+						+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['使能','失效']}" 
 						+"]";
 				protocolAlarmGroupConfigNumItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				protocolAlarmGroupConfigNumItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
@@ -479,7 +479,7 @@ function CreateProtocolAlarmGroupEnumItemsConfigInfoTable(protocolName,classes,g
 					+"{data:'meaning'},"
 					+"{data:'delay',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigEnumItemsHandsontableHelper);}}," 
 					+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
-					+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
+					+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['使能','失效']}" 
 					+"]";
 				protocolAlarmGroupConfigEnumItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				protocolAlarmGroupConfigEnumItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
@@ -607,7 +607,7 @@ function CreateProtocolAlarmGroupSwitchItemsConfigInfoTable(protocolName,classes
 					+"{data:'value',type:'dropdown',strict:true,allowInvalid:false,source:['开','关']},"
 					+"{data:'delay',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAlarmGroupConfigSwitchItemsHandsontableHelper);}}," 
 					+"{data:'alarmLevel',type:'dropdown',strict:true,allowInvalid:false,source:['正常','一级报警','二级报警','三级报警']}," 
-					+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['enable','disable']}" 
+					+"{data:'alarmSign',type:'dropdown',strict:true,allowInvalid:false,source:['使能','失效']}" 
 					+"]";
 				protocolAlarmGroupConfigSwitchItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				protocolAlarmGroupConfigSwitchItemsHandsontableHelper.columns=Ext.JSON.decode(columns);

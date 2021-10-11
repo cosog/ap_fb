@@ -44,10 +44,10 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
         
         var pipelineDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备列表',
+                    fieldLabel: '井号',
                     id: "RealTimeMonitoringPipelineDeviceListComb_Id",
-                    labelWidth: 70,
-                    width: 180,
+                    labelWidth: 35,
+                    width: 145,
                     labelAlign: 'left',
                     queryMode: 'remote',
                     typeAhead: true,
@@ -120,7 +120,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         },{
                         	region: 'south',
                         	height: '40%',
-                        	title: '趋势曲线',
+                        	title: '实时曲线',
                         	layout: 'fit',
                         	border: true,
                         	split: true,
@@ -209,7 +209,7 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 			
 			//绘制第一个数据型变量曲线
 			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode==2){
+				if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
 					Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	pipelineRealTimeMonitoringCurve(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	break;

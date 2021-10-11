@@ -45,10 +45,10 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
         
         var pipelineDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备列表',
+                    fieldLabel: '井号',
                     id: "HistoryQueryPipelineDeviceListComb_Id",
-                    labelWidth: 70,
-                    width: 180,
+                    labelWidth: 35,
+                    width: 145,
                     labelAlign: 'left',
                     queryMode: 'remote',
                     typeAhead: true,
@@ -139,7 +139,7 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                     border: false,
                     items: [{
                     	region: 'center',
-                    	title: '数据详情',
+                    	title: '历史数据',
                     	id: "PipelineHistoryQueryInfoDataPanel_Id",
                     	layout: 'fit',
                     	html:'<div class="PipelineHistoryQueryInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PipelineHistoryQueryInfoDataTableInfoDiv_id"></div></div>',
@@ -228,7 +228,7 @@ function CreatePipelineDeviceHistoryQueryDataTable(recordId,deviceName,deviceTyp
 			
 			//绘制第一个数据型变量曲线
 			for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].resolutionMode==2){
+				if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
 					Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").setValue(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
                 	pipelineHistoryQueryCurve(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
@@ -429,11 +429,12 @@ function pipelineHistoryQueryCurve(item){
 				var result =  Ext.JSON.decode(response.responseText);
 			    var data = result.list;
 			    var tickInterval = 1;
-			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
-			    if(tickInterval<10){
-			    	tickInterval=10;
-			    }
-			    tickInterval=1000;
+			    tickInterval = Math.floor(data.length / 10) + 1;
+//			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
+//			    if(tickInterval<10){
+//			    	tickInterval=10;
+//			    }
+//			    tickInterval=1000;
 //			    if(){
 //			    	
 //			    }

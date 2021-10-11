@@ -133,7 +133,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        	header: '操作项',  
     			        	dataIndex: 'item',
     			        	align:'left',
-    			        	flex:12,
+    			        	flex:4,
     			        	renderer:function(value){
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
@@ -150,7 +150,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        { 	header: '操作', 
     			        	dataIndex: 'operation',
     			        	align:'center',
-    			        	flex:3,
+    			        	flex:6,
     			        	renderer :function(value,e,o){
     			        		var id = e.record.id;
     			        		var item=o.data.item;
@@ -170,85 +170,284 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
+    			        		hand=false;
     			        		text="设置";
-    		                    Ext.defer(function () {
-    		                        Ext.widget('button', {
-    		                            renderTo: id,
-    		                            height: 18,
-    		                            width: 38,
-    		                            text: text,
-    		                            disabled:hand,
-    		                            hidden:hidden,
-    		                            handler: function () {
-    		                            	var operaName="";
-    		                            	if(text=="停抽"||text=="启抽"||text=="即时采集"||text=="即时刷新"){
-    		                            		operaName="是否执行"+text+"操作";
-    		                            	}else{
-    		                            		operaName="是否执行"+text+item.split("(")[0]+"操作";
-    		                            	}
-    		                            	 Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
-    		                                 Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
-    		                                 Ext.Msg.confirm("操作确认", operaName, function (btn) {
-    		                                     if (btn == "yes") {
-    		                                         var win_Obj = Ext.getCmp("DeviceControlCheckPassWindow_Id")
-    		                                         if (win_Obj != undefined) {
-    		                                             win_Obj.destroy();
-    		                                         }
-    		                                         var DeviceControlCheckPassWindow = Ext.create("AP.view.realTimeMonitoring.DeviceControlCheckPassWindow", {
-    		                                             title: '控制'
-    		                                         });
-    		                                         
-    		                                         
-    		                                     	 var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-    		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
-    		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
-    		                                         
-    		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
-    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
-    		                                         
-    		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-//    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
-    		                                         
-    		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(2);
-    		                                         Ext.getCmp("DeviceControlValue_Id").show();
-		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
-		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
-    		                                         
-    		                                         if(resolutionMode==0){//开关量
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-    		                                         }else if(resolutionMode==1&&itemMeaning.length>0){//枚举量
-    		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
-    		                                        	 Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
-    		                                        	 var data=[];
-    		                                        	 for(var k=0;k<itemMeaning.length;k++){
-    		                                        		 data.push(itemMeaning[k]);
-    		                                        	 }
-    		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
-    		                                             	autoLoad : false,
-    		                                                 fields: ['boxkey', 'boxval'],
-    		                                                 data: data
-    		                                             });
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
-    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
-    		                                         }else{
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
-//    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
-//    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
-    		                                         }
-    		                                         
-    		                                         DeviceControlCheckPassWindow.show();
-    		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-//    		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
-    		                                     }
-    		                                 });
-    		                            }
-    		                        });
-    		                    }, 50);
+    			        		if(resolutionMode==1&&itemMeaning.length==2){
+    			        			Ext.defer(function () {
+        		                        Ext.widget('toolbar', {
+        		                            renderTo: id,
+        		                            dock: 'top',
+        		                            style: 'margin:0,0,0,0',
+        		                            ui: 'footer',
+        		                            height: 20,
+        		                            width: 100,
+        		                            items: [{
+        		                            	xtype: 'button',
+        		                            	height: 18,
+        		                            	width: 38,
+        		                            	style: 'margin:0,0,0,0',
+        		                            	disabled:hand,
+            		                            hidden:hidden,
+        		                            	text: itemMeaning[0][1],
+        		                            	handler: function () {
+        		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		Ext.Ajax.request({
+        		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
+        		                                        method: "POST",
+        		                                        waitMsg: cosog.string.updatewait,
+        		                                        waitTitle: 'Please Wait...',
+        		                                        params: {
+        		                                        	wellName: wellName,
+        		                                        	deviceType: 0,
+        		                                            controlType:itemcode,
+        		                                            controlValue:itemMeaning[0][0]
+        		                                        },
+        		                                        success: function (response, action) {
+        		                                        	if (action.result.flag == false) {
+        		                                                Ext.MessageBox.show({
+        		                                                    title: cosog.string.ts,
+        		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
+        		                                                    icon: Ext.MessageBox.INFO,
+        		                                                    buttons: Ext.Msg.OK,
+        		                                                    fn: function () {
+        		                                                        window.location.href = context + "/login/toLogin";
+        		                                                    }
+        		                                                });
+        		                                            } else if (action.result.flag == true && action.result.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            }  else if (action.result.flag == true && action.result.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } 
+        		                                        },
+        		                                        failure: function () {
+        		                                            Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font>】：" + cosog.string.contactadmin + "！")
+        		                                        }
+        		                                	});   
+        		                            	}
+        		                            },{
+        		                            	xtype: 'button',
+        		                            	height: 18,
+        		                            	width: 38,
+        		                            	style: 'margin:0,0,0,0',
+        		                            	disabled:hand,
+            		                            hidden:hidden,
+        		                            	text: itemMeaning[1][1],
+        		                            	handler: function () {
+        		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		Ext.Ajax.request({
+        		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
+        		                                        method: "POST",
+        		                                        waitMsg: cosog.string.updatewait,
+        		                                        waitTitle: 'Please Wait...',
+        		                                        params: {
+        		                                        	wellName: wellName,
+        		                                        	deviceType: 0,
+        		                                            controlType:itemcode,
+        		                                            controlValue:itemMeaning[1][0]
+        		                                        },
+        		                                        success: function (response, action) {
+        		                                        	if (action.result.flag == false) {
+        		                                                Ext.MessageBox.show({
+        		                                                    title: cosog.string.ts,
+        		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
+        		                                                    icon: Ext.MessageBox.INFO,
+        		                                                    buttons: Ext.Msg.OK,
+        		                                                    fn: function () {
+        		                                                        window.location.href = context + "/login/toLogin";
+        		                                                    }
+        		                                                });
+        		                                            } else if (action.result.flag == true && action.result.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            }  else if (action.result.flag == true && action.result.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } 
+        		                                        },
+        		                                        failure: function () {
+        		                                            Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font>】：" + cosog.string.contactadmin + "！")
+        		                                        }
+        		                                	});   
+        		                            	}
+        		                            }]
+        		                        });
+        		                    }, 50);
+    			        		}else if(resolutionMode==0&&itemMeaning.length>0){
+    			        			Ext.defer(function () {
+        		                        Ext.widget('toolbar', {
+        		                            renderTo: id,
+        		                            dock: 'top',
+        		                            style: 'margin:0,0,0,0',
+        		                            ui: 'footer',
+        		                            height: 20,
+        		                            width: 100,
+        		                            items: [{
+        		                            	xtype: 'button',
+        		                            	height: 18,
+        		                            	width: 38,
+        		                            	style: 'margin:0,0,0,0',
+        		                            	disabled:hand,
+            		                            hidden:hidden,
+        		                            	text: '开',
+        		                            	handler: function () {
+        		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		Ext.Ajax.request({
+        		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
+        		                                        method: "POST",
+        		                                        waitMsg: cosog.string.updatewait,
+        		                                        waitTitle: 'Please Wait...',
+        		                                        params: {
+        		                                        	wellName: wellName,
+        		                                        	deviceType: 0,
+        		                                            controlType:itemcode,
+        		                                            controlValue:1
+        		                                        },
+        		                                        success: function (response, action) {
+        		                                        	if (action.result.flag == false) {
+        		                                                Ext.MessageBox.show({
+        		                                                    title: cosog.string.ts,
+        		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
+        		                                                    icon: Ext.MessageBox.INFO,
+        		                                                    buttons: Ext.Msg.OK,
+        		                                                    fn: function () {
+        		                                                        window.location.href = context + "/login/toLogin";
+        		                                                    }
+        		                                                });
+        		                                            } else if (action.result.flag == true && action.result.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            }  else if (action.result.flag == true && action.result.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } 
+        		                                        },
+        		                                        failure: function () {
+        		                                            Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font>】：" + cosog.string.contactadmin + "！")
+        		                                        }
+        		                                	});   
+        		                            	}
+        		                            },{
+        		                            	xtype: 'button',
+        		                            	height: 18,
+        		                            	width: 38,
+        		                            	style: 'margin:0,0,0,0',
+        		                            	disabled:hand,
+            		                            hidden:hidden,
+        		                            	text: '关',
+        		                            	handler: function () {
+        		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		Ext.Ajax.request({
+        		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
+        		                                        method: "POST",
+        		                                        waitMsg: cosog.string.updatewait,
+        		                                        waitTitle: 'Please Wait...',
+        		                                        params: {
+        		                                        	wellName: wellName,
+        		                                        	deviceType: 0,
+        		                                            controlType:itemcode,
+        		                                            controlValue:2
+        		                                        },
+        		                                        success: function (response, action) {
+        		                                        	if (action.result.flag == false) {
+        		                                                Ext.MessageBox.show({
+        		                                                    title: cosog.string.ts,
+        		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
+        		                                                    icon: Ext.MessageBox.INFO,
+        		                                                    buttons: Ext.Msg.OK,
+        		                                                    fn: function () {
+        		                                                        window.location.href = context + "/login/toLogin";
+        		                                                    }
+        		                                                });
+        		                                            } else if (action.result.flag == true && action.result.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            }  else if (action.result.flag == true && action.result.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } 
+        		                                        },
+        		                                        failure: function () {
+        		                                            Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font>】：" + cosog.string.contactadmin + "！")
+        		                                        }
+        		                                	});   
+        		                            	}
+        		                            }]
+        		                        });
+        		                    }, 50);
+    			        		}else{
+    			        			Ext.defer(function () {
+        		                        Ext.widget('button', {
+        		                            renderTo: id,
+        		                            height: 18,
+        		                            width: 38,
+        		                            text: text,
+        		                            disabled:hand,
+        		                            hidden:hidden,
+        		                            handler: function () {
+        		                            	var operaName="";
+        		                            	if(text=="停抽"||text=="启抽"||text=="即时采集"||text=="即时刷新"){
+        		                            		operaName="是否执行"+text+"操作";
+        		                            	}else{
+        		                            		operaName="是否执行"+text+item.split("(")[0]+"操作";
+        		                            	}
+        		                            	 Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+        		                                 Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
+//        		                                 Ext.Msg.confirm("操作确认", operaName, function (btn) {
+//        		                                     if (btn == "yes") {
+        		                                         var win_Obj = Ext.getCmp("DeviceControlCheckPassWindow_Id")
+        		                                         if (win_Obj != undefined) {
+        		                                             win_Obj.destroy();
+        		                                         }
+        		                                         var DeviceControlCheckPassWindow = Ext.create("AP.view.realTimeMonitoring.DeviceControlCheckPassWindow", {
+        		                                             title: '控制'
+        		                                         });
+        		                                         
+        		                                         
+        		                                     	 var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
+        		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
+        		                                         
+        		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
+        		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
+        		                                         
+        		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
+//        		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+        		                                         
+        		                                         Ext.getCmp("DeviceControlShowType_Id").setValue(2);
+        		                                         Ext.getCmp("DeviceControlValue_Id").show();
+    		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
+    		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+        		                                         
+        		                                         if(resolutionMode==0){//开关量
+//        		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+        		                                         }else if(resolutionMode==1&&itemMeaning.length>0){//枚举量
+        		                                        	 Ext.getCmp("DeviceControlValue_Id").hide();
+        		                                        	 Ext.getCmp("DeviceControlShowType_Id").setValue(resolutionMode);
+        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setFieldLabel(o.data.item);
+        		                                        	 var data=[];
+        		                                        	 for(var k=0;k<itemMeaning.length;k++){
+        		                                        		 data.push(itemMeaning[k]);
+        		                                        	 }
+        		                                        	 var controlTypeStore = new Ext.data.SimpleStore({
+        		                                             	autoLoad : false,
+        		                                                 fields: ['boxkey', 'boxval'],
+        		                                                 data: data
+        		                                             });
+        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
+//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
+        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
+        		                                         }else{
+//        		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
+//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
+//        		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
+//        		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+        		                                         }
+        		                                         
+        		                                         DeviceControlCheckPassWindow.show();
+        		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
+//        		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
+//        		                                     }
+//        		                                 });
+        		                            }
+        		                        });
+        		                    }, 50);
+    			        		}
     		                    return Ext.String.format('<div id="{0}"></div>', id);
     			        	} 
     			        }

@@ -121,15 +121,6 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                                 }  else if (action.result.flag == true && action.result.error == true) {
                                 	Ext.getCmp("DeviceControlCheckPassWindow_Id").close();
                                     Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-                                    
-                                    var tabPanel = Ext.getCmp("DeviceRealtimeAnalisisPanel");
-                            		var activeId = tabPanel.getActiveTab().id;
-                            		var gridPanelId="DiagnosisPumpingUnit_SingleDinagnosisAnalysis_Id";
-                            		if(activeId=="pumpUnitRealtimeAnalysisPanel_Id"){
-                            			Ext.getCmp("DiagnosisControlDataGridPanel_Id").getStore().commitChanges();
-                            		}else if(activeId=="screwPumpRealtimeAnalysisPanel_Id"){
-                            			Ext.getCmp("ScrewPumpRTControlDataGridPanel_Id").getStore().commitChanges(); 
-                            		}
                                 } 
                             },
                             failure: function () {

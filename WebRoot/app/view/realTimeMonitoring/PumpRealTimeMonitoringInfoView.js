@@ -45,10 +45,10 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
         
         var pumpDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备列表',
+                    fieldLabel: '井号',
                     id: "RealTimeMonitoringPumpDeviceListComb_Id",
-                    labelWidth: 70,
-                    width: 180,
+                    labelWidth: 35,
+                    width: 145,
                     labelAlign: 'left',
                     queryMode: 'remote',
                     typeAhead: true,
@@ -122,7 +122,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         },{
                         	region: 'south',
                         	height: '40%',
-                        	title: '趋势曲线',
+                        	title: '实时曲线',
                         	layout: 'fit',
                         	border: true,
                         	split: true,
@@ -208,9 +208,9 @@ function CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 				pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 			
-			//绘制第一个数据型变量曲线
+			//绘制第一个float型变量曲线columnDataType resolutionMode
 			for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-				if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode==2){
+				if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
 					Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	pumpRealTimeMonitoringCurve(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
                 	break;
