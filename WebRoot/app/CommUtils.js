@@ -2302,6 +2302,28 @@ color16ToRgba = function(sColor,Opacity){
 	return '<span data-qtip="'+tipval+'" data-dismissDelay=10000>'+val+'</span>';
 }
  
+ adviceStatTableCommStatusColor = function(val,o,p,e) {
+	 	var itemCode=p.data.itemCode;
+	 	var tipval=val;
+	 	var alarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
+	 	var backgroundColor='#FFFFFF';
+	 	var color='#000000';
+	 	var opacity=1;
+	 	var alarmLevel=0;
+	 	if(itemCode.toUpperCase()=='offline'.toUpperCase()){
+	 		alarmLevel=100;
+	 	}
+	 	if (alarmLevel == 100) {
+//	 		backgroundColor='#'+alarmShowStyle.FirstLevel.BackgroundColor;
+//	 		color='#'+alarmShowStyle.FirstLevel.Color;
+//	 		opacity=alarmShowStyle.FirstLevel.Opacity
+	 		color='#'+alarmShowStyle.FirstLevel.BackgroundColor;
+		}
+	 	var rgba=color16ToRgba(backgroundColor,opacity);
+	 	o.style='background-color:'+rgba+';color:'+color+';';
+	 	return '<span data-qtip="'+tipval+'" data-dismissDelay=10000>'+val+'</span>';
+	}
+ 
  adviceCommStatusColor = function(val,o,p,e) {
 	 	var commStatus=p.data.commStatus;
 	 	var tipval=val;

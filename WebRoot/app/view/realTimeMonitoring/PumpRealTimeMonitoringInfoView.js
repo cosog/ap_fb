@@ -6,7 +6,6 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
-        
         var pumpCombStore = new Ext.data.JsonStore({
         	pageSize:defaultWellComboxSize,
             fields: [{
@@ -78,17 +77,27 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                 layout: 'border',
                 items: [{
                     region: 'center',
-                    title:'设备概览',
-                    id:'PumpRealTimeMonitoringInfoDeviceListPanel_Id',
-                    border: false,
-                    layout: 'fit',
-                    tbar:[{
-                        id: 'PumpRealTimeMonitoringInfoDeviceListSelectRow_Id',
-                        xtype: 'textfield',
-                        value: 0,
-                        hidden: true
-                    },pumpDeviceCombo]
-                    
+                    layout: 'border',
+                    items:[{
+                    	region: 'center',
+                    	title:'设备概览',
+                    	id:'PumpRealTimeMonitoringInfoDeviceListPanel_Id',
+                        border: false,
+                        layout: 'fit',
+                        tbar:[{
+                        	id: 'PumpRealTimeMonitoringInfoDeviceListSelectRow_Id',
+                        	xtype: 'textfield',
+                            value: 0,
+                            hidden: true
+                         },pumpDeviceCombo]
+                    },{
+                    	title:'状态统计',
+                    	region: 'south',
+                    	height: '40%',
+                    	id:'PumpRealTimeMonitoringStatInfoPanel_Id',
+                        border: false,
+                        layout: 'fit',
+                    }]
                 }, {
                 	region: 'east',
                     width: '80%',
@@ -144,7 +153,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         }]
                     },{
                     	region: 'east',
-                    	width: '15%',
+                    	width: '20%',
                     	xtype: 'tabpanel',
                     	id:"PumpRealTimeMonitoringRightTabPanel",
                 		activeTab: 0,

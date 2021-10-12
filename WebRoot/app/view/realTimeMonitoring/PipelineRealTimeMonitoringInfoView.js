@@ -76,17 +76,27 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                 layout: 'border',
                 items: [{
                     region: 'center',
-                    title:'设备概览',
-                    id:'PipelineRealTimeMonitoringInfoDeviceListPanel_Id',
-                    border: false,
-                    layout: 'fit',
-                    tbar:[{
-                        id: 'PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id',
-                        xtype: 'textfield',
-                        value: 0,
-                        hidden: true
-                    },pipelineDeviceCombo]
-                    
+                    layout: 'border',
+                    items:[{
+                    	region: 'center',
+                    	title:'设备概览',
+                        id:'PipelineRealTimeMonitoringInfoDeviceListPanel_Id',
+                        border: false,
+                        layout: 'fit',
+                        tbar:[{
+                            id: 'PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id',
+                            xtype: 'textfield',
+                            value: 0,
+                            hidden: true
+                        },pipelineDeviceCombo]
+                    },{
+                    	title:'状态统计',
+                    	region: 'south',
+                    	height: '40%',
+                    	id:'PipelineRealTimeMonitoringStatInfoPanel_Id',
+                        border: false,
+                        layout: 'fit',
+                    }]
                 }, {
                 	region: 'east',
                     width: '80%',

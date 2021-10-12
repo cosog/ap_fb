@@ -133,8 +133,9 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        	header: '操作项',  
     			        	dataIndex: 'item',
     			        	align:'left',
-    			        	flex:4,
-    			        	renderer:function(value){
+    			        	flex:6,
+    			        	renderer:function(value,e,o){
+    			        		e.tdStyle ="vertical-align:middle;";
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
     			        },
@@ -150,7 +151,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        { 	header: '操作', 
     			        	dataIndex: 'operation',
     			        	align:'center',
-    			        	flex:6,
+//    			        	flex:8,
+    			        	width:85,
     			        	renderer :function(value,e,o){
     			        		var id = e.record.id;
     			        		var item=o.data.item;
@@ -170,22 +172,25 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
-    			        		hand=false;
+//    			        		hand=false;
     			        		text="设置";
+    			        		e.tdStyle ="vertical-align:middle;";
     			        		if(resolutionMode==1&&itemMeaning.length==2){
     			        			Ext.defer(function () {
         		                        Ext.widget('toolbar', {
         		                            renderTo: id,
         		                            dock: 'top',
-        		                            style: 'margin:0,0,0,0',
+        		                            style: 'margin:0;padding:0',
         		                            ui: 'footer',
-        		                            height: 20,
-        		                            width: 100,
+        		                            align:'center',
+        		                            height: 25,
+        		                            width: 80,
         		                            items: [{
         		                            	xtype: 'button',
-        		                            	height: 18,
+        		                            	height: 25,
         		                            	width: 38,
-        		                            	style: 'margin:0,0,0,0',
+        		                            	style: 'margin:1',
+        		                            	align:'center',
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: itemMeaning[0][1],
@@ -226,9 +231,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                            	}
         		                            },{
         		                            	xtype: 'button',
-        		                            	height: 18,
+        		                            	height: 25,
         		                            	width: 38,
-        		                            	style: 'margin:0,0,0,0',
+        		                            	style: 'margin:0',
+        		                            	align:'center',
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: itemMeaning[1][1],
@@ -275,15 +281,15 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                        Ext.widget('toolbar', {
         		                            renderTo: id,
         		                            dock: 'top',
-        		                            style: 'margin:0,0,0,0',
+        		                            style: 'margin:0;padding:0',
         		                            ui: 'footer',
-        		                            height: 20,
-        		                            width: 100,
+        		                            height: 25,
+        		                            width: 80,
         		                            items: [{
         		                            	xtype: 'button',
-        		                            	height: 18,
+        		                            	height: 25,
         		                            	width: 38,
-        		                            	style: 'margin:0,0,0,0',
+        		                            	style: 'margin:1',
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: '开',
@@ -324,7 +330,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                            	}
         		                            },{
         		                            	xtype: 'button',
-        		                            	height: 18,
+        		                            	height: 25,
         		                            	width: 38,
         		                            	style: 'margin:0,0,0,0',
         		                            	disabled:hand,
@@ -372,7 +378,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        			Ext.defer(function () {
         		                        Ext.widget('button', {
         		                            renderTo: id,
-        		                            height: 18,
+        		                            height: 25,
         		                            width: 38,
         		                            text: text,
         		                            disabled:hand,

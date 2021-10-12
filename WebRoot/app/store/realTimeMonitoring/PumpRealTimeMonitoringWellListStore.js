@@ -70,10 +70,13 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceName=Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').getValue();
+        	var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+        	
             var new_params = {
                     orgId: orgId,
                     deviceType:0,
-                    deviceName:deviceName
+                    deviceName:deviceName,
+                    commStatus:commStatus
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

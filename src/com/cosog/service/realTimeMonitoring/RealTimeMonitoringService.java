@@ -40,7 +40,65 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+	public String getDeviceRealTimeStat(String orgId,String deviceType) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String tableName="tbl_pumpacqdata_latest";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			tableName="tbl_pipelineacqdata_latest";
+		}
+		
+		String sql="select t.commstatus,count(1) from "+tableName+" t,tbl_wellinformation t2 "
+				+ " where t.wellid=t2.id and t2.orgid in("+orgId+") and t2.devicetype="+deviceType
+				+"  group by t.commstatus";
+		
+		
+		List<?> list = this.findCallSql(sql);
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"item\",children:[] },"
+				+ "{ \"header\":\"变量\",\"dataIndex\":\"count\",children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalCount\":3,");
+		
+		int total=0,online=0,offline=0;
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			if(StringManagerUtils.stringToInteger(obj[0]+"")==1){
+				online=StringManagerUtils.stringToInteger(obj[1]+"");
+			}else{
+				offline=StringManagerUtils.stringToInteger(obj[1]+"");
+			}
+		}
+		total=online+offline;
+		result_json.append("{\"id\":1,");
+		result_json.append("\"item\":\"全部\",");
+		result_json.append("\"itemCode\":\"all\",");
+		result_json.append("\"count\":"+total+"},");
+		
+		result_json.append("{\"id\":2,");
+		result_json.append("\"item\":\"在线\",");
+		result_json.append("\"itemCode\":\"online\",");
+		result_json.append("\"count\":"+online+"},");
+		
+		result_json.append("{\"id\":3,");
+		result_json.append("\"item\":\"离线\",");
+		result_json.append("\"itemCode\":\"offline\",");
+		result_json.append("\"count\":"+offline+"}");
+		result_json.append("]");
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,String commStatus,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
@@ -77,6 +135,11 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		if("online".equalsIgnoreCase(commStatus)){
+			sql+=" and t2.commstatus=1";
+		}else if("offline".equalsIgnoreCase(commStatus)){
+			sql+=" and t2.commstatus=0";
 		}
 		sql+=" order by t.sortnum,t.wellname";
 		
