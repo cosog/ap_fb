@@ -1,12 +1,12 @@
-Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore', {
+Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.pipelineRealTimeMonitoringWellListStore',
-    fields: ['id','commStatus','commStatusName','wellName'],
+    alias: 'widget.pumpRealTimeMonitoringStatStore',
+    fields: ['id','item','count','itemCode'],
     autoLoad: true,
     pageSize: 50,
     proxy: {
         type: 'ajax',
-        url: context + '/realTimeMonitoringController/getDeviceRealTimeOverview',
+        url: context + '/realTimeMonitoringController/getDeviceRealTimeStat',
         actionMethods: {
             read: 'POST'
         },
@@ -23,23 +23,16 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
-            var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+            var gridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createRealTimeMonitoringColumn(arrColumns);
+                var column = createRealTimeMonitoringStatColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                var bbar = new Ext.PagingToolbar({
-                	store: store,
-                	displayInfo: true,
-                	displayMsg: '共 {2}条'
-    	        });
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "PipelineRealTimeMonitoringListGridPanel_Id",
+                    id: "PumpRealTimeMonitoringStatGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     columnLines: true,
-                    forceFit: false,
-                    stripeRows: true,
-                    bbar: bbar,
+                    forceFit: true,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
@@ -50,16 +43,17 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     		
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
-                    		var deviceName=record.data.wellName;
-                    		var deviceType=1;
-                    		CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
-                    		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
+                    		var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+                			if (isNotVal(gridPanel)) {
+                				gridPanel.getStore().load();
+                			}else{
+                				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+                			}
                     	}
                     }
                 });
-                var PipelineRealTimeMonitoringInfoDeviceListPanel = Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListPanel_Id");
-                PipelineRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
+                var PumpRealTimeMonitoringStatInfoPanel = Ext.getCmp("PumpRealTimeMonitoringStatInfoPanel_Id");
+                PumpRealTimeMonitoringStatInfoPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
             	gridPanel.getSelectionModel().select(0, true);
@@ -67,13 +61,9 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-        	var deviceName=Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
-        	var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
             var new_params = {
                     orgId: orgId,
-                    deviceType:1,
-                    deviceName:deviceName,
-                    commStatus:commStatus
+                    deviceType:0
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

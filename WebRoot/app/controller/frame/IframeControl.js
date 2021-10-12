@@ -293,19 +293,34 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
 		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
-			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-			if (isNotVal(gridPanel)) {
-				gridPanel.getStore().load();
+			var statGridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
+			if (isNotVal(statGridPanel)) {
+				statGridPanel.getStore().load();
 			}else{
-				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore');
 			}
+			
+			
+//			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+//			if (isNotVal(gridPanel)) {
+//				gridPanel.getStore().load();
+//			}else{
+//				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+//			}
 		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
-			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-			if (isNotVal(gridPanel)) {
-				gridPanel.getStore().load();
+			var statGridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
+			if (isNotVal(statGridPanel)) {
+				statGridPanel.getStore().load();
 			}else{
-				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore');
 			}
+			
+//			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+//			if (isNotVal(gridPanel)) {
+//				gridPanel.getStore().load();
+//			}else{
+//				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+//			}
 		}
 	}else if(module_Code == "DeviceHistoryQuery"){
 		var tabPanel = Ext.getCmp("HistoryQueryTabPanel");

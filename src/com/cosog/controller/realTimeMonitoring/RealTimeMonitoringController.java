@@ -63,12 +63,10 @@ public class RealTimeMonitoringController extends BaseController {
 	private String orgId;
 	private int totals;
 	
-	//
-	@RequestMapping("/getDeviceRealTimeOverview")
-	public String getDeviceRealTimeOverview() throws Exception {
+	@RequestMapping("/getDeviceRealTimeStat")
+	public String getDeviceRealTimeStat() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
 		User user=null;
@@ -79,7 +77,36 @@ public class RealTimeMonitoringController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,deviceName,deviceType,pager);
+		json = realTimeMonitoringService.getDeviceRealTimeStat(orgId,deviceType);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	//
+	@RequestMapping("/getDeviceRealTimeOverview")
+	public String getDeviceRealTimeOverview() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		String commStatus = ParamUtils.getParameter(request, "commStatus");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,deviceName,deviceType,commStatus,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -218,7 +245,8 @@ public class RealTimeMonitoringController extends BaseController {
 						+ "\"Slave\":"+Slave+","
 						+ "\"Addr\":"+addr+""
 						+ "}";
-				String responseStr=StringManagerUtils.sendPostMethod(url, ctrlJson,"utf-8");
+				String responseStr="";
+				responseStr=StringManagerUtils.sendPostMethod(url, ctrlJson,"utf-8");
 				if(!StringManagerUtils.isNotNull(responseStr)){
 					result=false;
 				}
