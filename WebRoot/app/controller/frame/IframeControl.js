@@ -295,6 +295,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
 			var statGridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
 			if (isNotVal(statGridPanel)) {
+				statGridPanel.getSelectionModel().deselectAll(true);
 				statGridPanel.getStore().load();
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore');
@@ -310,6 +311,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 			var statGridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
 			if (isNotVal(statGridPanel)) {
+				statGridPanel.getSelectionModel().deselectAll(true);
 				statGridPanel.getStore().load();
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore');
@@ -361,27 +363,70 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 	}else if(module_Code == "AlarmQuery"){
 		var tabPanel = Ext.getCmp("AlarmQueryTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
-		if(activeId=="CommunicationAlarmInfoPanel_Id"){
-			var gridPanel = Ext.getCmp("CommunicationAlarmGridPanel_Id");
-			if (isNotVal(gridPanel)) {
-				gridPanel.getStore().load();
-			}else{
-				Ext.create('AP.store.alarmQuery.CommunicationAlarmStore');
+		if(activeId=="PumpAlarmQueryPanel_Id"){
+			var secondTabPanel = Ext.getCmp("PumpAlarmQueryTabPanel");
+			var secondActiveId = secondTabPanel.getActiveTab().id;
+			if(secondActiveId=="PumpCommunicationAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PumpCommunicationAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmStore');
+				}
+			}else if(secondActiveId=="PumpNumericValueAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
+				}
+			}else if(secondActiveId=="PumpEnumValueAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PumpEnumValueAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PumpEnumValueAlarmStore');
+				}
+			}else if(secondActiveId=="PumpSwitchingValueAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmStore');
+				}
 			}
-		}else if(activeId=="NumericValueAlarmInfoPanel_Id"){
-//			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-//			if (isNotVal(gridPanel)) {
-//				gridPanel.getStore().load();
-//			}else{
-//				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
-//			}
-		}else if(activeId=="SwitchingValueAlarmInfoPanel_Id"){
-//			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-//			if (isNotVal(gridPanel)) {
-//				gridPanel.getStore().load();
-//			}else{
-//				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
-//			}
+		}else if(activeId=="PipelineAlarmQueryPanel_Id"){
+			var secondTabPanel = Ext.getCmp("PipelineAlarmQueryTabPanel");
+			var secondActiveId = secondTabPanel.getActiveTab().id;
+			if(secondActiveId=="PipelineCommunicationAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PipelineCommunicationAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PipelineCommunicationAlarmStore');
+				}
+			}else if(secondActiveId=="PipelineNumericValueAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmStore');
+				}
+			}else if(secondActiveId=="PipelineEnumValueAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PipelineEnumValueAlarmStore');
+				}
+			}else if(secondActiveId=="PipelineSwitchingValueAlarmInfoPanel_Id"){
+				var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
+				if (isNotVal(gridPanel)) {
+					gridPanel.getStore().load();
+				}else{
+					Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore');
+				}
+			}
 		}
 	}else if(module_Code == "AlarmSet"){
 		getAlarmLevelColor();

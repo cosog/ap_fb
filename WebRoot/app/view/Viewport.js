@@ -156,6 +156,8 @@ function websocketOnMessage(evt) {
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
 			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+				//更新通信状态统计
+				getDeviceCommStatusTotal();
 				//更新设备概览列表
 				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(PumpRealTimeMonitoringListGrid)){
@@ -229,6 +231,8 @@ function websocketOnMessage(evt) {
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
 			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+				//更新通信状态统计
+				getDeviceCommStatusTotal();
 				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(PumpRealTimeMonitoringListGrid)){
 					var store = PumpRealTimeMonitoringListGrid.getStore();
@@ -251,7 +255,7 @@ function websocketOnMessage(evt) {
 					if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 						var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 						if(wellName==data.wellName){
-							var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
+							var value=data.wellName+":"+data.acqTime+" "+(data.commStatus==1?"在线":"离线");
 							pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
 						}
 					}
@@ -263,6 +267,8 @@ function websocketOnMessage(evt) {
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
 			if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+				//更新通信状态统计
+				getDeviceCommStatusTotal();
 				//更新设备概览列表
 				var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(gridPanel)){
@@ -335,6 +341,8 @@ function websocketOnMessage(evt) {
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
 			if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+				//更新通信状态统计
+				getDeviceCommStatusTotal();
 				var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(gridPanel)){
 					var store = gridPanel.getStore();
@@ -354,7 +362,7 @@ function websocketOnMessage(evt) {
 					if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 						var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 						if(wellName==data.wellName){
-							var value=data.wellName+":"+data.acqTime+","+(data.commStatus==1?"在线":"离线");
+							var value=data.wellName+":"+data.acqTime+" "+(data.commStatus==1?"在线":"离线");
 							pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
 						}
 					}
@@ -377,6 +385,56 @@ function websocketClose(websocket) {
 	if(websocket!=null){
 		websocket.close();
 	}
+}
+
+function getDeviceCommStatusTotal(){
+	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+	var deviceType=0;
+	var gridPanelId="PumpRealTimeMonitoringStatGridPanel_Id";
+	var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+	var activeId = tabPanel.getActiveTab().id;
+	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+		gridPanelId="PumpRealTimeMonitoringStatGridPanel_Id";
+	}else{
+		deviceType=1;
+		gridPanelId="PipelineRealTimeMonitoringStatGridPanel_Id";
+	}
+	
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/realTimeMonitoringController/getDeviceRealTimeCommStatusStat',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			var all=result.all;
+			var online=result.online;
+			var offline=result.offline;
+
+			var  gridPanel= Ext.getCmp(gridPanelId);
+			if(isNotVal(gridPanel)){
+				var store = gridPanel.getStore();
+				for(var i=0;i<store.getCount();i++){
+					var record=store.getAt(i);
+					if(record.data.itemCode.toUpperCase()=="all".toUpperCase()){
+						record.set("count",all);
+						record.commit();
+					}else if(record.data.itemCode.toUpperCase()=="online".toUpperCase()){
+						record.set("count",online);
+						record.commit();
+					}else if(record.data.itemCode.toUpperCase()=="offline".toUpperCase()){
+						record.set("count",offline);
+						record.commit();
+					}
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			orgId:orgId,
+			deviceType:deviceType
+        }
+	});
 }
 
 function fullscreen(){

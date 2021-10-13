@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cosog.model.AlarmShowStyle;
+import com.cosog.model.CommStatus;
 import com.cosog.model.User;
 import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
@@ -94,6 +95,35 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("\"count\":"+offline+"}");
 		result_json.append("]");
 		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getDeviceRealTimeCommStatusStat(String orgId,String deviceType) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+		if(commStatusList==null){
+			EquipmentDriverServerTask.LoadDeviceCommStatus();
+			commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+		}
+		
+		result_json.append("{ \"success\":true,\"orgId\":\""+orgId+"\",\"deviceType\":"+deviceType+",");
+		int all=0,online=0,offline=0;
+		for(int i=0;i<commStatusList.size();i++){
+			CommStatus commStatus=commStatusList.get(i);
+			if(commStatus.getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
+				if(commStatus.getCommStatus()==1){
+					online+=1;
+				}else{
+					offline+=1;;
+				}
+			}
+		}
+		all=online+offline;
+		result_json.append("\"all\":"+all+",");
+		result_json.append("\"online\":"+online+",");
+		result_json.append("\"offline\":"+offline);
 		result_json.append("}");
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}

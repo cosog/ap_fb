@@ -1,74 +1,12 @@
-Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
+Ext.define('AP.view.alarmQuery.PumpNumericValueAlarmInfoView', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.NumericValueAlarmInfoView',
+    alias: 'widget.PumpNumericValueAlarmInfoView',
     layout: "fit",
-    id: "NumericValueAlarmInfoView_Id",
+    id: "PumpNumericValueAlarmInfoView_Id",
     border: false,
     //forceFit : true,
     initComponent: function () {
-//    	var NumericValueAlarmStore= Ext.create('AP.store.alarmQuery.NumericValueAlarmStore');
-    	var deviceTypeCombStore = new Ext.data.JsonStore({
-        	pageSize:defaultWellComboxSize,
-            fields: [{
-                name: "boxkey",
-                type: "string"
-            }, {
-                name: "boxval",
-                type: "string"
-            }],
-            proxy: {
-            	url: context + '/wellInformationManagerController/loadDataDictionaryComboxList',
-                type: "ajax",
-                actionMethods: {
-                    read: 'POST'
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'totals'
-                }
-            },
-            autoLoad: true,
-            listeners: {
-                beforeload: function (store, options) {
-                    var new_params = {
-                    	itemCode: 'deviceType'
-                    };
-                    Ext.apply(store.proxy.extraParams,new_params);
-                }
-            }
-        });
-    	
-        var deviceTypeCombo = Ext.create(
-                'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备类型',
-                    id: "NumericValueAlarmDeviceTypeListComb_Id",
-                    labelWidth: 60,
-                    width: 170,
-                    labelAlign: 'left',
-                    queryMode: 'remote',
-                    typeAhead: true,
-                    store: deviceTypeCombStore,
-                    autoSelect: false,
-                    editable: false,
-                    triggerAction: 'all',
-                    displayField: "boxval",
-                    valueField: "boxkey",
-                    pageSize:comboxPagingStatus,
-                    minChars:0,
-                    emptyText: cosog.string.all,
-                    blankText: cosog.string.all,
-                    listeners: {
-                        expand: function (sm, selections) {
-                            deviceTypeCombo.getStore().loadPage(1); // 加载井下拉框的store
-                        },
-                        select: function (combo, record, index) {
-                        	Ext.getCmp("NumericValueAlarmDeviceListComb_Id").setValue('');
-                        	Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
-                        }
-                    }
-                });
-        
+//    	var PumpNumericValueAlarmStore= Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
         var deviceCombStore = new Ext.data.JsonStore({
         	pageSize:defaultWellComboxSize,
             fields: [{
@@ -94,8 +32,8 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('NumericValueAlarmDeviceListComb_Id').getValue();
-                    var deviceType = Ext.getCmp('NumericValueAlarmDeviceTypeListComb_Id').getValue();
+                    var wellName = Ext.getCmp('PumpNumericValueAlarmDeviceListComb_Id').getValue();
+                    var deviceType = 0;
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: deviceType,
@@ -109,7 +47,7 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备',
-                    id: "NumericValueAlarmDeviceListComb_Id",
+                    id: "PumpNumericValueAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
                     labelAlign: 'left',
@@ -130,15 +68,15 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PumpNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceTypeCombo,'-',deviceCombo,'-',{
+            tbar: [deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '报警级别',
-				id : 'NumericValueAlarmLevelComb_Id',
+				id : 'PumpNumericValueAlarmLevelComb_Id',
 				labelWidth: 60,
                 width: 170,
                 labelAlign: 'left',
@@ -159,13 +97,13 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
             	xtype : "combobox",
 				fieldLabel : '是否发送短信',
-				id : 'NumericValueAlarmIsSendMessageComb_Id',
+				id : 'PumpNumericValueAlarmIsSendMessageComb_Id',
 				labelWidth: 80,
                 width: 190,
                 labelAlign: 'left',
@@ -186,7 +124,7 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -198,10 +136,10 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
                 width: 130,
                 format: 'Y-m-d ',
                 value: '',
-                id: 'NumericValueAlarmQueryStartDate_Id',
+                id: 'PumpNumericValueAlarmQueryStartDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("PumpNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             },{
@@ -214,10 +152,10 @@ Ext.define('AP.view.alarmQuery.NumericValueAlarmInfoView', {
                 format: 'Y-m-d ',
                 value: '',
 //                value: new Date(),
-                id: 'NumericValueAlarmQueryEndDate_Id',
+                id: 'PumpNumericValueAlarmQueryEndDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("NumericValueAlarmGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("PumpNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             }]
