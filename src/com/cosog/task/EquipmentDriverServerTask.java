@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.cosog.model.AlarmShowStyle;
+import com.cosog.model.CommStatus;
 import com.cosog.model.drive.InitId;
 import com.cosog.model.drive.InitInstance;
 import com.cosog.model.drive.InitProtocol;
@@ -60,71 +61,74 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 //		
-//		String path="";
-//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-//		path=stringManagerUtils.getFilePath("test1.json","test/");
-//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-//		
-//		path=stringManagerUtils.getFilePath("test2.json","test/");
-//		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
-//		
-//		path=stringManagerUtils.getFilePath("test3.json","test/");
-//		String onLineData=stringManagerUtils.readFile(path,"utf-8");
-//		
-//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
-//		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
-//		
-//		int i=0;
-//		while(true){
-//			if(i%2==0){
-//				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
-//			}else{
-//				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
-//			}
-//			i++;
-//			
-////			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
-//			
-//			Thread.sleep(1000*1);
-//		}
+		String path="";
+		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+		path=stringManagerUtils.getFilePath("test1.json","test/");
+		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+		
+		path=stringManagerUtils.getFilePath("test2.json","test/");
+		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+		
+		path=stringManagerUtils.getFilePath("test3.json","test/");
+		String onLineData=stringManagerUtils.readFile(path,"utf-8");
+		
+		path=stringManagerUtils.getFilePath("test4.json","test/");
+		String offLineData=stringManagerUtils.readFile(path,"utf-8");
+		
+		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
+		
+		int i=0;
+		while(true){
+			if(i%2==0){
+				StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+			}else{
+				StringManagerUtils.sendPostMethod(onlineUrl, offLineData,"utf-8");
+			}
+			i++;
+			
+//			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+			
+			Thread.sleep(1000*1);
+		}
 		
 		
 
-		loadProtocolConfig();
-		initServerConfig();
-		initProtocolConfig("","");
-		initInstanceConfig(null,"");
-		initSMSInstanceConfig(null,"");
-		initDriverAcquisitionInfoConfig(null,"");
-		initSMSDevice(null,"");
-		do{
-			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-			type = new TypeToken<DriverProbeResponse>() {}.getType();
-			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-			String Ver="";
-			if(driverProbeResponse!=null){
-				if(!driverProbeResponse.getHttpServerInitStatus()){
-					initServerConfig();
-				}
-				if(!driverProbeResponse.getProtocolInitStatus()){
-					initProtocolConfig("","");
-				}
-				if(!driverProbeResponse.getInstanceInitStatus()){
-					initInstanceConfig(null,"");
-					initSMSInstanceConfig(null,"");
-				}
-				if(!driverProbeResponse.getSMSInitStatus()){
-					initSMSDevice(null,"");
-				}
-				if(!driverProbeResponse.getIDInitStatus()){
-					initDriverAcquisitionInfoConfig(null,"");
-				}
-				Ver=driverProbeResponse.getVer();
-			}else{
-				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-			}
-			Thread.sleep(1000*1);
-		}while(true);
+//		loadProtocolConfig();
+//		initServerConfig();
+//		initProtocolConfig("","");
+//		initInstanceConfig(null,"");
+//		initSMSInstanceConfig(null,"");
+//		initDriverAcquisitionInfoConfig(null,"");
+//		initSMSDevice(null,"");
+//		do{
+//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+//			type = new TypeToken<DriverProbeResponse>() {}.getType();
+//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+//			String Ver="";
+//			if(driverProbeResponse!=null){
+//				if(!driverProbeResponse.getHttpServerInitStatus()){
+//					initServerConfig();
+//				}
+//				if(!driverProbeResponse.getProtocolInitStatus()){
+//					initProtocolConfig("","");
+//				}
+//				if(!driverProbeResponse.getInstanceInitStatus()){
+//					initInstanceConfig(null,"");
+//					initSMSInstanceConfig(null,"");
+//				}
+//				if(!driverProbeResponse.getSMSInitStatus()){
+//					initSMSDevice(null,"");
+//				}
+//				if(!driverProbeResponse.getIDInitStatus()){
+//					initDriverAcquisitionInfoConfig(null,"");
+//				}
+//				Ver=driverProbeResponse.getVer();
+//			}else{
+//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+//			}
+//			Thread.sleep(1000*1);
+//		}while(true);
 	}
 	
 	public static class DriverProbeResponse{
@@ -941,6 +945,38 @@ public class EquipmentDriverServerTask {
 		}
 		if(!dataModelMap.containsKey("AlarmShowStyle")){
 			dataModelMap.put("AlarmShowStyle", alarmShowStyle);
+		}
+		OracleJdbcUtis.closeDBConnection(conn, stmt, pstmt, rs);
+	}
+	
+	public static void LoadDeviceCommStatus() throws IOException, SQLException{
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+		if(commStatusList==null){
+			commStatusList=new ArrayList<CommStatus>();
+		}
+		String sql="select t.wellname,t.devicetype,t.orgid,decode(t.devicetype,0,t2.commstatus,1,t3.commstatus) as commstatus "
+				+ " from tbl_wellinformation t "
+				+ " left outer join tbl_pumpacqdata_latest t2 on t2.wellid=t.id "
+				+ " left outer join tbl_pipelineacqdata_latest t3 on t3.wellid=t.id "
+				+ " where t.devicetype <>2 "
+				+ " order by t.devicetype,t.sortnum";
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null){
+			return ;
+		}
+		pstmt = conn.prepareStatement(sql); 
+		rs=pstmt.executeQuery();
+		while(rs.next()){
+			CommStatus commStatus=new CommStatus();
+			commStatus.setDeviceName(rs.getString(1));
+			commStatus.setDeviceType(rs.getInt(2));
+			commStatus.setOrgId(rs.getInt(3));
+			commStatus.setCommStatus(rs.getInt(4));
+			commStatusList.add(commStatus);
+		}
+		if(!dataModelMap.containsKey("DeviceCommStatus")){
+			dataModelMap.put("DeviceCommStatus", commStatusList);
 		}
 		OracleJdbcUtis.closeDBConnection(conn, stmt, pstmt, rs);
 	}

@@ -196,6 +196,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: itemMeaning[0][1],
+        		                            	tooltip:itemMeaning[0][1],
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         		                            		Ext.Ajax.request({
@@ -240,6 +241,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: itemMeaning[1][1],
+        		                            	tooltip:itemMeaning[1][1],
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         		                            		Ext.Ajax.request({
@@ -295,6 +297,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: '开',
+        		                            	tooltip:'开',
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         		                            		Ext.Ajax.request({
@@ -338,6 +341,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	disabled:hand,
             		                            hidden:hidden,
         		                            	text: '关',
+        		                            	tooltip:'关',
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         		                            		Ext.Ajax.request({
@@ -383,6 +387,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            height: 25,
         		                            width: 38,
         		                            text: text,
+        		                            tooltip: text,
         		                            disabled:hand,
         		                            hidden:hidden,
         		                            handler: function () {

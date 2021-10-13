@@ -1,73 +1,11 @@
-Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
+Ext.define('AP.view.alarmQuery.PumpSwitchingValueAlarmInfoView', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.EnumValueAlarmInfoView',
+    alias: 'widget.PumpSwitchingValueAlarmInfoView',
     layout: "fit",
-    id: "EnumValueAlarmInfoView_Id",
+    id: "PumpSwitchingValueAlarmInfoView_Id",
     border: false,
     //forceFit : true,
     initComponent: function () {
-    	var deviceTypeCombStore = new Ext.data.JsonStore({
-        	pageSize:defaultWellComboxSize,
-            fields: [{
-                name: "boxkey",
-                type: "string"
-            }, {
-                name: "boxval",
-                type: "string"
-            }],
-            proxy: {
-            	url: context + '/wellInformationManagerController/loadDataDictionaryComboxList',
-                type: "ajax",
-                actionMethods: {
-                    read: 'POST'
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'totals'
-                }
-            },
-            autoLoad: true,
-            listeners: {
-                beforeload: function (store, options) {
-                    var new_params = {
-                    	itemCode: 'deviceType'
-                    };
-                    Ext.apply(store.proxy.extraParams,new_params);
-                }
-            }
-        });
-    	
-        var deviceTypeCombo = Ext.create(
-                'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备类型',
-                    id: "EnumValueAlarmDeviceTypeListComb_Id",
-                    labelWidth: 60,
-                    width: 170,
-                    labelAlign: 'left',
-                    queryMode: 'remote',
-                    typeAhead: true,
-                    store: deviceTypeCombStore,
-                    autoSelect: false,
-                    editable: false,
-                    triggerAction: 'all',
-                    displayField: "boxval",
-                    valueField: "boxkey",
-                    pageSize:comboxPagingStatus,
-                    minChars:0,
-                    emptyText: cosog.string.all,
-                    blankText: cosog.string.all,
-                    listeners: {
-                        expand: function (sm, selections) {
-                            deviceTypeCombo.getStore().loadPage(1); // 加载井下拉框的store
-                        },
-                        select: function (combo, record, index) {
-                        	Ext.getCmp("EnumValueAlarmDeviceListComb_Id").setValue('');
-                        	Ext.getCmp("EnumValueAlarmGridPanel_Id").getStore().loadPage(1);
-                        }
-                    }
-                });
-        
         var deviceCombStore = new Ext.data.JsonStore({
         	pageSize:defaultWellComboxSize,
             fields: [{
@@ -93,8 +31,8 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('EnumValueAlarmDeviceListComb_Id').getValue();
-                    var deviceType = Ext.getCmp('EnumValueAlarmDeviceTypeListComb_Id').getValue();
+                    var wellName = Ext.getCmp('PumpSwitchingValueAlarmDeviceListComb_Id').getValue();
+                    var deviceType = 0;
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: deviceType,
@@ -108,7 +46,7 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备',
-                    id: "EnumValueAlarmDeviceListComb_Id",
+                    id: "PumpSwitchingValueAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
                     labelAlign: 'left',
@@ -129,15 +67,15 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("EnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceTypeCombo,'-',deviceCombo,'-',{
+            tbar: [deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '报警级别',
-				id : 'EnumValueAlarmLevelComb_Id',
+				id : 'PumpSwitchingValueAlarmLevelComb_Id',
 				labelWidth: 60,
                 width: 170,
                 labelAlign: 'left',
@@ -158,13 +96,13 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("EnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
             	xtype : "combobox",
 				fieldLabel : '是否发送短信',
-				id : 'EnumValueAlarmIsSendMessageComb_Id',
+				id : 'PumpSwitchingValueAlarmIsSendMessageComb_Id',
 				labelWidth: 80,
                 width: 190,
                 labelAlign: 'left',
@@ -185,7 +123,7 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("EnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -197,10 +135,10 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
                 width: 130,
                 format: 'Y-m-d ',
                 value: '',
-                id: 'EnumValueAlarmQueryStartDate_Id',
+                id: 'PumpSwitchingValueAlarmQueryStartDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("EnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             },{
@@ -213,10 +151,10 @@ Ext.define('AP.view.alarmQuery.EnumValueAlarmInfoView', {
                 format: 'Y-m-d ',
                 value: '',
 //                value: new Date(),
-                id: 'EnumValueAlarmQueryEndDate_Id',
+                id: 'PumpSwitchingValueAlarmQueryEndDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("EnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             }]

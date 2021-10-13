@@ -40,15 +40,17 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		
+                    		if(selected.length>0){
+                    			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+                    			if (isNotVal(gridPanel)) {
+                    				gridPanel.getStore().load();
+                    			}else{
+                    				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+                    			}
+                    		}
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-                			if (isNotVal(gridPanel)) {
-                				gridPanel.getStore().load();
-                			}else{
-                				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
-                			}
+                    		
                     	}
                     }
                 });

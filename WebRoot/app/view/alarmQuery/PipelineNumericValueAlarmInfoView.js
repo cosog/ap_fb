@@ -1,74 +1,12 @@
-Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
+Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.SwitchingValueAlarmInfoView',
+    alias: 'widget.PipelineNumericValueAlarmInfoView',
     layout: "fit",
-    id: "SwitchingValueAlarmInfoView_Id",
+    id: "PipelineNumericValueAlarmInfoView_Id",
     border: false,
     //forceFit : true,
     initComponent: function () {
-//    	var SwitchingValueAlarmStore= Ext.create('AP.store.alarmQuery.SwitchingValueAlarmStore');
-    	var deviceTypeCombStore = new Ext.data.JsonStore({
-        	pageSize:defaultWellComboxSize,
-            fields: [{
-                name: "boxkey",
-                type: "string"
-            }, {
-                name: "boxval",
-                type: "string"
-            }],
-            proxy: {
-            	url: context + '/wellInformationManagerController/loadDataDictionaryComboxList',
-                type: "ajax",
-                actionMethods: {
-                    read: 'POST'
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'list',
-                    totalProperty: 'totals'
-                }
-            },
-            autoLoad: true,
-            listeners: {
-                beforeload: function (store, options) {
-                    var new_params = {
-                    	itemCode: 'deviceType'
-                    };
-                    Ext.apply(store.proxy.extraParams,new_params);
-                }
-            }
-        });
-    	
-        var deviceTypeCombo = Ext.create(
-                'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备类型',
-                    id: "SwitchingValueAlarmDeviceTypeListComb_Id",
-                    labelWidth: 60,
-                    width: 170,
-                    labelAlign: 'left',
-                    queryMode: 'remote',
-                    typeAhead: true,
-                    store: deviceTypeCombStore,
-                    autoSelect: false,
-                    editable: false,
-                    triggerAction: 'all',
-                    displayField: "boxval",
-                    valueField: "boxkey",
-                    pageSize:comboxPagingStatus,
-                    minChars:0,
-                    emptyText: cosog.string.all,
-                    blankText: cosog.string.all,
-                    listeners: {
-                        expand: function (sm, selections) {
-                            deviceTypeCombo.getStore().loadPage(1); // 加载井下拉框的store
-                        },
-                        select: function (combo, record, index) {
-                        	Ext.getCmp("SwitchingValueAlarmDeviceListComb_Id").setValue('');
-                        	Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
-                        }
-                    }
-                });
-        
+//    	var PipelineNumericValueAlarmStore= Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmStore');
         var deviceCombStore = new Ext.data.JsonStore({
         	pageSize:defaultWellComboxSize,
             fields: [{
@@ -94,8 +32,8 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('SwitchingValueAlarmDeviceListComb_Id').getValue();
-                    var deviceType = Ext.getCmp('SwitchingValueAlarmDeviceTypeListComb_Id').getValue();
+                    var wellName = Ext.getCmp('PipelineNumericValueAlarmDeviceListComb_Id').getValue();
+                    var deviceType = 0;
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: deviceType,
@@ -109,7 +47,7 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
                     fieldLabel: '设备',
-                    id: "SwitchingValueAlarmDeviceListComb_Id",
+                    id: "PipelineNumericValueAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
                     labelAlign: 'left',
@@ -130,15 +68,15 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceTypeCombo,'-',deviceCombo,'-',{
+            tbar: [deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '报警级别',
-				id : 'SwitchingValueAlarmLevelComb_Id',
+				id : 'PipelineNumericValueAlarmLevelComb_Id',
 				labelWidth: 60,
                 width: 170,
                 labelAlign: 'left',
@@ -159,13 +97,13 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
             	xtype : "combobox",
 				fieldLabel : '是否发送短信',
-				id : 'SwitchingValueAlarmIsSendMessageComb_Id',
+				id : 'PipelineNumericValueAlarmIsSendMessageComb_Id',
 				labelWidth: 80,
                 width: 190,
                 labelAlign: 'left',
@@ -186,7 +124,7 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -198,10 +136,10 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
                 width: 130,
                 format: 'Y-m-d ',
                 value: '',
-                id: 'SwitchingValueAlarmQueryStartDate_Id',
+                id: 'PipelineNumericValueAlarmQueryStartDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             },{
@@ -214,10 +152,10 @@ Ext.define('AP.view.alarmQuery.SwitchingValueAlarmInfoView', {
                 format: 'Y-m-d ',
                 value: '',
 //                value: new Date(),
-                id: 'SwitchingValueAlarmQueryEndDate_Id',
+                id: 'PipelineNumericValueAlarmQueryEndDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("SwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                		Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
             }]

@@ -5,10 +5,8 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
     border: false,
     initComponent: function () {
         var me = this;
-        var CommunicationAlarmInfoView = Ext.create('AP.view.alarmQuery.CommunicationAlarmInfoView');
-        var NumericValueAlarmInfoView = Ext.create('AP.view.alarmQuery.NumericValueAlarmInfoView');
-        var EnumValueAlarmInfoView = Ext.create('AP.view.alarmQuery.EnumValueAlarmInfoView');
-        var SwitchingValueAlarmInfoView = Ext.create('AP.view.alarmQuery.SwitchingValueAlarmInfoView');
+        var PumpAlarmQueryInfoView = Ext.create('AP.view.alarmQuery.PumpAlarmQueryInfoView');
+        var PipelineAlarmQueryInfoView = Ext.create('AP.view.alarmQuery.PipelineAlarmQueryInfoView');
         Ext.apply(me, {
         	items: [{
         		xtype: 'tabpanel',
@@ -17,61 +15,85 @@ Ext.define("AP.view.alarmQuery.AlarmQueryInfoView", {
         		border: false,
         		tabPosition: 'bottom',
         		items: [{
-        				title: '通信状态报警',
-        				id:'CommunicationAlarmInfoPanel_Id',
-        				items: [CommunicationAlarmInfoView],
+        				title: '泵设备',
+        				id:'PumpAlarmQueryPanel_Id',
+        				items: [PumpAlarmQueryInfoView],
         				layout: "fit",
         				border: false
         			},{
-        				title: '数值量报警',
-        				id:'NumericValueAlarmInfoPanel_Id',
-        				items: [NumericValueAlarmInfoView],
-        				layout: "fit",
-        				border: false
-        			},{
-        				title: '枚举量报警',
-        				id:'EnumValueAlarmInfoPanel_Id',
-        				items: [EnumValueAlarmInfoView],
-        				layout: "fit",
-        				border: false
-        			},{
-        				title: '开关量报警',
-        				id:'SwitchingValueAlarmInfoPanel_Id',
-        				items: [SwitchingValueAlarmInfoView],
+        				title: '管设备',
+        				id:'PipelineAlarmQueryPanel_Id',
+        				items: [PipelineAlarmQueryInfoView],
         				layout: "fit",
         				border: false
         			}],
         			listeners: {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
-        					if(newCard.id=="CommunicationAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("CommunicationAlarmGridPanel_Id");
-        						if (isNotVal(gridPanel)) {
-        							gridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.alarmQuery.CommunicationAlarmStore');
-        						}
-        					}else if(newCard.id=="NumericValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("NumericValueAlarmGridPanel_Id");
-        						if (isNotVal(gridPanel)) {
-        							gridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.alarmQuery.NumericValueAlarmStore');
-        						}
-        					}else if(newCard.id=="EnumValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("EnumValueAlarmGridPanel_Id");
-        						if (isNotVal(gridPanel)) {
-        							gridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.alarmQuery.EnumValueAlarmStore');
-        						}
-        					}else if(newCard.id=="SwitchingValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("SwitchingValueAlarmGridPanel_Id");
-        						if (isNotVal(gridPanel)) {
-        							gridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.alarmQuery.SwitchingValueAlarmStore');
-        						}
+        					if(newCard.id=="PumpAlarmQueryPanel_Id"){
+        						var secondTabPanel = Ext.getCmp("PumpAlarmQueryTabPanel");
+        						var secondActiveId = secondTabPanel.getActiveTab().id;
+        						if(secondActiveId=="PumpCommunicationAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PumpCommunicationAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmStore');
+            						}
+            					}else if(secondActiveId=="PumpNumericValueAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
+            						}
+            					}else if(secondActiveId=="PumpEnumValueAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PumpEnumValueAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PumpEnumValueAlarmStore');
+            						}
+            					}else if(secondActiveId=="PumpSwitchingValueAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmStore');
+            						}
+            					}
+        					}else if(newCard.id=="PipelineAlarmQueryPanel_Id"){
+        						var secondTabPanel = Ext.getCmp("PipelineAlarmQueryTabPanel");
+        						var secondActiveId = secondTabPanel.getActiveTab().id;
+        						if(secondActiveId=="PipelineCommunicationAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PipelineCommunicationAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PipelineCommunicationAlarmStore');
+            						}
+            					}else if(secondActiveId=="PipelineNumericValueAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmStore');
+            						}
+            					}else if(secondActiveId=="PipelineEnumValueAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PipelineEnumValueAlarmStore');
+            						}
+            					}else if(secondActiveId=="PipelineSwitchingValueAlarmInfoPanel_Id"){
+            						var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
+            						if (isNotVal(gridPanel)) {
+            							gridPanel.getStore().load();
+            						}else{
+            							Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore');
+            						}
+            					}
         					}
         				}
         			}

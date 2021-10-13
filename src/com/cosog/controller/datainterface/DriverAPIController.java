@@ -33,6 +33,7 @@ import org.springframework.web.socket.TextMessage;
 
 import com.cosog.controller.base.BaseController;
 import com.cosog.model.AlarmShowStyle;
+import com.cosog.model.CommStatus;
 import com.cosog.model.calculate.CommResponseData;
 import com.cosog.model.calculate.TimeEffResponseData;
 import com.cosog.model.calculate.TimeEffTotalResponseData;
@@ -294,6 +295,21 @@ public class DriverAPIController extends BaseController{
 					
 					int result=commonDataService.getBaseDao().updateOrDeleteBySql(updateRealData);
 					result=commonDataService.getBaseDao().updateOrDeleteBySql(updateHistData);
+					
+					//更新内存中设备通信状态
+					Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+					List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+					if(commStatusList==null){
+						EquipmentDriverServerTask.LoadDeviceCommStatus();
+						commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+					}
+					for(int i=0;i<commStatusList.size();i++){
+						if(wellName.equals(commStatusList.get(i).getDeviceName()) && devicetype.equals(commStatusList.get(i).getDeviceType()+"")){
+							commStatusList.get(i).setCommStatus(acqOnline.getStatus()?1:0);
+							break;
+						}
+					}
+					
 					String commAlarm="";
 					if(acqOnline.getStatus()){
 						commAlarm="update tbl_alarminfo t set t.recoverytime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss') "
@@ -641,6 +657,19 @@ public class DriverAPIController extends BaseController{
 						acquisitionItemInfoList.add(acquisitionItemInfo);
 					}
 					
+					//更新内存中设备通信状态
+					Map<String, Object> commStatusModelMap = DataModelMap.getMapObject();
+					List<CommStatus> commStatusList=(List<CommStatus>) commStatusModelMap.get("DeviceCommStatus");
+					if(commStatusList==null){
+						EquipmentDriverServerTask.LoadDeviceCommStatus();
+						commStatusList=(List<CommStatus>) commStatusModelMap.get("DeviceCommStatus");
+					}
+					for(int i=0;i<commStatusList.size();i++){
+						if(wellName.equals(commStatusList.get(i).getDeviceName()) && deviceType.equals(commStatusList.get(i).getDeviceType()+"")){
+							commStatusList.get(i).setCommStatus(1);
+							break;
+						}
+					}
 					
 					if(save || alarm){//如果满足保存周期或者有报警，保存数据
 						commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
