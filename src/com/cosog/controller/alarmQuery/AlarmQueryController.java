@@ -49,7 +49,7 @@ public class AlarmQueryController extends BaseController{
 	private int totals;
 	
 	@RequestMapping("/getAlarmData")
-	public String getCommunicationAlarmData() throws Exception {
+	public String getAlarmData() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
@@ -83,7 +83,7 @@ public class AlarmQueryController extends BaseController{
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
-		json = alarmQueryService.getCommunicationAlarmData(orgId,deviceType,deviceName,alarmType,alarmLevel,pager);
+		json = alarmQueryService.getAlarmData(orgId,deviceType,deviceName,alarmType,alarmLevel,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -95,7 +95,56 @@ public class AlarmQueryController extends BaseController{
 		return null;
 	}
 	
-	
+	@RequestMapping("/exportAlarmData")
+	public String exportAlarmData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		alarmType = ParamUtils.getParameter(request, "alarmType");
+		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
+		startDate = ParamUtils.getParameter(request, "startDate");
+		endDate = ParamUtils.getParameter(request, "endDate");
+		
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		HttpSession session=request.getSession();
+		user = (User) session.getAttribute("userLogin");
+		if (user != null) {
+			orgId = "" + user.getUserorgids();
+			if(user.getUserOrgid()==0){
+				orgId+=",0";
+			}
+		}
+		if(!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from viw_alarminfo t ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+			if(!StringManagerUtils.isNotNull(startDate)){
+				startDate=endDate;
+			}
+		}
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		json = alarmQueryService.getAlarmExportData(orgId,deviceType,deviceName,alarmType,alarmLevel,pager);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 	
 	public String getLimit() {
 		return limit;

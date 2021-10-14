@@ -22,12 +22,12 @@ Ext.define('AP.store.historyQuery.PipelineHistoryQueryWellListStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createHistoryQueryColumn(arrColumns);
+            Ext.getCmp("PipelineHistoryQueryColumnStr_Id").setValue(column);
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PipelineHistoryQueryListGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createHistoryQueryColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,
@@ -53,6 +53,9 @@ Ext.define('AP.store.historyQuery.PipelineHistoryQueryWellListStore', {
                     	itemdblclick: function (view,record,item,index,e,eOpts) {
                     		var wellName=Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').getValue();
                     		if(wellName==null||wellName==""){
+                    			Ext.getCmp("PipelineHistoryQueryHisBtn_Id").hide();
+                            	Ext.getCmp("PipelineHistoryQueryAllBtn_Id").show();
+                    			
                     			Ext.getCmp("PipelineHistoryQueryStartDate_Id").show();
                             	Ext.getCmp("PipelineHistoryQueryEndDate_Id").show();
                             	
@@ -97,6 +100,7 @@ Ext.define('AP.store.historyQuery.PipelineHistoryQueryWellListStore', {
             }
             
             if(get_rawData.totalCount>0){
+            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
         },

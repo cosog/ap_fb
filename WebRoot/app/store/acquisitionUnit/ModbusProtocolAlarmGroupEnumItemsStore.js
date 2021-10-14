@@ -64,6 +64,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupEnumItemsStore', {
                 panel.add(gridPanel);
             }
             if(get_rawData.totalRoot.length>0){
+            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
         },

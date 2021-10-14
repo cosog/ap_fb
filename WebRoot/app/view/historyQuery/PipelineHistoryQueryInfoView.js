@@ -45,7 +45,7 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
         
         var pipelineDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '井号',
+                    fieldLabel: '井名',
                     id: "HistoryQueryPipelineDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -68,13 +68,18 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         },
                         select: function (combo, record, index) {
                         	if(combo.value==""){
+                        		Ext.getCmp("PipelineHistoryQueryHisBtn_Id").show();
+                            	Ext.getCmp("PipelineHistoryQueryAllBtn_Id").hide();
+                        		
                         		Ext.getCmp("PipelineHistoryQueryStartDate_Id").hide();
                         		Ext.getCmp("PipelineHistoryQueryEndDate_Id").hide();
                         	}else{
+                        		Ext.getCmp("PipelineHistoryQueryHisBtn_Id").hide();
+                            	Ext.getCmp("PipelineHistoryQueryAllBtn_Id").show();
+                        		
                         		Ext.getCmp("PipelineHistoryQueryStartDate_Id").show();
                         		Ext.getCmp("PipelineHistoryQueryEndDate_Id").show();
                         	}
-                        	
                         	
                         	Ext.getCmp("PipelineHistoryQueryListGridPanel_Id").getStore().loadPage(1);
                         }
@@ -95,6 +100,11 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         id: 'PipelineHistoryQueryInfoDeviceListSelectRow_Id',
                         xtype: 'textfield',
                         value: 0,
+                        hidden: true
+                    },{
+                        id: 'PipelineHistoryQueryColumnStr_Id',
+                        xtype: 'textfield',
+                        value: '',
                         hidden: true
                     },pipelineDeviceCombo,'-',{
                         xtype: 'datefield',
@@ -127,10 +137,83 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         		Ext.getCmp("PipelineHistoryQueryListGridPanel_Id").getStore().loadPage(1);
                             }
                         }
+                    },'-', {
+                        xtype: 'button',
+                        text: cosog.string.exportExcel,
+                        pressed: true,
+                        hidden:false,
+                        handler: function (v, o) {
+                        	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                        	var deviceName=Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').getValue();
+                        	var startDate=Ext.getCmp('PipelineHistoryQueryStartDate_Id').rawValue;
+                            var endDate=Ext.getCmp('PipelineHistoryQueryEndDate_Id').rawValue;
+                       	 	var deviceType=1;
+                       	 	var fileName='管设备历史数据';
+                       	 	var title='管设备历史数据';
+                       	 	var columnStr=Ext.getCmp("PipelineHistoryQueryColumnStr_Id").getValue();
+                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDate,fileName,title,columnStr);
+                        }
+                    }, '->', {
+                    	xtype: 'button',
+                        text:'查看历史',
+                        tooltip:'点击按钮或者双击表格，查看历史数据',
+                        id:'PipelineHistoryQueryHisBtn_Id',
+                        pressed: true,
+                        hidden: false,
+                        handler: function (v, o) {
+                        	var selectRow= Ext.getCmp("PipelineHistoryQueryInfoDeviceListSelectRow_Id").getValue();
+                    		var gridPanel=Ext.getCmp("PipelineHistoryQueryListGridPanel_Id");
+                    		if(isNotVal(gridPanel)){
+                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                    			var deviceName=selectedItem.data.wellName;
+                    			Ext.getCmp("PipelineHistoryQueryHisBtn_Id").hide();
+                    			Ext.getCmp("PipelineHistoryQueryAllBtn_Id").show();
+                    			
+                    			Ext.getCmp("PipelineHistoryQueryStartDate_Id").show();
+                            	Ext.getCmp("PipelineHistoryQueryEndDate_Id").show();
+                            	
+                            	Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue(deviceName);
+                            	Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue(deviceName);
+                            	
+                            	Ext.getCmp('PipelineHistoryQueryStartDate_Id').setValue('');
+                            	Ext.getCmp('PipelineHistoryQueryStartDate_Id').setRawValue('');
+                            	
+                            	Ext.getCmp('PipelineHistoryQueryEndDate_Id').setValue('');
+                            	Ext.getCmp('PipelineHistoryQueryEndDate_Id').setRawValue('');
+                            	
+                            	
+                            	Ext.getCmp("PipelineHistoryQueryListGridPanel_Id").getStore().loadPage(1);
+                    		}
+                        }
+                    },{
+                    	xtype: 'button',
+                        text:'返回概览',
+                        id:'PipelineHistoryQueryAllBtn_Id',
+                        pressed: true,
+                        hidden: true,
+                        handler: function (v, o) {
+                        	Ext.getCmp("PipelineHistoryQueryHisBtn_Id").show();
+                        	Ext.getCmp("PipelineHistoryQueryAllBtn_Id").hide();
+                        	
+                			Ext.getCmp("PipelineHistoryQueryStartDate_Id").hide();
+                        	Ext.getCmp("PipelineHistoryQueryEndDate_Id").hide();
+                        	
+                        	Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
+                        	Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
+                        	
+                        	Ext.getCmp('PipelineHistoryQueryStartDate_Id').setValue('');
+                        	Ext.getCmp('PipelineHistoryQueryStartDate_Id').setRawValue('');
+                        	
+                        	Ext.getCmp('PipelineHistoryQueryEndDate_Id').setValue('');
+                        	Ext.getCmp('PipelineHistoryQueryEndDate_Id').setRawValue('');
+                        	
+                        	
+                        	Ext.getCmp("PipelineHistoryQueryListGridPanel_Id").getStore().loadPage(1);
+                        }
                     }]
                 }, {
                 	region: 'east',
-                    width: '70%',
+                    width: '65%',
                     autoScroll: true,
                     split: true,
                     collapsible: true,
@@ -430,6 +513,9 @@ function pipelineHistoryQueryCurve(item){
 			    var data = result.list;
 			    var tickInterval = 1;
 			    tickInterval = Math.floor(data.length / 10) + 1;
+			    if(tickInterval<100){
+			    	tickInterval=100;
+			    }
 //			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
 //			    if(tickInterval<10){
 //			    	tickInterval=10;

@@ -459,6 +459,44 @@ public class ConfigFile {
 	    }
 	}
 	
+	public static class DriverProbe{
+		private String init;
+		private String mem;
+		private String disk;
+		private String host;
+		private String cpu;
+		public String getInit() {
+			return init;
+		}
+		public void setInit(String init) {
+			this.init = init;
+		}
+		public String getMem() {
+			return mem;
+		}
+		public void setMem(String mem) {
+			this.mem = mem;
+		}
+		public String getDisk() {
+			return disk;
+		}
+		public void setDisk(String disk) {
+			this.disk = disk;
+		}
+		public String getHost() {
+			return host;
+		}
+		public void setHost(String host) {
+			this.host = host;
+		}
+		public String getCpu() {
+			return cpu;
+		}
+		public void setCpu(String cpu) {
+			this.cpu = cpu;
+		}
+	}
+	
 	public static class DriverConfig{
 		private String server;
 		private String protocol;
@@ -468,7 +506,7 @@ public class ConfigFile {
 		private String readAddr;
 		private String writeAddr;
 		private String writeSMS;
-		private String probe;
+		private DriverProbe probe;
 		public String getServer() {
 			return server;
 		}
@@ -487,10 +525,10 @@ public class ConfigFile {
 		public void setId(String id) {
 			this.id = id;
 		}
-		public String getProbe() {
+		public DriverProbe getProbe() {
 			return probe;
 		}
-		public void setProbe(String probe) {
+		public void setProbe(DriverProbe probe) {
 			this.probe = probe;
 		}
 		public String getReadAddr() {

@@ -22,11 +22,11 @@ Ext.define('AP.store.alarmQuery.PumpCommunicationAlarmStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createAlarmQueryColumn(arrColumns);
+            Ext.getCmp("PumpCommunicationAlarmColumnStr_Id").setValue(column);
             var gridPanel = Ext.getCmp("PumpCommunicationAlarmGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createAlarmQueryColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,

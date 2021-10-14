@@ -28,7 +28,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getCommunicationAlarmData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
+	public String getAlarmData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
 		String ddicName="commStatusAlarm";
 		if(StringManagerUtils.stringToInteger(alarmType)==1){
 			ddicName="numericValueAlarm";
@@ -59,6 +59,38 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		
 		String getResult = this.findCustomPageBySqlEntity(sql,finalSql, columns, 20 + "", pager);
+		return getResult.replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getAlarmExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
+		String ddicName="commStatusAlarm";
+		if(StringManagerUtils.stringToInteger(alarmType)==1){
+			ddicName="numericValueAlarm";
+		}else if(StringManagerUtils.stringToInteger(alarmType)==2){
+			ddicName="enumValueAlarm";
+		}else if(StringManagerUtils.stringToInteger(alarmType)==3){
+			ddicName="switchingValueAlarm";
+		}
+		DataDictionary ddic = null;
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String columns = ddic.getTableHeader();
+		String sql=ddic.getSql()+" from viw_alarminfo t where t.orgid in ("+orgId+") "
+				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+		if(StringManagerUtils.isNotNull(deviceType)){
+			sql+=" and t.devicetype="+deviceType;
+		}
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		if(StringManagerUtils.isNotNull(alarmType)){
+			sql+=" and t.alarmType="+alarmType;
+		}
+		if(StringManagerUtils.isNotNull(alarmLevel)){
+			sql+=" and t.alarmLevel="+alarmLevel;
+		}
+		sql+=" order by t.alarmtime desc";
+		
+		String getResult = this.findExportDataBySqlEntity(sql,sql, columns, 20 + "", pager);
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 }

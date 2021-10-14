@@ -44,7 +44,7 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
         
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备',
+                    fieldLabel: '井名',
                     id: "PumpCommunicationAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -71,7 +71,12 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceCombo,'-',{
+            tbar: [{
+                id: 'PumpCommunicationAlarmColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '是否发送短信',
 				id : 'PumpCommunicationAlarmIsSendMessageComb_Id',
@@ -128,6 +133,25 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
                 	select: function (combo, record, index) {
                 		Ext.getCmp("PumpCommunicationAlarmGridPanel_Id").getStore().loadPage(1);
                     }
+                }
+            },'-', {
+                xtype: 'button',
+                text: cosog.string.exportExcel,
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=0;
+                	var deviceName=Ext.getCmp('PumpCommunicationAlarmDeviceListComb_Id').getValue();
+                	var startDate=Ext.getCmp('PumpCommunicationAlarmQueryStartDate_Id').rawValue;
+                    var endDate=Ext.getCmp('PumpCommunicationAlarmQueryEndDate_Id').rawValue;
+               	 	var alarmType=0;
+               	 	var alarmLevel='';
+               	 	
+               	 	var fileName='泵设备通信报警数据';
+               	 	var title='泵设备通信报警数据';
+               	 	var columnStr=Ext.getCmp("PumpCommunicationAlarmColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
                 }
             }]
         });

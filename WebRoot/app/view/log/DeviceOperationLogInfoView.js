@@ -108,7 +108,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
         
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备',
+                    fieldLabel: '井名',
                     id: "DeviceOperationLogDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -203,7 +203,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
 //                hidden: true,
                 fieldLabel: '区间',
                 labelWidth: 30,
-                width: 120,
+                width: 130,
                 format: 'Y-m-d ',
                 value: '',
                 id: 'DeviceOperationLogQueryStartDate_Id',
@@ -218,7 +218,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
 //                hidden: true,
                 fieldLabel: '至',
                 labelWidth: 15,
-                width: 105,
+                width: 115,
                 format: 'Y-m-d ',
                 value: '',
 //                value: new Date(),

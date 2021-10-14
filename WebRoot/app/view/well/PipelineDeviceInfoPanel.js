@@ -371,7 +371,7 @@ var PipelineDeviceInfoHandsontableHelper = {
 			                        params.push(changes[i][2]);
 			                        params.push(changes[i][3]);
 			                        
-			                        if("edit"==source&&params[1]=="wellName"){//编辑井号单元格
+			                        if("edit"==source&&params[1]=="wellName"){//编辑井名单元格
 			                        	var data="{\"oldWellName\":\""+params[2]+"\",\"newWellName\":\""+params[3]+"\"}";
 			                        	pipelineDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
 			                        }

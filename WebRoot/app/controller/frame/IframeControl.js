@@ -295,7 +295,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
 			var statGridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
 			if (isNotVal(statGridPanel)) {
-				statGridPanel.getSelectionModel().deselectAll(true);
+//				statGridPanel.getSelectionModel().deselectAll(true);
 				statGridPanel.getStore().load();
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore');
@@ -311,7 +311,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 			var statGridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
 			if (isNotVal(statGridPanel)) {
-				statGridPanel.getSelectionModel().deselectAll(true);
+//				statGridPanel.getSelectionModel().deselectAll(true);
 				statGridPanel.getStore().load();
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore');

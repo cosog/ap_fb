@@ -20,9 +20,9 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolTreeInfoStore', {
         beforeload: function (store, options) {
         },
         load: function (store, options, eOpts) {
-        	var ModbusProtocolConfigTreeGridPanel = Ext.getCmp("ModbusProtocolConfigTreeGridPanel_Id");
-            if (!isNotVal(ModbusProtocolConfigTreeGridPanel)) {
-                ModbusProtocolConfigTreeGridPanel = Ext.create('Ext.tree.Panel', {
+        	var treeGridPanel = Ext.getCmp("ModbusProtocolConfigTreeGridPanel_Id");
+            if (!isNotVal(treeGridPanel)) {
+                treeGridPanel = Ext.create('Ext.tree.Panel', {
                     id: "ModbusProtocolConfigTreeGridPanel_Id",
 //                    layout: "fit",
                     border: false,
@@ -123,9 +123,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolTreeInfoStore', {
 
                 });
                 var ModbusProtocolConfigPanel = Ext.getCmp("ModbusProtocolConfigPanel_Id");
-                ModbusProtocolConfigPanel.add(ModbusProtocolConfigTreeGridPanel);
+                ModbusProtocolConfigPanel.add(treeGridPanel);
             }
-            ModbusProtocolConfigTreeGridPanel.getSelectionModel().select(0, true);
+            treeGridPanel.getSelectionModel().deselectAll(true);
+            treeGridPanel.getSelectionModel().select(0, true);
         }
     }
 });

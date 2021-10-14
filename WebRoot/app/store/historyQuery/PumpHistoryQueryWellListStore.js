@@ -22,12 +22,12 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createHistoryQueryColumn(arrColumns);
+            Ext.getCmp("PumpHistoryQueryColumnStr_Id").setValue(column);
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createHistoryQueryColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,
@@ -100,6 +100,7 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
             }
             
             if(get_rawData.totalCount>0){
+            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
         },

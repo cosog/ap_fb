@@ -113,6 +113,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAddrMappingTreeInfoStore', {
                 var panel = Ext.getCmp("ModbusProtocolAddrMappingConfigPanel_Id");
                 panel.add(treeGridPanel);
             }
+            treeGridPanel.getSelectionModel().deselectAll(true);
             treeGridPanel.getSelectionModel().select(0, true);
         }
     }

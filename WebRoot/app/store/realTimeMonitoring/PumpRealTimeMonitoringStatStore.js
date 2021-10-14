@@ -41,9 +41,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
                     listeners: {
                     	selectionchange: function (view, selected, o) {
                     		if(selected.length>0){
-                    			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-                    			if (isNotVal(gridPanel)) {
-                    				gridPanel.getStore().load();
+                    			var PumpRealTimeMonitoringListGridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+                    			if (isNotVal(PumpRealTimeMonitoringListGridPanel)) {
+                    				PumpRealTimeMonitoringListGridPanel.getSelectionModel().deselectAll(true);
+                    				PumpRealTimeMonitoringListGridPanel.getStore().load();
                     			}else{
                     				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
                     			}
@@ -58,6 +59,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
                 PumpRealTimeMonitoringStatInfoPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
+            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
         },

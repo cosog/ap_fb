@@ -44,7 +44,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
         
         var pumpDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '井号',
+                    fieldLabel: '井名',
                     id: "RealTimeMonitoringPumpDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -89,7 +89,27 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         	xtype: 'textfield',
                             value: 0,
                             hidden: true
-                         },pumpDeviceCombo]
+                         },{
+                             id: 'PumpRealTimeMonitoringColumnStr_Id',
+                             xtype: 'textfield',
+                             value: '',
+                             hidden: true
+                         },pumpDeviceCombo,'-', {
+                             xtype: 'button',
+                             text: cosog.string.exportExcel,
+                             pressed: true,
+                             hidden:false,
+                             handler: function (v, o) {
+                            	 var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                            	 var deviceName=Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').getValue();
+                            	 var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+                            	 var deviceType=0;
+                            	 var fileName='泵设备实时监控数据';
+                            	 var title='泵设备实时监控数据';
+                            	 var columnStr=Ext.getCmp("PumpRealTimeMonitoringColumnStr_Id").getValue();
+                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
+                             }
+                         }]
                     },{
                     	title:'状态统计',
                     	region: 'south',

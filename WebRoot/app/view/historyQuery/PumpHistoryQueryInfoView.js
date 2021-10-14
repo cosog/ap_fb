@@ -45,7 +45,7 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
         
         var pumpDeviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '井号',
+                    fieldLabel: '井名',
                     id: "HistoryQueryPumpDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -102,6 +102,11 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         xtype: 'textfield',
                         value: 0,
                         hidden: true
+                    },{
+                        id: 'PumpHistoryQueryColumnStr_Id',
+                        xtype: 'textfield',
+                        value: '',
+                        hidden: true
                     },pumpDeviceCombo,'-',{
                         xtype: 'datefield',
                         anchor: '100%',
@@ -132,6 +137,22 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         	select: function (combo, record, index) {
                         		Ext.getCmp("PumpHistoryQueryListGridPanel_Id").getStore().loadPage(1);
                             }
+                        }
+                    },'-', {
+                        xtype: 'button',
+                        text: cosog.string.exportExcel,
+                        pressed: true,
+                        hidden:false,
+                        handler: function (v, o) {
+                        	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                        	var deviceName=Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').getValue();
+                        	var startDate=Ext.getCmp('PumpHistoryQueryStartDate_Id').rawValue;
+                            var endDate=Ext.getCmp('PumpHistoryQueryEndDate_Id').rawValue;
+                       	 	var deviceType=0;
+                       	 	var fileName='泵设备历史数据';
+                       	 	var title='泵设备历史数据';
+                       	 	var columnStr=Ext.getCmp("PumpHistoryQueryColumnStr_Id").getValue();
+                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDate,fileName,title,columnStr);
                         }
                     }, '->', {
                     	xtype: 'button',
@@ -193,7 +214,7 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                     }]
                 }, {
                 	region: 'east',
-                    width: '70%',
+                    width: '65%',
                     autoScroll: true,
                     split: true,
                     collapsible: true,

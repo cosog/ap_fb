@@ -45,7 +45,7 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
         
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备',
+                    fieldLabel: '井名',
                     id: "PipelineSwitchingValueAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -72,7 +72,12 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceCombo,'-',{
+            tbar: [{
+                id: 'PipelineSwitchingValueAlarmColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '报警级别',
 				id : 'PipelineSwitchingValueAlarmLevelComb_Id',
@@ -156,6 +161,25 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                 	select: function (combo, record, index) {
                 		Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
+                }
+            },'-', {
+                xtype: 'button',
+                text: cosog.string.exportExcel,
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=1;
+                	var deviceName=Ext.getCmp('PipelineSwitchingValueAlarmDeviceListComb_Id').getValue();
+                	var alarmLevel=Ext.getCmp('PipelineSwitchingValueAlarmLevelComb_Id').getValue();
+                	var startDate=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartDate_Id').rawValue;
+                    var endDate=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndDate_Id').rawValue;
+               	 	var alarmType=2;
+               	 	
+               	 	var fileName='管设备开关量报警数据';
+               	 	var title='管设备开关量报警数据';
+               	 	var columnStr=Ext.getCmp("PipelineSwitchingValueAlarmColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
                 }
             }]
         });
