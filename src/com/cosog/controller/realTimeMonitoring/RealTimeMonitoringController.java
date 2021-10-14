@@ -144,6 +144,43 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/exportDeviceRealTimeOverviewDataExcel")
+	public String exportDeviceRealTimeOverviewDataExcel() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		String commStatus = ParamUtils.getParameter(request, "commStatus");
+		
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = realTimeMonitoringService.getDeviceRealTimeOverviewExportData(orgId,deviceName,deviceType,commStatus);
+		
+		
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/getDeviceRealTimeMonitoringData")
 	public String getDeviceRealTimeMonitoringData() throws Exception {
 		String json = "";
@@ -394,6 +431,50 @@ public class RealTimeMonitoringController extends BaseController {
 		response.setCharacterEncoding("utf-8");
 		// 输出json数据。
 		out.print(jsonLogin);
+		return null;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping("/getResourceProbeHistoryCurveData")
+	public String getResourceProbeHistoryCurveData() throws Exception {
+		String json = "";
+		String endDate = ParamUtils.getParameter(request, "endDate");
+		String startDate = ParamUtils.getParameter(request, "startDate");
+		String itemName = ParamUtils.getParameter(request, "itemName");
+		String itemCode = ParamUtils.getParameter(request, "itemCode");
+		
+		this.pager = new Page("pagerForm", request);
+		if(!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from tbl_resourcemonitoring t ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+		}
+		
+		if(!StringManagerUtils.isNotNull(startDate)){
+			startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),0);
+		}
+		
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		json =  this.realTimeMonitoringService.getResourceProbeHistoryCurveData(startDate,endDate,itemName,itemCode);
+		
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw;
+		try {
+			pw = response.getWriter();
+			pw.write(json);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

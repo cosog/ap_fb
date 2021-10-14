@@ -54,16 +54,15 @@ public class ResourceMonitoringTask {
 	@SuppressWarnings("static-access")
 //	@Scheduled(cron = "0/1 * * * * ?")
 	public void checkAndSendResourceMonitoring() throws SQLException, UnsupportedEncodingException, ParseException{
-		String probeAppUrl=Config.getInstance().configFile.getAgileCalculate().getProbe().getApp()[0];
-		String probeMemUrl=Config.getInstance().configFile.getAgileCalculate().getProbe().getMem()[0];
-		String probeCPUUrl=Config.getInstance().configFile.getAgileCalculate().getProbe().getCpu()[0];
+		String probeMemUrl=Config.getInstance().configFile.getDriverConfig().getProbe().getMem();
+		String probeCPUUrl=Config.getInstance().configFile.getDriverConfig().getProbe().getCpu();
 		
 		String adAllOfflineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/allDeviceOffline";
-		String adProbeUrl=Config.getInstance().configFile.getDriverConfig().getProbe();
+		String adProbeUrl=Config.getInstance().configFile.getDriverConfig().getProbe().getInit();
 		
-		String appRunStatus="停止";
-		int appRunStatusValue=0;
-		String appVersion="";
+		String acRunStatus="停止";
+		int acRunStatusValue=0;
+		String acVersion="";
 		
 		String adRunStatus="停止";
 		int adRunStatusValue=0;
@@ -82,14 +81,14 @@ public class ResourceMonitoringTask {
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
 		
-		//ac状态检测
-		String appProbeResponseDataStr=StringManagerUtils.sendPostMethod(probeAppUrl, "","utf-8");
-		type = new TypeToken<AppRunStatusProbeResonanceData>() {}.getType();
-		AppRunStatusProbeResonanceData appRunStatusProbeResonanceData=gson.fromJson(appProbeResponseDataStr, type);
-		if(appRunStatusProbeResonanceData!=null){
-			appRunStatus="运行";
-			appRunStatusValue=1;
-			appVersion=appRunStatusProbeResonanceData.getVer();
+		//ad状态检测
+		String appProbeResponseDataStr=StringManagerUtils.sendPostMethod(adProbeUrl, "","utf-8");
+		type = new TypeToken<DriverProbeResponse>() {}.getType();
+		DriverProbeResponse driverProbeResponse=gson.fromJson(appProbeResponseDataStr, type);
+		if(driverProbeResponse!=null){
+			adRunStatus="运行";
+			adRunStatusValue=1;
+			adVersion=driverProbeResponse.getVer();
 			String CPUProbeResponseDataStr=StringManagerUtils.sendPostMethod(probeCPUUrl, "","utf-8");
 			String MemoryProbeResponseDataStr=StringManagerUtils.sendPostMethod(probeMemUrl, "","utf-8");
 			type = new TypeToken<CPUProbeResponseData>() {}.getType();
@@ -122,21 +121,13 @@ public class ResourceMonitoringTask {
 				memUsedPercentValue=memoryProbeResponseData.getUsedPercent()+"";
 			}
 		}
-		//ad状态检测
-		String responseData=StringManagerUtils.sendPostMethod(adProbeUrl, "","utf-8");
-		type = new TypeToken<DriverProbeResponse>() {}.getType();
-		DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-		if(driverProbeResponse!=null){
-			adRunStatus="运行";
-			adRunStatusValue=1;
-			adVersion=driverProbeResponse.getVer();
-		}
+		
 		conn=OracleJdbcUtis.getConnection();
 		if(conn!=null){
 			cs = conn.prepareCall("{call prd_save_resourcemonitoring(?,?,?,?,?,?,?,?)}");
 			cs.setString(1, StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss"));
-			cs.setInt(2, appRunStatusValue);
-			cs.setString(3, appVersion);
+			cs.setInt(2, acRunStatusValue);
+			cs.setString(3, acVersion);
 			cs.setInt(4, adRunStatusValue);
 			cs.setString(5, adVersion);
 			cs.setString(6, cpuUsedPercentValue);
@@ -151,8 +142,9 @@ public class ResourceMonitoringTask {
 			}
 		}
 		String sendData="{"
-				+ "\"appRunStatus\":\""+appRunStatus+"\","
-				+ "\"appVersion\":\""+appVersion+"\","
+				+ "\"functionCode\":\"ResourceMonitoringData\","
+				+ "\"appRunStatus\":\""+adRunStatus+"\","
+				+ "\"appVersion\":\""+adVersion+"\","
 				+ "\"cpuUsedPercent\":\""+cpuUsedPercent+"\","
 				+ "\"cpuUsedPercentAlarmLevel\":"+cpuUsedPercentAlarmLevel+","
 				+ "\"memUsedPercent\":\""+memUsedPercent+"\","
@@ -164,8 +156,8 @@ public class ResourceMonitoringTask {
 				+ "\"tableSpaceUsedPercentAlarmLevel\":"+tableSpaceInfo.getAlarmLevel()+""
 				+ "}";
 		try {
-			infoHandler().sendMessageToUserByModule("RealtimeEvaluation", new TextMessage(sendData));
-			infoHandler2().sendMessageToBy("RealtimeEvaluation", sendData);
+			infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(sendData));
+			infoHandler2().sendMessageToBy("ApWebSocketClient", sendData);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

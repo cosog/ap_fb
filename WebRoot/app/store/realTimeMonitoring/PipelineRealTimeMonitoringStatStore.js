@@ -43,9 +43,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore', {
                     		
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-                			if (isNotVal(gridPanel)) {
-                				gridPanel.getStore().load();
+                    		var PipelineRealTimeMonitoringListGridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+                			if (isNotVal(PipelineRealTimeMonitoringListGridPanel)) {
+                				PipelineRealTimeMonitoringListGridPanel.getSelectionModel().deselectAll(true);
+                				PipelineRealTimeMonitoringListGridPanel.getStore().load();
                 			}else{
                 				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
                 			}
@@ -56,6 +57,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore', {
                 PipelineRealTimeMonitoringStatInfoPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
+            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
         },

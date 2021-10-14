@@ -46,7 +46,7 @@ Ext.define('AP.view.alarmQuery.PumpNumericValueAlarmInfoView', {
         
         var deviceCombo = Ext.create(
                 'Ext.form.field.ComboBox', {
-                    fieldLabel: '设备',
+                    fieldLabel: '井名',
                     id: "PumpNumericValueAlarmDeviceListComb_Id",
                     labelWidth: 35,
                     width: 145,
@@ -73,7 +73,12 @@ Ext.define('AP.view.alarmQuery.PumpNumericValueAlarmInfoView', {
                     }
                 });
     	Ext.apply(this, {
-            tbar: [deviceCombo,'-',{
+            tbar: [{
+                id: 'PumpNumericValueAlarmColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },deviceCombo,'-',{
             	xtype : "combobox",
 				fieldLabel : '报警级别',
 				id : 'PumpNumericValueAlarmLevelComb_Id',
@@ -157,6 +162,25 @@ Ext.define('AP.view.alarmQuery.PumpNumericValueAlarmInfoView', {
                 	select: function (combo, record, index) {
                 		Ext.getCmp("PumpNumericValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
+                }
+            },'-', {
+                xtype: 'button',
+                text: cosog.string.exportExcel,
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=0;
+                	var deviceName=Ext.getCmp('PumpNumericValueAlarmDeviceListComb_Id').getValue();
+                	var alarmLevel=Ext.getCmp('PumpNumericValueAlarmLevelComb_Id').getValue();
+                	var startDate=Ext.getCmp('PumpNumericValueAlarmQueryStartDate_Id').rawValue;
+                    var endDate=Ext.getCmp('PumpNumericValueAlarmQueryEndDate_Id').rawValue;
+               	 	var alarmType=1;
+               	 	
+               	 	var fileName='泵设备数值量报警数据';
+               	 	var title='泵设备数值量报警数据';
+               	 	var columnStr=Ext.getCmp("PumpNumericValueAlarmColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
                 }
             }]
         });

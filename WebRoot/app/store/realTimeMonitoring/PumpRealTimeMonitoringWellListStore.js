@@ -22,12 +22,12 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createRealTimeMonitoringColumn(arrColumns);
+            Ext.getCmp("PumpRealTimeMonitoringColumnStr_Id").setValue(column);
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createRealTimeMonitoringColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,
@@ -64,7 +64,12 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                 PumpRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
+//            	if(gridPanel.getSelectionModel().getSelection().length>0){
+//            		gridPanel.getSelectionModel().deselectAll(true);
+//            	}
             	gridPanel.getSelectionModel().select(0, true);
+            	
+            	
             }
         },
         beforeload: function (store, options) {

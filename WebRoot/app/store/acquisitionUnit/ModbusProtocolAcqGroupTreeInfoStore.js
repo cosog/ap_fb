@@ -116,6 +116,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqGroupTreeInfoStore', {
                 var panel = Ext.getCmp("ModbusProtocolAcqGroupConfigPanel_Id");
                 panel.add(gridPanel);
             }
+            gridPanel.getSelectionModel().deselectAll(true);
             gridPanel.getSelectionModel().select(0, true);
         }
     }

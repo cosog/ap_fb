@@ -117,6 +117,75 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
+	public String getDeviceHistoryExportData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		
+		String tableName="tbl_pumpacqdata_latest";
+		String hisTableName="tbl_pumpacqdata_hist";
+		String table="";
+		String ddicName="pumpHistoryQuery";
+		DataDictionary ddic = null;
+		List<String> ddicColumnsList=new ArrayList<String>();
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			tableName="tbl_pipelineacqdata_latest";
+			hisTableName="tbl_pipelineacqdata_hist";
+			ddicName="pipelineHistoryQuery";
+		}
+		table=tableName;
+		if(StringManagerUtils.isNotNull(deviceName)){
+			table=hisTableName;
+		}
+		
+		
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String sql="select t2.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		String[] ddicColumns=ddic.getSql().split(",");
+		for(int i=0;i<ddicColumns.length;i++){
+			if(ddicColumns[i].toUpperCase().contains("ADDR")){
+				ddicColumnsList.add(ddicColumns[i]);
+			}
+		}
+		for(int i=0;i<ddicColumnsList.size();i++){
+			sql+=",t2."+ddicColumnsList.get(i);
+		}
+		
+		
+		sql+= " from tbl_wellinformation t "
+				+ "left outer join "+table+" t2 on t2.wellid=t.id"
+				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
+		
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=" and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'";
+		}
+		sql+=" order by t.sortnum,t.wellname";
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=",t2.acqtime desc";
+		}
+		List<?> list = this.findCallSql(sql);
+		result_json.append("[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"wellName\":\""+obj[1]+"\",");
+			result_json.append("\"commStatus\":"+obj[2]+",");
+			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
+			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
+			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			for(int j=0;j<ddicColumnsList.size();j++){
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
+			}
+			if(result_json.toString().endsWith(",")){
+				result_json.deleteCharAt(result_json.length() - 1);
+			}
+			result_json.append("},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
 	public String getDeviceHistoryDetailsData(String deviceName,String deviceType,String recordId,String isHis) throws IOException, SQLException{
 		int items=4;
 		StringBuffer result_json = new StringBuffer();

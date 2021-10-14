@@ -369,6 +369,39 @@ function websocketOnMessage(evt) {
 				}
 			}
 		}
+	}else if(data.functionCode.toUpperCase()=="ResourceMonitoringData".toUpperCase()){//接收到资源监测数据
+		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
+			if(data.cpuUsedPercentAlarmLevel==1){
+				Ext.getCmp("CPUUsedPercentLabel_id").setText("<font color=#F09614 >CPU:"+data.cpuUsedPercent+"</font>");
+			}else if(data.cpuUsedPercentAlarmLevel==2){
+				Ext.getCmp("CPUUsedPercentLabel_id").setText("<font color=#DC2828 >CPU:"+data.cpuUsedPercent+"</font>");
+			}else{
+				Ext.getCmp("CPUUsedPercentLabel_id").setText("CPU:"+data.cpuUsedPercent);
+			}
+			
+			if(data.memUsedPercentAlarmLevel==1){
+				Ext.getCmp("memUsedPercentLabel_id").setText("<font color=#F09614 >内存:"+data.memUsedPercent+"</font>");
+			}else if(data.memUsedPercentAlarmLevel==2){
+				Ext.getCmp("memUsedPercentLabel_id").setText("<font color=#DC2828 >内存:"+data.memUsedPercent+"</font>");
+			}else{
+				Ext.getCmp("memUsedPercentLabel_id").setText("内存:"+data.memUsedPercent);
+			}
+			
+			if(data.tableSpaceUsedPercentAlarmLevel==1){
+				Ext.getCmp("tableSpaceSizeProbeLabel_id").setText("<font color=#F09614 >表空间:"+data.tableSpaceUsedPercent+"</font>");
+			}else if(data.tableSpaceUsedPercentAlarmLevel==2){
+				Ext.getCmp("tableSpaceSizeProbeLabel_id").setText("<font color=#DC2828 >表空间:"+data.tableSpaceUsedPercent+"</font>");
+			}else{
+				Ext.getCmp("tableSpaceSizeProbeLabel_id").setText("表空间:"+data.tableSpaceUsedPercent);
+			}
+			
+			if(data.adRunStatus=="运行"){
+				Ext.getCmp("adRunStatusProbeLabel_id").setIconCls("dtgreen");
+			}else{
+				Ext.getCmp("adRunStatusProbeLabel_id").setIconCls("dtyellow");
+			}
+			Ext.getCmp("adRunStatusProbeLabel_id").setText("ad"+data.adVersion);
+		}
 	}
 }
 function websocketOnOpen() {

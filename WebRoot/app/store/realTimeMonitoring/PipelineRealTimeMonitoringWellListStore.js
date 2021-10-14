@@ -22,10 +22,12 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createRealTimeMonitoringColumn(arrColumns);
+            Ext.getCmp("PipelineRealTimeMonitoringColumnStr_Id").setValue(column);
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createRealTimeMonitoringColumn(arrColumns);
+                
                 var newColumns = Ext.JSON.decode(column);
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
@@ -62,6 +64,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                 PipelineRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
+//            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
         },
