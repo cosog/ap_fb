@@ -148,6 +148,36 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
                 fieldLabel: '组名称',
                 anchor: '100%',
                 value: ''
+            },{
+				xtype : "hidden",
+				id : 'formAcquisitionGroupType_Id',
+				value:'0',
+				name : "acquisitionGroup.type"
+			},{
+            	xtype : "combobox",
+				fieldLabel : '组类型',
+				id : 'formAcquisitionGroupTypeComb_Id',
+				anchor : '100%',
+				triggerAction : 'all',
+				selectOnFocus : true,
+			    forceSelection : true,
+			    value:0,
+			    allowBlank: false,
+				editable : false,
+				store : new Ext.data.SimpleStore({
+							fields : ['value', 'text'],
+							data : [[0, '采集组'],[1, '控制组']]
+						}),
+				displayField : 'text',
+				valueField : 'value',
+				queryMode : 'local',
+				emptyText : '请选择组类型',
+				blankText : '请选择组类型',
+				listeners : {
+					select:function(v,o){
+						Ext.getCmp("formAcquisitionGroupType_Id").setValue(this.value);
+					}
+				}
             }, {
                 id: 'formAcquisitionGroupCode_Id',
                 name: "acquisitionGroup.groupCode",

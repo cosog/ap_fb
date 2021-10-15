@@ -197,7 +197,12 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
                 });
         
     	Ext.apply(this, {
-            tbar: [deviceTypeCombo,'-',deviceCombo,'-',operationTypeCombo,'-',{
+            tbar: [{
+                id: 'DeviceOperationLogColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },deviceTypeCombo,'-',deviceCombo,'-',operationTypeCombo,'-',{
                 xtype: 'datefield',
                 anchor: '100%',
 //                hidden: true,
@@ -227,6 +232,24 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
                 	select: function (combo, record, index) {
                 		Ext.getCmp("DeviceOperationLogGridPanel_Id").getStore().loadPage(1);
                     }
+                }
+            },'-', {
+                xtype: 'button',
+                text: cosog.string.exportExcel,
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=Ext.getCmp('DeviceOperationLogDeviceTypeListComb_Id').getValue();
+                	var deviceName=Ext.getCmp('DeviceOperationLogDeviceListComb_Id').getValue();
+                	var operationType=Ext.getCmp('DeviceOperationLogOperationTypeListComb_Id').getValue();
+                	var startDate=Ext.getCmp('DeviceOperationLogQueryStartDate_Id').rawValue;
+                    var endDate=Ext.getCmp('DeviceOperationLogQueryEndDate_Id').rawValue;
+               	 	
+               	 	var fileName='设备操作日志';
+               	 	var title='设备操作日志';
+               	 	var columnStr=Ext.getCmp("DeviceOperationLogColumnStr_Id").getValue();
+               	 	exportDeviceOperationLogExcel(orgId,deviceType,deviceName,operationType,startDate,endDate,fileName,title,columnStr);
                 }
             }]
         });

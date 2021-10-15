@@ -147,3 +147,98 @@ function createSystemLogColumn(columnInfo) {
     myColumns += "]";
     return myColumns;
 };
+
+function exportDeviceOperationLogExcel(orgId,deviceType,deviceName,operationType,startDate,endDate,fileName,title,columnStr) {
+    var url = context + '/logQueryController/exportDeviceOperationLogExcelData';
+    var fields = "";
+    var heads = "";
+    var lockedheads = "";
+    var unlockedheads = "";
+    var lockedfields = "";
+    var unlockedfields = "";
+    var columns_ = Ext.JSON.decode(columnStr);
+    
+    fields = "id";
+    heads = "序号";
+    Ext.Array.each(columns_, function (name, index, countriesItSelf) {
+        var column = columns_[index];
+        if (index > 0 && !column.hidden) {
+        	if(column.locked){
+        		lockedfields += column.dataIndex + ",";
+        		lockedheads += column.text + ",";
+        	}else{
+        		unlockedfields += column.dataIndex + ",";
+        		unlockedheads += column.text + ",";
+        	}
+        }
+    });
+    if (isNotVal(lockedfields)) {
+    	lockedfields = lockedfields.substring(0, lockedfields.length - 1);
+    	lockedheads = lockedheads.substring(0, lockedheads.length - 1);
+    	fields+=","+lockedfields;
+    	heads+= "," + lockedheads;
+    }
+    if (isNotVal(unlockedfields)) {
+    	unlockedfields = unlockedfields.substring(0, unlockedfields.length - 1);
+    	unlockedheads = unlockedheads.substring(0, unlockedheads.length - 1);
+    	fields+=","+unlockedfields;
+    	heads+= "," + unlockedheads;
+    }
+    
+    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
+    + "&orgId=" + orgId 
+    + "&deviceType=" + deviceType 
+    + "&deviceName=" + URLencode(URLencode(deviceName))
+    + "&operationType=" + operationType
+    + "&startDate=" + startDate
+    + "&endDate=" + endDate
+    + "&fileName=" + URLencode(URLencode(fileName)) 
+    + "&title=" + URLencode(URLencode(title));
+    openExcelWindow(url + '?flag=true' + param);
+};
+
+function exportSystemLogExcel(orgId,startDate,endDate,fileName,title,columnStr) {
+    var url = context + '/logQueryController/exportSystemLogExcelData';
+    var fields = "";
+    var heads = "";
+    var lockedheads = "";
+    var unlockedheads = "";
+    var lockedfields = "";
+    var unlockedfields = "";
+    var columns_ = Ext.JSON.decode(columnStr);
+    
+    fields = "id";
+    heads = "序号";
+    Ext.Array.each(columns_, function (name, index, countriesItSelf) {
+        var column = columns_[index];
+        if (index > 0 && !column.hidden) {
+        	if(column.locked){
+        		lockedfields += column.dataIndex + ",";
+        		lockedheads += column.text + ",";
+        	}else{
+        		unlockedfields += column.dataIndex + ",";
+        		unlockedheads += column.text + ",";
+        	}
+        }
+    });
+    if (isNotVal(lockedfields)) {
+    	lockedfields = lockedfields.substring(0, lockedfields.length - 1);
+    	lockedheads = lockedheads.substring(0, lockedheads.length - 1);
+    	fields+=","+lockedfields;
+    	heads+= "," + lockedheads;
+    }
+    if (isNotVal(unlockedfields)) {
+    	unlockedfields = unlockedfields.substring(0, unlockedfields.length - 1);
+    	unlockedheads = unlockedheads.substring(0, unlockedheads.length - 1);
+    	fields+=","+unlockedfields;
+    	heads+= "," + unlockedheads;
+    }
+    
+    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
+    + "&orgId=" + orgId
+    + "&startDate=" + startDate
+    + "&endDate=" + endDate
+    + "&fileName=" + URLencode(URLencode(fileName)) 
+    + "&title=" + URLencode(URLencode(title));
+    openExcelWindow(url + '?flag=true' + param);
+};

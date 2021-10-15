@@ -58,10 +58,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                         	Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").setValue(index);
                         	if(record.data.classes==0){
                         		if(isNotVal(record.data.children) && record.data.children.length>0){
-                        			CreateProtocolInstanceItemsConfigInfoTable(record.data.children[0].text);
+                        			CreateProtocolInstanceAcqItemsInfoTable(record.data.children[0].text);
                         		}
                         	}else if(record.data.classes==1){
-                        		CreateProtocolInstanceItemsConfigInfoTable(record.data.text);
+                        		CreateProtocolInstanceAcqItemsInfoTable(record.data.text);
                         	}
                         	CreateProtocolInstanceConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件

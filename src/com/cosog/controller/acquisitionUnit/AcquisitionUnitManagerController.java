@@ -614,10 +614,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 	@RequestMapping("/getProtocolInstanceItemsConfigData")
 	public String getProtocolInstanceItemsConfigData() throws Exception {
 		String instanceName = ParamUtils.getParameter(request, "instanceName");
-		String classes = ParamUtils.getParameter(request, "classes");
-		String code = ParamUtils.getParameter(request, "code");
+		String RWType = ParamUtils.getParameter(request, "RWType");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolInstanceItemsConfigData(instanceName);
+		json = acquisitionUnitItemManagerService.getProtocolInstanceItemsConfigData(instanceName,RWType);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -867,6 +866,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 								RWType="rw";
 							}else if("只读".equalsIgnoreCase(modbusDriverSaveData.getDataConfig().get(j).getRWType())){
 								RWType="r";
+							}else if("只写".equalsIgnoreCase(modbusDriverSaveData.getDataConfig().get(j).getRWType())){
+								RWType="w";
 							}
 							int resolutionMode=2;
 							if("开关量".equalsIgnoreCase(modbusDriverSaveData.getDataConfig().get(j).getResolutionMode())){
@@ -1089,6 +1090,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					acquisitionGroup.setId(StringManagerUtils.stringToInteger(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getId()));
 					acquisitionGroup.setGroupCode(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getGroupCode());
 					acquisitionGroup.setGroupName(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getGroupName());
+					acquisitionGroup.setType("采集组".equalsIgnoreCase(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getTypeName())?0:1);
 					acquisitionGroup.setAcqCycle(StringManagerUtils.stringToInteger(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getAcqCycle()));
 					acquisitionGroup.setSaveCycle(StringManagerUtils.stringToInteger(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getSaveCycle()));
 					acquisitionGroup.setRemark(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getRemark());
@@ -1104,6 +1106,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					acquisitionGroup.setId(StringManagerUtils.stringToInteger(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getId()));
 					acquisitionGroup.setGroupCode(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getGroupCode());
 					acquisitionGroup.setGroupName(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getGroupName());
+					acquisitionGroup.setType("采集组".equalsIgnoreCase(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getTypeName())?0:1);
 					acquisitionGroup.setAcqCycle(StringManagerUtils.stringToInteger(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getAcqCycle()));
 					acquisitionGroup.setSaveCycle(StringManagerUtils.stringToInteger(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getSaveCycle()));
 					acquisitionGroup.setRemark(acquisitionGroupHandsontableChangeData.getInsertlist().get(i).getRemark());

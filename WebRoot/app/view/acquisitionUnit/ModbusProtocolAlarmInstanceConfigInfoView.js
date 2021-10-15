@@ -215,9 +215,15 @@ function CreateProtocolAlarmInstancePropertiesInfoTable(data){
 		
 		var item3={};
 		item3.id=3;
-		item3.title='排序序号';
-		item3.value=data.sort;
+		item3.title='报警组';
+		item3.value=data.alarmGroupName;
 		root.push(item3);
+		
+		var item4={};
+		item4.id=4;
+		item4.title='排序序号';
+		item4.value=data.sort;
+		root.push(item4);
 	}
 	
 	if(protocolAlarmInstancePropertiesHandsontableHelper==null || protocolAlarmInstancePropertiesHandsontableHelper.hot==undefined){
@@ -610,7 +616,7 @@ function SaveModbusProtocolAlarmInstanceConfigTreeData(){
 			saveData.name=propertiesData[0][2];
 			saveData.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
 			saveData.alarmGroupId=selectedItem.data.alarmGroupId;
-			saveData.sort=propertiesData[2][2];
+			saveData.sort=propertiesData[3][2];
 			SaveModbusProtocolAlarmInstanceData(saveData);
 		}
 	}
@@ -626,7 +632,7 @@ function SaveModbusProtocolAlarmInstanceData(saveData){
 				Ext.getCmp("ModbusProtocolAlarmInstanceConfigTreeGridPanel_Id").getStore().load();
             	Ext.MessageBox.alert("信息","保存成功");
             } else {
-            	Ext.MessageBox.alert("信息","采集单元数据保存失败");
+            	Ext.MessageBox.alert("信息","采控单元数据保存失败");
             }
 		},
 		failure:function(){

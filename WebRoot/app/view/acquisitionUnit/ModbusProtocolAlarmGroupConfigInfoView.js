@@ -379,7 +379,7 @@ function CreateProtocolAlarmGroupConfigPropertiesInfoTable(data){
 		root.push(item1);
 		
 		var item2={};
-		item2.id=4;
+		item2.id=2;
 		item2.title='备注';
 		item2.value=data.remark;
 		root.push(item2);
@@ -802,7 +802,7 @@ function SaveModbusProtocolAlarmGroupConfigData(saveData){
 				Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().load();
             	Ext.MessageBox.alert("信息","保存成功");
             } else {
-            	Ext.MessageBox.alert("信息","采集单元数据保存失败");
+            	Ext.MessageBox.alert("信息","采控单元数据保存失败");
             }
 		},
 		failure:function(){
