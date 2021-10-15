@@ -77,9 +77,9 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolTreeInfoStore', {
                         	}if(record.data.classes==1){
                         		info='协议';
                         	}else if(record.data.classes==2){
-                        		info='采集单元';
+                        		info='采控单元';
                         	}else if(record.data.classes==3){
-                        		info='采集组';
+                        		info='采控组';
                         	}
                         	var menu = Ext.create('Ext.menu.Menu', {
                                 floating: true,

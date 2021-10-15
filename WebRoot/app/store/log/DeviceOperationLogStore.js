@@ -22,11 +22,11 @@ Ext.define('AP.store.log.DeviceOperationLogStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createDeviceOperationLogColumn(arrColumns);
+            Ext.getCmp("DeviceOperationLogColumnStr_Id").setValue(column);
             var gridPanel = Ext.getCmp("DeviceOperationLogGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createDeviceOperationLogColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,

@@ -54,6 +54,28 @@ public class LogQueryService<T> extends BaseService<T>  {
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 	
+	public String getDeviceOperationLogExportData(String orgId,String deviceType,String deviceName,String operationType,Page pager) throws IOException, SQLException{
+		String ddicName="deviceOperationLog";
+		DataDictionary ddic = null;
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String columns = ddic.getTableHeader();
+		String sql=ddic.getSql()+" from viw_deviceoperationlog t where t.orgid in ("+orgId+") "
+				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+		if(StringManagerUtils.isNotNull(deviceType)){
+			sql+=" and t.devicetype="+deviceType;
+		}
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		if(StringManagerUtils.isNotNull(operationType)){
+			sql+=" and t.action="+operationType;
+		}
+		sql+=" order by t.createtime desc";
+		
+		String getResult = this.findExportDataBySqlEntity(sql,sql, columns, 20 + "", pager);
+		return getResult.replaceAll("\"null\"", "\"\"");
+	}
+	
 	public String getSystemLogData(String orgId,String operationType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		String ddicName="SystemLog";
@@ -72,6 +94,25 @@ public class LogQueryService<T> extends BaseService<T>  {
 		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		
 		String getResult = this.findCustomPageBySqlEntity(sql,finalSql, columns, 20 + "", pager);
+		return getResult.replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getSystemLogExportData(String orgId,String operationType,Page pager) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		String ddicName="SystemLog";
+		DataDictionary ddic = null;
+		List<String> ddicColumnsList=new ArrayList<String>();
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String columns = ddic.getTableHeader();
+		String sql=ddic.getSql()+" from viw_systemlog t where t.orgid in ("+orgId+") "
+				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+		
+		if(StringManagerUtils.isNotNull(operationType)){
+//			sql+=" and t.action="+operationType;
+		}
+		sql+=" order by t.createtime desc";
+		
+		String getResult = this.findExportDataBySqlEntity(sql,sql, columns, 20 + "", pager);
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 }

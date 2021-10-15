@@ -525,11 +525,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	
 	public String exportWellInformationData(Map map,Page pager,int recordCount) {
 		StringBuffer result_json = new StringBuffer();
-		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		if(equipmentDriveMap.size()==0){
-			EquipmentDriverServerTask.loadProtocolConfig();
-			equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		}
+		String ddicName="pumpDeviceManager";
 		String wellInformationName = (String) map.get("wellInformationName");
 		int deviceType=StringManagerUtils.stringToInteger((String) map.get("deviceType"));
 		String orgId = (String) map.get("orgId");
@@ -537,44 +533,37 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		if (StringManagerUtils.isNotNull(wellInformationName)) {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
-		String sql = "select id,orgName,wellName,protocolcode,acquisitionUnit,signInId,slave,"
+		if(deviceType==0){
+			ddicName="pumpDeviceManager";
+		}else if(deviceType==1){
+			ddicName="pipelineDeviceManager";
+		}else if(deviceType==2){
+			ddicName="SMSDeviceManager";
+		}
+		String sql = "select id,orgName,wellName,instanceName,alarmInstanceName,signInId,slave,"
 				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
-				+ WellInformation_Str
-				+ " and t.orgid in ("+orgId+" )  "
-				+ " and t.devicetype="+deviceType
-			    + " order by t.sortnum,t.wellname ";
+				+ WellInformation_Str;
+		if(deviceType!=2){
+			sql+= " and t.orgid in ("+orgId+" )  ";
+		}
+				
+		sql+= " and t.devicetype="+deviceType;
+		sql+= " order by t.sortnum,t.wellname ";
+		
+		String json = "";
 		List<?> list = this.findCallSql(sql);
+		
 		result_json.append("[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
-			String protocolName="";
-			String protocolCode=obj[3]+"";
-			for(Entry<String, Object> entry:equipmentDriveMap.entrySet()){
-				if(entry.getKey().toUpperCase().contains("KAFKA".toUpperCase())){
-					KafkaConfig driveConfig=(KafkaConfig)equipmentDriveMap.get("KafkaDrive");
-					if(protocolCode.equals(driveConfig.getProtocolCode())){
-						protocolName=driveConfig.getProtocolName();
-						break;
-					}
-				}else if(entry.getKey().toUpperCase().contains("modbusProtocolConfig".toUpperCase())){
-					ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-					for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
-						ModbusProtocolConfig.Protocol protocolConfig=(ModbusProtocolConfig.Protocol)modbusProtocolConfig.getProtocol().get(j);
-						if(protocolCode.equals(protocolConfig.getCode())){
-							protocolName=protocolConfig.getName();
-							break;
-						}
-					}
-				}
-			}
+			
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
 			result_json.append("\"wellName\":\""+obj[2]+"\",");
-			result_json.append("\"protocolCode\":\""+obj[3]+"\",");
-			result_json.append("\"protocolName\":\""+protocolName+"\",");
-			result_json.append("\"acquisitionUnit\":\""+obj[4]+"\",");
+			result_json.append("\"instanceName\":\""+obj[3]+"\",");
+			result_json.append("\"alarmInstanceName\":\""+obj[4]+"\",");
 			result_json.append("\"signInId\":\""+obj[5]+"\",");
 			result_json.append("\"slave\":\""+obj[6]+"\",");
 			
@@ -594,7 +583,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.deleteCharAt(result_json.length() - 1);
 		}
 		result_json.append("]");
-		return result_json.toString().replaceAll("null", "");
+		json=result_json.toString().replaceAll("null", "");
+		return json;
 	}
 
 }

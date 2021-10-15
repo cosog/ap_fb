@@ -47,9 +47,9 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
         var protocolAndAcqUnitTree=Ext.create('AP.view.well.TreePicker',{
         	id:'modbusInstanceProtocolAndAcqUnit_Id',
         	anchor: '100%',
-        	fieldLabel: '采集单元',
-            emptyText: '请选择采集单元...',
-            blankText: '请选择采集单元...',
+        	fieldLabel: '采控单元',
+            emptyText: '请选择采控单元...',
+            blankText: '请选择采控单元...',
             displayField: 'text',
             autoScroll:true,
             forceSelection : true,// 只能选择下拉框里面的内容
@@ -62,11 +62,10 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
                 },
             	select: function (picker,record,eOpts) {
                 	if(record.data.classes==1){
-                		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择采集单元！</font>");
+                		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择采控单元！</font>");
                 	}else{
                 		Ext.getCmp("modbusInstanceAcqUnit_Id").setValue(record.data.id);
                 	}
-                	
                 }
             }
         });

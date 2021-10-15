@@ -17,14 +17,14 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
                     hidden: true
                 },'->',{
         			xtype: 'button',
-                    text: '添加采集单元',
+                    text: '添加采控单元',
                     iconCls: 'add',
                     handler: function (v, o) {
                     	addAcquisitionUnitInfo();
         			}
         		},"-",{
         			xtype: 'button',
-                    text: '添加采集组',
+                    text: '添加采控组',
                     iconCls: 'add',
                     handler: function (v, o) {
                     	addAcquisitionGroupInfo();
@@ -262,11 +262,11 @@ function CreateProtocolAcqGroupConfigPropertiesInfoTable(data){
 		item1.value=data.text;
 		root.push(item1);
 		
-//		var item2={};
-//		item2.id=2;
-//		item2.title='采集周期(s)';
-//		item2.value=data.acq_cycle;
-//		root.push(item2);
+		var item2={};
+		item2.id=2;
+		item2.title='组类型';
+		item2.value=data.typeName;
+		root.push(item2);
 		
 		var item3={};
 		item3.id=3;
@@ -353,12 +353,13 @@ var ProtocolConfigAcqGroupPropertiesHandsontableHelper = {
 		                    	this.strict = true;
 		                    	this.allowInvalid = false;
 		                    }
-//	                    	if (visualColIndex === 2 && visualRowIndex===2) {
-//		                    	this.type = 'dropdown';
-//		                    	this.source = ['modbus-tcp','modbus-rtu'];
-//		                    	this.strict = true;
-//		                    	this.allowInvalid = false;
-//		                    }
+	                    }else if(protocolConfigAcqGroupPropertiesHandsontableHelper.classes===3){
+	                    	if (visualColIndex === 2 && visualRowIndex===1) {
+		                    	this.type = 'dropdown';
+		                    	this.source = ['采集组','控制组'];
+		                    	this.strict = true;
+		                    	this.allowInvalid = false;
+		                    }
 	                    }
 	                    return cellProperties;
 	                },
@@ -381,35 +382,36 @@ function SaveModbusProtocolAcqGroupConfigTreeData(){
 		var selectedItem=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
 		var propertiesData=protocolConfigAcqGroupPropertiesHandsontableHelper.hot.getData();
 		var protocolProperties={};
-		if(selectedItem.data.classes==2){//选中的是采集单元
+		if(selectedItem.data.classes==2){//选中的是采控单元
 			protocolProperties.classes=selectedItem.data.classes;
 			protocolProperties.id=selectedItem.data.id;
 			protocolProperties.unitCode=selectedItem.data.code;
 			protocolProperties.unitName=propertiesData[0][2];
 			protocolProperties.remark=propertiesData[1][2];
-		}else if(selectedItem.data.classes==3){//选中的是采集单元组
+		}else if(selectedItem.data.classes==3){//选中的是采控单元组
 			protocolProperties.classes=selectedItem.data.classes;
 			protocolProperties.id=selectedItem.data.id;
 			protocolProperties.groupCode=selectedItem.data.code;
 			protocolProperties.groupName=propertiesData[0][2];
 			protocolProperties.acqCycle=300;
-			protocolProperties.saveCycle=propertiesData[1][2];
-			protocolProperties.remark=propertiesData[2][2];
+			protocolProperties.typeName=propertiesData[1][2];
+			protocolProperties.saveCycle=propertiesData[2][2];
+			protocolProperties.remark=propertiesData[3][2];
 		}
-		if(selectedItem.data.classes==2){//保存采集单元
+		if(selectedItem.data.classes==2){//保存采控单元
 			var acqUnitSaveData={};
 			acqUnitSaveData.updatelist=[];
 			acqUnitSaveData.updatelist.push(protocolProperties);
 			saveAcquisitionUnitConfigData(acqUnitSaveData,selectedItem.data.protocol);
 		}
 		
-		if(selectedItem.data.classes==3){//选中的是采集单元组
+		if(selectedItem.data.classes==3){//选中的是采控单元组
 			var acqGroupSaveData={};
 			acqGroupSaveData.updatelist=[];
 			acqGroupSaveData.updatelist.push(protocolProperties);
 			
 			saveAcquisitionGroupConfigData(acqGroupSaveData,selectedItem.data.protocol,selectedItem.parentNode.data.id);
-			//给采集组授予采集项
+			//给采控组授予采控项
 			grantAcquisitionItemsPermission();
 		}
 		
@@ -449,7 +451,7 @@ function saveAcquisitionUnitConfigData(acqUnitSaveData,protocol){
             	Ext.MessageBox.alert("信息","保存成功");
             	Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
             } else {
-            	Ext.MessageBox.alert("信息","采集单元数据保存失败");
+            	Ext.MessageBox.alert("信息","采控单元数据保存失败");
             }
 		},
 		failure:function(){
@@ -473,7 +475,7 @@ function saveAcquisitionGroupConfigData(acqGroupSaveData,protocol,unitId){
             	Ext.MessageBox.alert("信息","保存成功");
             	Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();
             } else {
-            	Ext.MessageBox.alert("信息","采集组数据保存失败");
+            	Ext.MessageBox.alert("信息","采控组数据保存失败");
             }
 		},
 		failure:function(){

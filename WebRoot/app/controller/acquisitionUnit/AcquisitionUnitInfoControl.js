@@ -59,7 +59,7 @@ var saveModbusProtocolSubmitBtnForm = function () {
 
 function addAcquisitionUnitInfo() {
     var AcquisitionUnitInfoWindow = Ext.create("AP.view.acquisitionUnit.AcquisitionUnitInfoWindow", {
-        title: '创建采集单元'
+        title: '创建采控单元'
     });
     AcquisitionUnitInfoWindow.show();
     Ext.getCmp("addFormAcquisitionUnit_Id").show();
@@ -69,7 +69,7 @@ function addAcquisitionUnitInfo() {
 
 function addAcquisitionGroupInfo() {
     var AcquisitionGroupInfoWindow = Ext.create("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
-        title: '创建采集组'
+        title: '创建采控组'
     });
     AcquisitionGroupInfoWindow.show();
     Ext.getCmp("addFormAcquisitionGroup_Id").show();
@@ -77,7 +77,7 @@ function addAcquisitionGroupInfo() {
     return false;
 };
 
-//采集组窗体创建按钮事件
+//采控组窗体创建按钮事件
 var SaveAcquisitionGroupSubmitBtnForm = function () {
     var saveAcquisitionGroupWinForm = Ext.getCmp("acquisitionGroup_editWin_Id").down('form');
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
@@ -148,7 +148,7 @@ function modifyAcquisitionGroupInfo() {
     var _record = selectedModel.getSelection();
     if (_record.length > 0) {
         var editWindow = Ext.create("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
-            title: '编辑采集组'
+            title: '编辑采控组'
         });
         editWindow.show();
         Ext.getCmp("addFormAcquisitionGroup_Id").hide();
@@ -267,7 +267,7 @@ function modifyAcquisitionUnitInfo() {
     var _record = AcquisitionUnit_model.getSelection();
     if (_record.length > 0) {
         var AcquisitionUnitInfoWindow = Ext.create("AP.view.acquisitionUnit.AcquisitionUnitInfoWindow", {
-            title: '编辑采集单元'
+            title: '编辑采控单元'
         });
         AcquisitionUnitInfoWindow.show();
         Ext.getCmp("addFormAcquisitionUnit_Id").hide();
@@ -434,7 +434,7 @@ showAcquisitionUnitOwnGroups = function (selectedAcquisitionUnitId) {
     return false;
 }
 
-//为当前采集组安排采集项
+//为当前采控组安排采控项
 var grantAcquisitionItemsPermission = function () {
     if (protocolAcqGroupConfigItemsHandsontableHelper == null) {
         return false;
@@ -452,7 +452,7 @@ var grantAcquisitionItemsPermission = function () {
     
     var groupCode = selectedItem.data.code;
     if (!isNotVal(groupCode)) {
-//        Ext.Msg.alert(cosog.string.ts, '请先选择一个采集组!');
+//        Ext.Msg.alert(cosog.string.ts, '请先选择一个采控组!');
         return false
     }
     if (driverConfigItemsData.length > 0) {
@@ -483,10 +483,10 @@ var grantAcquisitionItemsPermission = function () {
                 success: function (response) {
                     var result = Ext.JSON.decode(response.responseText);
                     if (result.msg == true) {
-                        Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + '成功安排了' + "</font>】" + addjson.length + "" + '个采集项' + "。");
+                        Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + '成功安排了' + "</font>】" + addjson.length + "" + '个采控项' + "。");
                     }
                     if (result.msg == false) {
-                        Ext.Msg.alert('info', "<font color=red>SORRY！" + '采集项安排失败' + "。</font>");
+                        Ext.Msg.alert('info', "<font color=red>SORRY！" + '采控项安排失败' + "。</font>");
                     }
                 },
                 failure: function () {
@@ -494,15 +494,15 @@ var grantAcquisitionItemsPermission = function () {
                 }
             });
         } else {
-            Ext.Msg.alert(cosog.string.ts, '<font color=blue>' + '无选中的采集项!' + '！</font>');
+            Ext.Msg.alert(cosog.string.ts, '<font color=blue>' + '无选中的采控项!' + '！</font>');
         }
     } else {
-        Ext.Msg.alert(cosog.string.ts, '<font color=blue>' + '无选中的采集项!' + '！</font>');
+        Ext.Msg.alert(cosog.string.ts, '<font color=blue>' + '无选中的采控项!' + '！</font>');
     }
     return false;
 }
 
-//为当前采集单元安排采集组
+//为当前采控单元安排采控组
 var grantAcquisitionGroupsPermission = function () {
 	if (acquisitionGroupConfigHandsontableHelper == null) {
         return false;
@@ -516,7 +516,7 @@ var grantAcquisitionGroupsPermission = function () {
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
     var unitId = Ext.getCmp("selectedAcquisitionUnitId_Id").getValue();
     if (!isNotVal(unitId)) {
-//        Ext.Msg.alert(cosog.string.ts, '请先选择一个采集单元!');
+//        Ext.Msg.alert(cosog.string.ts, '请先选择一个采控单元!');
         return false
     }
     if (acquisitionData.length > 0) {
@@ -546,10 +546,10 @@ var grantAcquisitionGroupsPermission = function () {
             success: function (response) {
                 var result = Ext.JSON.decode(response.responseText);
                 if (result.msg == true) {
-                    Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + '成功安排了' + "</font>】" + addjson.length + "" + '个采集组' + "。");
+                    Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + '成功安排了' + "</font>】" + addjson.length + "" + '个采控组' + "。");
                 }
                 if (result.msg == false) {
-                    Ext.Msg.alert('info', "<font color=red>SORRY！" + '采集组安排失败' + "。</font>");
+                    Ext.Msg.alert('info', "<font color=red>SORRY！" + '采控组安排失败' + "。</font>");
                 }
             },
             failure: function () {
@@ -557,7 +557,7 @@ var grantAcquisitionGroupsPermission = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, '<font color=blue>' + '无选中的采集单元!' + '！</font>');
+        Ext.Msg.alert(cosog.string.ts, '<font color=blue>' + '无选中的采控单元!' + '！</font>');
     }
     return false;
 };

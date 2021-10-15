@@ -22,17 +22,16 @@ Ext.define('AP.store.log.SystemLogStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
+            var column = createSystemLogColumn(arrColumns);
+            Ext.getCmp("SystemLogColumnStr_Id").setValue(column);
             var gridPanel = Ext.getCmp("SystemLogGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createSystemLogColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
-                
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,
                 	displayMsg: '当前 {0}~{1}条  共 {2} 条'
     	        });
-                
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "SystemLogGridPanel_Id",
                     border: false,

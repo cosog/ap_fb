@@ -584,7 +584,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 						for(int k=0;k<modbusProtocolConfig.getProtocol().get(j).getItems().size();k++){
 							for(int m=0;m<itemsArr.length;m++){
 								if(itemsArr[m].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle())){
-									if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())){
+									if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())
+											||"w".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())){
 										controlItems.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle());
 										controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr());
 										controlItemResolutionMode.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode());

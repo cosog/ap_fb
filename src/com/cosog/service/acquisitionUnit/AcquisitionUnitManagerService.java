@@ -169,6 +169,14 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					}else if(protocolConfig.getItems().get(j).getResolutionMode()==1){
 						resolutionMode="枚举量";
 					}
+					String RWType="只读";
+					if("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+						RWType="只读";
+					}else if("w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+						RWType="只写";
+					}else if("rw".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+						RWType="读写";
+					}
 					result_json.append("{\"checked\":"+checked+","
 							+ "\"id\":"+(j+1)+","
 							+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
@@ -177,7 +185,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
 							+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
 							+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
-							+ "\"RWType\":\""+("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())?"只读":"读写")+"\","
+							+ "\"RWType\":\""+RWType+"\","
 							+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
 							+ "\"resolutionMode\":\""+resolutionMode+"\","
 							+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
@@ -535,9 +543,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getProtocolInstanceItemsConfigData(String instanceName){
+	public String getProtocolInstanceItemsConfigData(String instanceName,String RWType){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
+		int index=1;
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
 			EquipmentDriverServerTask.loadProtocolConfig();
@@ -577,18 +586,29 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
 					for(int j=0;j<protocolConfig.getItems().size();j++){
 						if(StringManagerUtils.existOrNot(itemsList, protocolConfig.getItems().get(j).getTitle(),false)){
-							result_json.append("{\"id\":"+(j+1)+","
-									+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
-									+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
-									+ "\"quantity\":"+protocolConfig.getItems().get(j).getQuantity()+","
-									+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
-									+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
-									+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
-									+ "\"RWType\":\""+("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())?"只读":"读写")+"\","
-									+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
-									+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
+							if(RWType.equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+								String RWTypeName="只读";
+								if("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+									RWTypeName="只读";
+								}else if("w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+									RWTypeName="只写";
+								}else if("rw".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+									RWTypeName="读写";
+								}
+								
+								result_json.append("{\"id\":"+index+","
+										+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
+										+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
+										+ "\"quantity\":"+protocolConfig.getItems().get(j).getQuantity()+","
+										+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
+										+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
+										+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
+										+ "\"RWType\":\""+RWTypeName+"\","
+										+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
+										+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
+								index++;
+							}
 						}
-						
 					}
 					break;
 				}
@@ -833,7 +853,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		if(modbusProtocolConfig!=null){
 			String unitSql="select t.id as id,t.unit_code as unitCode,t.unit_name as unitName,t.remark,t.protocol from tbl_acq_unit_conf t order by t.protocol,t.id";
-			String groupSql="select t3.id,t3.group_code,t3.group_name,t3.acq_cycle,t3.save_cycle,t3.remark,t3.protocol,t2.id as unitId "
+			String groupSql="select t3.id,t3.group_code,t3.group_name,t3.acq_cycle,t3.save_cycle,t3.remark,t3.protocol,t3.type,t2.id as unitId "
 					+ " from TBL_ACQ_GROUP2UNIT_CONF t,tbl_acq_unit_conf t2,tbl_acq_group_conf t3 "
 					+ " where t.unitid=t2.id and t.groupid=t3.id "
 					+ " order by t3.protocol,t2.unit_code,t3.group_code";
@@ -875,7 +895,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									pumpTree_json.append("\"save_cycle\":"+groupObj[4]+",");
 									pumpTree_json.append("\"remark\":\""+groupObj[5]+"\",");
 									pumpTree_json.append("\"protocol\":\""+groupObj[6]+"\",");
-									pumpTree_json.append("\"unitId\":"+groupObj[7]+",");
+									pumpTree_json.append("\"type\":"+groupObj[7]+",");
+									pumpTree_json.append("\"typeName\":\""+("0".equalsIgnoreCase(groupObj[7]+"")?"采集组":"控制组")+"\",");
+									pumpTree_json.append("\"unitId\":"+groupObj[groupObj.length-1]+",");
 									pumpTree_json.append("\"iconCls\": \"AcqGroup\",");
 									pumpTree_json.append("\"leaf\": true");
 									pumpTree_json.append("},");
@@ -1249,13 +1271,13 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		pumpTree_json.append("[");
 		pipelineTree_json.append("[");
 		String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
-				+ " t.unitid,t.devicetype,t.sort "
-				+ " from tbl_protocolinstance t "
+				+ " t.unitid,t2.unit_name,t.devicetype,t.sort  "
+				+ " from tbl_protocolinstance t ,tbl_acq_unit_conf t2 where t.unitid=t2.id"
 				+ " order by t.devicetype,t.sort";
 		List<?> list=this.findCallSql(sql);
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
-			if(StringManagerUtils.stringToInteger(obj[10]+"")==0){
+			if(StringManagerUtils.stringToInteger(obj[11]+"")==0){
 				pumpTree_json.append("{\"classes\":1,");
 				pumpTree_json.append("\"id\":\""+obj[0]+"\",");
 				pumpTree_json.append("\"text\":\""+obj[1]+"\",");
@@ -1267,8 +1289,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pumpTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
 				pumpTree_json.append("\"heartbeatSuffix\":\""+obj[8]+"\",");
 				pumpTree_json.append("\"unitId\":"+obj[9]+",");
-				pumpTree_json.append("\"deviceType\":"+obj[10]+",");
-				pumpTree_json.append("\"sort\":"+obj[11]+",");
+				pumpTree_json.append("\"unitName\":\""+obj[10]+"\",");
+				pumpTree_json.append("\"deviceType\":"+obj[11]+",");
+				pumpTree_json.append("\"sort\":"+obj[12]+",");
 				pumpTree_json.append("\"iconCls\": \"Protocol\",");
 				pumpTree_json.append("\"leaf\": true");
 				pumpTree_json.append("},");
@@ -1284,8 +1307,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
 				pipelineTree_json.append("\"heartbeatSuffix\":\""+obj[8]+"\",");
 				pipelineTree_json.append("\"unitId\":"+obj[9]+",");
-				pipelineTree_json.append("\"deviceType\":"+obj[10]+",");
-				pipelineTree_json.append("\"sort\":"+obj[11]+",");
+				pipelineTree_json.append("\"unitName\":\""+obj[10]+"\",");
+				pipelineTree_json.append("\"deviceType\":"+obj[11]+",");
+				pipelineTree_json.append("\"sort\":"+obj[12]+",");
 				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
 				pipelineTree_json.append("\"leaf\": true");
 				pipelineTree_json.append("},");
@@ -1317,20 +1341,21 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		StringBuffer pipelineTree_json = new StringBuffer();
 		pumpTree_json.append("[");
 		pipelineTree_json.append("[");
-		String sql="select t.id,t.name,t.code,t.alarmGroupId,t.devicetype,t.sort "
-				+ " from tbl_protocolalarminstance t "
+		String sql="select t.id,t.name,t.code,t.alarmGroupId,t2.group_name,t.devicetype,t.sort   "
+				+ " from tbl_protocolalarminstance t ,tbl_alarm_group_conf t2 where t.alarmgroupid=t2.id "
 				+ " order by t.devicetype,t.sort";
 		List<?> list=this.findCallSql(sql);
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
-			if(StringManagerUtils.stringToInteger(obj[4]+"")==0){
+			if(StringManagerUtils.stringToInteger(obj[5]+"")==0){
 				pumpTree_json.append("{\"classes\":1,");
 				pumpTree_json.append("\"id\":\""+obj[0]+"\",");
 				pumpTree_json.append("\"text\":\""+obj[1]+"\",");
 				pumpTree_json.append("\"code\":\""+obj[2]+"\",");
 				pumpTree_json.append("\"alarmGroupId\":"+obj[3]+",");
-				pumpTree_json.append("\"deviceType\":"+obj[4]+",");
-				pumpTree_json.append("\"sort\":"+obj[5]+",");
+				pumpTree_json.append("\"alarmGroupName\":\""+obj[4]+"\",");
+				pumpTree_json.append("\"deviceType\":"+obj[5]+",");
+				pumpTree_json.append("\"sort\":"+obj[6]+",");
 				pumpTree_json.append("\"iconCls\": \"Protocol\",");
 				pumpTree_json.append("\"leaf\": true");
 				pumpTree_json.append("},");
@@ -1340,8 +1365,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"text\":\""+obj[1]+"\",");
 				pipelineTree_json.append("\"code\":\""+obj[2]+"\",");
 				pipelineTree_json.append("\"alarmGroupId\":"+obj[3]+",");
-				pipelineTree_json.append("\"deviceType\":"+obj[4]+",");
-				pipelineTree_json.append("\"sort\":"+obj[5]+",");
+				pipelineTree_json.append("\"alarmGroupName\":\""+obj[4]+"\",");
+				pipelineTree_json.append("\"deviceType\":"+obj[5]+",");
+				pipelineTree_json.append("\"sort\":"+obj[6]+",");
 				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
 				pipelineTree_json.append("\"leaf\": true");
 				pipelineTree_json.append("},");

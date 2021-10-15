@@ -76,16 +76,65 @@ public class LogQueryController extends BaseController{
 				endDate = StringManagerUtils.getCurrentTime();
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-//				startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
 				startDate=endDate;
 			}
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		json = logQueryService.getDeviceOperationLogData(orgId,deviceType,deviceName,operationType,pager);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/exportDeviceOperationLogExcelData")
+	public String exportDeviceOperationLogExcelData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		operationType = ParamUtils.getParameter(request, "operationType");
+		startDate = ParamUtils.getParameter(request, "startDate");
+		endDate = ParamUtils.getParameter(request, "endDate");
+		
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		HttpSession session=request.getSession();
+		user = (User) session.getAttribute("userLogin");
+		if (user != null) {
+			orgId = "" + user.getUserorgids();
+			if(user.getUserOrgid()==0){
+				orgId+=",0";
+			}
+		}
+		
+		
+		if(!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from viw_deviceoperationlog t ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+			if(!StringManagerUtils.isNotNull(startDate)){
+				startDate=endDate;
+			}
+		}
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		json = logQueryService.getDeviceOperationLogExportData(orgId,deviceType,deviceName,operationType,pager);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
 		pw.print(json);
@@ -120,16 +169,61 @@ public class LogQueryController extends BaseController{
 				endDate = StringManagerUtils.getCurrentTime();
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-//				startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
 				startDate=endDate;
 			}
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		json = logQueryService.getSystemLogData(orgId,operationType,pager);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/exportSystemLogExcelData")
+	public String exportSystemLogExcelData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		operationType = ParamUtils.getParameter(request, "operationType");
+		startDate = ParamUtils.getParameter(request, "startDate");
+		endDate = ParamUtils.getParameter(request, "endDate");
+		
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		HttpSession session=request.getSession();
+		user = (User) session.getAttribute("userLogin");
+		if (user != null) {
+			orgId = "" + user.getUserorgids();
+			if(user.getUserOrgid()==0){
+				orgId+=",0";
+			}
+		}
+		if(!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from tbl_systemlog t ";
+			List list = this.service.reportDateJssj(sql);
+			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
+				endDate = list.get(0).toString();
+			} else {
+				endDate = StringManagerUtils.getCurrentTime();
+			}
+			if(!StringManagerUtils.isNotNull(startDate)){
+				startDate=endDate;
+			}
+		}
+		pager.setStart_date(startDate);
+		pager.setEnd_date(endDate);
+		json = logQueryService.getSystemLogExportData(orgId,operationType,pager);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
 		pw.print(json);

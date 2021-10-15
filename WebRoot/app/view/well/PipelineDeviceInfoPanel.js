@@ -31,7 +31,7 @@ Ext.define('AP.view.well.PipelineDeviceInfoPanel', {
             listeners: {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('tbuingDeviceComb_Id').getValue();
+                    var wellName = Ext.getCmp('pipelineDeviceComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: 1,
@@ -45,7 +45,7 @@ Ext.define('AP.view.well.PipelineDeviceInfoPanel', {
         var pipelineCombo = Ext.create(
             'Ext.form.field.ComboBox', {
                 fieldLabel: cosog.string.wellName,
-                id: "tbuingDeviceComb_Id",
+                id: "pipelineDeviceComb_Id",
                 labelWidth: 35,
                 width: 145,
                 labelAlign: 'left',
@@ -99,7 +99,7 @@ Ext.define('AP.view.well.PipelineDeviceInfoPanel', {
             				var fields = "";
             			    var heads = "";
             			    var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-            				var wellInformationName = Ext.getCmp('tbuingDeviceComb_Id').getValue();
+            				var wellInformationName = Ext.getCmp('pipelineDeviceComb_Id').getValue();
             				var url=context + '/wellInformationManagerController/exportWellInformationData';
             				for(var i=0;i<pipelineDeviceInfoHandsontableHelper.colHeaders.length;i++){
             					fields+=pipelineDeviceInfoHandsontableHelper.columns[i].data+",";
@@ -175,7 +175,7 @@ function CreateAndLoadPipelineDeviceInfoTable(isNew){
 //        pipelineDeviceInfoHandsontableHelper=null;
 //	}
 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-	var wellInformationName_Id = Ext.getCmp('tbuingDeviceComb_Id').getValue();
+	var wellInformationName_Id = Ext.getCmp('pipelineDeviceComb_Id').getValue();
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/wellInformationManagerController/doWellInformationShow',
