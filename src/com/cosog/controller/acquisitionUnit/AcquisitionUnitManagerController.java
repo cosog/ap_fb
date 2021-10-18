@@ -613,10 +613,10 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	@RequestMapping("/getProtocolInstanceItemsConfigData")
 	public String getProtocolInstanceItemsConfigData() throws Exception {
-		String instanceName = ParamUtils.getParameter(request, "instanceName");
-		String RWType = ParamUtils.getParameter(request, "RWType");
+		String id = ParamUtils.getParameter(request, "id");
+		String classes = ParamUtils.getParameter(request, "classes");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolInstanceItemsConfigData(instanceName,RWType);
+		json = acquisitionUnitItemManagerService.getProtocolInstanceItemsConfigData(id,classes);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -628,12 +628,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	@RequestMapping("/getProtocolAlarmInstanceNumItemsConfigData")
 	public String getProtocolAlarmInstanceNumItemsConfigData() throws Exception {
-		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		String id = ParamUtils.getParameter(request, "id");
 		String resolutionMode = ParamUtils.getParameter(request, "resolutionMode");
 		String classes = ParamUtils.getParameter(request, "classes");
 		String code = ParamUtils.getParameter(request, "code");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceNumItemsConfigData(instanceName,resolutionMode);
+		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceNumItemsConfigData(id,classes,resolutionMode);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -645,12 +645,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	@RequestMapping("/getProtocolAlarmInstanceSwitchItemsConfigData")
 	public String getProtocolAlarmInstanceSwitchItemsConfigData() throws Exception {
-		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		String id = ParamUtils.getParameter(request, "id");
 		String resolutionMode = ParamUtils.getParameter(request, "resolutionMode");
 		String classes = ParamUtils.getParameter(request, "classes");
 		String code = ParamUtils.getParameter(request, "code");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceSwitchItemsConfigData(instanceName,resolutionMode);
+		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceSwitchItemsConfigData(id,classes,resolutionMode);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -662,12 +662,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 	
 	@RequestMapping("/getProtocolAlarmInstanceEnumItemsConfigData")
 	public String getProtocolAlarmInstanceEnumItemsConfigData() throws Exception {
-		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		String id = ParamUtils.getParameter(request, "id");
 		String resolutionMode = ParamUtils.getParameter(request, "resolutionMode");
 		String classes = ParamUtils.getParameter(request, "classes");
 		String code = ParamUtils.getParameter(request, "code");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceEnumItemsConfigData(instanceName,resolutionMode);
+		json = acquisitionUnitItemManagerService.getProtocolAlarmInstanceEnumItemsConfigData(id,classes,resolutionMode);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();

@@ -454,11 +454,11 @@ function pumpRealTimeMonitoringCurve(item){
 				var result =  Ext.JSON.decode(response.responseText);
 			    var data = result.list;
 			    var tickInterval = 1;
-			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
-			    if(tickInterval<10){
-			    	tickInterval=10;
+			    tickInterval = Math.floor(data.length / 2) + 1;
+			    if(tickInterval<100){
+			    	tickInterval=100;
 			    }
-			    tickInterval=1000;
+//			    tickInterval=1000;
 //			    if(){
 //			    	
 //			    }
@@ -498,7 +498,7 @@ function pumpRealTimeMonitoringCurve(item){
 			       '#F4BD82', // 黄
 			       '#FF00FF' // 紫
 			     ];
-			    initTimeAndDataCurveChartFn(ser, tickInterval, "pumpRealTimeMonitoringCurveDiv_Id", title, '', xTitle, yTitle, color,false);
+			    initTimeAndDataCurveChartFn(ser, tickInterval, "pumpRealTimeMonitoringCurveDiv_Id", title, '', xTitle, yTitle, color,false,'%H:%M:%S');
 			},
 			failure:function(){
 				Ext.MessageBox.alert("错误","与后台联系的时候出了问题");

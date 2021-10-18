@@ -1032,13 +1032,13 @@
                     "Title": "欠压保护开关",
                     "Addr": 40201,
                     "StoreDataType": "uint16",
-                    "IFDataType": "uint16",
+                    "IFDataType": "int",
                     "Quantity": 1,
                     "Ratio": 1,
                     "RWType": "w",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active",
+                    "AcqMode": "passive",
                     "Meaning": [{
                         "Value": 1,
                         "Meaning": "启用"
@@ -1051,37 +1051,37 @@
                     "Title": "设定欠压保护值",
                     "Addr": 40202,
                     "StoreDataType": "uint16",
-                    "IFDataType": "uint16",
+                    "IFDataType": "int",
                     "Quantity": 1,
                     "Ratio": 1,
                     "RWType": "w",
                     "Unit": "",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "passive"
                 },
                 {
                     "Title": "设定欠压保护延时值",
                     "Addr": 40203,
                     "StoreDataType": "uint16",
-                    "IFDataType": "uint16",
+                    "IFDataType": "int",
                     "Quantity": 1,
                     "Ratio": 1,
                     "RWType": "w",
                     "Unit": "",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "passive"
                 },
                 {
                     "Title": "设定工作模式",
                     "Addr": 40243,
                     "StoreDataType": "uint16",
-                    "IFDataType": "uint16",
+                    "IFDataType": "int",
                     "Quantity": 1,
                     "Ratio": 1,
                     "RWType": "w",
                     "Unit": "",
                     "ResolutionMode": 1,
-                    "AcqMode": "active",
+                    "AcqMode": "passive",
                     "Meaning": [{
                         "Value": 1,
                         "Meaning": "手动控制"
@@ -1112,7 +1112,7 @@
                     "RWType": "w",
                     "Unit": "Hz",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "passive"
                 }
             ]
         },

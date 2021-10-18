@@ -17,19 +17,19 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
                 border: false,
                 tabPosition: 'left',
                 items: [{
-                	title:'地址映射',
+                	title:'<div style="color:#000000;font-size:13px;font-family:SimHei">地址映射</div>',
                 	id:"ModbusProtocolAddrMappingConfigTabPanel_Id",
                 	items: [ModbusProtocolAddrMappingConfigInfoView],
     				layout: "fit",
     				border: false
                 },{
-                	title:'采控组配置',
+                	title:'<div style="color:#000000;font-size:13px;font-family:SimHei">采控组配置</div>',
                 	id:'ModbusProtocolAcqGroupConfigTabPanel_Id',
                 	items: [ModbusProtocolAcqGroupConfigInfoView],
     				layout: "fit",
     				border: false
                 },{
-                	title:'报警组配置',
+                	title:'<div style="color:#000000;font-size:13px;font-family:SimHei">报警组配置</div>',
                 	id:'ModbusProtocolAlarmGroupConfigTabPanel_Id',
                 	items: [ModbusProtocolAlarmGroupConfigInfoView],
     				layout: "fit",

@@ -566,7 +566,7 @@ function pumpHistoryQueryCurve(item){
 			       '#F4BD82', // 黄
 			       '#FF00FF' // 紫
 			     ];
-			    initTimeAndDataCurveChartFn(ser, tickInterval, "pumpHistoryQueryCurveDiv_Id", title, '', xTitle, yTitle, color,false);
+			    initTimeAndDataCurveChartFn(ser, tickInterval, "pumpHistoryQueryCurveDiv_Id", title, '', xTitle, yTitle, color,false,'%Y-%m-%d');
 			},
 			failure:function(){
 				Ext.MessageBox.alert("错误","与后台联系的时候出了问题");

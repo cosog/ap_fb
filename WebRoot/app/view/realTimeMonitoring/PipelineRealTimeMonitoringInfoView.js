@@ -172,7 +172,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         }]
                     },{
                     	region: 'east',
-                    	width: '15%',
+                    	width: '20%',
                     	xtype: 'tabpanel',
                     	id:"PipelineRealTimeMonitoringRightTabPanel",
                 		activeTab: 0,
@@ -480,7 +480,7 @@ function pipelineRealTimeMonitoringCurve(item){
 			       '#F4BD82', // 黄
 			       '#FF00FF' // 紫
 			     ];
-			    initTimeAndDataCurveChartFn(ser, tickInterval, "pipelineRealTimeMonitoringCurveDiv_Id", title, '', xTitle, yTitle, color,false);
+			    initTimeAndDataCurveChartFn(ser, tickInterval, "pipelineRealTimeMonitoringCurveDiv_Id", title, '', xTitle, yTitle, color,false,'%H:%M:%S');
 			},
 			failure:function(){
 				Ext.MessageBox.alert("错误","与后台联系的时候出了问题");

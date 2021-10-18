@@ -112,21 +112,9 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		if(!isNotVal(controlGridPanel)){
     			controlGridPanel=Ext.create('Ext.grid.Panel', {
     				id:'PumpRealTimeMonitoringControlDataGridPanel_Id',
-    				requires: [
-                       	'Ext.grid.selection.SpreadsheetModel',
-                       	'Ext.grid.plugin.Clipboard'
-                       	],
-                    xtype:'spreadsheet-checked',
-                    plugins: [
-                        'clipboard',
-                        'selectionreplicator',
-                        new Ext.grid.plugin.CellEditing({
-                      	  clicksToEdit:2
-                        })
-                    ],
     				border: false,
     				columnLines: true,
-    				forceFit: true,
+    				forceFit: false,
     				store: controlStore,
     			    columns: [
     			        { 
@@ -152,7 +140,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        	dataIndex: 'operation',
     			        	align:'center',
 //    			        	flex:8,
-    			        	width:85,
+    			        	width:92,
     			        	renderer :function(value,e,o){
     			        		var id = e.record.id;
     			        		var item=o.data.item;

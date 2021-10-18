@@ -162,32 +162,32 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                     		if(newCard.id=="ModbusProtocolAlarmInstanceNumItemsTableInfoPanel_Id"){
                     			if(selectedItem.data.classes==0){
                             		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                            			CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.children[0].text);
+                            			CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.children[0].id,selectedItem.data.children[0].text,selectedItem.data.children[0].classes);
                             		}else{
-                            			CreateProtocolAlarmInstanceNumItemsConfigInfoTable('');
+                            			CreateProtocolAlarmInstanceNumItemsConfigInfoTable(-1,'',1);
                             		}
-                            	}else if(selectedItem.data.classes==1){
-                            		CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.text);
+                            	}else{
+                            		CreateProtocolAlarmInstanceNumItemsConfigInfoTable(selectedItem.data.id,selectedItem.data.text,selectedItem.data.classes);
                             	}
                         	}else if(newCard.id=="ModbusProtocolAlarmInstanceSwitchItemsTableInfoPanel_Id"){
                         		if(selectedItem.data.classes==0){
                             		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                            			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.children[0].text);
+                            			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.children[0].id,selectedItem.data.children[0].text,selectedItem.data.children[0].classes);
                             		}else{
-                            			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable('');
+                            			CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(-1,'',1);
                             		}
-                            	}else if(selectedItem.data.classes==1){
-                            		CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.text);
+                            	}else{
+                            		CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(selectedItem.data.id,selectedItem.data.text,selectedItem.data.classes);
                             	}
                         	}else if(newCard.id=="ModbusProtocolAlarmInstanceEnumItemsTableInfoPanel_Id"){
                         		if(selectedItem.data.classes==0){
                             		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                            			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.children[0].text);
+                            			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.children[0].id,selectedItem.data.children[0].text,selectedItem.data.children[0].classes);
                             		}else{
-                            			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable('');
+                            			CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(-1,'',1);
                             		}
-                            	}else if(selectedItem.data.classes==1){
-                            		CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.text);
+                            	}else{
+                            		CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(selectedItem.data.id,selectedItem.data.text,selectedItem.data.classes);
                             	}
                         	}
                     	}
@@ -309,12 +309,12 @@ var ProtocolAlarmInstancePropertiesHandsontableHelper = {
 	    }
 };
 
-function CreateProtocolAlarmInstanceNumItemsConfigInfoTable(instanceName){
+function CreateProtocolAlarmInstanceNumItemsConfigInfoTable(id,name,classes){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceNumItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"/数据量报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(name+"/数据量报警项");
 			
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmInstanceConfigNumItemsHandsontableHelper==null || protocolAlarmInstanceConfigNumItemsHandsontableHelper.hot==undefined){
@@ -348,7 +348,8 @@ function CreateProtocolAlarmInstanceNumItemsConfigInfoTable(instanceName){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			instanceName:instanceName,
+			id:id,
+			classes:classes,
 			resolutionMode:2
         }
 	});
@@ -408,12 +409,12 @@ var ProtocolAlarmInstanceConfigNumItemsHandsontableHelper = {
 	    }
 };
 
-function CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(instanceName){
+function CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(id,name,classes){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceSwitchItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"/开关量报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(name+"/开关量报警项");
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmInstanceConfigSwitchItemsHandsontableHelper==null || protocolAlarmInstanceConfigSwitchItemsHandsontableHelper.hot==undefined){
 				protocolAlarmInstanceConfigSwitchItemsHandsontableHelper = ProtocolAlarmInstanceConfigSwitchItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceSwitchItemsConfigTableInfoDiv_id");
@@ -446,7 +447,8 @@ function CreateProtocolAlarmInstanceSwitchItemsConfigInfoTable(instanceName){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			instanceName:instanceName,
+			id:id,
+			classes:classes,
 			resolutionMode:0
         }
 	});
@@ -506,12 +508,12 @@ var ProtocolAlarmInstanceConfigSwitchItemsHandsontableHelper = {
 	    }
 };
 
-function CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(instanceName){
+function CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(id,name,classes){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAlarmInstanceEnumItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(instanceName+"/枚举量报警项");
+			Ext.getCmp("ModbusProtocolAlarmInstanceItemsConfigTabPanel_Id").setTitle(name+"/枚举量报警项");
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAlarmInstanceConfigEnumItemsHandsontableHelper==null || protocolAlarmInstanceConfigEnumItemsHandsontableHelper.hot==undefined){
 				protocolAlarmInstanceConfigEnumItemsHandsontableHelper = ProtocolAlarmInstanceConfigEnumItemsHandsontableHelper.createNew("ModbusProtocolAlarmInstanceEnumItemsConfigTableInfoDiv_id");
@@ -543,7 +545,8 @@ function CreateProtocolAlarmInstanceEnumItemsConfigInfoTable(instanceName){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			instanceName:instanceName,
+			id:id,
+			classes:classes,
 			resolutionMode:1
         }
 	});
