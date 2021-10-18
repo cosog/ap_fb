@@ -187,7 +187,7 @@ function websocketOnMessage(evt) {
 				//更新实时表和实时曲线
 				if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-					if(wellName==data.wellName){
+					if(wellName==data.wellName && data.CellInfo.length>0){
 						pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
 						pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
 						
@@ -298,7 +298,7 @@ function websocketOnMessage(evt) {
 				//更新实时表和实时曲线
 				if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
 					var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-					if(wellName==data.wellName){
+					if(wellName==data.wellName && data.CellInfo.length>0){
 						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
 						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
 						//更新实时曲线
@@ -400,7 +400,7 @@ function websocketOnMessage(evt) {
 			}else{
 				Ext.getCmp("adRunStatusProbeLabel_id").setIconCls("dtyellow");
 			}
-			Ext.getCmp("adRunStatusProbeLabel_id").setText("ad"+data.adVersion);
+			Ext.getCmp("adRunStatusProbeLabel_id").setText("驱动 v"+data.adVersion);
 		}
 	}
 }

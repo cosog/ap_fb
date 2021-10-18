@@ -21,12 +21,9 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore', {
         load: function (store, record, f, op, o) {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
-            var arrColumns = get_rawData.columns;
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                var column = createRealTimeMonitoringStatColumn(arrColumns);
-                var newColumns = Ext.JSON.decode(column);
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PipelineRealTimeMonitoringStatGridPanel_Id",
                     border: false,
@@ -37,7 +34,35 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore', {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
                     store: store,
-                    columns: newColumns,
+                    columns: [{
+                        text: '序号',
+                        lockable: true,
+                        align: 'center',
+                        width: 50,
+                        xtype: 'rownumberer',
+                        sortable: false,
+                        locked: false
+                    }, {
+                        text: '名称',
+                        flex:2,
+                        lockable: true,
+                        align: 'center',
+                        sortable: false,
+                        dataIndex: 'item',
+                        renderer: function (value) {
+                            return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? "" : value) + "</span>";
+                        }
+                    }, {
+                        text: '变量',
+                        flex:1,
+                        lockable: true,
+                        align: 'center',
+                        sortable: false,
+                        dataIndex: 'count',
+                        renderer: function (value, o, p, e) {
+                            return adviceStatTableCommStatusColor(value, o, p, e);
+                        }
+                    }],
                     listeners: {
                     	selectionchange: function (view, selected, o) {
                     		

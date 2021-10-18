@@ -58,18 +58,20 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                         	Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").setValue(index);
                         	if(record.data.classes==0){
                         		if(isNotVal(record.data.children) && record.data.children.length>0){
-                        			CreateProtocolInstanceAcqItemsInfoTable(record.data.children[0].text);
+                        			CreateProtocolInstanceAcqItemsInfoTable(record.data.children[0].id,record.data.children[0].text,record.data.children[0].classes);
+                        		}else{
+                        			CreateProtocolInstanceAcqItemsInfoTable(-1,'',1);
                         		}
-                        	}else if(record.data.classes==1){
-                        		CreateProtocolInstanceAcqItemsInfoTable(record.data.text);
+                        	}else{
+                        		CreateProtocolInstanceAcqItemsInfoTable(record.data.id,record.data.text,record.data.classes);
                         	}
                         	CreateProtocolInstanceConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
                         	e.preventDefault();//去掉点击右键是浏览器的菜单
                         	var info='节点';
-                        	if(record.data.classes==0){
+                        	if(record.data.classes!=1){
                         		return;
-                        	}if(record.data.classes==1){
+                        	}else{
                         		info='实例';
                         	}
                         	var menu = Ext.create('Ext.menu.Menu', {

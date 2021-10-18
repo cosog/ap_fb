@@ -114,18 +114,6 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		if(!isNotVal(controlGridPanel)){
     			controlGridPanel=Ext.create('Ext.grid.Panel', {
     				id:'PipelineRealTimeMonitoringControlDataGridPanel_Id',
-    				requires: [
-                       	'Ext.grid.selection.SpreadsheetModel',
-                       	'Ext.grid.plugin.Clipboard'
-                       	],
-                    xtype:'spreadsheet-checked',
-                    plugins: [
-                        'clipboard',
-                        'selectionreplicator',
-                        new Ext.grid.plugin.CellEditing({
-                      	  clicksToEdit:2
-                        })
-                    ],
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -154,7 +142,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			        	dataIndex: 'operation',
     			        	align:'center',
 //    			        	flex:8,
-    			        	width:85,
+    			        	width:92,
     			        	renderer :function(value,e,o){
     			        		var id = e.record.id;
     			        		var item=o.data.item;

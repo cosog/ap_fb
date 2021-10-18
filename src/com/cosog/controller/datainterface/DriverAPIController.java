@@ -755,7 +755,7 @@ public class DriverAPIController extends BaseController{
 					webSocketSendData.append("]");
 					webSocketSendData.append(",\"CellInfo\":"+info_json);
 					webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
-					System.out.println(webSocketSendData.toString());
+//					System.out.println(webSocketSendData.toString());
 					infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
 					infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 				}

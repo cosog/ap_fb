@@ -2551,14 +2551,14 @@ public class StringManagerUtils {
 	    		//邮件发送人
 	    		mimeMessage.setFrom(new InternetAddress(myEMailAccount));
 	    		//邮件接收人
-	    		mimeMessage.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMailAccount));
-//	    		for(int i=0;i<receivingAccount.size();i++){
-//	    			if(i==0){
-//	    				mimeMessage.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receivingAccount.get(i)));
-//	    			}else{
-//	    				mimeMessage.addRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receivingAccount.get(i)));
-//	    			}
-//	    		}
+//	    		mimeMessage.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMailAccount));
+	    		for(int i=0;i<receivingAccount.size();i++){
+	    			if(i==0){
+	    				mimeMessage.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receivingAccount.get(i)));
+	    			}else{
+	    				mimeMessage.addRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receivingAccount.get(i)));
+	    			}
+	    		}
 	    		//邮件标题
 	    		mimeMessage.setSubject(topic);
 	    		//邮件内容

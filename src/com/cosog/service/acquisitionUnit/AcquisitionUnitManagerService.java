@@ -543,7 +543,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getProtocolInstanceItemsConfigData(String instanceName,String RWType){
+	public String getProtocolInstanceItemsConfigData(String id,String classes){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		int index=1;
@@ -569,11 +569,21 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("\"totalRoot\":[");
 		List<String> itemsList=new ArrayList<String>();
 		
-		String protocolSql="select t.protocol from tbl_acq_unit_conf t,tbl_protocolinstance t2 where t2.unitid=t.id and t2.name='"+instanceName+"'";
+		String protocolSql="select t.protocol from tbl_acq_unit_conf t,tbl_protocolinstance t2 where t2.unitid=t.id and t2.id="+id+"";
 		String itemsSql="select distinct(t.itemname) "
 				+ " from tbl_acq_item2group_conf t,tbl_acq_group_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_unit_conf t4,tbl_protocolinstance t5 "
-				+ " where t.groupid=t2.id and t2.id=t3.groupid and t3.unitid=t4.id and t4.id=t5.unitid and t5.name='"+instanceName+"'";
-		
+				+ " where t.groupid=t2.id and t2.id=t3.groupid and t3.unitid=t4.id and t4.id=t5.unitid and t5.id="+id+"";
+		if("2".equals(classes)){
+			protocolSql="select t.protocol from tbl_acq_unit_conf t where t.id="+id+"";
+			itemsSql="select distinct(t.itemname) "
+					+ " from tbl_acq_item2group_conf t,tbl_acq_group_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_unit_conf t4 "
+					+ " where t.groupid=t2.id and t2.id=t3.groupid and t3.unitid=t4.id and t4.id="+id+"";
+		}else if("3".equals(classes)){
+			protocolSql="select t.protocol from tbl_acq_group_conf t where t.id="+id+"";
+			itemsSql="select distinct(t.itemname) "
+					+ " from tbl_acq_item2group_conf t,tbl_acq_group_conf t2 "
+					+ " where t.groupid=t2.id and t2.id="+id+"";
+		}
 		List<?> protocolList=this.findCallSql(protocolSql);
 		if(protocolList.size()>0){
 			String protocolName=protocolList.get(0)+"";
@@ -586,28 +596,27 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
 					for(int j=0;j<protocolConfig.getItems().size();j++){
 						if(StringManagerUtils.existOrNot(itemsList, protocolConfig.getItems().get(j).getTitle(),false)){
-							if(RWType.equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
-								String RWTypeName="只读";
-								if("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
-									RWTypeName="只读";
-								}else if("w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
-									RWTypeName="只写";
-								}else if("rw".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
-									RWTypeName="读写";
-								}
-								
-								result_json.append("{\"id\":"+index+","
-										+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
-										+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
-										+ "\"quantity\":"+protocolConfig.getItems().get(j).getQuantity()+","
-										+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
-										+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
-										+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
-										+ "\"RWType\":\""+RWTypeName+"\","
-										+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
-										+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
-								index++;
+//							if(RWType.equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){}
+							String RWTypeName="只读";
+							if("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+								RWTypeName="只读";
+							}else if("w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+								RWTypeName="只写";
+							}else if("rw".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+								RWTypeName="读写";
 							}
+							
+							result_json.append("{\"id\":"+index+","
+									+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
+									+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
+									+ "\"quantity\":"+protocolConfig.getItems().get(j).getQuantity()+","
+									+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
+									+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
+									+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
+									+ "\"RWType\":\""+RWTypeName+"\","
+									+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
+									+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
+							index++;
 						}
 					}
 					break;
@@ -622,7 +631,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getProtocolAlarmInstanceNumItemsConfigData(String instanceName,String resolutionMode){
+	public String getProtocolAlarmInstanceNumItemsConfigData(String id,String classes,String resolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -650,9 +659,19 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ "t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
-				+ " and t3.name='"+instanceName+"' "
+				+ " and t3.id="+id+" "
 				+ " and t.type="+resolutionMode
 				+ " order by t.itemaddr";
+		
+		if("2".equals(classes)){
+			itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
+					+ "t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
+					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3 "
+					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
+					+ " and t2.id="+id+" "
+					+ " and t.type="+resolutionMode
+					+ " order by t.itemaddr";
+		}
 		
 		List<?> list=this.findCallSql(itemsSql);
 		for(int i=0;i<list.size();i++){
@@ -677,7 +696,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
-	public String getProtocolAlarmInstanceSwitchItemsConfigData(String instanceName,String resolutionMode){
+	public String getProtocolAlarmInstanceSwitchItemsConfigData(String id,String classes,String resolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -705,10 +724,18 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ " t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
-				+ " and t3.name='"+instanceName+"' "
+				+ " and t3.id="+id+" "
 				+ " and t.type="+resolutionMode
 				+ " order by t.itemaddr,t.bitindex";
-		
+		if("2".equals(classes)){
+			itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.bitIndex,t.value,t.delay,"
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
+					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2, tbl_code t3 "
+					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
+					+ " and t2.id="+id+" "
+					+ " and t.type="+resolutionMode
+					+ " order by t.itemaddr,t.bitindex";
+		}
 		List<?> list=this.findCallSql(itemsSql);
 		String protocolName="";
 		Protocol protocol=null;
@@ -758,7 +785,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
-	public String getProtocolAlarmInstanceEnumItemsConfigData(String instanceName,String resolutionMode){
+	public String getProtocolAlarmInstanceEnumItemsConfigData(String id,String classes,String resolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -785,10 +812,18 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ " t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
 				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
 				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
-				+ " and t3.name='"+instanceName+"' "
+				+ " and t3.id="+id+" "
 				+ " and t.type="+resolutionMode
 				+ " order by t.itemaddr,t.bitindex";
-		
+		if("2".equals(classes)){
+			itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
+					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2, tbl_code t3 "
+					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
+					+ " and t2.id="+id+" "
+					+ " and t.type="+resolutionMode
+					+ " order by t.itemaddr,t.bitindex";
+		}
 		List<?> list=this.findCallSql(itemsSql);
 		String protocolName="";
 		Protocol protocol=null;
@@ -1271,13 +1306,18 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		pumpTree_json.append("[");
 		pipelineTree_json.append("[");
 		String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
-				+ " t.unitid,t2.unit_name,t.devicetype,t.sort  "
+				+ " t.devicetype,t.sort,t.unitid,t2.unit_name "
 				+ " from tbl_protocolinstance t ,tbl_acq_unit_conf t2 where t.unitid=t2.id"
 				+ " order by t.devicetype,t.sort";
+		String groupSql="select t.id,t.group_name,t.group_code,t2.unitid "
+				+ " from tbl_acq_group_conf t,tbl_acq_group2unit_conf t2 "
+				+ " where t.id=t2.groupid "
+				+ " order by t2.unitid,t.type";
 		List<?> list=this.findCallSql(sql);
+		List<?> groupList=this.findCallSql(groupSql);
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
-			if(StringManagerUtils.stringToInteger(obj[11]+"")==0){
+			if(StringManagerUtils.stringToInteger(obj[9]+"")==0){
 				pumpTree_json.append("{\"classes\":1,");
 				pumpTree_json.append("\"id\":\""+obj[0]+"\",");
 				pumpTree_json.append("\"text\":\""+obj[1]+"\",");
@@ -1288,12 +1328,40 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pumpTree_json.append("\"signInSuffix\":\""+obj[6]+"\",");
 				pumpTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
 				pumpTree_json.append("\"heartbeatSuffix\":\""+obj[8]+"\",");
-				pumpTree_json.append("\"unitId\":"+obj[9]+",");
-				pumpTree_json.append("\"unitName\":\""+obj[10]+"\",");
-				pumpTree_json.append("\"deviceType\":"+obj[11]+",");
-				pumpTree_json.append("\"sort\":"+obj[12]+",");
+				pumpTree_json.append("\"deviceType\":"+obj[9]+",");
+				pumpTree_json.append("\"sort\":"+obj[10]+",");
+				pumpTree_json.append("\"unitId\":"+obj[11]+",");
+				pumpTree_json.append("\"unitName\":\""+obj[12]+"\",");
 				pumpTree_json.append("\"iconCls\": \"Protocol\",");
-				pumpTree_json.append("\"leaf\": true");
+
+				pumpTree_json.append("\"expanded\": true,");
+				pumpTree_json.append("\"children\": [");
+				pumpTree_json.append("{\"classes\":2,");
+				pumpTree_json.append("\"text\":\""+obj[12]+"\",");
+				pumpTree_json.append("\"id\":"+obj[11]+",");
+				pumpTree_json.append("\"iconCls\": \"AcqUnit\","); 
+				
+				pumpTree_json.append("\"expanded\": true,");
+				pumpTree_json.append("\"children\": [");
+				for(int j=0;j<groupList.size();j++){
+					Object[] groupObj = (Object[]) groupList.get(j);
+					if((obj[11]+"").equalsIgnoreCase(groupObj[3]+"")){
+						pumpTree_json.append("{\"classes\":3,");
+						pumpTree_json.append("\"id\":"+groupObj[0]+",");
+						pumpTree_json.append("\"text\":\""+groupObj[1]+"\",");
+						pumpTree_json.append("\"code\":\""+groupObj[2]+"\",");
+						pumpTree_json.append("\"iconCls\": \"AcqGroup\","); 
+						pumpTree_json.append("\"leaf\": true},");
+					}
+				}
+				if(pumpTree_json.toString().endsWith(",")){
+					pumpTree_json.deleteCharAt(pumpTree_json.length() - 1);
+				}
+				
+				pumpTree_json.append("]");
+				
+				pumpTree_json.append("}]");
+				
 				pumpTree_json.append("},");
 			}else{
 				pipelineTree_json.append("{\"classes\":1,");
@@ -1306,12 +1374,38 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"signInSuffix\":\""+obj[6]+"\",");
 				pipelineTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
 				pipelineTree_json.append("\"heartbeatSuffix\":\""+obj[8]+"\",");
-				pipelineTree_json.append("\"unitId\":"+obj[9]+",");
-				pipelineTree_json.append("\"unitName\":\""+obj[10]+"\",");
-				pipelineTree_json.append("\"deviceType\":"+obj[11]+",");
-				pipelineTree_json.append("\"sort\":"+obj[12]+",");
+				pipelineTree_json.append("\"deviceType\":"+obj[9]+",");
+				pipelineTree_json.append("\"sort\":"+obj[10]+",");
+				pipelineTree_json.append("\"unitId\":"+obj[11]+",");
+				pipelineTree_json.append("\"unitName\":\""+obj[12]+"\",");
 				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
-				pipelineTree_json.append("\"leaf\": true");
+				pipelineTree_json.append("\"expanded\": true,");
+				
+				pipelineTree_json.append("\"children\": [");
+				pipelineTree_json.append("{\"classes\":2,");
+				pipelineTree_json.append("\"text\":\""+obj[12]+"\",");
+				pipelineTree_json.append("\"id\":"+obj[11]+",");
+				pipelineTree_json.append("\"iconCls\": \"AcqUnit\","); 
+				pipelineTree_json.append("\"expanded\": true,");
+				pipelineTree_json.append("\"children\": [");
+				for(int j=0;j<groupList.size();j++){
+					Object[] groupObj = (Object[]) groupList.get(j);
+					if((obj[11]+"").equalsIgnoreCase(groupObj[3]+"")){
+						pipelineTree_json.append("{\"classes\":3,");
+						pipelineTree_json.append("\"id\":"+groupObj[0]+",");
+						pipelineTree_json.append("\"text\":\""+groupObj[1]+"\",");
+						pipelineTree_json.append("\"code\":\""+groupObj[2]+"\",");
+						pipelineTree_json.append("\"iconCls\": \"AcqGroup\","); 
+						pipelineTree_json.append("\"leaf\": true},");
+					}
+				}
+				if(pipelineTree_json.toString().endsWith(",")){
+					pipelineTree_json.deleteCharAt(pipelineTree_json.length() - 1);
+				}
+				
+				pipelineTree_json.append("]");
+				pipelineTree_json.append("}]");
+				
 				pipelineTree_json.append("},");
 			}
 		}
@@ -1357,7 +1451,17 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pumpTree_json.append("\"deviceType\":"+obj[5]+",");
 				pumpTree_json.append("\"sort\":"+obj[6]+",");
 				pumpTree_json.append("\"iconCls\": \"Protocol\",");
-				pumpTree_json.append("\"leaf\": true");
+				pumpTree_json.append("\"expanded\": true,");
+				pumpTree_json.append("\"children\": [");
+				pumpTree_json.append("{\"classes\":2,");
+				pumpTree_json.append("\"id\":"+obj[3]+",");
+				pumpTree_json.append("\"text\":\""+obj[4]+"\",");
+				pumpTree_json.append("\"iconCls\": \"AcqGroup\","); 
+				pumpTree_json.append("\"leaf\": true}");
+				pumpTree_json.append("]");
+				
+				
+				
 				pumpTree_json.append("},");
 			}else{
 				pipelineTree_json.append("{\"classes\":1,");
@@ -1369,7 +1473,15 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"deviceType\":"+obj[5]+",");
 				pipelineTree_json.append("\"sort\":"+obj[6]+",");
 				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
-				pipelineTree_json.append("\"leaf\": true");
+				pipelineTree_json.append("\"expanded\": true,");
+				pipelineTree_json.append("\"children\": [");
+				pipelineTree_json.append("{\"classes\":2,");
+				pipelineTree_json.append("\"id\":"+obj[3]+",");
+				pipelineTree_json.append("\"text\":\""+obj[4]+"\",");
+				pipelineTree_json.append("\"iconCls\": \"AcqGroup\","); 
+				pipelineTree_json.append("\"leaf\": true}");
+				pipelineTree_json.append("]");
+				
 				pipelineTree_json.append("},");
 			}
 		}

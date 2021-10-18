@@ -106,17 +106,11 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
     				}
     				
     				//采控实例HandsontableHelper资源
-    				if(protocolInstanceConfigAcqItemsHandsontableHelper!=null){
-    					if(protocolInstanceConfigAcqItemsHandsontableHelper.hot!=undefined){
-    						protocolInstanceConfigAcqItemsHandsontableHelper.hot.destroy();
+    				if(protocolInstanceConfigItemsHandsontableHelper!=null){
+    					if(protocolInstanceConfigItemsHandsontableHelper.hot!=undefined){
+    						protocolInstanceConfigItemsHandsontableHelper.hot.destroy();
     					}
-    					protocolInstanceConfigAcqItemsHandsontableHelper=null;
-    				}
-    				if(protocolInstanceConfigControlItemsHandsontableHelper!=null){
-    					if(protocolInstanceConfigControlItemsHandsontableHelper.hot!=undefined){
-    						protocolInstanceConfigControlItemsHandsontableHelper.hot.destroy();
-    					}
-    					protocolInstanceConfigControlItemsHandsontableHelper=null;
+    					protocolInstanceConfigItemsHandsontableHelper=null;
     				}
     				if(protocolConfigInstancePropertiesHandsontableHelper!=null){
     					if(protocolConfigInstancePropertiesHandsontableHelper.hot!=undefined){

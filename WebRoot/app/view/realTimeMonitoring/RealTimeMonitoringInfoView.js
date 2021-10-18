@@ -20,6 +20,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
                     },{
                 		xtype: 'button',
                         id:"CPUUsedPercentLabel_id",
+//                        width: 180,
                         text: 'CPU:',
                         handler: function (v, o) {
                         	Ext.getCmp('ResourceMonitoringCurveItem_Id').setValue("CPU使用率(%)");
@@ -34,6 +35,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
                 		xtype: 'button',
                         id:"memUsedPercentLabel_id",
                         text: '内存:',
+//                        width: 130,
                         handler: function (v, o) {
                         	Ext.getCmp('ResourceMonitoringCurveItem_Id').setValue("内存使用率(%)");
                             Ext.getCmp('ResourceMonitoringCurveItemCode_Id').setValue("memUsedPercent");
@@ -47,6 +49,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
                 		xtype: 'button',
                         id:"tableSpaceSizeProbeLabel_id",
                         text: '表空间:',
+//                        width: 130,
                         handler: function (v, o) {
                         	Ext.getCmp('ResourceMonitoringCurveItem_Id').setValue("表空间使用率(%)");
                             Ext.getCmp('ResourceMonitoringCurveItemCode_Id').setValue("tableSpaceSize");
@@ -59,7 +62,8 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
                 	},{
                 		xtype: 'button',
                         id:"adRunStatusProbeLabel_id",
-                        text: 'ad状态:',
+                        text: '驱动:',
+//                        width: 100,
                         handler: function (v, o) {
                         	Ext.getCmp('ResourceMonitoringCurveItem_Id').setValue("ad运行状态");
                             Ext.getCmp('ResourceMonitoringCurveItemCode_Id').setValue("adRunStatus");

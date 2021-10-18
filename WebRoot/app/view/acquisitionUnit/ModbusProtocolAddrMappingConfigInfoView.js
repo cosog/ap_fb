@@ -152,7 +152,7 @@ function CreateModbusProtocolAddrMappingItemsConfigInfoTable(protocolName,classe
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolItemsConfigData',
 		success:function(response) {
-			Ext.getCmp("ModbusProtocolAddrMappingItemsConfigPanel_Id").setTitle(protocolName+"采控项配置");
+			Ext.getCmp("ModbusProtocolAddrMappingItemsConfigPanel_Id").setTitle(protocolName+"/采控项配置");
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolConfigAddrMappingItemsHandsontableHelper==null || protocolConfigAddrMappingItemsHandsontableHelper.hot==undefined){
 				protocolConfigAddrMappingItemsHandsontableHelper = ProtocolConfigAddrMappingItemsHandsontableHelper.createNew("ModbusProtocolAddrMappingItemsConfigTableInfoDiv_id");

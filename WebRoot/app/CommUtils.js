@@ -7674,7 +7674,7 @@ function getBaseUrl(){
 	return baseRoot;
 };
 
-function initTimeAndDataCurveChartFn(series, tickInterval, divId, title, subtitle, xtitle, ytitle, color,legend) {
+function initTimeAndDataCurveChartFn(series, tickInterval, divId, title, subtitle, xtitle, ytitle, color,legend,timeFormat) {
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -7707,7 +7707,7 @@ function initTimeAndDataCurveChartFn(series, tickInterval, divId, title, subtitl
             tickPixelInterval: tickInterval,
             labels: {
                 formatter: function () {
-                    return Highcharts.dateFormat("%Y-%m-%d", this.value);
+                    return Highcharts.dateFormat(timeFormat, this.value);
                 },
                 rotation: 0, //倾斜度，防止数量过多显示不全  
                 step: 2
