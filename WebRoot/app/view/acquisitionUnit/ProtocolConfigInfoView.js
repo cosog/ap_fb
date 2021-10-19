@@ -7,6 +7,7 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
     initComponent: function () {
     	var me = this;
     	var ModbusProtocolConfigInfoView = Ext.create('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView');
+    	var ModbusProtocolUnitConfigInfoView = Ext.create('AP.view.acquisitionUnit.ModbusProtocolUnitConfigInfoView');
         var ModbusProtocolInstanceConfigInfoView = Ext.create('AP.view.acquisitionUnit.ModbusProtocolInstanceConfigInfoView');
     	Ext.apply(me, {
     		items: [{
@@ -22,6 +23,12 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
     				layout: "fit",
     				border: false
                 },{
+                	title:'单元配置',
+                	id:'ScadaDriverModbusUnitConfigTabPanel_Id',
+                	items: [ModbusProtocolUnitConfigInfoView],
+    				layout: "fit",
+    				border: false
+                },{
                 	title:'实例配置',
                 	id:'ScadaDriverModbusInstanceConfigTabPanel_Id',
                 	items: [ModbusProtocolInstanceConfigInfoView],
@@ -32,12 +39,19 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
                     tabchange: function (tabPanel, newCard, oldCard, obj) {
                     	if(newCard.id=="ScadaDriverModbusProtocolConfigTabPanel_Id"){
 //                    		loadFSDiagramAnalysisSingleStatData();
+                    	}else if(newCard.id=="ScadaDriverModbusUnitConfigTabPanel_Id"){
+                    		var treePanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
+                    		if(isNotVal(treePanel)){
+                    			treePanel.getStore().load();
+                    		}else{
+                    			Ext.create('AP.store.acquisitionUnit.ModbusProtocolAcqUnitTreeInfoStore');
+                    		}
                     	}else if(newCard.id=="ScadaDriverModbusInstanceConfigTabPanel_Id"){
                     		var treePanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
                     		if(isNotVal(treePanel)){
                     			treePanel.getStore().load();
                     		}else{
-                    			ModbusProtocolTreeInfoStore = Ext.create('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore');
+                    			Ext.create('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore');
                     		}
                     	}
                     }
@@ -66,43 +80,43 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
     				}
     				
     				//采控组HandsontableHelper资源
-    				if(protocolAcqGroupConfigItemsHandsontableHelper!=null){
-    					if(protocolAcqGroupConfigItemsHandsontableHelper.hot!=undefined){
-    						protocolAcqGroupConfigItemsHandsontableHelper.hot.destroy();
+    				if(protocolAcqUnitConfigItemsHandsontableHelper!=null){
+    					if(protocolAcqUnitConfigItemsHandsontableHelper.hot!=undefined){
+    						protocolAcqUnitConfigItemsHandsontableHelper.hot.destroy();
     					}
-    					protocolAcqGroupConfigItemsHandsontableHelper=null;
+    					protocolAcqUnitConfigItemsHandsontableHelper=null;
     				}
-    				if(protocolConfigAcqGroupPropertiesHandsontableHelper!=null){
-    					if(protocolConfigAcqGroupPropertiesHandsontableHelper.hot!=undefined){
-    						protocolConfigAcqGroupPropertiesHandsontableHelper.hot.destroy();
+    				if(protocolConfigAcqUnitPropertiesHandsontableHelper!=null){
+    					if(protocolConfigAcqUnitPropertiesHandsontableHelper.hot!=undefined){
+    						protocolConfigAcqUnitPropertiesHandsontableHelper.hot.destroy();
     					}
-    					protocolConfigAcqGroupPropertiesHandsontableHelper=null;
+    					protocolConfigAcqUnitPropertiesHandsontableHelper=null;
     				}
     				
-    				//报警组HandsontableHelper资源
-    				if(protocolConfigAlarmGroupPropertiesHandsontableHelper!=null){
-    					if(protocolConfigAlarmGroupPropertiesHandsontableHelper.hot!=undefined){
-    						protocolConfigAlarmGroupPropertiesHandsontableHelper.hot.destroy();
+    				//报警单元HandsontableHelper资源
+    				if(protocolConfigAlarmUnitPropertiesHandsontableHelper!=null){
+    					if(protocolConfigAlarmUnitPropertiesHandsontableHelper.hot!=undefined){
+    						protocolConfigAlarmUnitPropertiesHandsontableHelper.hot.destroy();
     					}
-    					protocolConfigAlarmGroupPropertiesHandsontableHelper=null;
+    					protocolConfigAlarmUnitPropertiesHandsontableHelper=null;
     				}
-    				if(protocolAlarmGroupConfigNumItemsHandsontableHelper!=null){
-    					if(protocolAlarmGroupConfigNumItemsHandsontableHelper.hot!=undefined){
-    						protocolAlarmGroupConfigNumItemsHandsontableHelper.hot.destroy();
+    				if(protocolAlarmUnitConfigNumItemsHandsontableHelper!=null){
+    					if(protocolAlarmUnitConfigNumItemsHandsontableHelper.hot!=undefined){
+    						protocolAlarmUnitConfigNumItemsHandsontableHelper.hot.destroy();
     					}
-    					protocolAlarmGroupConfigNumItemsHandsontableHelper=null;
+    					protocolAlarmUnitConfigNumItemsHandsontableHelper=null;
     				}
-    				if(protocolAlarmGroupConfigSwitchItemsHandsontableHelper!=null){
-    					if(protocolAlarmGroupConfigSwitchItemsHandsontableHelper.hot!=undefined){
-    						protocolAlarmGroupConfigSwitchItemsHandsontableHelper.hot.destroy();
+    				if(protocolAlarmUnitConfigSwitchItemsHandsontableHelper!=null){
+    					if(protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot!=undefined){
+    						protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot.destroy();
     					}
-    					protocolAlarmGroupConfigSwitchItemsHandsontableHelper=null;
+    					protocolAlarmUnitConfigSwitchItemsHandsontableHelper=null;
     				}
-    				if(protocolAlarmGroupConfigEnumItemsHandsontableHelper!=null){
-    					if(protocolAlarmGroupConfigEnumItemsHandsontableHelper.hot!=undefined){
-    						protocolAlarmGroupConfigEnumItemsHandsontableHelper.hot.destroy();
+    				if(protocolAlarmUnitConfigEnumItemsHandsontableHelper!=null){
+    					if(protocolAlarmUnitConfigEnumItemsHandsontableHelper.hot!=undefined){
+    						protocolAlarmUnitConfigEnumItemsHandsontableHelper.hot.destroy();
     					}
-    					protocolAlarmGroupConfigEnumItemsHandsontableHelper=null;
+    					protocolAlarmUnitConfigEnumItemsHandsontableHelper=null;
     				}
     				
     				//采控实例HandsontableHelper资源

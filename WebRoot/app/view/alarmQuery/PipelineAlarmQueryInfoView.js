@@ -17,25 +17,25 @@ Ext.define("AP.view.alarmQuery.PipelineAlarmQueryInfoView", {
         		border: false,
         		tabPosition: 'left',
         		items: [{
-        				title: '通信状态报警',
+        				title: '<div style="color:#000000;font-size:11px;font-family:SimSun">通信状态报警</div>',
         				id:'PipelineCommunicationAlarmInfoPanel_Id',
         				items: [CommunicationAlarmInfoView],
         				layout: "fit",
         				border: false
         			},{
-        				title: '数值量报警',
+        				title: '<div style="color:#000000;font-size:11px;font-family:SimSun">数值量报警</div>',
         				id:'PipelineNumericValueAlarmInfoPanel_Id',
         				items: [NumericValueAlarmInfoView],
         				layout: "fit",
         				border: false
         			},{
-        				title: '枚举量报警',
+        				title: '<div style="color:#000000;font-size:11px;font-family:SimSun">枚举量报警</div>',
         				id:'PipelineEnumValueAlarmInfoPanel_Id',
         				items: [EnumValueAlarmInfoView],
         				layout: "fit",
         				border: false
         			},{
-        				title: '开关量报警',
+        				title: '<div style="color:#000000;font-size:11px;font-family:SimSun">开关量报警</div>',
         				id:'PipelineSwitchingValueAlarmInfoPanel_Id',
         				items: [SwitchingValueAlarmInfoView],
         				layout: "fit",

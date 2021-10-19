@@ -12,7 +12,7 @@ Ext.define('AP.controller.acquisitionUnit.AcquisitionUnitInfoControl', {
 });
 
 function addModbusProtocolAddrMappingConfigData() {
-    var window = Ext.create("AP.view.acquisitionUnit.ModbusProtocolAddrMappingInfoWindow", {
+    var window = Ext.create("AP.view.acquisitionUnit.ModbusProtocolInfoWindow", {
         title: '创建协议'
     });
     window.show();
@@ -436,10 +436,10 @@ showAcquisitionUnitOwnGroups = function (selectedAcquisitionUnitId) {
 
 //为当前采控组安排采控项
 var grantAcquisitionItemsPermission = function () {
-    if (protocolAcqGroupConfigItemsHandsontableHelper == null) {
+    if (protocolAcqUnitConfigItemsHandsontableHelper == null) {
         return false;
     }
-    var driverConfigItemsData = protocolAcqGroupConfigItemsHandsontableHelper.hot.getData();
+    var driverConfigItemsData = protocolAcqUnitConfigItemsHandsontableHelper.hot.getData();
     var addUrl = context + '/acquisitionUnitManagerController/grantAcquisitionItemsPermission'
     // 添加条件
     var addjson = [];
@@ -605,8 +605,8 @@ var saveModbusProtocolInstanceSubmitBtnForm = function () {
 };
 
 function addAlarmGroupInfo() {
-    var window = Ext.create("AP.view.acquisitionUnit.AlarmGroupInfoWindow", {
-        title: '创建报警组'
+    var window = Ext.create("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
+        title: '创建报警单元'
     });
     window.show();
     Ext.getCmp("addFormAlarmGroup_Id").show();
@@ -616,7 +616,7 @@ function addAlarmGroupInfo() {
 
 //窗体创建按钮事件
 var SaveAlarmGroupSubmitBtnForm = function () {
-    var winForm = Ext.getCmp("alarmGroup_editWin_Id").down('form');
+    var winForm = Ext.getCmp("alarmUnit_editWin_Id").down('form');
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
     if (winForm.getForm().isValid()) {
         winForm.getForm().submit({
@@ -626,7 +626,7 @@ var SaveAlarmGroupSubmitBtnForm = function () {
             waitMsg: cosog.string.sendServer,
             waitTitle: 'Please Wait...',
             success: function (response, action) {
-                Ext.getCmp('alarmGroup_editWin_Id').close();
+                Ext.getCmp('alarmUnit_editWin_Id').close();
                 Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().load();
                 if (action.result.msg == true) {
                     Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.success + "</font>】，" + cosog.string.dataInfo + "");

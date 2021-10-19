@@ -215,7 +215,7 @@ function CreateProtocolAlarmInstancePropertiesInfoTable(data){
 		
 		var item3={};
 		item3.id=3;
-		item3.title='报警组';
+		item3.title='报警单元';
 		item3.value=data.alarmGroupName;
 		root.push(item3);
 		

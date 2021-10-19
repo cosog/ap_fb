@@ -1,6 +1,6 @@
-Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupEnumItemsStore', {
+Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitEnumItemsStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.modbusProtocolAlarmGroupEnumItemsStore',
+    alias: 'widget.modbusProtocolAlarmUnitEnumItemsStore',
     fields: ['id','title','code','itemAddr'],
     autoLoad: true,
     pageSize: 10000,
@@ -49,13 +49,13 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupEnumItemsStore', {
                     		
                     		if(selectedGroup.data.classes==0){
                     			if(isNotVal(selectedGroup.data.children) && selectedGroup.data.children.length>0){
-                    				CreateProtocolAlarmGroupEnumItemsConfigInfoTable(selectedGroup.data.children[0].text,selectedGroup.data.children[0].classes,selectedGroup.data.children[0].code,record.data.addr);
+                    				CreateProtocolAlarmUnitEnumItemsConfigInfoTable(selectedGroup.data.children[0].text,selectedGroup.data.children[0].classes,selectedGroup.data.children[0].code,record.data.addr);
                     			}
                     			
                     		}else if(selectedGroup.data.classes==1){
-                    			CreateProtocolAlarmGroupEnumItemsConfigInfoTable(selectedGroup.data.text,selectedGroup.data.classes,selectedGroup.data.code,record.data.addr);
+                    			CreateProtocolAlarmUnitEnumItemsConfigInfoTable(selectedGroup.data.text,selectedGroup.data.classes,selectedGroup.data.code,record.data.addr);
                         	}else if(selectedGroup.data.classes==2||selectedGroup.data.classes==3){
-                        		CreateProtocolAlarmGroupEnumItemsConfigInfoTable(selectedGroup.data.protocol,selectedGroup.data.classes,selectedGroup.data.code,record.data.addr);
+                        		CreateProtocolAlarmUnitEnumItemsConfigInfoTable(selectedGroup.data.protocol,selectedGroup.data.classes,selectedGroup.data.code,record.data.addr);
                         	}
                     	}
                     }

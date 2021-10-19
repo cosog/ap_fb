@@ -1,6 +1,6 @@
-Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
+Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
     extend: 'Ext.data.TreeStore',
-    alias: 'widget.modbusProtocolAlarmGroupTreeInfoStore',
+    alias: 'widget.modbusProtocolAlarmUnitTreeInfoStore',
     model: 'AP.model.acquisitionUnit.AcquisitionItemsTreeInfoModel',
     autoLoad: true,
     folderSort: false,
@@ -60,12 +60,12 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                 			if(activeId=="ModbusProtocolAlarmGroupNumItemsConfigTableInfoPanel_Id"){
                 				if(record.data.classes==0){
                             		if(isNotVal(record.data.children) && record.data.children.length>0){
-                            			CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
+                            			CreateProtocolAlarmUnitNumItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
                             		}
                             	}else if(record.data.classes==1){
-                            		CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
+                            		CreateProtocolAlarmUnitNumItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
                             	}else if(record.data.classes==2||record.data.classes==3){
-                            		CreateProtocolAlarmGroupNumItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
+                            		CreateProtocolAlarmUnitNumItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
                             	}
                         	}else if(activeId=="ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoPanel_Id"){
                         		var gridPanel=Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id");
@@ -73,7 +73,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                         			gridPanel.getSelectionModel().deselectAll(true);
                         			gridPanel.getStore().load();
                         		}else{
-                        			ModbusProtocolTreeInfoStore = Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupSwitchItemsStore');
+                        			Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitSwitchItemsStore');
                         		}
                         	}else if(activeId=="ModbusProtocolAlarmGroupEnumItemsConfigTableInfoPanel_Id"){
                         		var gridPanel=Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsGridPanel_Id");
@@ -81,10 +81,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                         			gridPanel.getSelectionModel().deselectAll(true);
                         			gridPanel.getStore().load();
                         		}else{
-                        			ModbusProtocolTreeInfoStore = Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupEnumItemsStore');
+                        			Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitEnumItemsStore');
                         		}
                         	}
-                        	CreateProtocolAlarmGroupConfigPropertiesInfoTable(record.data);
+                        	CreateProtocolAlarmUnitConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
                         	e.preventDefault();//去掉点击右键是浏览器的菜单
                         	var info='节点';
@@ -93,7 +93,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                         	}if(record.data.classes==2){
                         		info='报警单元';
                         	}else if(record.data.classes==3){
-                        		info='报警组';
+                        		info='报警单元';
                         	}
                         	var menu = Ext.create('Ext.menu.Menu', {
                                 floating: true,
@@ -108,7 +108,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmGroupTreeInfoStore', {
                                                 		var saveData={};
                                                 		saveData.delidslist=[];
                                                 		saveData.delidslist.push(record.data.id);
-                                                		SaveModbusProtocolAlarmGroupConfigData(saveData);
+                                                		SaveModbusProtocolAlarmUnitConfigData(saveData);
                                                 	}
 //                                                }
 //                                            }
