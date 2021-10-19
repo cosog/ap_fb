@@ -1,10 +1,10 @@
-var protocolAcqGroupConfigItemsHandsontableHelper=null;
-var protocolConfigAcqGroupPropertiesHandsontableHelper=null;
-Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
+var protocolAcqUnitConfigItemsHandsontableHelper=null;
+var protocolConfigAcqUnitPropertiesHandsontableHelper=null;
+Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqUnitConfigInfoView', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.modbusProtocolAcqGroupConfigInfoView',
+    alias: 'widget.modbusProtocolAcqUnitConfigInfoView',
     layout: "fit",
-    id:'modbusProtocolAcqGroupConfigInfoViewId',
+    id:'modbusProtocolAcqUnitConfigInfoViewId',
     border: false,
     initComponent: function () {
     	var me = this;
@@ -35,7 +35,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
         			text: cosog.string.save,
         			iconCls: 'save',
         			handler: function (v, o) {
-        				SaveModbusProtocolAcqGroupConfigTreeData();
+        				SaveModbusProtocolAcqUnitConfigTreeData();
         			}
                 }],
                 layout: "border",
@@ -66,12 +66,12 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
                         html:'<div class="ModbusProtocolAcqGroupPropertiesTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAcqGroupPropertiesTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                            	if(protocolConfigAcqGroupPropertiesHandsontableHelper!=null && protocolConfigAcqGroupPropertiesHandsontableHelper.hot!=undefined){
+                            	if(protocolConfigAcqUnitPropertiesHandsontableHelper!=null && protocolConfigAcqUnitPropertiesHandsontableHelper.hot!=undefined){
                             		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
                             		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
                             		if(isNotVal(gridPanel)){
                             			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            			CreateProtocolAcqGroupConfigPropertiesInfoTable(selectedItem.data);
+                            			CreateProtocolAcqUnitConfigPropertiesInfoTable(selectedItem.data);
                             		}
                             	}
                             }
@@ -87,19 +87,19 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
                     html:'<div class="ModbusProtocolAcqGroupItemsConfigTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAcqGroupItemsConfigTableInfoDiv_id"></div></div>',
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        	if(protocolAcqGroupConfigItemsHandsontableHelper!=null && protocolAcqGroupConfigItemsHandsontableHelper.hot!=undefined){
+                        	if(protocolAcqUnitConfigItemsHandsontableHelper!=null && protocolAcqUnitConfigItemsHandsontableHelper.hot!=undefined){
                         		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
                         		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
                         		if(isNotVal(gridPanel)){
                         			var selectedItem=gridPanel.getStore().getAt(selectRow);
                         			if(selectedItem.data.classes==0){
                                 		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                                			CreateProtocolAcqGroupItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
+                                			CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
                                 		}
                                 	}else if(selectedItem.data.classes==1){
-                                		CreateProtocolAcqGroupItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
+                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
                                 	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
-                                		CreateProtocolAcqGroupItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
+                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
                                 	}
                         		}
                         	}
@@ -112,38 +112,38 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqGroupConfigInfoView', {
     }
 });
 
-function CreateProtocolAcqGroupItemsConfigInfoTable(protocolName,classes,code){
+function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolItemsConfigData',
 		success:function(response) {
 //			Ext.getCmp("DriverItemsConfigTableInfoPanel_Id").setTitle(protocolName+"采控项配置");
 			var result =  Ext.JSON.decode(response.responseText);
-			if(protocolAcqGroupConfigItemsHandsontableHelper==null || protocolAcqGroupConfigItemsHandsontableHelper.hot==undefined){
-				protocolAcqGroupConfigItemsHandsontableHelper = ProtocolAcqGroupConfigItemsHandsontableHelper.createNew("ModbusProtocolAcqGroupItemsConfigTableInfoDiv_id");
+			if(protocolAcqUnitConfigItemsHandsontableHelper==null || protocolAcqUnitConfigItemsHandsontableHelper.hot==undefined){
+				protocolAcqUnitConfigItemsHandsontableHelper = ProtocolAcqUnitConfigItemsHandsontableHelper.createNew("ModbusProtocolAcqGroupItemsConfigTableInfoDiv_id");
 				var colHeaders="['','序号','名称','地址','数量','存储数据类型','接口数据类型','读写类型','单位','换算比例','采集模式']";
 				var columns="[{data:'checked',type:'checkbox'},{data:'id'},{data:'title'},"
-					 	+"{data:'addr',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqGroupConfigItemsHandsontableHelper);}},"
-						+"{data:'quantity',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqGroupConfigItemsHandsontableHelper);}}," 
+					 	+"{data:'addr',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}},"
+						+"{data:'quantity',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
 						+"{data:'storeDataType',type:'dropdown',strict:true,allowInvalid:false,source:['byte','int16','uint16','float32','bcd']}," 
 						+"{data:'IFDataType',type:'dropdown',strict:true,allowInvalid:false,source:['bool','int','float32','float64','string']}," 
 						+"{data:'RWType',type:'dropdown',strict:true,allowInvalid:false,source:['只读', '读写']}," 
 						+"{data:'unit'}," 
-						+"{data:'ratio',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqGroupConfigItemsHandsontableHelper);}}," 
+						+"{data:'ratio',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
 						+"{data:'acqMode',type:'dropdown',strict:true,allowInvalid:false,source:['主动上传', '被动响应']}" 
 						+"]";
-				protocolAcqGroupConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
-				protocolAcqGroupConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
+				protocolAcqUnitConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				protocolAcqUnitConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
 				if(result.totalRoot.length==0){
-					protocolAcqGroupConfigItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					protocolAcqUnitConfigItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					protocolAcqGroupConfigItemsHandsontableHelper.createTable(result.totalRoot);
+					protocolAcqUnitConfigItemsHandsontableHelper.createTable(result.totalRoot);
 				}
 			}else{
 				if(result.totalRoot.length==0){
-					protocolAcqGroupConfigItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					protocolAcqGroupConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
+					protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
 				}
 			}
 		},
@@ -158,41 +158,41 @@ function CreateProtocolAcqGroupItemsConfigInfoTable(protocolName,classes,code){
 	});
 };
 
-var ProtocolAcqGroupConfigItemsHandsontableHelper = {
+var ProtocolAcqUnitConfigItemsHandsontableHelper = {
 		createNew: function (divid) {
-	        var protocolAcqGroupConfigItemsHandsontableHelper = {};
-	        protocolAcqGroupConfigItemsHandsontableHelper.hot1 = '';
-	        protocolAcqGroupConfigItemsHandsontableHelper.divid = divid;
-	        protocolAcqGroupConfigItemsHandsontableHelper.validresult=true;//数据校验
-	        protocolAcqGroupConfigItemsHandsontableHelper.colHeaders=[];
-	        protocolAcqGroupConfigItemsHandsontableHelper.columns=[];
-	        protocolAcqGroupConfigItemsHandsontableHelper.AllData=[];
+	        var protocolAcqUnitConfigItemsHandsontableHelper = {};
+	        protocolAcqUnitConfigItemsHandsontableHelper.hot1 = '';
+	        protocolAcqUnitConfigItemsHandsontableHelper.divid = divid;
+	        protocolAcqUnitConfigItemsHandsontableHelper.validresult=true;//数据校验
+	        protocolAcqUnitConfigItemsHandsontableHelper.colHeaders=[];
+	        protocolAcqUnitConfigItemsHandsontableHelper.columns=[];
+	        protocolAcqUnitConfigItemsHandsontableHelper.AllData=[];
 	        
-	        protocolAcqGroupConfigItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        protocolAcqUnitConfigItemsHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
 	        }
 	        
-	        protocolAcqGroupConfigItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        protocolAcqUnitConfigItemsHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
 	            td.style.backgroundColor = 'rgb(184, 184, 184)';
 	        }
 	        
-	        protocolAcqGroupConfigItemsHandsontableHelper.createTable = function (data) {
-	        	$('#'+protocolAcqGroupConfigItemsHandsontableHelper.divid).empty();
-	        	var hotElement = document.querySelector('#'+protocolAcqGroupConfigItemsHandsontableHelper.divid);
-	        	protocolAcqGroupConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        protocolAcqUnitConfigItemsHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolAcqUnitConfigItemsHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolAcqUnitConfigItemsHandsontableHelper.divid);
+	        	protocolAcqUnitConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
 	        		colWidths: [25,50,120,80,80,80,80,80,80,80,80],
 //	                hiddenColumns: {
 //	                    columns: [0],
 //	                    indicators: true
 //	                },
-	                columns:protocolAcqGroupConfigItemsHandsontableHelper.columns,
+	                columns:protocolAcqUnitConfigItemsHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
 	                rowHeaders: false,//显示行头
-	                colHeaders:protocolAcqGroupConfigItemsHandsontableHelper.colHeaders,//显示列头
+	                colHeaders:protocolAcqUnitConfigItemsHandsontableHelper.colHeaders,//显示列头
 	                columnSorting: true,//允许排序
 	                sortIndicator: true,
 	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
@@ -206,16 +206,16 @@ var ProtocolAcqGroupConfigItemsHandsontableHelper = {
 	                    var visualColIndex = this.instance.toVisualColumn(col);
 	                    if (visualColIndex >0) {
 							cellProperties.readOnly = true;
-//							cellProperties.renderer = protocolAcqGroupConfigItemsHandsontableHelper.addBoldBg;
+//							cellProperties.renderer = protocolAcqUnitConfigItemsHandsontableHelper.addBoldBg;
 		                }
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-//	                	var row1=protocolAcqGroupConfigItemsHandsontableHelper.hot.getDataAtRow(row);
+//	                	var row1=protocolAcqUnitConfigItemsHandsontableHelper.hot.getDataAtRow(row);
 //	                	if(row1[0]){
-//	                		protocolAcqGroupConfigItemsHandsontableHelper.hot.setDataAtCell(row, 0, false);
+//	                		protocolAcqUnitConfigItemsHandsontableHelper.hot.setDataAtCell(row, 0, false);
 //	                	}else{
-//	                		protocolAcqGroupConfigItemsHandsontableHelper.hot.setDataAtCell(row, 0, true);
+//	                		protocolAcqUnitConfigItemsHandsontableHelper.hot.setDataAtCell(row, 0, true);
 //	                	}
 	                }
 //	        		,colHeaders: function (col) { 
@@ -226,22 +226,22 @@ var ProtocolAcqGroupConfigItemsHandsontableHelper = {
 //	                      txt += "> 全选"; 
 //	                      return txt; 
 //	                     default:
-//	                    	 return protocolAcqGroupConfigItemsHandsontableHelper.colHeaders[col]; 
+//	                    	 return protocolAcqUnitConfigItemsHandsontableHelper.colHeaders[col]; 
 //	                    } 
 //	                 }
 	        	});
 	        }
 	        //保存数据
-	        protocolAcqGroupConfigItemsHandsontableHelper.saveData = function () {}
-	        protocolAcqGroupConfigItemsHandsontableHelper.clearContainer = function () {
-	        	protocolAcqGroupConfigItemsHandsontableHelper.AllData = [];
+	        protocolAcqUnitConfigItemsHandsontableHelper.saveData = function () {}
+	        protocolAcqUnitConfigItemsHandsontableHelper.clearContainer = function () {
+	        	protocolAcqUnitConfigItemsHandsontableHelper.AllData = [];
 	        }
-	        return protocolAcqGroupConfigItemsHandsontableHelper;
+	        return protocolAcqUnitConfigItemsHandsontableHelper;
 	    }
 };
 
 
-function CreateProtocolAcqGroupConfigPropertiesInfoTable(data){
+function CreateProtocolAcqUnitConfigPropertiesInfoTable(data){
 	var root=[];
 	if(data.classes==2){
 		var item1={};
@@ -281,56 +281,56 @@ function CreateProtocolAcqGroupConfigPropertiesInfoTable(data){
 		root.push(item4);
 	}
 	
-	if(protocolConfigAcqGroupPropertiesHandsontableHelper==null || protocolConfigAcqGroupPropertiesHandsontableHelper.hot==undefined){
-		protocolConfigAcqGroupPropertiesHandsontableHelper = ProtocolConfigAcqGroupPropertiesHandsontableHelper.createNew("ModbusProtocolAcqGroupPropertiesTableInfoDiv_id");
+	if(protocolConfigAcqUnitPropertiesHandsontableHelper==null || protocolConfigAcqUnitPropertiesHandsontableHelper.hot==undefined){
+		protocolConfigAcqUnitPropertiesHandsontableHelper = ProtocolConfigAcqUnitPropertiesHandsontableHelper.createNew("ModbusProtocolAcqGroupPropertiesTableInfoDiv_id");
 		var colHeaders="['序号','名称','变量']";
 		var columns="[{data:'id'},{data:'title'},{data:'value'}]";
-		protocolConfigAcqGroupPropertiesHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
-		protocolConfigAcqGroupPropertiesHandsontableHelper.columns=Ext.JSON.decode(columns);
-		protocolConfigAcqGroupPropertiesHandsontableHelper.classes=data.classes;
-		protocolConfigAcqGroupPropertiesHandsontableHelper.createTable(root);
+		protocolConfigAcqUnitPropertiesHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+		protocolConfigAcqUnitPropertiesHandsontableHelper.columns=Ext.JSON.decode(columns);
+		protocolConfigAcqUnitPropertiesHandsontableHelper.classes=data.classes;
+		protocolConfigAcqUnitPropertiesHandsontableHelper.createTable(root);
 	}else{
-		protocolConfigAcqGroupPropertiesHandsontableHelper.classes=data.classes;
-		protocolConfigAcqGroupPropertiesHandsontableHelper.hot.loadData(root);
+		protocolConfigAcqUnitPropertiesHandsontableHelper.classes=data.classes;
+		protocolConfigAcqUnitPropertiesHandsontableHelper.hot.loadData(root);
 	}
 };
 
-var ProtocolConfigAcqGroupPropertiesHandsontableHelper = {
+var ProtocolConfigAcqUnitPropertiesHandsontableHelper = {
 		createNew: function (divid) {
-	        var protocolConfigAcqGroupPropertiesHandsontableHelper = {};
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.hot = '';
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.classes =null;
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.divid = divid;
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.validresult=true;//数据校验
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.colHeaders=[];
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.columns=[];
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.AllData=[];
+	        var protocolConfigAcqUnitPropertiesHandsontableHelper = {};
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.hot = '';
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.classes =null;
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.divid = divid;
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.validresult=true;//数据校验
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.colHeaders=[];
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.columns=[];
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.AllData=[];
 	        
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
 	        }
 	        
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
 	            td.style.backgroundColor = 'rgb(184, 184, 184)';
 	        }
 	        
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.createTable = function (data) {
-	        	$('#'+protocolConfigAcqGroupPropertiesHandsontableHelper.divid).empty();
-	        	var hotElement = document.querySelector('#'+protocolConfigAcqGroupPropertiesHandsontableHelper.divid);
-	        	protocolConfigAcqGroupPropertiesHandsontableHelper.hot = new Handsontable(hotElement, {
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.createTable = function (data) {
+	        	$('#'+protocolConfigAcqUnitPropertiesHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+protocolConfigAcqUnitPropertiesHandsontableHelper.divid);
+	        	protocolConfigAcqUnitPropertiesHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
 	        		colWidths: [2,5,5],
 //	                hiddenColumns: {
 //	                    columns: [0],
 //	                    indicators: true
 //	                },
-	                columns:protocolConfigAcqGroupPropertiesHandsontableHelper.columns,
+	                columns:protocolConfigAcqUnitPropertiesHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
 	                rowHeaders: false,//显示行头
-	                colHeaders:protocolConfigAcqGroupPropertiesHandsontableHelper.colHeaders,//显示列头
+	                colHeaders:protocolConfigAcqUnitPropertiesHandsontableHelper.colHeaders,//显示列头
 	                columnSorting: true,//允许排序
 	                sortIndicator: true,
 	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
@@ -344,16 +344,16 @@ var ProtocolConfigAcqGroupPropertiesHandsontableHelper = {
 	                    var visualColIndex = this.instance.toVisualColumn(col);
 	                    if (visualColIndex ==0 || visualColIndex ==1) {
 							cellProperties.readOnly = true;
-							cellProperties.renderer = protocolConfigAcqGroupPropertiesHandsontableHelper.addBoldBg;
+							cellProperties.renderer = protocolConfigAcqUnitPropertiesHandsontableHelper.addBoldBg;
 		                }
-	                    if(protocolConfigAcqGroupPropertiesHandsontableHelper.classes===1){
+	                    if(protocolConfigAcqUnitPropertiesHandsontableHelper.classes===1){
 	                    	if (visualColIndex === 2 && visualRowIndex===1) {
 		                    	this.type = 'dropdown';
 		                    	this.source = ['泵设备','管设备'];
 		                    	this.strict = true;
 		                    	this.allowInvalid = false;
 		                    }
-	                    }else if(protocolConfigAcqGroupPropertiesHandsontableHelper.classes===3){
+	                    }else if(protocolConfigAcqUnitPropertiesHandsontableHelper.classes===3){
 	                    	if (visualColIndex === 2 && visualRowIndex===1) {
 		                    	this.type = 'dropdown';
 		                    	this.source = ['采集组','控制组'];
@@ -367,20 +367,20 @@ var ProtocolConfigAcqGroupPropertiesHandsontableHelper = {
 	                }
 	        	});
 	        }
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.saveData = function () {}
-	        protocolConfigAcqGroupPropertiesHandsontableHelper.clearContainer = function () {
-	        	protocolConfigAcqGroupPropertiesHandsontableHelper.AllData = [];
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.saveData = function () {}
+	        protocolConfigAcqUnitPropertiesHandsontableHelper.clearContainer = function () {
+	        	protocolConfigAcqUnitPropertiesHandsontableHelper.AllData = [];
 	        }
-	        return protocolConfigAcqGroupPropertiesHandsontableHelper;
+	        return protocolConfigAcqUnitPropertiesHandsontableHelper;
 	    }
 };
 
 
-function SaveModbusProtocolAcqGroupConfigTreeData(){
+function SaveModbusProtocolAcqUnitConfigTreeData(){
 	var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
 	if(ScadaDriverModbusConfigSelectRow!=''){
 		var selectedItem=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
-		var propertiesData=protocolConfigAcqGroupPropertiesHandsontableHelper.hot.getData();
+		var propertiesData=protocolConfigAcqUnitPropertiesHandsontableHelper.hot.getData();
 		var protocolProperties={};
 		if(selectedItem.data.classes==2){//选中的是采控单元
 			protocolProperties.classes=selectedItem.data.classes;
@@ -424,7 +424,7 @@ function saveModbusProtocolConfigData(configInfo){
 		url:context + '/acquisitionUnitManagerController/saveModbusProtocolConfigData',
 		success:function(response) {
 			var data=Ext.JSON.decode(response.responseText);
-			protocolAcqGroupConfigItemsHandsontableHelper.clearContainer();
+			protocolAcqUnitConfigItemsHandsontableHelper.clearContainer();
 			if (data.success) {
             	Ext.MessageBox.alert("信息","保存成功");
             	Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().load();

@@ -1,9 +1,9 @@
-Ext.define("AP.view.acquisitionUnit.AlarmGroupInfoWindow", {
+Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
     extend: 'Ext.window.Window',
-    alias: 'widget.alarmGroupInfoWindow',
+    alias: 'widget.alarmUnitInfoWindow',
     layout: 'fit',
     iframe: true,
-    id: 'alarmGroup_editWin_Id',
+    id: 'alarmUnit_editWin_Id',
     closeAction: 'destroy',
     width: 330,
     shadow: 'sides',
@@ -85,14 +85,14 @@ Ext.define("AP.view.acquisitionUnit.AlarmGroupInfoWindow", {
 			},modbusProtocolComb, {
                 id: 'formAlarmGroupName_Id',
                 name: "alarmGroup.groupName",
-                fieldLabel: '报警组名称',
+                fieldLabel: '单元名称',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
             }, {
                 id: 'formAlarmGroupCode_Id',
                 name: "alarmGroup.groupCode",
-                fieldLabel: '报警组编码',
+                fieldLabel: '单元编码',
                 hidden:true,
                 anchor: '100%',
                 value: ''
@@ -100,7 +100,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmGroupInfoWindow", {
             }, {
             	id: 'alarmGroupRemark_Id',
             	name: "alarmGroup.remark",
-                fieldLabel: '报警组描述',
+                fieldLabel: '单元描述',
                 anchor: '100%',
                 value: '',
                 xtype: 'textareafield',
@@ -128,7 +128,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmGroupInfoWindow", {
         	 	text: cosog.string.cancel,
                 iconCls: 'cancel',
                 handler: function () {
-                    Ext.getCmp("alarmGroup_editWin_Id").close();
+                    Ext.getCmp("alarmUnit_editWin_Id").close();
                 }
          }]
         });

@@ -47,9 +47,9 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
         var protocolAndAlarmGroupTree=Ext.create('AP.view.well.TreePicker',{
         	id:'modbusInstanceProtocolAndAlarmGroup_Id',
         	anchor: '100%',
-        	fieldLabel: '报警组',
-            emptyText: '请选择报警组...',
-            blankText: '请选择报警组...',
+        	fieldLabel: '报警单元',
+            emptyText: '请选择报警单元...',
+            blankText: '请选择报警单元...',
             displayField: 'text',
             autoScroll:true,
             forceSelection : true,// 只能选择下拉框里面的内容
@@ -62,7 +62,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
                 },
             	select: function (picker,record,eOpts) {
                 	if(record.data.classes==1){
-                		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择报警组！</font>");
+                		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择报警单元！</font>");
                 	}else{
                 		Ext.getCmp("modbusInstanceAlarmGroup_Id").setValue(record.data.id);
                 	}

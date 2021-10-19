@@ -1,6 +1,6 @@
-Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqGroupTreeInfoStore', {
+Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqUnitTreeInfoStore', {
     extend: 'Ext.data.TreeStore',
-    alias: 'widget.modbusProtocolAcqGroupTreeInfoStore',
+    alias: 'widget.modbusProtocolAcqUnitTreeInfoStore',
     model: 'AP.model.acquisitionUnit.AcquisitionItemsTreeInfoModel',
     autoLoad: true,
     folderSort: false,
@@ -58,17 +58,17 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqGroupTreeInfoStore', {
                         	Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").setValue(index);
                         	if(record.data.classes==0){
                         		if(isNotVal(record.data.children) && record.data.children.length>0){
-                        			CreateProtocolAcqGroupItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
+                        			CreateProtocolAcqUnitItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
                         		}
                         	}else if(record.data.classes==1){
-                        		CreateProtocolAcqGroupItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
+                        		CreateProtocolAcqUnitItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
                         	}else if(record.data.classes==2||record.data.classes==3){
-                        		CreateProtocolAcqGroupItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
+                        		CreateProtocolAcqUnitItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
                         	}
                         	if(record.data.classes==3){
 //                        		showAcquisitionGroupOwnItems(record.data.code);
                         	}
-                        	CreateProtocolAcqGroupConfigPropertiesInfoTable(record.data);
+                        	CreateProtocolAcqUnitConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
                         	e.preventDefault();//去掉点击右键是浏览器的菜单
                         	var info='节点';

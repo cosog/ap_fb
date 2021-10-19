@@ -11,7 +11,8 @@ Ext.define("AP.view.alarmSet.AlarmSetInfoView", {
                 layout: 'border',
                 id: 'alarmSetGlobalPanel_Id',
                 items: [{
-                    region: 'center',
+                	title:'概览数据',
+                	region: 'center',
                     height: '100%',
                     layout: 'fit',
                     border: false,
@@ -200,6 +201,12 @@ Ext.define("AP.view.alarmSet.AlarmSetInfoView", {
                         }]
 
                     }]
+                },{
+                	title:'实时/历史数据',
+                	region: 'south',
+                	split: true,
+                    collapsible: true,
+                	height: '50%'
                 }]
             }]
         });

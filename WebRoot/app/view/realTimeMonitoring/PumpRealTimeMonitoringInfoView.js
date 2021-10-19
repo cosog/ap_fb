@@ -113,6 +113,8 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                     },{
                     	title:'状态统计',
                     	region: 'south',
+                    	split: true,
+                        collapsible: true,
                     	height: '40%',
                     	id:'PumpRealTimeMonitoringStatInfoPanel_Id',
                         border: false,

@@ -52,7 +52,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -61,74 +61,74 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 //		
-		String path="";
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		path=stringManagerUtils.getFilePath("test1.json","test/");
-		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test2.json","test/");
-		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test3.json","test/");
-		String onLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test4.json","test/");
-		String offLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
-		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
-		
-		int i=0;
-		while(true){
-			if(i%2==0){
-				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
-			}else{
-				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
-			}
-			i++;
-			
-//			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
-			
-			Thread.sleep(1000*1);
-		}
+//		String path="";
+//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+//		path=stringManagerUtils.getFilePath("test1.json","test/");
+//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test2.json","test/");
+//		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test3.json","test/");
+//		String onLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test4.json","test/");
+//		String offLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+//		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
+//		
+//		int i=0;
+//		while(true){
+//			if(i%2==0){
+//				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+//			}else{
+//				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
+//			}
+//			i++;
+//			
+////			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+//			
+//			Thread.sleep(1000*1);
+//		}
 		
 		
 
-//		loadProtocolConfig();
-//		initServerConfig();
-//		initProtocolConfig("","");
-//		initInstanceConfig(null,"");
-//		initSMSInstanceConfig(null,"");
-//		initDriverAcquisitionInfoConfig(null,"");
-//		initSMSDevice(null,"");
-//		do{
-//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-//			type = new TypeToken<DriverProbeResponse>() {}.getType();
-//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-//			String Ver="";
-//			if(driverProbeResponse!=null){
-//				if(!driverProbeResponse.getHttpServerInitStatus()){
-//					initServerConfig();
-//				}
-//				if(!driverProbeResponse.getProtocolInitStatus()){
-//					initProtocolConfig("","");
-//				}
-//				if(!driverProbeResponse.getInstanceInitStatus()){
-//					initInstanceConfig(null,"");
-//					initSMSInstanceConfig(null,"");
-//				}
-//				if(!driverProbeResponse.getSMSInitStatus()){
-//					initSMSDevice(null,"");
-//				}
-//				if(!driverProbeResponse.getIDInitStatus()){
-//					initDriverAcquisitionInfoConfig(null,"");
-//				}
-//				Ver=driverProbeResponse.getVer();
-//			}else{
-//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-//			}
-//			Thread.sleep(1000*1);
-//		}while(true);
+		loadProtocolConfig();
+		initServerConfig();
+		initProtocolConfig("","");
+		initInstanceConfig(null,"");
+		initSMSInstanceConfig(null,"");
+		initDriverAcquisitionInfoConfig(null,"");
+		initSMSDevice(null,"");
+		do{
+			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+			type = new TypeToken<DriverProbeResponse>() {}.getType();
+			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+			String Ver="";
+			if(driverProbeResponse!=null){
+				if(!driverProbeResponse.getHttpServerInitStatus()){
+					initServerConfig();
+				}
+				if(!driverProbeResponse.getProtocolInitStatus()){
+					initProtocolConfig("","");
+				}
+				if(!driverProbeResponse.getInstanceInitStatus()){
+					initInstanceConfig(null,"");
+					initSMSInstanceConfig(null,"");
+				}
+				if(!driverProbeResponse.getSMSInitStatus()){
+					initSMSDevice(null,"");
+				}
+				if(!driverProbeResponse.getIDInitStatus()){
+					initDriverAcquisitionInfoConfig(null,"");
+				}
+				Ver=driverProbeResponse.getVer();
+			}else{
+				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+			}
+			Thread.sleep(1000*1);
+		}while(true);
 	}
 	
 	public static class DriverProbeResponse{
@@ -909,11 +909,12 @@ public class EquipmentDriverServerTask {
 		if(alarmShowStyle==null){
 			alarmShowStyle=new AlarmShowStyle();
 		}
-		String sql="select v1.itemvalue,v1.itemname,v2.itemname,v3.itemname from "
+		String sql="select v1.itemvalue as alarmLevel,v1.itemname as backgroundColor,v2.itemname as color,v3.itemname as opacity from "
 				+ " (select * from tbl_code t where t.itemcode='BJYS' ) v1,"
 				+ " (select * from tbl_code t where t.itemcode='BJQJYS' ) v2,"
 				+ " (select * from tbl_code t where t.itemcode='BJYSTMD' ) v3 "
-				+ " where v1.itemvalue=v2.itemvalue and v1.itemvalue=v3.itemvalue order by v1.itemvalue ";
+				+ " where v1.itemvalue=v2.itemvalue and v1.itemvalue=v3.itemvalue "
+				+ " order by v1.itemvalue ";
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
 			return ;

@@ -113,6 +113,8 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                     	title:'状态统计',
                     	region: 'south',
                     	height: '40%',
+                    	split: true,
+                        collapsible: true,
                     	id:'PipelineRealTimeMonitoringStatInfoPanel_Id',
                         border: false,
                         layout: 'fit',
