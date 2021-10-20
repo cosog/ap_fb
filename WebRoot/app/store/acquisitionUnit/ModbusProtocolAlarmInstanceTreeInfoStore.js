@@ -39,7 +39,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmInstanceTreeInfoStore', 
                     store: store,
                     columns: [{
                     	xtype: 'treecolumn',
-                    	text: '实例列表',
+                    	text: '报警实例列表',
                         flex: 8,
                         align: 'left',
                         dataIndex: 'text'

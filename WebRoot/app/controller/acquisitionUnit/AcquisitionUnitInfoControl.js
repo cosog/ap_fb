@@ -604,7 +604,7 @@ var saveModbusProtocolInstanceSubmitBtnForm = function () {
     return false;
 };
 
-function addAlarmGroupInfo() {
+function addAlarmUnitInfo() {
     var window = Ext.create("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
         title: '创建报警单元'
     });
@@ -615,7 +615,7 @@ function addAlarmGroupInfo() {
 };
 
 //窗体创建按钮事件
-var SaveAlarmGroupSubmitBtnForm = function () {
+var SaveAlarmUnitSubmitBtnForm = function () {
     var winForm = Ext.getCmp("alarmUnit_editWin_Id").down('form');
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
     if (winForm.getForm().isValid()) {

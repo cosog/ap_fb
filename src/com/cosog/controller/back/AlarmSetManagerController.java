@@ -2,6 +2,7 @@ package com.cosog.controller.back;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,17 +21,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cosog.controller.base.BaseController;
+import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.User;
 import com.cosog.model.WorkStatusAlarm;
+import com.cosog.model.drive.ModbusDriverSaveData;
 import com.cosog.service.back.AlarmSetManagerService;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.Constants;
+import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.Page;
 import com.cosog.utils.PagingConstants;
 import com.cosog.utils.ParamUtils;
 import com.cosog.utils.StringManagerUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -264,53 +270,23 @@ public class AlarmSetManagerController extends BaseController {
 	 */
 	@RequestMapping("/setAlarmLevelColor")
 	public String setAlarmLevelColor() throws Exception {
-		String alarmLevelBackgroundColor0=request.getParameter("alarmLevelBackgroundColor0");
-		String alarmLevelBackgroundColor1=request.getParameter("alarmLevelBackgroundColor1");
-		String alarmLevelBackgroundColor2=request.getParameter("alarmLevelBackgroundColor2");
-		String alarmLevelBackgroundColor3=request.getParameter("alarmLevelBackgroundColor3");
+		Gson gson = new Gson();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
 		
-		String alarmLevelColor0=request.getParameter("alarmLevelColor0");
-		String alarmLevelColor1=request.getParameter("alarmLevelColor1");
-		String alarmLevelColor2=request.getParameter("alarmLevelColor2");
-		String alarmLevelColor3=request.getParameter("alarmLevelColor3");
-		
-		String alarmLevelOpacity0=request.getParameter("alarmLevelOpacity0");
-		String alarmLevelOpacity1=request.getParameter("alarmLevelOpacity1");
-		String alarmLevelOpacity2=request.getParameter("alarmLevelOpacity2");
-		String alarmLevelOpacity3=request.getParameter("alarmLevelOpacity3");
-		
-		
-		if(!StringManagerUtils.isNotNull(alarmLevelBackgroundColor0))
-			alarmLevelBackgroundColor0="00FF00";
-		if(!StringManagerUtils.isNotNull(alarmLevelBackgroundColor1))
-			alarmLevelBackgroundColor1="FF0000";
-		if(!StringManagerUtils.isNotNull(alarmLevelBackgroundColor2))
-			alarmLevelBackgroundColor2="FF6600";
-		if(!StringManagerUtils.isNotNull(alarmLevelBackgroundColor3))
-			alarmLevelBackgroundColor3="FFCC00";
-		
-		if(!StringManagerUtils.isNotNull(alarmLevelColor0))
-			alarmLevelColor0="FFFFFF";
-		if(!StringManagerUtils.isNotNull(alarmLevelColor1))
-			alarmLevelColor1="FFFFFF";
-		if(!StringManagerUtils.isNotNull(alarmLevelColor2))
-			alarmLevelColor2="FFFFFF";
-		if(!StringManagerUtils.isNotNull(alarmLevelColor3))
-			alarmLevelColor3="FFFFFF";
-		
-		if(!StringManagerUtils.isNotNull(alarmLevelOpacity0))
-			alarmLevelOpacity0="1";
-		if(!StringManagerUtils.isNotNull(alarmLevelOpacity1))
-			alarmLevelOpacity1="1";
-		if(!StringManagerUtils.isNotNull(alarmLevelOpacity2))
-			alarmLevelOpacity2="1";
-		if(!StringManagerUtils.isNotNull(alarmLevelOpacity3))
-			alarmLevelOpacity3="1";
+		String data = ParamUtils.getParameter(request, "data");
+		java.lang.reflect.Type type = new TypeToken<AlarmShowStyle>() {}.getType();
+		AlarmShowStyle alarmShowStyleSaveData=gson.fromJson(data, type);
 		String json="";
 		try {
-			alarmSetManagerService.setAlarmLevelColor(alarmLevelBackgroundColor0, alarmLevelBackgroundColor1, alarmLevelBackgroundColor2, alarmLevelBackgroundColor3,
-					alarmLevelColor0,alarmLevelColor1,alarmLevelColor2,alarmLevelColor3,
-					alarmLevelOpacity0,alarmLevelOpacity1,alarmLevelOpacity2,alarmLevelOpacity3);
+			if(alarmShowStyleSaveData!=null){
+				
+			}
+			alarmSetManagerService.setAlarmLevelColor(alarmShowStyleSaveData);
 			EquipmentDriverServerTask.initAlarmStyle();
 			json="{success:true,msg:true}";
 		} catch (Exception e) {

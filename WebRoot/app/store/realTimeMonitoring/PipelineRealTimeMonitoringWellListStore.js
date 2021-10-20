@@ -49,9 +49,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		
+                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     	},
                     	select: function(grid, record, index, eOpts) {
+                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
                     		var deviceName=record.data.wellName;
                     		var deviceType=1;

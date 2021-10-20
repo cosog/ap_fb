@@ -32,7 +32,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmUnitConfigInfoView', {
                     text: '添加报警单元',
                     iconCls: 'add',
                     handler: function (v, o) {
-                    	addAlarmGroupInfo();
+                    	addAlarmUnitInfo();
         			}
         		},"-",{
                 	xtype: 'button',

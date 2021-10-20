@@ -85,7 +85,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
         var receiveMailCombox = new Ext.form.ComboBox({
             id: 'receiveMailComboxfield_Id',
             value: 0,
-            fieldLabel: '接收报警短信',
+            fieldLabel: '接收报警邮件',
             typeAhead : true,
             allowBlank: false,
             autoSelect:true,

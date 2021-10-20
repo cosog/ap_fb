@@ -275,7 +275,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			}
 		}
 		if(totolCount<30){
-			for(int i=totolCount;i<50;i++){
+			for(int i=totolCount;i<20;i++){
 				totalRoot.append("{},");
 			}
 		}

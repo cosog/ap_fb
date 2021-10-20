@@ -240,13 +240,23 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 			}
 			
 			//绘制第一个数据型变量曲线
-			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
-					Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
-                	pipelineRealTimeMonitoringCurve(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
-                	break;
+			var item=Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
+			if(!isNotVal(item)){
+				for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
+						Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
+//	                	pipelineRealTimeMonitoringCurve(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
+	                	item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
+	                	break;
+					}
 				}
 			}
+			if(isNotVal(item)){
+				pipelineRealTimeMonitoringCurve(item);
+			}
+			
+			
+			
 			//添加单元格属性
 			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 				var row=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
@@ -354,11 +364,14 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
         					td.style.fontWeight = 'bold';
    			             	td.style.fontFamily = 'SimHei';
         					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-        						td.style.color='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						td.style.color='#'+AlarmShowStyle.Details.FirstLevel.Color;
         					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-        						td.style.color='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						td.style.color='#'+AlarmShowStyle.Details.SecondLevel.Color;
         					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-        						td.style.color='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						td.style.color='#'+AlarmShowStyle.Details.ThirdLevel.Color;
         					}
         					
         				}
