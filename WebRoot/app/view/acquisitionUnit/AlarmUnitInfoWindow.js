@@ -50,7 +50,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
         var modbusProtocolComb = Ext.create(
 				'Ext.form.field.ComboBox', {
 					fieldLabel :  '协议名称',
-					id : 'formAlarmGroupProtocolComb_Id',
+					id : 'formAlarmUnitProtocolComb_Id',
 					anchor : '100%',
 					store: modbusProtocolStore,
 					queryMode : 'remote',
@@ -63,34 +63,34 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
 					valueField : "boxkey",
 					listeners : {
 						select: function (v,o) {
-							Ext.getCmp("formAlarmGroupProtocol_Id").setValue(this.value);
+							Ext.getCmp("formAlarmUnitProtocol_Id").setValue(this.value);
 	                    }
 					}
 				});
         
-        var postalarmGroupEditForm = Ext.create('Ext.form.Panel', {
+        var postalarmUnitEditForm = Ext.create('Ext.form.Panel', {
             baseCls: 'x-plain',
             defaultType: 'textfield',
             items: [{
                 xtype: "hidden",
                 fieldLabel: '序号',
-                id: 'formAlarmGroup_Id',
+                id: 'formAlarmUnit_Id',
                 anchor: '100%',
                 name: "alarmGroup.id"
             },{
 				xtype : "hidden",
-				id : 'formAlarmGroupProtocol_Id',
+				id : 'formAlarmUnitProtocol_Id',
 				value:'',
 				name : "alarmGroup.protocol"
 			},modbusProtocolComb, {
-                id: 'formAlarmGroupName_Id',
+                id: 'formAlarmUnitName_Id',
                 name: "alarmGroup.groupName",
                 fieldLabel: '单元名称',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
             }, {
-                id: 'formAlarmGroupCode_Id',
+                id: 'formAlarmUnitCode_Id',
                 name: "alarmGroup.groupCode",
                 fieldLabel: '单元编码',
                 hidden:true,
@@ -98,7 +98,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
                 value: ''
                 
             }, {
-            	id: 'alarmGroupRemark_Id',
+            	id: 'alarmUnitRemark_Id',
             	name: "alarmGroup.remark",
                 fieldLabel: '单元描述',
                 anchor: '100%',
@@ -108,11 +108,11 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
             }],
             buttons: [{
             	xtype: 'button',
-            	id: 'addFormAlarmGroup_Id',
+            	id: 'addformAlarmUnit_Id',
             	text: cosog.string.save,
                 iconCls: 'save',
                 handler: function () {
-                	SaveAlarmGroupSubmitBtnForm();
+                	SaveAlarmUnitSubmitBtnForm();
                 }
          }, {
                 xtype: 'button',
@@ -121,7 +121,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
                 hidden: true,
                 iconCls: 'edit',
                 handler: function () {
-                	UpdateAlarmGroupDataInfoSubmitBtnForm();
+                	UpdateAlarmUnitDataInfoSubmitBtnForm();
                 }
          }, {
         	 	xtype: 'button',   
@@ -133,7 +133,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
          }]
         });
         Ext.apply(me, {
-            items: postalarmGroupEditForm
+            items: postalarmUnitEditForm
         });
         me.callParent(arguments);
     }

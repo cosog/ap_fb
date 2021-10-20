@@ -89,7 +89,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				editable : false,
 				store : new Ext.data.SimpleStore({
 							fields : ['value', 'text'],
-							data : [['modbus-tcp', 'modbus-tcp'],['modbus-rtu', 'modbus-rtu']]
+							data : [['modbus-tcp', 'modbus-tcp'],['modbus-rtu', 'modbus-rtu'],['private-kd93', 'private-kd93'],['private-lq1000', 'private-lq1000']]
 						}),
 				displayField : 'text',
 				valueField : 'value',

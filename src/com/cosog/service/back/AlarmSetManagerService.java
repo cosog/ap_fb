@@ -1,18 +1,24 @@
 package com.cosog.service.back;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.WellInformation;
 import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
+import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.Config;
 import com.cosog.utils.ConfigFile;
+import com.cosog.utils.DataModelMap;
 import com.cosog.utils.Page;
 import com.cosog.utils.StringManagerUtils;
+import com.google.gson.Gson;
 
 import net.sf.json.JSONObject;
 
@@ -289,62 +295,24 @@ public class AlarmSetManagerService<T> extends BaseService<T> {
 	
 	@SuppressWarnings("unchecked")
 	public String getAlarmLevelColor(){
-		String backColorSql="select t.itemname from tbl_code t where itemcode='BJYS' order by itemvalue" ;
-		String colorSql="select t.itemname from tbl_code t where itemcode='BJQJYS' order by itemvalue" ;
-		String opacitySql="select t.itemname from tbl_code t where itemcode='BJYSTMD' order by itemvalue" ;
-		String json="";
-		StringBuffer strBuf = new StringBuffer();
-		List<T> backColorList= (List<T>) this.getSQLObjects(backColorSql);
-		List<T> colorList= (List<T>) this.getSQLObjects(colorSql);
-		List<T> opacityList= (List<T>) this.getSQLObjects(opacitySql);
-		strBuf.append("{\"success\":true,\"BackgroundColor\":{");
-		if (null != backColorList && backColorList.size() > 0) {
-			strBuf.append("\"Level0\":\""+backColorList.get(0)+"\",");
-			strBuf.append("\"Level1\":\""+backColorList.get(1)+"\",");
-			strBuf.append("\"Level2\":\""+backColorList.get(2)+"\",");
-			strBuf.append("\"Level3\":\""+backColorList.get(3)+"\"");
-		}else{
-			strBuf.append("\"Level0\":\"\",");
-			strBuf.append("\"Level1\":\"\",");
-			strBuf.append("\"Level2\":\"\",");
-			strBuf.append("\"Level3\":\"\"");
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		String json="[]";
+		if(alarmShowStyle==null){
+			try {
+				EquipmentDriverServerTask.initAlarmStyle();
+				alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+			} catch (IOException|SQLException e) {
+				json="[]";
+			}
 		}
-		strBuf.append("},\"Color\":{");
-		if (null != colorList && colorList.size() > 0) {
-			strBuf.append("\"Level0\":\""+colorList.get(0)+"\",");
-			strBuf.append("\"Level1\":\""+colorList.get(1)+"\",");
-			strBuf.append("\"Level2\":\""+colorList.get(2)+"\",");
-			strBuf.append("\"Level3\":\""+colorList.get(3)+"\"");
-		}else{
-			strBuf.append("\"Level0\":\"\",");
-			strBuf.append("\"Level1\":\"\",");
-			strBuf.append("\"Level2\":\"\",");
-			strBuf.append("\"Level3\":\"\"");
-		}
-		strBuf.append("},\"Opacity\":{");
-		if (null != opacityList && opacityList.size() > 0) {
-			strBuf.append("\"Level0\":"+opacityList.get(0)+",");
-			strBuf.append("\"Level1\":"+opacityList.get(1)+",");
-			strBuf.append("\"Level2\":"+opacityList.get(2)+",");
-			strBuf.append("\"Level3\":"+opacityList.get(3)+"");
-		}else{
-			strBuf.append("\"Level0\":1,");
-			strBuf.append("\"Level1\":1,");
-			strBuf.append("\"Level2\":1,");
-			strBuf.append("\"Level3\":1");
-		}
-		strBuf.append("}}");
-		json=strBuf.toString();
+		json=new Gson().toJson(alarmShowStyle);
 		return json;
 	}
 	
-	public void setAlarmLevelColor(String alarmLevelBackgroundColor0,String alarmLevelBackgroundColor1,String alarmLevelBackgroundColor2,String alarmLevelBackgroundColor3,
-			String alarmLevelColor0,String alarmLevelColor1,String alarmLevelColor2,String alarmLevelColor3,
-			String alarmLevelOpacity0,String alarmLevelOpacity1,String alarmLevelOpacity2,String alarmLevelOpacity3){
+	public void setAlarmLevelColor(AlarmShowStyle alarmShowStyle){
 		try {
-			this.getBaseDao().setAlarmLevelColor(alarmLevelBackgroundColor0, alarmLevelBackgroundColor1, alarmLevelBackgroundColor2, alarmLevelBackgroundColor3,
-					alarmLevelColor0,alarmLevelColor1,alarmLevelColor2,alarmLevelColor3,
-					alarmLevelOpacity0,alarmLevelOpacity1,alarmLevelOpacity2,alarmLevelOpacity3);
+			this.getBaseDao().setAlarmLevelColor(alarmShowStyle);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

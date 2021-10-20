@@ -668,7 +668,7 @@ public class EquipmentDriverServerTask {
 				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
 			}
 		}else{
-			String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.sort from tbl_protocolsmsinstance t ";
+			String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.sort from tbl_protocolsmsinstance t where 1=1 ";
 			if(StringManagerUtils.isNotNull(instances)){
 				sql+=" and t.name in("+instances+")";
 			}
@@ -915,6 +915,18 @@ public class EquipmentDriverServerTask {
 				+ " (select * from tbl_code t where t.itemcode='BJYSTMD' ) v3 "
 				+ " where v1.itemvalue=v2.itemvalue and v1.itemvalue=v3.itemvalue "
 				+ " order by v1.itemvalue ";
+		String sql2="select v1.itemvalue as alarmLevel,v1.itemname as backgroundColor,v2.itemname as color,v3.itemname as opacity from "
+				+ " (select * from tbl_code t where t.itemcode='BJYS2' ) v1,"
+				+ " (select * from tbl_code t where t.itemcode='BJQJYS2' ) v2,"
+				+ " (select * from tbl_code t where t.itemcode='BJYSTMD2' ) v3 "
+				+ " where v1.itemvalue=v2.itemvalue and v1.itemvalue=v3.itemvalue "
+				+ " order by v1.itemvalue ";
+		String sql3="select v1.itemvalue as alarmLevel,v1.itemname as backgroundColor,v2.itemname as color,v3.itemname as opacity from "
+				+ " (select * from tbl_code t where t.itemcode='BJYS3' ) v1,"
+				+ " (select * from tbl_code t where t.itemcode='BJQJYS3' ) v2,"
+				+ " (select * from tbl_code t where t.itemcode='BJYSTMD3' ) v3 "
+				+ " where v1.itemvalue=v2.itemvalue and v1.itemvalue=v3.itemvalue "
+				+ " order by v1.itemvalue ";
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
 			return ;
@@ -923,27 +935,82 @@ public class EquipmentDriverServerTask {
 		rs=pstmt.executeQuery();
 		while(rs.next()){
 			if(rs.getInt(1)==0){
-				alarmShowStyle.getNormal().setValue(rs.getInt(1));
-				alarmShowStyle.getNormal().setBackgroundColor(rs.getString(2));
-				alarmShowStyle.getNormal().setColor(rs.getString(3));
-				alarmShowStyle.getNormal().setOpacity(rs.getString(4));
+				alarmShowStyle.getOverview().getNormal().setValue(rs.getInt(1));
+				alarmShowStyle.getOverview().getNormal().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getOverview().getNormal().setColor(rs.getString(3));
+				alarmShowStyle.getOverview().getNormal().setOpacity(rs.getString(4));
 			}else if(rs.getInt(1)==100){
-				alarmShowStyle.getFirstLevel().setValue(rs.getInt(1));
-				alarmShowStyle.getFirstLevel().setBackgroundColor(rs.getString(2));
-				alarmShowStyle.getFirstLevel().setColor(rs.getString(3));
-				alarmShowStyle.getFirstLevel().setOpacity(rs.getString(4));
+				alarmShowStyle.getOverview().getFirstLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getOverview().getFirstLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getOverview().getFirstLevel().setColor(rs.getString(3));
+				alarmShowStyle.getOverview().getFirstLevel().setOpacity(rs.getString(4));
 			}else if(rs.getInt(1)==200){
-				alarmShowStyle.getSecondLevel().setValue(rs.getInt(1));
-				alarmShowStyle.getSecondLevel().setBackgroundColor(rs.getString(2));
-				alarmShowStyle.getSecondLevel().setColor(rs.getString(3));
-				alarmShowStyle.getSecondLevel().setOpacity(rs.getString(4));
+				alarmShowStyle.getOverview().getSecondLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getOverview().getSecondLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getOverview().getSecondLevel().setColor(rs.getString(3));
+				alarmShowStyle.getOverview().getSecondLevel().setOpacity(rs.getString(4));
 			}else if(rs.getInt(1)==300){
-				alarmShowStyle.getThirdLevel().setValue(rs.getInt(1));
-				alarmShowStyle.getThirdLevel().setBackgroundColor(rs.getString(2));
-				alarmShowStyle.getThirdLevel().setColor(rs.getString(3));
-				alarmShowStyle.getThirdLevel().setOpacity(rs.getString(4));
+				alarmShowStyle.getOverview().getThirdLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getOverview().getThirdLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getOverview().getThirdLevel().setColor(rs.getString(3));
+				alarmShowStyle.getOverview().getThirdLevel().setOpacity(rs.getString(4));
 			}	
 		}
+		
+		pstmt = conn.prepareStatement(sql2); 
+		rs=pstmt.executeQuery();
+		while(rs.next()){
+			if(rs.getInt(1)==0){
+				alarmShowStyle.getDetails().getNormal().setValue(rs.getInt(1));
+				alarmShowStyle.getDetails().getNormal().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getDetails().getNormal().setColor(rs.getString(3));
+				alarmShowStyle.getDetails().getNormal().setOpacity(rs.getString(4));
+			}else if(rs.getInt(1)==100){
+				alarmShowStyle.getDetails().getFirstLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getDetails().getFirstLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getDetails().getFirstLevel().setColor(rs.getString(3));
+				alarmShowStyle.getDetails().getFirstLevel().setOpacity(rs.getString(4));
+			}else if(rs.getInt(1)==200){
+				alarmShowStyle.getDetails().getSecondLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getDetails().getSecondLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getDetails().getSecondLevel().setColor(rs.getString(3));
+				alarmShowStyle.getDetails().getSecondLevel().setOpacity(rs.getString(4));
+			}else if(rs.getInt(1)==300){
+				alarmShowStyle.getDetails().getThirdLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getDetails().getThirdLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getDetails().getThirdLevel().setColor(rs.getString(3));
+				alarmShowStyle.getDetails().getThirdLevel().setOpacity(rs.getString(4));
+			}	
+		}
+		
+		pstmt = conn.prepareStatement(sql3); 
+		rs=pstmt.executeQuery();
+		while(rs.next()){
+			if(rs.getInt(1)==0){
+				alarmShowStyle.getStatistics().getNormal().setValue(rs.getInt(1));
+				alarmShowStyle.getStatistics().getNormal().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getStatistics().getNormal().setColor(rs.getString(3));
+				alarmShowStyle.getStatistics().getNormal().setOpacity(rs.getString(4));
+			}else if(rs.getInt(1)==100){
+				alarmShowStyle.getStatistics().getFirstLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getStatistics().getFirstLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getStatistics().getFirstLevel().setColor(rs.getString(3));
+				alarmShowStyle.getStatistics().getFirstLevel().setOpacity(rs.getString(4));
+			}else if(rs.getInt(1)==200){
+				alarmShowStyle.getStatistics().getSecondLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getStatistics().getSecondLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getStatistics().getSecondLevel().setColor(rs.getString(3));
+				alarmShowStyle.getStatistics().getSecondLevel().setOpacity(rs.getString(4));
+			}else if(rs.getInt(1)==300){
+				alarmShowStyle.getStatistics().getThirdLevel().setValue(rs.getInt(1));
+				alarmShowStyle.getStatistics().getThirdLevel().setBackgroundColor(rs.getString(2));
+				alarmShowStyle.getStatistics().getThirdLevel().setColor(rs.getString(3));
+				alarmShowStyle.getStatistics().getThirdLevel().setOpacity(rs.getString(4));
+			}	
+		}
+		
+		
+		
 		if(!dataModelMap.containsKey("AlarmShowStyle")){
 			dataModelMap.put("AlarmShowStyle", alarmShowStyle);
 		}

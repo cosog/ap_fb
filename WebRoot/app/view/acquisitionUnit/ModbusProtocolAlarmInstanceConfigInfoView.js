@@ -47,7 +47,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceConfigInfoView', 
                     hideMode:'offsets',
                     items: [{
                     	region: 'center',
-                    	title:'实例列表',
+                    	title:'报警实例列表',
 //                    	autoScroll:true,
                         scrollable: true,
                     	id:"ModbusProtocolAlarmInstanceConfigPanel_Id"

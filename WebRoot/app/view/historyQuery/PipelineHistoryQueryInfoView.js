@@ -419,11 +419,14 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
         					td.style.fontWeight = 'bold';
    			             	td.style.fontFamily = 'SimHei';
         					if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-        						td.style.color='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						td.style.color='#'+AlarmShowStyle.Details.FirstLevel.Color;
         					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-        						td.style.color='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						td.style.color='#'+AlarmShowStyle.Details.SecondLevel.Color;
         					}else if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-        						td.style.color='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						td.style.color='#'+AlarmShowStyle.Details.ThirdLevel.Color;
         					}
         					
         				}
