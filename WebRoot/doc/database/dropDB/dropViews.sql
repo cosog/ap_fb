@@ -1,0 +1,4 @@
+drop view VIW_ALARMINFO;
+drop view VIW_DEVICEOPERATIONLOG;
+drop view VIW_SYSTEMLOG;
+drop view VIW_WELLINFORMATION;

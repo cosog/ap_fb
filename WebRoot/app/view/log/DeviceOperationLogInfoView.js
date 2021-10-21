@@ -6,7 +6,7 @@ Ext.define('AP.view.log.DeviceOperationLogInfoView', {
     border: false,
     //forceFit : true,
     initComponent: function () {
-    	var DeviceOperationLogStore= Ext.create('AP.store.log.DeviceOperationLogStore');
+//    	var DeviceOperationLogStore= Ext.create('AP.store.log.DeviceOperationLogStore');
     	var deviceTypeCombStore = new Ext.data.JsonStore({
         	pageSize:defaultWellComboxSize,
             fields: [{

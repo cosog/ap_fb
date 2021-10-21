@@ -423,10 +423,11 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
 				+ WellInformation_Str;
-		if(deviceType!=2){
-			sql+= " and t.orgid in ("+orgId+" )  ";
-		}
-				
+//		if(deviceType!=2){
+//			sql+= " and t.orgid in ("+orgId+" )  ";
+//		}
+		sql+= " and t.orgid in ("+orgId+" )  ";		
+		
 		sql+= " and t.devicetype="+deviceType;
 		sql+= " order by t.sortnum,t.wellname ";
 		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype="+deviceType+" order by t.sort";

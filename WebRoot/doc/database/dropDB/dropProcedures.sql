@@ -1,0 +1,9 @@
+drop procedure PRD_CHANGE_WELLNAME;
+drop procedure PRD_CLEAR_DATA;
+drop procedure PRD_RESET_SEQUENCE;
+drop procedure PRD_SAVE_ALARMCOLOR;
+drop procedure PRD_SAVE_ALARMINFO;
+drop procedure PRD_SAVE_DEVICEOPERATIONLOG;
+drop procedure PRD_SAVE_RESOURCEMONITORING;
+drop procedure PRD_SAVE_SYSTEMLOG;
+drop procedure PRD_SAVE_WELLINFORMATION;

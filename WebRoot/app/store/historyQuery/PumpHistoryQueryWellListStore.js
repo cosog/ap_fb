@@ -102,6 +102,14 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
             if(get_rawData.totalCount>0){
             	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
+            }else{
+            	if(pumpDeviceHistoryQueryDataHandsontableHelper!=null){
+					if(pumpDeviceHistoryQueryDataHandsontableHelper.hot!=undefined){
+						pumpDeviceHistoryQueryDataHandsontableHelper.hot.destroy();
+					}
+					pumpDeviceHistoryQueryDataHandsontableHelper=null;
+				}
+            	$("#pumpHistoryQueryCurveDiv_Id").html('');
             }
         },
         beforeload: function (store, options) {

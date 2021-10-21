@@ -41,7 +41,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolUnitConfigInfoView', {
 //                    		}
 //                    	}else 
                     	if(newCard.id=="ModbusProtocolAlarmUnitConfigTabPanel_Id"){
-                    		var treePanel=Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id");
+                    		var treePanel=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id");
                     		if(isNotVal(treePanel)){
                     			treePanel.getStore().load();
                     		}else{

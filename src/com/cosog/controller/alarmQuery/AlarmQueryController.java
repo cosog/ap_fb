@@ -59,13 +59,21 @@ public class AlarmQueryController extends BaseController{
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
 		this.pager = new Page("pagerForm", request);
-		User user=null;
-		HttpSession session=request.getSession();
-		user = (User) session.getAttribute("userLogin");
-		if (user != null) {
-			orgId = "" + user.getUserorgids();
-			if(user.getUserOrgid()==0){
-				orgId+=",0";
+//		User user=null;
+//		HttpSession session=request.getSession();
+//		user = (User) session.getAttribute("userLogin");
+//		if (user != null) {
+//			orgId = "" + user.getUserorgids();
+//			if(user.getUserOrgid()==0){
+//				orgId+=",0";
+//			}
+//		}
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId=user.getUserorgids();
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){

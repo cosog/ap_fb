@@ -72,7 +72,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                         	if(record.data.classes!=1){
                         		return;
                         	}else{
-                        		info='实例';
+                        		info='采控实例';
                         	}
                         	var menu = Ext.create('Ext.menu.Menu', {
                                 floating: true,
@@ -88,7 +88,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                                                 		var configInfo={};
                                             			configInfo.delidslist=[];
                                             			configInfo.delidslist.push(record.data.id);
-                                            			SaveModbusProtocolInstanceConfigTreeData(configInfo);
+                                            			SaveModbusProtocolAcqInstanceData(configInfo);
                                                 	}
                                                 	
                                                 	

@@ -7,7 +7,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
     defaultRootId: '0',
     proxy: {
         type: 'ajax',
-        url: context + '/acquisitionUnitManagerController/modbusProtocolAlarmGroupTreeData',
+        url: context + '/acquisitionUnitManagerController/modbusProtocolAlarmUnitTreeData',
         actionMethods: {
             read: 'POST'
         },
@@ -20,10 +20,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
         beforeload: function (store, options) {
         },
         load: function (store, options, eOpts) {
-        	var gridPanel = Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id");
+        	var gridPanel = Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 gridPanel = Ext.create('Ext.tree.Panel', {
-                    id: "ModbusProtocolAlarmGroupConfigTreeGridPanel_Id",
+                    id: "ModbusProtocolAlarmUnitConfigTreeGridPanel_Id",
 //                    layout: "fit",
                     border: false,
                     animate: true,
@@ -55,9 +55,9 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
                         selectionchange ( view, selected, eOpts ){
                         	
                         },select( v, record, index, eOpts ){
-                        	Ext.getCmp("ModbusProtocolAlarmGroupConfigSelectRow_Id").setValue(index);
-                        	var activeId = Ext.getCmp("ModbusProtocolAlarmGroupItemsConfigTabPanel_Id").getActiveTab().id;
-                			if(activeId=="ModbusProtocolAlarmGroupNumItemsConfigTableInfoPanel_Id"){
+                        	Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").setValue(index);
+                        	var activeId = Ext.getCmp("ModbusProtocolAlarmUnitItemsConfigTabPanel_Id").getActiveTab().id;
+                			if(activeId=="ModbusProtocolAlarmUnitNumItemsConfigTableInfoPanel_Id"){
                 				if(record.data.classes==0){
                             		if(isNotVal(record.data.children) && record.data.children.length>0){
                             			CreateProtocolAlarmUnitNumItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
@@ -67,16 +67,16 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
                             	}else if(record.data.classes==2||record.data.classes==3){
                             		CreateProtocolAlarmUnitNumItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
                             	}
-                        	}else if(activeId=="ModbusProtocolAlarmGroupSwitchItemsConfigTableInfoPanel_Id"){
-                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id");
+                        	}else if(activeId=="ModbusProtocolAlarmUnitSwitchItemsConfigTableInfoPanel_Id"){
+                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id");
                         		if(isNotVal(gridPanel)){
                         			gridPanel.getSelectionModel().deselectAll(true);
                         			gridPanel.getStore().load();
                         		}else{
                         			Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitSwitchItemsStore');
                         		}
-                        	}else if(activeId=="ModbusProtocolAlarmGroupEnumItemsConfigTableInfoPanel_Id"){
-                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmGroupEnumItemsGridPanel_Id");
+                        	}else if(activeId=="ModbusProtocolAlarmUnitEnumItemsConfigTableInfoPanel_Id"){
+                        		var gridPanel=Ext.getCmp("ModbusProtocolAlarmUnitEnumItemsGridPanel_Id");
                         		if(isNotVal(gridPanel)){
                         			gridPanel.getSelectionModel().deselectAll(true);
                         			gridPanel.getStore().load();
@@ -124,7 +124,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
                     }
 
                 });
-                var panel = Ext.getCmp("ModbusProtocolAlarmGroupConfigPanel_Id");
+                var panel = Ext.getCmp("ModbusProtocolAlarmUnitConfigPanel_Id");
                 panel.add(gridPanel);
             }
             gridPanel.getSelectionModel().deselectAll(true);

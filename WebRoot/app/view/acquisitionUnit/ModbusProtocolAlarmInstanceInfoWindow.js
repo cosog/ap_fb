@@ -17,12 +17,12 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
     border: false,
     initComponent: function () {
         var me = this;
-        var ProtocolAndAlarmGroupTreeStore=Ext.create('Ext.data.TreeStore', {
+        var ProtocolAndAlarmUnitTreeStore=Ext.create('Ext.data.TreeStore', {
             fields: ['orgId', 'text', 'leaf'],
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: context + '/acquisitionUnitManagerController/modbusProtocolAndAlarmGroupTreeData',
+                url: context + '/acquisitionUnitManagerController/modbusProtocolAndAlarmUnitTreeData',
                 reader: 'json'
             },
             root: {
@@ -44,8 +44,8 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
             }
         });
         
-        var protocolAndAlarmGroupTree=Ext.create('AP.view.well.TreePicker',{
-        	id:'modbusInstanceProtocolAndAlarmGroup_Id',
+        var protocolAndAlarmUnitTree=Ext.create('AP.view.well.TreePicker',{
+        	id:'modbusInstanceProtocolAndAlarmUnit_Id',
         	anchor: '100%',
         	fieldLabel: '报警单元',
             emptyText: '请选择报警单元...',
@@ -55,16 +55,16 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
             forceSelection : true,// 只能选择下拉框里面的内容
             rootVisible: false,
             allowBlank: false,
-            store:ProtocolAndAlarmGroupTreeStore,
+            store:ProtocolAndAlarmUnitTreeStore,
             listeners: {
             	expand: function (sm, selections) {
-            		protocolAndAlarmGroupTree.getStore().load();
+            		protocolAndAlarmUnitTree.getStore().load();
                 },
             	select: function (picker,record,eOpts) {
                 	if(record.data.classes==1){
                 		Ext.Msg.alert('info', "<font color=red>当前选中为协议，请选择报警单元！</font>");
                 	}else{
-                		Ext.getCmp("modbusInstanceAlarmGroup_Id").setValue(record.data.id);
+                		Ext.getCmp("modbusInstanceAlarmUnit_Id").setValue(record.data.id);
                 	}
                 	
                 }
@@ -121,10 +121,10 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
 				}
             },{
 				xtype : "hidden",
-				id : 'modbusInstanceAlarmGroup_Id',
+				id : 'modbusInstanceAlarmUnit_Id',
 				value: 0,
-				name : "protocolAlarmInstance.alarmGroupId"
-			},protocolAndAlarmGroupTree,{
+				name : "protocolAlarmInstance.AlarmUnitId"
+			},protocolAndAlarmUnitTree,{
             	xtype: 'numberfield',
             	id: "modbusProtocolAlarmInstanceSort_Id",
                 name: 'protocolAlarmInstance.sort',

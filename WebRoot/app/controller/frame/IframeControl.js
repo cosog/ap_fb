@@ -335,11 +335,11 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 				Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
 			}
 		}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
-			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+			var gridPanel = Ext.getCmp("PipelineHistoryQueryListGridPanel_Id");
 			if (isNotVal(gridPanel)) {
 				gridPanel.getStore().load();
 			}else{
-				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+				Ext.create('AP.store.historyQuery.PipelineHistoryQueryWellListStore');
 			}
 		}
 	}else if(module_Code == "LogQuery"){

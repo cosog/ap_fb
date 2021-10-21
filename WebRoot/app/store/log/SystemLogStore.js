@@ -66,6 +66,10 @@ Ext.define('AP.store.log.SystemLogStore', {
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+        	var orgSelection= Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+        	if(orgSelection.length==0){
+        		orgId='';
+        	}
         	var startDate=Ext.getCmp('SystemLogQueryStartDate_Id').rawValue;
             var endDate=Ext.getCmp('SystemLogQueryEndDate_Id').rawValue;
             var new_params = {

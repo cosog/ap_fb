@@ -8,22 +8,22 @@ import javax.persistence.Table;
 
 import com.cosog.utils.StringManagerUtils;
 /**
- *  <p>描述：报警组实体类  tbl_alarm_group_conf</p>
+ *  <p>描述：报警组实体类  tbl_alarm_unit_conf</p>
  *  
  * @author zhao  2021-09-10
  *
  */
 @Entity
-@Table(name = "tbl_alarm_group_conf")
-public class AlarmGroup implements java.io.Serializable {
+@Table(name = "tbl_alarm_unit_conf")
+public class AlarmUnit implements java.io.Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private String groupCode;
-	private String groupName;
+	private String unitCode;
+	private String unitName;
 	private String protocol;
 	
 	private String remark;
@@ -31,13 +31,13 @@ public class AlarmGroup implements java.io.Serializable {
 	// Constructors
 
 	/** default constructor */
-	public AlarmGroup() {
+	public AlarmUnit() {
 	}
 
 	/** full constructor */
-	public AlarmGroup(String groupCode, String groupName,String remark) {
-		this.groupCode = groupCode;
-		this.groupName = groupName;
+	public AlarmUnit(String unitCode, String unitName,String remark) {
+		this.unitCode = unitCode;
+		this.unitName = unitName;
 		this.remark=remark;
 	}
 
@@ -52,22 +52,22 @@ public class AlarmGroup implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "GROUP_CODE", nullable = true, length = 20)
-	public String getGroupCode() {
-		return this.groupCode;
+	@Column(name = "Unit_CODE", nullable = true, length = 20)
+	public String getUnitCode() {
+		return this.unitCode;
 	}
 
-	public void setGroupCode(String groupCode) {
-		this.groupCode = groupCode;
+	public void setUnitCode(String unitCode) {
+		this.unitCode = unitCode;
 	}
 
-	@Column(name = "GROUP_NAME", nullable = false, length = 40)
-	public String getGroupName() {
-		return this.groupName;
+	@Column(name = "UNIT_NAME", nullable = false, length = 40)
+	public String getUnitName() {
+		return this.unitName;
 	}
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
 	}
 	
 	@Column(name = "REMARK", nullable = true, length = 10)

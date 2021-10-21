@@ -609,7 +609,7 @@ function addAlarmUnitInfo() {
         title: '创建报警单元'
     });
     window.show();
-    Ext.getCmp("addFormAlarmGroup_Id").show();
+    Ext.getCmp("addFormAlarmUnit_Id").show();
     Ext.getCmp("updateFormaAquisitionUnit_Id").hide();
     return false;
 };
@@ -620,14 +620,14 @@ var SaveAlarmUnitSubmitBtnForm = function () {
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
     if (winForm.getForm().isValid()) {
         winForm.getForm().submit({
-            url: context + '/acquisitionUnitManagerController/doAlarmGroupAdd',
+            url: context + '/acquisitionUnitManagerController/doAlarmUnitAdd',
             clientValidation: true, // 进行客户端验证
             method: "POST",
             waitMsg: cosog.string.sendServer,
             waitTitle: 'Please Wait...',
             success: function (response, action) {
                 Ext.getCmp('alarmUnit_editWin_Id').close();
-                Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().load();
+                Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().load();
                 if (action.result.msg == true) {
                     Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.success + "</font>】，" + cosog.string.dataInfo + "");
                 }

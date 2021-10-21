@@ -20,9 +20,9 @@ t2.recoverytime,t.orgid
 /*==============================================================*/
 create or replace view viw_deviceoperationlog as
 select t.id,t.devicetype,t3.itemname as deviceTypeName,
-t.wellname,t.createtime,t.user_id,t.loginip,t.action,t4.itemname as actionname,t.remark ,t2.user_orgid as orgid
-from tbl_deviceoperationlog t,tbl_user t2,tbl_code t3,tbl_code t4
-where t.user_id=t2.user_id
+t.wellname,t.createtime,t.user_id,t.loginip,t.action,t4.itemname as actionname,t.remark ,t2.orgid as orgid
+from tbl_deviceoperationlog t,tbl_code t3,tbl_code t4,tbl_wellinformation t2
+where t.wellname=t2.wellname and t.devicetype=t2.devicetype
 and t.devicetype=t3.itemvalue and upper(t3.itemcode)=upper('devicetype')
 and t.action=t4.itemvalue and upper(t4.itemcode)=upper('action');
 /

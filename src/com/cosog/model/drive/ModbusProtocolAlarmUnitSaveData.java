@@ -2,13 +2,13 @@ package com.cosog.model.drive;
 
 import java.util.List;
 
-public class ModbusProtocolAlarmGroupSaveData {
+public class ModbusProtocolAlarmUnitSaveData {
 
 	int id;
 	int resolutionMode;
-	String groupCode;
-	String groupName;
-	String oldGroupName;
+	String unitCode;
+	String unitName;
+	String oldUnitName;
 	String protocol;
 	String remark;
 	
@@ -116,28 +116,28 @@ public class ModbusProtocolAlarmGroupSaveData {
 		this.id = id;
 	}
 
-	public String getGroupCode() {
-		return groupCode;
+	public String getUnitCode() {
+		return unitCode;
 	}
 
-	public void setGroupCode(String groupCode) {
-		this.groupCode = groupCode;
+	public void setUnitCode(String unitCode) {
+		this.unitCode = unitCode;
 	}
 
-	public String getGroupName() {
-		return groupName;
+	public String getUnitName() {
+		return unitName;
 	}
 
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
 	}
 
-	public String getOldGroupName() {
-		return oldGroupName;
+	public String getOldUnitName() {
+		return oldUnitName;
 	}
 
-	public void setOldGroupName(String oldGroupName) {
-		this.oldGroupName = oldGroupName;
+	public void setOldUnitName(String oldUnitName) {
+		this.oldUnitName = oldUnitName;
 	}
 
 	public String getProtocol() {
