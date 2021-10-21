@@ -23,7 +23,7 @@ public class ProtocolAlarmInstance implements java.io.Serializable {
 	private String name;
 	private String code;
 	private Integer deviceType;
-	private Integer alarmGroupId;
+	private Integer alarmUnitId;
 	private Integer sort;
 
 	// Constructors
@@ -33,13 +33,13 @@ public class ProtocolAlarmInstance implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public ProtocolAlarmInstance(Integer id, String name, String code, Integer deviceType, Integer alarmGroupId,Integer sort) {
+	public ProtocolAlarmInstance(Integer id, String name, String code, Integer deviceType, Integer alarmUnitId,Integer sort) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.code = code;
 		this.deviceType = deviceType;
-		this.alarmGroupId = alarmGroupId;
+		this.alarmUnitId = alarmUnitId;
 		this.sort = sort;
 	}
 
@@ -81,13 +81,13 @@ public class ProtocolAlarmInstance implements java.io.Serializable {
 		this.deviceType = deviceType;
 	}
 
-	@Column(name = "alarmGroupId", precision = 22, scale = 0)
-	public Integer getAlarmGroupId() {
-		return alarmGroupId;
+	@Column(name = "alarmUnitId", precision = 22, scale = 0)
+	public Integer getAlarmUnitId() {
+		return alarmUnitId;
 	}
 
-	public void setAlarmGroupId(Integer alarmGroupId) {
-		this.alarmGroupId = alarmGroupId;
+	public void setAlarmUnitId(Integer alarmUnitId) {
+		this.alarmUnitId = alarmUnitId;
 	}
 
 	@Column(name = "sort", precision = 22, scale = 0)

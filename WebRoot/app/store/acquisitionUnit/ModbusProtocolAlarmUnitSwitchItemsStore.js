@@ -22,12 +22,12 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitSwitchItemsStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
-            var gridPanel = Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id");
+            var gridPanel = Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var column = createModbusProtocolAddrMappingEnumOrSwitchItemsColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(column);
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "ModbusProtocolAlarmGroupSwitchItemsGridPanel_Id",
+                    id: "ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     columnLines: true,
@@ -44,9 +44,9 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitSwitchItemsStore', {
                     		}
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsSelectRow_Id").setValue(index);
-                    		var selectGroupRow= Ext.getCmp("ModbusProtocolAlarmGroupConfigSelectRow_Id").getValue();
-                    		var selectedGroup=Ext.getCmp("ModbusProtocolAlarmGroupConfigTreeGridPanel_Id").getStore().getAt(selectGroupRow);
+                    		Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsSelectRow_Id").setValue(index);
+                    		var selectGroupRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
+                    		var selectedGroup=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().getAt(selectGroupRow);
                     		
                     		if(selectedGroup.data.classes==0){
                     			if(isNotVal(selectedGroup.data.children) && selectedGroup.data.children.length>0){
@@ -61,7 +61,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitSwitchItemsStore', {
                     	}
                     }
                 });
-                var panel = Ext.getCmp("ModbusProtocolAlarmGroupSwitchItemsPanel_Id");
+                var panel = Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsPanel_Id");
                 panel.add(gridPanel);
             }
             if(get_rawData.totalRoot.length>0){

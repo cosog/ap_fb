@@ -216,7 +216,7 @@ function CreateProtocolAlarmInstancePropertiesInfoTable(data){
 		var item3={};
 		item3.id=3;
 		item3.title='报警单元';
-		item3.value=data.alarmGroupName;
+		item3.value=data.alarmUnitName;
 		root.push(item3);
 		
 		var item4={};
@@ -618,7 +618,7 @@ function SaveModbusProtocolAlarmInstanceConfigTreeData(){
 			saveData.oldName=selectedItem.data.text;
 			saveData.name=propertiesData[0][2];
 			saveData.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
-			saveData.alarmGroupId=selectedItem.data.alarmGroupId;
+			saveData.alarmUnitId=selectedItem.data.alarmUnitId;
 			saveData.sort=propertiesData[3][2];
 			SaveModbusProtocolAlarmInstanceData(saveData);
 		}

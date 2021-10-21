@@ -328,8 +328,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
-					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
-					+ " where t.type=2 and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+code+"' "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
+					+ " where t.type=2 and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+code+"' "
 					+ " order by t.id";
 			list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
@@ -382,7 +382,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getModbusProtocolEnumAlarmItemsConfigData(String protocolName,String classes,String groupCode,String itemAddr,String itemResolutionMode){
+	public String getModbusProtocolEnumAlarmItemsConfigData(String protocolName,String classes,String unitCode,String itemAddr,String itemResolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -409,8 +409,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
-					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
-					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
+					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+unitCode+"' "
 					+ " order by t.id";
 			list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
@@ -460,7 +460,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getModbusProtocolSwitchAlarmItemsConfigData(String protocolName,String classes,String groupCode,String itemAddr,String itemResolutionMode){
+	public String getModbusProtocolSwitchAlarmItemsConfigData(String protocolName,String classes,String unitCode,String itemAddr,String itemResolutionMode){
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -486,8 +486,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.bitindex,t.value,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
-					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3  "
-					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.group_code='"+groupCode+"' "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
+					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+unitCode+"' "
 					+ " order by t.id";
 			list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
@@ -657,8 +657,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
 				+ "t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
-				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
-				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
+				+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
+				+ " where t.unitid=t2.id and t2.id=t3.alarmunitid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.id="+id+" "
 				+ " and t.type="+resolutionMode
 				+ " order by t.itemaddr";
@@ -666,8 +666,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		if("2".equals(classes)){
 			itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
 					+ "t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
-					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_code t3 "
-					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3 "
+					+ " where t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
 					+ " and t2.id="+id+" "
 					+ " and t.type="+resolutionMode
 					+ " order by t.itemaddr";
@@ -722,16 +722,16 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.bitIndex,t.value,t.delay,"
 				+ " t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
-				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
-				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
+				+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
+				+ " where t.unitid=t2.id and t2.id=t3.alarmunitid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.id="+id+" "
 				+ " and t.type="+resolutionMode
 				+ " order by t.itemaddr,t.bitindex";
 		if("2".equals(classes)){
 			itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.bitIndex,t.value,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
-					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2, tbl_code t3 "
-					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2, tbl_code t3 "
+					+ " where t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
 					+ " and t2.id="+id+" "
 					+ " and t.type="+resolutionMode
 					+ " order by t.itemaddr,t.bitindex";
@@ -810,16 +810,16 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		String itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
 				+ " t4.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
-				+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
-				+ " where t.groupid=t2.id and t2.id=t3.alarmgroupid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
+				+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_protocolalarminstance t3, tbl_code t4 "
+				+ " where t.unitid=t2.id and t2.id=t3.alarmunitid and upper(t4.itemcode)=upper('BJJB') and t.alarmlevel=t4.itemvalue "
 				+ " and t3.id="+id+" "
 				+ " and t.type="+resolutionMode
 				+ " order by t.itemaddr,t.bitindex";
 		if("2".equals(classes)){
 			itemsSql="select t.id, t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
 					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'),t2.protocol "
-					+ " from tbl_alarm_item2group_conf t,tbl_alarm_group_conf t2, tbl_code t3 "
-					+ " where t.groupid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2, tbl_code t3 "
+					+ " where t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue "
 					+ " and t2.id="+id+" "
 					+ " and t.type="+resolutionMode
 					+ " order by t.itemaddr,t.bitindex";
@@ -1139,7 +1139,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 	}
 	
 	
-	public String modbusProtocolAndAlarmGroupTreeData(String deviceTypeStr){
+	public String modbusProtocolAndAlarmUnitTreeData(String deviceTypeStr){
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -1155,8 +1155,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		result_json.append("[");
 		if(modbusProtocolConfig!=null){
-			String alarmGroupSql="select t.id,t.group_code,t.group_name,t.remark,t.protocol from tbl_alarm_group_conf t order by t.protocol,t.id";
-			List<?> alarmGroupList=this.findCallSql(alarmGroupSql);
+			String alarmUnitSql="select t.id,t.unit_code,t.unit_name,t.remark,t.protocol from tbl_alarm_unit_conf t order by t.protocol,t.id";
+			List<?> alarmUnitList=this.findCallSql(alarmUnitSql);
 			//排序
 			Collections.sort(modbusProtocolConfig.getProtocol());
 			
@@ -1170,8 +1170,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					result_json.append("\"expanded\": true,");
 					result_json.append("\"disabled\": true,");
 					result_json.append("\"children\": [");
-					for(int j=0;j<alarmGroupList.size();j++){
-						Object[] unitObj = (Object[]) alarmGroupList.get(j);
+					for(int j=0;j<alarmUnitList.size();j++){
+						Object[] unitObj = (Object[]) alarmUnitList.get(j);
 						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(unitObj[unitObj.length-1]+"")){
 							result_json.append("{\"classes\":2,");
 							result_json.append("\"id\":"+unitObj[0]+",");
@@ -1199,7 +1199,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 	}
 	
 	
-	public String modbusProtocolAlarmGroupTreeData(){
+	public String modbusProtocolAlarmUnitTreeData(){
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer pumpTree_json = new StringBuffer();
 		StringBuffer pipelineTree_json = new StringBuffer();
@@ -1214,11 +1214,11 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		pipelineTree_json.append("[");
 		
 		if(modbusProtocolConfig!=null){
-			String groupSql="select t.id,t.group_code,t.group_name,t.remark,t.protocol"
-					+ " from tbl_alarm_group_conf t "
+			String unitSql="select t.id,t.unit_code,t.unit_name,t.remark,t.protocol"
+					+ " from tbl_alarm_unit_conf t "
 					+ " where 1=1 "
-					+ " order by t.protocol,t.group_code";
-			List<?> groupList=this.findCallSql(groupSql);
+					+ " order by t.protocol,t.unit_code";
+			List<?> unitList=this.findCallSql(unitSql);
 			//排序
 			Collections.sort(modbusProtocolConfig.getProtocol());
 			
@@ -1232,15 +1232,15 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pumpTree_json.append("\"iconCls\": \"Protocol\",");
 					pumpTree_json.append("\"expanded\": true,");
 					pumpTree_json.append("\"children\": [");
-					for(int j=0;j<groupList.size();j++){
-						Object[] groupObj = (Object[]) groupList.get(j);
-						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(groupObj[groupObj.length-1]+"")){
+					for(int j=0;j<unitList.size();j++){
+						Object[] unitObj = (Object[]) unitList.get(j);
+						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(unitObj[unitObj.length-1]+"")){
 							pumpTree_json.append("{\"classes\":3,");
-							pumpTree_json.append("\"id\":"+groupObj[0]+",");
-							pumpTree_json.append("\"code\":\""+groupObj[1]+"\",");
-							pumpTree_json.append("\"text\":\""+groupObj[2]+"\",");
-							pumpTree_json.append("\"remark\":\""+groupObj[3]+"\",");
-							pumpTree_json.append("\"protocol\":\""+groupObj[4]+"\",");
+							pumpTree_json.append("\"id\":"+unitObj[0]+",");
+							pumpTree_json.append("\"code\":\""+unitObj[1]+"\",");
+							pumpTree_json.append("\"text\":\""+unitObj[2]+"\",");
+							pumpTree_json.append("\"remark\":\""+unitObj[3]+"\",");
+							pumpTree_json.append("\"protocol\":\""+unitObj[4]+"\",");
 							pumpTree_json.append("\"iconCls\": \"AcqGroup\",");
 							pumpTree_json.append("\"leaf\": true");
 							pumpTree_json.append("},");
@@ -1259,15 +1259,15 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pipelineTree_json.append("\"iconCls\": \"Protocol\",");
 					pipelineTree_json.append("\"expanded\": true,");
 					pipelineTree_json.append("\"children\": [");
-					for(int j=0;j<groupList.size();j++){
-						Object[] groupObj = (Object[]) groupList.get(j);
-						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(groupObj[groupObj.length-1]+"")){
+					for(int j=0;j<unitList.size();j++){
+						Object[] unitObj = (Object[]) unitList.get(j);
+						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(unitObj[unitObj.length-1]+"")){
 							pipelineTree_json.append("{\"classes\":3,");
-							pipelineTree_json.append("\"id\":"+groupObj[0]+",");
-							pipelineTree_json.append("\"code\":\""+groupObj[1]+"\",");
-							pipelineTree_json.append("\"text\":\""+groupObj[2]+"\",");
-							pipelineTree_json.append("\"remark\":\""+groupObj[3]+"\",");
-							pipelineTree_json.append("\"protocol\":\""+groupObj[4]+"\",");
+							pipelineTree_json.append("\"id\":"+unitObj[0]+",");
+							pipelineTree_json.append("\"code\":\""+unitObj[1]+"\",");
+							pipelineTree_json.append("\"text\":\""+unitObj[2]+"\",");
+							pipelineTree_json.append("\"remark\":\""+unitObj[3]+"\",");
+							pipelineTree_json.append("\"protocol\":\""+unitObj[4]+"\",");
 							pipelineTree_json.append("\"iconCls\": \"AcqGroup\",");
 							pipelineTree_json.append("\"leaf\": true");
 							pipelineTree_json.append("},");
@@ -1435,8 +1435,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		StringBuffer pipelineTree_json = new StringBuffer();
 		pumpTree_json.append("[");
 		pipelineTree_json.append("[");
-		String sql="select t.id,t.name,t.code,t.alarmGroupId,t2.group_name,t.devicetype,t.sort   "
-				+ " from tbl_protocolalarminstance t ,tbl_alarm_group_conf t2 where t.alarmgroupid=t2.id "
+		String sql="select t.id,t.name,t.code,t.alarmUnitId,t2.unit_name,t.devicetype,t.sort   "
+				+ " from tbl_protocolalarminstance t ,tbl_alarm_unit_conf t2 where t.alarmunitid=t2.id "
 				+ " order by t.devicetype,t.sort";
 		List<?> list=this.findCallSql(sql);
 		for(int i=0;i<list.size();i++){
@@ -1446,8 +1446,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pumpTree_json.append("\"id\":\""+obj[0]+"\",");
 				pumpTree_json.append("\"text\":\""+obj[1]+"\",");
 				pumpTree_json.append("\"code\":\""+obj[2]+"\",");
-				pumpTree_json.append("\"alarmGroupId\":"+obj[3]+",");
-				pumpTree_json.append("\"alarmGroupName\":\""+obj[4]+"\",");
+				pumpTree_json.append("\"alarmUnitId\":"+obj[3]+",");
+				pumpTree_json.append("\"alarmUnitName\":\""+obj[4]+"\",");
 				pumpTree_json.append("\"deviceType\":"+obj[5]+",");
 				pumpTree_json.append("\"sort\":"+obj[6]+",");
 				pumpTree_json.append("\"iconCls\": \"Protocol\",");
@@ -1468,8 +1468,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"id\":\""+obj[0]+"\",");
 				pipelineTree_json.append("\"text\":\""+obj[1]+"\",");
 				pipelineTree_json.append("\"code\":\""+obj[2]+"\",");
-				pipelineTree_json.append("\"alarmGroupId\":"+obj[3]+",");
-				pipelineTree_json.append("\"alarmGroupName\":\""+obj[4]+"\",");
+				pipelineTree_json.append("\"alarmUnitId\":"+obj[3]+",");
+				pipelineTree_json.append("\"alarmUnitName\":\""+obj[4]+"\",");
 				pipelineTree_json.append("\"deviceType\":"+obj[5]+",");
 				pipelineTree_json.append("\"sort\":"+obj[6]+",");
 				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
@@ -1665,26 +1665,26 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		super.bulkObjectDelete(hql);
 	}
 	
-	public void doAlarmGroupAdd(T doAlarmGroupAdd) throws Exception {
-		getBaseDao().addObject(doAlarmGroupAdd);
+	public void doAlarmUnitAdd(T doAlarmUnitAdd) throws Exception {
+		getBaseDao().addObject(doAlarmUnitAdd);
 	}
 	
-	public void doAlarmGroupEdit(T doAlarmGroupAdd) throws Exception {
-		getBaseDao().updateObject(doAlarmGroupAdd);
+	public void doAlarmUnitEdit(T doAlarmUnitAdd) throws Exception {
+		getBaseDao().updateObject(doAlarmUnitAdd);
 	}
 	
-	public void doModbusProtocolAlarmGroupDelete(final String ids) throws Exception {
-		final String hql = "DELETE AlarmGroup u where u.id in (" + ids + ")";
+	public void doModbusProtocolAlarmUnitDelete(final String ids) throws Exception {
+		final String hql = "DELETE AlarmUnit u where u.id in (" + ids + ")";
 		super.bulkObjectDelete(hql);
 	}
 	
-	public void deleteCurrentAlarmGroupOwnItems(final String groupId,final int resolutionMode) throws Exception {
-		final String hql = "DELETE AlarmGroupItem u where u.groupId ="+groupId+" and u.type="+resolutionMode;
+	public void deleteCurrentAlarmUnitOwnItems(final String unitId,final int resolutionMode) throws Exception {
+		final String hql = "DELETE AlarmUnitItem u where u.unitId ="+unitId+" and u.type="+resolutionMode;
 		getBaseDao().bulkObjectDelete(hql);
 	}
 	
-	public void grantAlarmItemsPermission(T alarmGroupItem) throws Exception {
-		getBaseDao().addObject(alarmGroupItem);
+	public void grantAlarmItemsPermission(T alarmUnitItem) throws Exception {
+		getBaseDao().addObject(alarmUnitItem);
 	}
 	
 	public void doModbusProtocolAlarmInstanceEdit(T protocolAlarmInstance) throws Exception {

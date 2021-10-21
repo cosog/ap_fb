@@ -76,22 +76,22 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
                 fieldLabel: '序号',
                 id: 'formAlarmUnit_Id',
                 anchor: '100%',
-                name: "alarmGroup.id"
+                name: "alarmUnit.id"
             },{
 				xtype : "hidden",
 				id : 'formAlarmUnitProtocol_Id',
 				value:'',
-				name : "alarmGroup.protocol"
+				name : "alarmUnit.protocol"
 			},modbusProtocolComb, {
                 id: 'formAlarmUnitName_Id',
-                name: "alarmGroup.groupName",
+                name: "alarmUnit.unitName",
                 fieldLabel: '单元名称',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
             }, {
                 id: 'formAlarmUnitCode_Id',
-                name: "alarmGroup.groupCode",
+                name: "alarmUnit.unitCode",
                 fieldLabel: '单元编码',
                 hidden:true,
                 anchor: '100%',
@@ -99,7 +99,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
                 
             }, {
             	id: 'alarmUnitRemark_Id',
-            	name: "alarmGroup.remark",
+            	name: "alarmUnit.remark",
                 fieldLabel: '单元描述',
                 anchor: '100%',
                 value: '',
@@ -108,7 +108,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
             }],
             buttons: [{
             	xtype: 'button',
-            	id: 'addformAlarmUnit_Id',
+            	id: 'addFormAlarmUnit_Id',
             	text: cosog.string.save,
                 iconCls: 'save',
                 handler: function () {

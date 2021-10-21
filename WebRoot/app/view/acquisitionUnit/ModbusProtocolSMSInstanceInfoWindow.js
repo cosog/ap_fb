@@ -48,7 +48,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				name : "protocolSMSInstance.acqProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '读协议类型',
+				fieldLabel : '采集协议类型',
 				id : 'modbusInstanceAcqProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -59,7 +59,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				editable : false,
 				store : new Ext.data.SimpleStore({
 							fields : ['value', 'text'],
-							data : [['modbus-tcp', 'modbus-tcp'],['modbus-rtu', 'modbus-rtu'],['private-kd93', 'private-kd93'],['private-lq1000', 'private-lq1000']]
+							data : [['private-lq1000', 'private-lq1000']]
 						}),
 				displayField : 'text',
 				valueField : 'value',
@@ -78,7 +78,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				name : "protocolSMSInstance.ctrlProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '写协议类型',
+				fieldLabel : '控制协议类型',
 				id : 'modbusInstanceCtrlProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -89,7 +89,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				editable : false,
 				store : new Ext.data.SimpleStore({
 							fields : ['value', 'text'],
-							data : [['modbus-tcp', 'modbus-tcp'],['modbus-rtu', 'modbus-rtu'],['private-kd93', 'private-kd93'],['private-lq1000', 'private-lq1000']]
+							data : [['private-lq1000', 'private-lq1000']]
 						}),
 				displayField : 'text',
 				valueField : 'value',

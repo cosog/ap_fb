@@ -86,13 +86,9 @@ begin
         select count(*) into oldwellcount from tbl_wellinformation t where t.wellname=v_oldWellName;
         if oldwellcount>0 then
            select id into oldWellId from tbl_wellinformation t where t.wellname=v_oldWellName;
-           update tbl_pump t set t.wellid=newWellId where t.wellid=oldWellId;
-           commit;
            update tbl_pumpacqdata_latest t set t.wellid=newWellId where t.wellid=oldWellId;
            commit;
            update tbl_pumpacqdata_hist t set t.wellid=newWellId where t.wellid=oldWellId;
-           commit;
-           update tbl_pipeline t set t.wellid=newWellId where t.wellid=oldWellId;
            commit;
            update tbl_pipelineacqdata_latest t set t.wellid=newWellId where t.wellid=oldWellId;
            commit;
@@ -496,6 +492,7 @@ CREATE OR REPLACE PROCEDURE prd_save_wellinformation (v_orgname   in varchar2,
   wellcount number :=0;
   wellamount number :=0;
   orgcount number :=0;
+  smsOrgId number :=0;
   p_orgName    varchar2(30):='';
   p_msg varchar2(3000) := 'error';
   p_sql varchar2(3000);
@@ -556,6 +553,7 @@ begin
     select count(*) into wellcount from tbl_wellinformation t where t.wellName=v_wellName and t.devicetype=v_devicetype;
     if wellcount>0 then
       Update tbl_wellinformation t set
+               t.orgid=(select org.org_id from tbl_org org where org.org_name=v_orgname and rownum=1),
                t.instancecode=(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),
                t.signinid=v_signInId,
                t.videourl=v_videourl,
@@ -564,8 +562,10 @@ begin
            commit;
            p_msg := 'ÐÞ¸Ä³É¹¦';
     elsif wellcount=0 then
+      select org.org_id into smsOrgId from tbl_org org where org.org_name=v_orgname and rownum=1;
+      
       insert into tbl_wellinformation(orgId,wellName,devicetype,signinid,videourl,Sortnum)
-      values(0,v_wellName,v_devicetype,v_signInId,v_videourl,v_sortNum);
+      values(smsOrgId,v_wellName,v_devicetype,v_signInId,v_videourl,v_sortNum);
       commit;
       update tbl_wellinformation t set 
              t.instancecode=(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1)

@@ -76,7 +76,7 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
             });
         Ext.apply(this, {
             tbar: [SMSDeviceCombo,'-', {
-                		id: 'PumoDeviceTotalCount_Id',
+                		id: 'SMSDeviceTotalCount_Id',
                 		xtype: 'component',
                 		hidden: false,
                 		tpl: cosog.string.totalCount + ': {count}',
@@ -195,7 +195,7 @@ function CreateAndLoadSMSDeviceInfoTable(isNew){
 			}else{
 				smsDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
 			}
-			Ext.getCmp("PumoDeviceTotalCount_Id").update({count: result.totalCount});
+			Ext.getCmp("SMSDeviceTotalCount_Id").update({count: result.totalCount});
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");

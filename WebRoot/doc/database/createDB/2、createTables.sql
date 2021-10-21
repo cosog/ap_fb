@@ -3,32 +3,6 @@
 /* Created on:     2021-10-20                                    */
 /*==============================================================*/
 
-
-/*==============================================================*/
-/* Table: TBL_ACQ_GROUP2UNIT_CONF                                    */
-/*==============================================================*/
-create table TBL_ACQ_GROUP2UNIT_CONF
-(
-  id      NUMBER(10) not null,
-  groupid NUMBER(10) not null,
-  matrix  VARCHAR2(8) not null,
-  unitid  NUMBER(10) not null
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_ACQ_GROUP2UNIT_CONF add constraint PK_ACQ_UNIT_GROUP primary key (ID)
-/
-create index IDX_ACQ_UNIT_GROUP_GROUPID on TBL_ACQ_GROUP2UNIT_CONF (GROUPID)
-/
-create index IDX_ACQ_UNIT_GROUP_UNITID on TBL_ACQ_GROUP2UNIT_CONF (UNITID)
-/
-
 /*==============================================================*/
 /* Table: TBL_ACQ_GROUP_CONF                                  */
 /*==============================================================*/
@@ -53,6 +27,29 @@ tablespace AP_FB_DATA
 /
 alter table TBL_ACQ_GROUP_CONF
   add constraint PK_ACQUISITIONGROUP primary key (ID)
+/
+
+/*==============================================================*/
+/* Table: TBL_ACQ_UNIT_CONF                                  */
+/*==============================================================*/
+create table TBL_ACQ_UNIT_CONF
+(
+  id        NUMBER(10) not null,
+  unit_code VARCHAR2(50) not null,
+  unit_name VARCHAR2(50),
+  protocol  VARCHAR2(50),
+  remark    VARCHAR2(2000)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_ACQ_UNIT_CONF
+  add constraint PK_T_ACQUISITIONUNIT primary key (ID)
 /
 
 /*==============================================================*/
@@ -84,15 +81,14 @@ create index IDX_ACQ_GROUP_ITEM_ITEMID on TBL_ACQ_ITEM2GROUP_CONF (ITEMID)
 /
 
 /*==============================================================*/
-/* Table: TBL_ACQ_UNIT_CONF                                  */
+/* Table: TBL_ACQ_GROUP2UNIT_CONF                                    */
 /*==============================================================*/
-create table TBL_ACQ_UNIT_CONF
+create table TBL_ACQ_GROUP2UNIT_CONF
 (
-  id        NUMBER(10) not null,
-  unit_code VARCHAR2(50) not null,
-  unit_name VARCHAR2(50),
-  protocol  VARCHAR2(50),
-  remark    VARCHAR2(2000)
+  id      NUMBER(10) not null,
+  groupid NUMBER(10) not null,
+  matrix  VARCHAR2(8) not null,
+  unitid  NUMBER(10) not null
 )
 tablespace AP_FB_DATA
   storage
@@ -102,9 +98,14 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_ACQ_UNIT_CONF
-  add constraint PK_T_ACQUISITIONUNIT primary key (ID)
+alter table TBL_ACQ_GROUP2UNIT_CONF add constraint PK_ACQ_UNIT_GROUP primary key (ID)
 /
+create index IDX_ACQ_UNIT_GROUP_GROUPID on TBL_ACQ_GROUP2UNIT_CONF (GROUPID)
+/
+create index IDX_ACQ_UNIT_GROUP_UNITID on TBL_ACQ_GROUP2UNIT_CONF (UNITID)
+/
+
+
 
 /*==============================================================*/
 /* Table: TBL_ALARMINFO                               */
@@ -144,15 +145,15 @@ create index IDX_ALARMINFO_WELLID on TBL_ALARMINFO (WELLID)
 /
 
 /*==============================================================*/
-/* Table: TBL_ALARM_GROUP_CONF                                    */
+/* Table: TBL_ALARM_UNIT_CONF                                    */
 /*==============================================================*/
-create TBL_ALARM_GROUP_CONF
+create table TBL_ALARM_UNIT_CONF
 (
-  id         NUMBER(10) not null,
-  group_code VARCHAR2(50) not null,
-  group_name VARCHAR2(50),
-  protocol   VARCHAR2(50),
-  remark     VARCHAR2(2000)
+  id        NUMBER(10) not null,
+  unit_code VARCHAR2(50) not null,
+  unit_name VARCHAR2(50),
+  protocol  VARCHAR2(50),
+  remark    VARCHAR2(2000)
 )
 tablespace AP_FB_DATA
   storage
@@ -162,43 +163,19 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_ACQ_GROUP_CONF
-  add constraint PK_ACQUISITIONGROUP primary key (ID)
+alter table TBL_ALARM_UNIT_CONF
+  add constraint PK_TBL_ALARM_UNIT_CONF primary key (ID)
+/
+create index IDX_ALARM_UNIT_PROROCOL on TBL_ALARM_UNIT_CONF (PROTOCOL)
 /
 
 /*==============================================================*/
-/* Table: TBL_ACQ_ITEM2GROUP_CONF                               */
+/* Table: TBL_ALARM_ITEM2UNIT_CONF                                    */
 /*==============================================================*/
-create table TBL_ACQ_ITEM2GROUP_CONF
-(
-  ID      NUMBER(10) not null,
-  ITEMID  NUMBER(10),
-  ITEMNAME VARCHAR2(100),
-  ITEMCODE VARCHAR2(100),
-  MATRIX  VARCHAR2(8),
-  GROUPID NUMBER(10) not null
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_ALARM_GROUP_CONF
-  add constraint PK_TBL_ALARM_GROUP_CONF primary key (ID)
-/
-create index IDX_ALARM_GROUP_PROROCOL on TBL_ALARM_GROUP_CONF (PROTOCOL)
-/
-
-/*==============================================================*/
-/* Table: TBL_ALARM_ITEM2GROUP_CONF                                    */
-/*==============================================================*/
-create table TBL_ALARM_ITEM2GROUP_CONF
+create table TBL_ALARM_ITEM2UNIT_CONF
 (
   id         NUMBER(10) not null,
-  groupid    NUMBER(10) not null,
+  unitid     NUMBER(10) not null,
   itemid     NUMBER(10),
   itemname   VARCHAR2(100),
   itemcode   VARCHAR2(100),
@@ -221,10 +198,10 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_ALARM_ITEM2GROUP_CONF
-  add constraint PK_ALARM_ITEM2GROUP_CONF primary key (ID)
+alter table TBL_ALARM_ITEM2UNIT_CONF
+  add constraint PK_ALARM_ITEM2UNIT_CONF primary key (ID)
 /
-create index IDX_ALARM_ITEM2GROUP_GROUP on TBL_ALARM_ITEM2GROUP_CONF (GROUPID)
+create index IDX_ALARM_ITEM2UNIT_UNIT on TBL_ALARM_ITEM2UNIT_CONF (UNITID)
 /
 
 /*==============================================================*/
@@ -698,12 +675,12 @@ create index IDX_PIPELINEACQDATA_L_WELLID on TBL_PIPELINEACQDATA_LATEST (WELLID)
 /*==============================================================*/
 create table TBL_PROTOCOLALARMINSTANCE
 (
-  id           NUMBER(10) not null,
-  name         VARCHAR2(50),
-  code         VARCHAR2(50),
-  alarmgroupid NUMBER(10),
-  devicetype   NUMBER(1) default 0,
-  sort         NUMBER(10)
+  id          NUMBER(10) not null,
+  name        VARCHAR2(50),
+  code        VARCHAR2(50),
+  alarmunitid NUMBER(10),
+  devicetype  NUMBER(1) default 0,
+  sort        NUMBER(10)
 )
 tablespace AP_FB_DATA
   storage
@@ -716,7 +693,7 @@ tablespace AP_FB_DATA
 alter table TBL_PROTOCOLALARMINSTANCE
   add constraint PK_PROTOCOLALARMINSTANCE primary key (ID)
 /
-create index IDX_ALARMINSTANCE_GROUPID on TBL_PROTOCOLALARMINSTANCE (ALARMGROUPID)
+create index IDX_ALARMINSTANCE_UNITID on TBL_PROTOCOLALARMINSTANCE (ALARMUNITID)
 /
 create index IDX_ALARMINSTANCE_TYPE on TBL_PROTOCOLALARMINSTANCE (DEVICETYPE)
 /

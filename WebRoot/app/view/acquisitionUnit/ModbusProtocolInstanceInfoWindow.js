@@ -130,7 +130,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				name : "protocolInstance.acqProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '读协议类型',
+				fieldLabel : '采集协议类型',
 				id : 'modbusInstanceAcqProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -160,7 +160,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				name : "protocolInstance.ctrlProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '写协议类型',
+				fieldLabel : '控制协议类型',
 				id : 'modbusInstanceCtrlProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',

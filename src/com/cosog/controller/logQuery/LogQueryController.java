@@ -56,16 +56,18 @@ public class LogQueryController extends BaseController{
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
 		this.pager = new Page("pagerForm", request);
-		User user=null;
-		HttpSession session=request.getSession();
-		user = (User) session.getAttribute("userLogin");
-		if (user != null) {
-			orgId = "" + user.getUserorgids();
-			if(user.getUserOrgid()==0){
-				orgId+=",0";
+		
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+				if(user.getUserOrgid()==0){
+					orgId+=",0";
+				}
 			}
 		}
-		
 		
 		if(!StringManagerUtils.isNotNull(endDate)){
 			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from viw_deviceoperationlog t ";
@@ -107,13 +109,15 @@ public class LogQueryController extends BaseController{
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
 		
 		this.pager = new Page("pagerForm", request);
-		User user=null;
-		HttpSession session=request.getSession();
-		user = (User) session.getAttribute("userLogin");
-		if (user != null) {
-			orgId = "" + user.getUserorgids();
-			if(user.getUserOrgid()==0){
-				orgId+=",0";
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+				if(user.getUserOrgid()==0){
+					orgId+=",0";
+				}
 			}
 		}
 		
@@ -151,15 +155,19 @@ public class LogQueryController extends BaseController{
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
 		this.pager = new Page("pagerForm", request);
-		User user=null;
-		HttpSession session=request.getSession();
-		user = (User) session.getAttribute("userLogin");
-		if (user != null) {
-			orgId = "" + user.getUserorgids();
-			if(user.getUserOrgid()==0){
-				orgId+=",0";
+		
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+				if(user.getUserOrgid()==0){
+					orgId+=",0";
+				}
 			}
 		}
+		
 		if(!StringManagerUtils.isNotNull(endDate)){
 			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from tbl_systemlog t ";
 			List list = this.service.reportDateJssj(sql);

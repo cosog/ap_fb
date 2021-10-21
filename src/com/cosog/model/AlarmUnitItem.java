@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_alarm_item2group_conf")
-public class AlarmGroupItem implements java.io.Serializable {
+@Table(name = "tbl_alarm_item2unit_conf")
+public class AlarmUnitItem implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private Integer groupId;
+	private Integer unitId;
 	private Integer itemId;
 	private String itemName;
 	private String itemCode;
@@ -28,18 +28,18 @@ public class AlarmGroupItem implements java.io.Serializable {
 	private Integer alarmLevel;
 	private Integer alarmSign;
 
-	public AlarmGroupItem() {
+	public AlarmUnitItem() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	/** full constructor */
-	public AlarmGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
+	public AlarmUnitItem(Integer id, Integer unitId, Integer itemId, String itemName, String itemCode,
 			Integer itemAddr, Integer type, Float value, Integer bitIndex, Float upperLimit, Float lowerLimit,
 			Float hystersis, Integer delay, Integer alarmLevel, Integer alarmSign) {
 		super();
 		this.id = id;
-		this.groupId = groupId;
+		this.unitId = unitId;
 		this.itemId = itemId;
 		this.itemName = itemName;
 		this.itemCode = itemCode;
@@ -66,12 +66,12 @@ public class AlarmGroupItem implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "groupid", nullable = false, precision = 22, scale = 0)
-	public Integer getGroupId() {
-		return this.groupId;
+	@Column(name = "unitid", nullable = false, precision = 22, scale = 0)
+	public Integer getUnitId() {
+		return this.unitId;
 	}
-	public void setGroupId(Integer groupId) {
-		this.groupId = groupId;
+	public void setUnitId(Integer unitId) {
+		this.unitId = unitId;
 	}
 	
 	@Column(name = "itemid", nullable = true, precision = 22, scale = 0)

@@ -67,6 +67,19 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             if(get_rawData.totalCount>0){
 //            	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
+            }else{
+            	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null){
+					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
+						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.destroy();
+					}
+					pipelineDeviceRealTimeMonitoringDataHandsontableHelper=null;
+				}
+            	Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
+            	
+            	$("#pipelineRealTimeMonitoringCurveDiv_Id").html('');
+            	
+            	Ext.getCmp("PipelineRealTimeMonitoringRightControlPanel").removeAll();
+            	Ext.getCmp("PipelineRealTimeMonitoringRightDeviceInfoPanel").removeAll();
             }
         },
         beforeload: function (store, options) {

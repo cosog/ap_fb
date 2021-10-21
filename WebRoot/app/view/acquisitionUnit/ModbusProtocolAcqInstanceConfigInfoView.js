@@ -126,13 +126,13 @@ function CreateProtocolInstanceConfigPropertiesInfoTable(data){
 		
 		var item4={};
 		item4.id=4;
-		item4.title='读协议类型';
+		item4.title='采集协议类型';
 		item4.value=data.acqProtocolType;
 		root.push(item4);
 		
 		var item5={};
 		item5.id=5;
-		item5.title='写协议类型';
+		item5.title='控制协议类型';
 		item5.value=data.ctrlProtocolType;
 		root.push(item5);
 		
@@ -385,26 +385,30 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 			
 			saveData.sort=propertiesData[9][2];
 			
-			Ext.Ajax.request({
-				method:'POST',
-				url:context + '/acquisitionUnitManagerController/saveProtocolInstanceData',
-				success:function(response) {
-					data=Ext.JSON.decode(response.responseText);
-					if (data.success) {
-						Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id").getStore().load();
-		            	Ext.MessageBox.alert("信息","保存成功");
-		            } else {
-		            	Ext.MessageBox.alert("信息","采控单元数据保存失败");
-		            }
-				},
-				failure:function(){
-					Ext.MessageBox.alert("信息","请求失败");
-				},
-				params: {
-					data: JSON.stringify(saveData),
-		        }
-			});
+			SaveModbusProtocolAcqInstanceData(saveData);
 		}
 	}
 };
+
+function SaveModbusProtocolAcqInstanceData(saveData){
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/acquisitionUnitManagerController/saveProtocolInstanceData',
+		success:function(response) {
+			data=Ext.JSON.decode(response.responseText);
+			if (data.success) {
+				Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id").getStore().load();
+            	Ext.MessageBox.alert("信息","保存成功");
+            } else {
+            	Ext.MessageBox.alert("信息","采控单元数据保存失败");
+            }
+		},
+		failure:function(){
+			Ext.MessageBox.alert("信息","请求失败");
+		},
+		params: {
+			data: JSON.stringify(saveData),
+        }
+	});
+}
 
