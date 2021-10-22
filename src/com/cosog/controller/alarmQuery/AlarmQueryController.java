@@ -120,13 +120,12 @@ public class AlarmQueryController extends BaseController{
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
 		
 		this.pager = new Page("pagerForm", request);
-		User user=null;
-		HttpSession session=request.getSession();
-		user = (User) session.getAttribute("userLogin");
-		if (user != null) {
-			orgId = "" + user.getUserorgids();
-			if(user.getUserOrgid()==0){
-				orgId+=",0";
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId=user.getUserorgids();
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
@@ -144,6 +143,69 @@ public class AlarmQueryController extends BaseController{
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		json = alarmQueryService.getAlarmExportData(orgId,deviceType,deviceName,alarmType,alarmLevel,pager);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getAlarmOverviewData")
+	public String getAlarmOverviewData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		alarmType = ParamUtils.getParameter(request, "alarmType");
+		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
+		this.pager = new Page("pagerForm", request);
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId=user.getUserorgids();
+			}
+		}
+		json = alarmQueryService.getAlarmOverviewData(orgId,deviceType,deviceName,alarmType,alarmLevel,pager);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/exportAlarmOverviewData")
+	public String exportAlarmOverviewData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		alarmType = ParamUtils.getParameter(request, "alarmType");
+		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
+		
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		this.pager = new Page("pagerForm", request);
+		if(!StringManagerUtils.isNotNull(orgId)){
+			User user=null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId=user.getUserorgids();
+			}
+		}
+		json = alarmQueryService.getAlarmOverviewExportData(orgId,deviceType,deviceName,alarmType,alarmLevel,pager);
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");

@@ -374,12 +374,21 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 					Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmStore');
 				}
 			}else if(secondActiveId=="PumpNumericValueAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PumpNumericValueAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
+					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore');
 				}
+				
+				
+				
+//				var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+//				if (isNotVal(gridPanel)) {
+//					gridPanel.getStore().load();
+//				}else{
+//					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
+//				}
 			}else if(secondActiveId=="PumpEnumValueAlarmInfoPanel_Id"){
 				var gridPanel = Ext.getCmp("PumpEnumValueAlarmGridPanel_Id");
 				if (isNotVal(gridPanel)) {
