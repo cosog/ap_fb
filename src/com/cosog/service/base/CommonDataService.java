@@ -2608,15 +2608,17 @@ public class CommonDataService extends BaseService {
 	}
 	
 	public boolean exportGridPanelData(HttpServletResponse response,String fileName,String title,String head,String field,String data) {
+		OutputStream os=null;
+		WritableWorkbook wbook=null;
 		try{
 		//生成excel文件
-			OutputStream os = response.getOutputStream();//
+			os = response.getOutputStream();//
 			response.reset();
 			response.setContentType("application/vnd.ms-excel");// 设置生成的文件类型
 			fileName += "-" + StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss") + ".xls";
 			response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));//
 			Vector<File> files = new Vector<File>();
-			WritableWorkbook wbook = Workbook.createWorkbook(os);
+			wbook = Workbook.createWorkbook(os);
 			WritableSheet wsheet = wbook.createSheet(title, 0); //
 			String heads[]=head.split(",");
 			String columns[]=field.split(",");
@@ -2650,7 +2652,8 @@ public class CommonDataService extends BaseService {
 						excelTitle = new Label(j, count+1, count + "", titleWritableFormat);
 					}else {
 						if(columns[j].equalsIgnoreCase("jssj")||columns[j].equalsIgnoreCase("cjsj")||columns[j].equalsIgnoreCase("gtcjsj")
-								||columns[j].indexOf("time")>0||columns[j].indexOf("date")>0||columns[j].indexOf("Date")>0){
+								||columns[j].indexOf("time")>0||columns[j].indexOf("Time")>0
+								||columns[j].indexOf("date")>0||columns[j].indexOf("Date")>0){
 							wsheet.setColumnView(j, 30);
 						}else{
 							wsheet.setColumnView(j, 16);
@@ -2660,7 +2663,6 @@ public class CommonDataService extends BaseService {
 						}else{
 							excelTitle = new Label(j, count+1,"",titleWritableFormat);
 						}
-						
 					}
 					wsheet.addCell(excelTitle);
 				}
@@ -2668,10 +2670,23 @@ public class CommonDataService extends BaseService {
 			wbook.write();
 			wbook.close();
 			os.close();
+			wbook=null;
+			os=null;
 			return true;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
+		} finally{
+			try {
+				if(os!=null){
+					os.close();
+				}
+				if(wbook!=null){
+					wbook.close();
+				}
+			} catch (IOException | WriteException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

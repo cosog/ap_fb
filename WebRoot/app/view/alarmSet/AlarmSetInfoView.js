@@ -79,8 +79,8 @@ Ext.define("AP.view.alarmSet.AlarmSetInfoView", {
                     itemId: 'saveAlarmColorSetBtnId',
                     id: 'saveAlarmColorSetBtnId',
                     action: '',
-                    text : cosog.string.update,
-                    iconCls: 'edit',
+                    text: cosog.string.save,
+        			iconCls: 'save',
                     handler: function () {
                         setAlarmLevelColor();
                     }
