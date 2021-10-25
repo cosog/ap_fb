@@ -32,7 +32,7 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
                     var wellName = Ext.getCmp('PipelineSwitchingValueAlarmDeviceListComb_Id').getValue();
-                    var deviceType = 0;
+                    var deviceType = 1;
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: deviceType,
@@ -67,13 +67,19 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [{
-                id: 'PipelineSwitchingValueAlarmColumnStr_Id',
+    		layout: 'border',
+    		tbar: [{
+                id: 'PipelineSwitchingValueAlarmOverviewColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },{
+                id: 'PipelineSwitchingValueAlarmDetailsColumnStr_Id',
                 xtype: 'textfield',
                 value: '',
                 hidden: true
@@ -101,7 +107,7 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -128,7 +134,7 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -162,9 +168,9 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                 		Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
-            },'-', {
+            },'-',{
                 xtype: 'button',
-                text: cosog.string.exportExcel,
+                text: '导出设备概览',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
@@ -172,16 +178,52 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                 	var deviceType=1;
                 	var deviceName=Ext.getCmp('PipelineSwitchingValueAlarmDeviceListComb_Id').getValue();
                 	var alarmLevel=Ext.getCmp('PipelineSwitchingValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PipelineSwitchingValueAlarmIsSendMessageComb_Id').getValue();
+               	 	var alarmType=3;
+               	 	
+               	 	var fileName='管设备开关量报警概览数据';
+               	 	var title='管设备开关量报警概览数据';
+               	 	var columnStr=Ext.getCmp("PipelineSwitchingValueAlarmOverviewColumnStr_Id").getValue();
+               	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+                }
+            },'-', {
+                xtype: 'button',
+                text: '导出报警数据',
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=1;
+                	var deviceName  = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                	var alarmLevel=Ext.getCmp('PipelineSwitchingValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PipelineSwitchingValueAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartDate_Id').rawValue;
                     var endDate=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndDate_Id').rawValue;
                	 	var alarmType=2;
                	 	
                	 	var fileName='管设备开关量报警数据';
                	 	var title='管设备开关量报警数据';
-               	 	var columnStr=Ext.getCmp("PipelineSwitchingValueAlarmColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
+               	 	var columnStr=Ext.getCmp("PipelineSwitchingValueAlarmDetailsColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,isSendMessage,alarmLevel,fileName,title,columnStr);
                 }
-            }]
+            }],
+    		items: [{
+    			region: 'center',
+    			title: '设备概览',
+    			id: 'PipelineSwitchingValueAlarmOverviewPanel_Id',
+    			autoScroll: true,
+                scrollable: true,
+    			layout: 'fit'
+    		},{
+    			region: 'east',
+    			title: '报警数据',
+    			id: 'PipelineSwitchingValueAlarmDetailsPanel_Id',
+                width: '80%',
+                autoScroll: true,
+                split: true,
+                collapsible: true,
+                layout: 'fit'
+    		}]
         });
         this.callParent(arguments);
     }

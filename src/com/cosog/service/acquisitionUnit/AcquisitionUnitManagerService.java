@@ -327,7 +327,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<?> list=null;
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.upperlimit,t.lowerlimit,t.hystersis,t.delay,"
-					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') as alarmsign,"
+					+ " decode(t.issendmessage,1,'是','否') as issendmessage,decode(t.issendmail,1,'是','否') as issendmail "
 					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
 					+ " where t.type=2 and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+code+"' "
 					+ " order by t.id";
@@ -343,7 +344,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				int index=1;
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					if(protocolConfig.getItems().get(j).getResolutionMode()==2){
-						String upperLimit="",lowerLimit="",hystersis="",delay="",alarmLevel="",alarmSign="";
+						String upperLimit="",lowerLimit="",hystersis="",delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
 						boolean checked=false;
 						for(int k=0;k<itemAddrsList.size();k++){
 							Object[] obj = (Object[]) list.get(k);
@@ -355,6 +356,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								delay=obj[6]+"";
 								alarmLevel=obj[7]+"";
 								alarmSign=obj[8]+"";
+								isSendMessage=obj[9]+"";
+								isSendMail=obj[10]+"";
 								break;
 							}
 						}
@@ -367,7 +370,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								+ "\"hystersis\":\""+hystersis+"\","
 								+ "\"delay\":\""+delay+"\","
 								+ "\"alarmLevel\":\""+alarmLevel+"\","
-								+ "\"alarmSign\":\""+alarmSign+"\"},");
+								+ "\"alarmSign\":\""+alarmSign+"\","
+								+ "\"isSendMessage\":\""+isSendMessage+"\","
+								+ "\"isSendMail\":\""+isSendMail+"\""
+								+ "},");
 						index++;
 					}
 				}
@@ -408,7 +414,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<?> list=null;
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.value,t.delay,"
-					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'), "
+					+ " decode(t.issendmessage,1,'是','否') as issendmessage,decode(t.issendmail,1,'是','否') as issendmail "
 					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
 					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+unitCode+"' "
 					+ " order by t.id";
@@ -426,7 +433,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(itemResolutionMode)
 							&& protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
 						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
-							String value="",delay="",alarmLevel="",alarmSign="";
+							String value="",delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
 							boolean checked=false;
 							for(int m=0;m<itemValueList.size();m++){
 								Object[] obj = (Object[]) list.get(m);
@@ -435,6 +442,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									delay=obj[4]+"";
 									alarmLevel=obj[5]+"";
 									alarmSign=obj[6]+"";
+									isSendMessage=obj[7]+"";
+									isSendMail=obj[8]+"";
 									break;
 								}
 							}
@@ -444,7 +453,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"meaning\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\","
 									+ "\"delay\":\""+delay+"\","
 									+ "\"alarmLevel\":\""+alarmLevel+"\","
-									+ "\"alarmSign\":\""+alarmSign+"\"},");
+									+ "\"alarmSign\":\""+alarmSign+"\","
+									+ "\"isSendMessage\":\""+isSendMessage+"\","
+									+ "\"isSendMail\":\""+isSendMail+"\""
+									+ "},");
 							index++;
 						}
 					}
@@ -485,7 +497,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<?> list=null;
 		if("3".equalsIgnoreCase(classes)){
 			String sql="select t.itemname,t.itemcode,t.itemaddr,t.bitindex,t.value,t.delay,"
-					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') "
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效'), "
+					+ " decode(t.issendmessage,1,'是','否') as issendmessage,decode(t.issendmail,1,'是','否') as issendmail "
 					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
 					+ " where t.type="+itemResolutionMode+" and t.itemAddr="+itemAddr+" and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+unitCode+"' "
 					+ " order by t.id";
@@ -503,7 +516,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(itemResolutionMode)
 							&& protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
 						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
-							String value="",delay="",alarmLevel="",alarmSign="";
+							String value="",delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
 							boolean checked=false;
 							for(int m=0;m<itemValueList.size();m++){
 								Object[] obj = (Object[]) list.get(m);
@@ -517,6 +530,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									delay=obj[5]+"";
 									alarmLevel=obj[6]+"";
 									alarmSign=obj[7]+"";
+									isSendMessage=obj[8]+"";
+									isSendMail=obj[9]+"";
 									break;
 								}
 							}
@@ -527,7 +542,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"value\":\""+value+"\","
 									+ "\"delay\":\""+delay+"\","
 									+ "\"alarmLevel\":\""+alarmLevel+"\","
-									+ "\"alarmSign\":\""+alarmSign+"\"},");
+									+ "\"alarmSign\":\""+alarmSign+"\","
+									+ "\"isSendMessage\":\""+isSendMessage+"\","
+									+ "\"isSendMail\":\""+isSendMail+"\""
+									+ "},");
 							index++;
 						}
 					}

@@ -32,7 +32,7 @@ Ext.define('AP.view.alarmQuery.PipelineEnumValueAlarmInfoView', {
                 beforeload: function (store, options) {
                 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
                     var wellName = Ext.getCmp('PipelineEnumValueAlarmDeviceListComb_Id').getValue();
-                    var deviceType = 0;
+                    var deviceType = 1;
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: deviceType,
@@ -67,13 +67,19 @@ Ext.define('AP.view.alarmQuery.PipelineEnumValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [{
-                id: 'PipelineEnumValueAlarmColumnStr_Id',
+    		layout: 'border',
+    		tbar: [{
+                id: 'PipelineEnumValueAlarmOverviewColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },{
+                id: 'PipelineEnumValueAlarmDetailsColumnStr_Id',
                 xtype: 'textfield',
                 value: '',
                 hidden: true
@@ -101,7 +107,7 @@ Ext.define('AP.view.alarmQuery.PipelineEnumValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -128,7 +134,7 @@ Ext.define('AP.view.alarmQuery.PipelineEnumValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -162,9 +168,9 @@ Ext.define('AP.view.alarmQuery.PipelineEnumValueAlarmInfoView', {
                 		Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
-            },'-', {
+            },'-',{
                 xtype: 'button',
-                text: cosog.string.exportExcel,
+                text: '导出设备概览',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
@@ -172,16 +178,52 @@ Ext.define('AP.view.alarmQuery.PipelineEnumValueAlarmInfoView', {
                 	var deviceType=1;
                 	var deviceName=Ext.getCmp('PipelineEnumValueAlarmDeviceListComb_Id').getValue();
                 	var alarmLevel=Ext.getCmp('PipelineEnumValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PipelineEnumValueAlarmIsSendMessageComb_Id').getValue();
+               	 	var alarmType=2;
+               	 	
+               	 	var fileName='管设备枚举量报警概览数据';
+               	 	var title='管设备枚举量报警概览数据';
+               	 	var columnStr=Ext.getCmp("PipelineEnumValueAlarmOverviewColumnStr_Id").getValue();
+               	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+                }
+            },'-', {
+                xtype: 'button',
+                text: '导出报警数据',
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=1;
+                	var deviceName  = Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                	var alarmLevel=Ext.getCmp('PipelineEnumValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PipelineEnumValueAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PipelineEnumValueAlarmQueryStartDate_Id').rawValue;
                     var endDate=Ext.getCmp('PipelineEnumValueAlarmQueryEndDate_Id').rawValue;
                	 	var alarmType=2;
                	 	
                	 	var fileName='管设备枚举量报警数据';
                	 	var title='管设备枚举量报警数据';
-               	 	var columnStr=Ext.getCmp("PipelineEnumValueAlarmColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
+               	 	var columnStr=Ext.getCmp("PipelineEnumValueAlarmDetailsColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
-            }]
+            }],
+            items: [{
+    			region: 'center',
+    			title: '设备概览',
+    			id: 'PipelineEnumValueAlarmOverviewPanel_Id',
+    			autoScroll: true,
+                scrollable: true,
+    			layout: 'fit'
+    		},{
+    			region: 'east',
+    			title: '报警数据',
+    			id: 'PipelineEnumValueAlarmDetailsPanel_Id',
+                width: '80%',
+                autoScroll: true,
+                split: true,
+                collapsible: true,
+                layout: 'fit'
+    		}]
         });
         this.callParent(arguments);
     }

@@ -27,6 +27,8 @@ public class AlarmUnitItem implements java.io.Serializable {
 	private Integer delay;
 	private Integer alarmLevel;
 	private Integer alarmSign;
+	private Integer isSendMessage;
+	private Integer isSendMail;
 
 	public AlarmUnitItem() {
 		super();
@@ -36,7 +38,7 @@ public class AlarmUnitItem implements java.io.Serializable {
 	/** full constructor */
 	public AlarmUnitItem(Integer id, Integer unitId, Integer itemId, String itemName, String itemCode,
 			Integer itemAddr, Integer type, Float value, Integer bitIndex, Float upperLimit, Float lowerLimit,
-			Float hystersis, Integer delay, Integer alarmLevel, Integer alarmSign) {
+			Float hystersis, Integer delay, Integer alarmLevel, Integer alarmSign, Integer isSendMessage, Integer isSendMail) {
 		super();
 		this.id = id;
 		this.unitId = unitId;
@@ -53,6 +55,8 @@ public class AlarmUnitItem implements java.io.Serializable {
 		this.delay = delay;
 		this.alarmLevel = alarmLevel;
 		this.alarmSign = alarmSign;
+		this.isSendMessage = isSendMessage;
+		this.isSendMail = isSendMail;
 	}
 
 	@Id
@@ -189,6 +193,24 @@ public class AlarmUnitItem implements java.io.Serializable {
 
 	public void setBitIndex(Integer bitIndex) {
 		this.bitIndex = bitIndex;
+	}
+
+	@Column(name = "isSendMessage")
+	public Integer getIsSendMessage() {
+		return isSendMessage;
+	}
+
+	public void setIsSendMessage(Integer isSendMessage) {
+		this.isSendMessage = isSendMessage;
+	}
+
+	@Column(name = "isSendMail")
+	public Integer getIsSendMail() {
+		return isSendMail;
+	}
+
+	public void setIsSendMail(Integer isSendMail) {
+		this.isSendMail = isSendMail;
 	}
 
 	

@@ -1246,6 +1246,22 @@ public class AcquisitionUnitManagerController extends BaseController {
 								
 								alarmUnitItem.setAlarmLevel(alarmLevel);
 								alarmUnitItem.setAlarmSign(alarmSign);
+								
+								int isSendMessage=0;
+								int isSendMail=0;
+								if("是".equalsIgnoreCase(modbusProtocolAlarmUnitSaveData.getAlarmItems().get(i).getIsSendMessage())){
+									isSendMessage=1;
+								}else if("否".equalsIgnoreCase(modbusProtocolAlarmUnitSaveData.getAlarmItems().get(i).getIsSendMessage())){
+									isSendMessage=0;
+								}
+								if("是".equalsIgnoreCase(modbusProtocolAlarmUnitSaveData.getAlarmItems().get(i).getIsSendMail())){
+									isSendMail=1;
+								}else if("否".equalsIgnoreCase(modbusProtocolAlarmUnitSaveData.getAlarmItems().get(i).getIsSendMail())){
+									isSendMail=0;
+								}
+								alarmUnitItem.setIsSendMessage(isSendMessage);
+								alarmUnitItem.setIsSendMail(isSendMail);
+								
 								this.alarmUnitItemManagerService.grantAlarmItemsPermission(alarmUnitItem);
 							}
 						}

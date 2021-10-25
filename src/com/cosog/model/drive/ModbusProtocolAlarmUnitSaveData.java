@@ -39,6 +39,10 @@ public class ModbusProtocolAlarmUnitSaveData {
 	    private String value;
 	    
 	    private int bitIndex;
+	    
+	    private String isSendMessage;
+	    
+	    private String isSendMail;
 
 	    public void setItemName(String itemName){
 	        this.itemName = itemName;
@@ -105,6 +109,18 @@ public class ModbusProtocolAlarmUnitSaveData {
 		}
 		public void setBitIndex(int bitIndex) {
 			this.bitIndex = bitIndex;
+		}
+		public String getIsSendMessage() {
+			return isSendMessage;
+		}
+		public void setIsSendMessage(String isSendMessage) {
+			this.isSendMessage = isSendMessage;
+		}
+		public String getIsSendMail() {
+			return isSendMail;
+		}
+		public void setIsSendMail(String isSendMail) {
+			this.isSendMail = isSendMail;
 		}
 	}
 

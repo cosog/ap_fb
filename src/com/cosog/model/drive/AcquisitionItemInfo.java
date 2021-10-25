@@ -19,6 +19,8 @@ public class AcquisitionItemInfo {
 	public String alarmInfo;
 	public int alarmType;
 	public int alarmDelay;
+	public int isSendMessage;
+	public int isSendMail;
 	public AcquisitionItemInfo() {
 		super();
 	}
@@ -175,6 +177,22 @@ public class AcquisitionItemInfo {
 
 	public void setAlarmDelay(int alarmDelay) {
 		this.alarmDelay = alarmDelay;
+	}
+
+	public int getIsSendMessage() {
+		return isSendMessage;
+	}
+
+	public void setIsSendMessage(int isSendMessage) {
+		this.isSendMessage = isSendMessage;
+	}
+
+	public int getIsSendMail() {
+		return isSendMail;
+	}
+
+	public void setIsSendMail(int isSendMail) {
+		this.isSendMail = isSendMail;
 	}
 	
 }

@@ -367,11 +367,11 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			var secondTabPanel = Ext.getCmp("PumpAlarmQueryTabPanel");
 			var secondActiveId = secondTabPanel.getActiveTab().id;
 			if(secondActiveId=="PumpCommunicationAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PumpCommunicationAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmStore');
+					Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmOverviewStore');
 				}
 			}else if(secondActiveId=="PumpNumericValueAlarmInfoPanel_Id"){
 				var gridPanel = Ext.getCmp("PumpNumericValueAlarmOverviewGridPanel_Id");
@@ -380,60 +380,51 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 				}else{
 					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore');
 				}
-				
-				
-				
-//				var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
-//				if (isNotVal(gridPanel)) {
-//					gridPanel.getStore().load();
-//				}else{
-//					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
-//				}
 			}else if(secondActiveId=="PumpEnumValueAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PumpEnumValueAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PumpEnumValueAlarmStore');
+					Ext.create('AP.store.alarmQuery.PumpEnumValueAlarmOverviewStore');
 				}
 			}else if(secondActiveId=="PumpSwitchingValueAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmStore');
+					Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmOverviewStore');
 				}
 			}
 		}else if(activeId=="PipelineAlarmQueryPanel_Id"){
 			var secondTabPanel = Ext.getCmp("PipelineAlarmQueryTabPanel");
 			var secondActiveId = secondTabPanel.getActiveTab().id;
 			if(secondActiveId=="PipelineCommunicationAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PipelineCommunicationAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PipelineCommunicationAlarmStore');
+					Ext.create('AP.store.alarmQuery.PipelineCommunicationAlarmOverviewStore');
 				}
 			}else if(secondActiveId=="PipelineNumericValueAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PipelineNumericValueAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmStore');
+					Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmOverviewStore');
 				}
 			}else if(secondActiveId=="PipelineEnumValueAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PipelineEnumValueAlarmStore');
+					Ext.create('AP.store.alarmQuery.PipelineEnumValueAlarmOverviewStore');
 				}
 			}else if(secondActiveId=="PipelineSwitchingValueAlarmInfoPanel_Id"){
-				var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
+				var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id");
 				if (isNotVal(gridPanel)) {
 					gridPanel.getStore().load();
 				}else{
-					Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore');
+					Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmOverviewStore');
 				}
 			}
 		}

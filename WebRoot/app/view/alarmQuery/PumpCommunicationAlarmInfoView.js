@@ -66,13 +66,19 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("PumpCommunicationAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [{
-                id: 'PumpCommunicationAlarmColumnStr_Id',
+    		layout: 'border',
+    		tbar: [{
+                id: 'PumpCommunicationAlarmOverviewColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },{
+                id: 'PumpCommunicationAlarmDetailsColumnStr_Id',
                 xtype: 'textfield',
                 value: '',
                 hidden: true
@@ -80,6 +86,7 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
             	xtype : "combobox",
 				fieldLabel : '是否发送短信',
 				id : 'PumpCommunicationAlarmIsSendMessageComb_Id',
+				hidden: true,
 				labelWidth: 80,
                 width: 190,
                 labelAlign: 'left',
@@ -100,7 +107,7 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PumpCommunicationAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -134,15 +141,34 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
                 		Ext.getCmp("PumpCommunicationAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
-            },'-', {
+            },'-',{
                 xtype: 'button',
-                text: cosog.string.exportExcel,
+                text: '导出设备概览',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                 	var deviceType=0;
                 	var deviceName=Ext.getCmp('PumpCommunicationAlarmDeviceListComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PumpCommunicationAlarmIsSendMessageComb_Id').getValue();
+                	var alarmType=0;
+               	 	var alarmLevel='';
+               	 	
+               	 	var fileName='泵设备通信报警概览数据';
+               	 	var title='泵设备通信报警概览数据';
+               	 	var columnStr=Ext.getCmp("PumpCommunicationAlarmOverviewColumnStr_Id").getValue();
+               	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+                }
+            },'-', {
+                xtype: 'button',
+                text: '导出报警数据',
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=0;
+                	var deviceName=Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                	var isSendMessage=Ext.getCmp('PumpCommunicationAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PumpCommunicationAlarmQueryStartDate_Id').rawValue;
                     var endDate=Ext.getCmp('PumpCommunicationAlarmQueryEndDate_Id').rawValue;
                	 	var alarmType=0;
@@ -150,10 +176,27 @@ Ext.define('AP.view.alarmQuery.PumpCommunicationAlarmInfoView', {
                	 	
                	 	var fileName='泵设备通信报警数据';
                	 	var title='泵设备通信报警数据';
-               	 	var columnStr=Ext.getCmp("PumpCommunicationAlarmColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
+               	 	var columnStr=Ext.getCmp("PumpCommunicationAlarmDetailsColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
-            }]
+            }],
+            items: [{
+    			region: 'center',
+    			title: '设备概览',
+    			id: 'PumpCommunicationAlarmOverviewPanel_Id',
+    			autoScroll: true,
+                scrollable: true,
+    			layout: 'fit'
+    		},{
+    			region: 'east',
+    			title: '报警数据',
+    			id: 'PumpCommunicationAlarmDetailsPanel_Id',
+                width: '80%',
+                autoScroll: true,
+                split: true,
+                collapsible: true,
+                layout: 'fit'
+    		}]
         });
         this.callParent(arguments);
     }
