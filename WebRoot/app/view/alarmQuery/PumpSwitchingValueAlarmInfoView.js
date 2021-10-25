@@ -67,13 +67,19 @@ Ext.define('AP.view.alarmQuery.PumpSwitchingValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [{
-                id: 'PumpSwitchingValueAlarmColumnStr_Id',
+    		layout: 'border',
+    		tbar: [{
+                id: 'PumpSwitchingValueAlarmOverviewColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },{
+                id: 'PumpSwitchingValueAlarmDetailsColumnStr_Id',
                 xtype: 'textfield',
                 value: '',
                 hidden: true
@@ -101,7 +107,7 @@ Ext.define('AP.view.alarmQuery.PumpSwitchingValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -128,7 +134,7 @@ Ext.define('AP.view.alarmQuery.PumpSwitchingValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -162,9 +168,9 @@ Ext.define('AP.view.alarmQuery.PumpSwitchingValueAlarmInfoView', {
                 		Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
-            },'-', {
+            },'-',{
                 xtype: 'button',
-                text: cosog.string.exportExcel,
+                text: '导出设备概览',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
@@ -172,16 +178,52 @@ Ext.define('AP.view.alarmQuery.PumpSwitchingValueAlarmInfoView', {
                 	var deviceType=0;
                 	var deviceName=Ext.getCmp('PumpSwitchingValueAlarmDeviceListComb_Id').getValue();
                 	var alarmLevel=Ext.getCmp('PumpSwitchingValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PumpSwitchingValueAlarmIsSendMessageComb_Id').getValue();
+               	 	var alarmType=3;
+               	 	
+               	 	var fileName='泵设备开关量报警概览数据';
+               	 	var title='泵设备开关量报警概览数据';
+               	 	var columnStr=Ext.getCmp("PumpSwitchingValueAlarmOverviewColumnStr_Id").getValue();
+               	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+                }
+            },'-', {
+                xtype: 'button',
+                text: '导出报警数据',
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=0;
+                	var deviceName  = Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                	var alarmLevel=Ext.getCmp('PumpSwitchingValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PumpSwitchingValueAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PumpSwitchingValueAlarmQueryStartDate_Id').rawValue;
                     var endDate=Ext.getCmp('PumpSwitchingValueAlarmQueryEndDate_Id').rawValue;
-               	 	var alarmType=2;
+               	 	var alarmType=3;
                	 	
                	 	var fileName='泵设备开关量报警数据';
                	 	var title='泵设备开关量报警数据';
-               	 	var columnStr=Ext.getCmp("PumpSwitchingValueAlarmColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
+               	 	var columnStr=Ext.getCmp("PumpSwitchingValueAlarmDetailsColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
-            }]
+            }],
+    		items: [{
+    			region: 'center',
+    			title: '设备概览',
+    			id: 'PumpSwitchingValueAlarmOverviewPanel_Id',
+    			autoScroll: true,
+                scrollable: true,
+    			layout: 'fit'
+    		},{
+    			region: 'east',
+    			title: '报警数据',
+    			id: 'PumpSwitchingValueAlarmDetailsPanel_Id',
+                width: '80%',
+                autoScroll: true,
+                split: true,
+                collapsible: true,
+                layout: 'fit'
+    		}]
         });
         this.callParent(arguments);
     }

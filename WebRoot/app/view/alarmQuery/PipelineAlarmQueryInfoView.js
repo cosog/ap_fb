@@ -45,32 +45,32 @@ Ext.define("AP.view.alarmQuery.PipelineAlarmQueryInfoView", {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
         					if(newCard.id=="PipelineCommunicationAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PipelineCommunicationAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PipelineCommunicationAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PipelineCommunicationAlarmOverviewStore');
         						}
         					}else if(newCard.id=="PipelineNumericValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PipelineNumericValueAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PipelineNumericValueAlarmOverviewStore');
         						}
         					}else if(newCard.id=="PipelineEnumValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PipelineEnumValueAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PipelineEnumValueAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PipelineEnumValueAlarmOverviewStore');
         						}
         					}else if(newCard.id=="PipelineSwitchingValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmOverviewStore');
         						}
         					}
         				}

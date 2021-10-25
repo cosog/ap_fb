@@ -67,13 +67,19 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                             deviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                         },
                         select: function (combo, record, index) {
-                        	Ext.getCmp("PumpEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+                        	Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
                         }
                     }
                 });
     	Ext.apply(this, {
-            tbar: [{
-                id: 'PumpEnumValueAlarmColumnStr_Id',
+    		layout: 'border',
+    		tbar: [{
+                id: 'PumpEnumValueAlarmOverviewColumnStr_Id',
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },{
+                id: 'PumpEnumValueAlarmDetailsColumnStr_Id',
                 xtype: 'textfield',
                 value: '',
                 hidden: true
@@ -101,7 +107,7 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PumpEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -128,7 +134,7 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
 				queryMode : 'local',
 				listeners : {
 					select:function(v,o){
-						Ext.getCmp("PumpEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
+						Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id").getStore().loadPage(1);
 					}
 				}
             },'-',{
@@ -162,9 +168,9 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                 		Ext.getCmp("PumpEnumValueAlarmGridPanel_Id").getStore().loadPage(1);
                     }
                 }
-            },'-', {
+            },'-',{
                 xtype: 'button',
-                text: cosog.string.exportExcel,
+                text: '导出设备概览',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
@@ -172,16 +178,52 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                 	var deviceType=0;
                 	var deviceName=Ext.getCmp('PumpEnumValueAlarmDeviceListComb_Id').getValue();
                 	var alarmLevel=Ext.getCmp('PumpEnumValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PumpEnumValueAlarmIsSendMessageComb_Id').getValue();
+               	 	var alarmType=2;
+               	 	
+               	 	var fileName='泵设备枚举量报警概览数据';
+               	 	var title='泵设备枚举量报警概览数据';
+               	 	var columnStr=Ext.getCmp("PumpEnumValueAlarmOverviewColumnStr_Id").getValue();
+               	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+                }
+            },'-', {
+                xtype: 'button',
+                text: '导出报警数据',
+                pressed: true,
+                hidden:false,
+                handler: function (v, o) {
+                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                	var deviceType=0;
+                	var deviceName  = Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                	var alarmLevel=Ext.getCmp('PumpEnumValueAlarmLevelComb_Id').getValue();
+                	var isSendMessage=Ext.getCmp('PumpEnumValueAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PumpEnumValueAlarmQueryStartDate_Id').rawValue;
                     var endDate=Ext.getCmp('PumpEnumValueAlarmQueryEndDate_Id').rawValue;
                	 	var alarmType=2;
                	 	
                	 	var fileName='泵设备枚举量报警数据';
                	 	var title='泵设备枚举量报警数据';
-               	 	var columnStr=Ext.getCmp("PumpEnumValueAlarmColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,fileName,title,columnStr);
+               	 	var columnStr=Ext.getCmp("PumpEnumValueAlarmDetailsColumnStr_Id").getValue();
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
-            }]
+            }],
+            items: [{
+    			region: 'center',
+    			title: '设备概览',
+    			id: 'PumpEnumValueAlarmOverviewPanel_Id',
+    			autoScroll: true,
+                scrollable: true,
+    			layout: 'fit'
+    		},{
+    			region: 'east',
+    			title: '报警数据',
+    			id: 'PumpEnumValueAlarmDetailsPanel_Id',
+                width: '80%',
+                autoScroll: true,
+                split: true,
+                collapsible: true,
+                layout: 'fit'
+    		}]
         });
         this.callParent(arguments);
     }

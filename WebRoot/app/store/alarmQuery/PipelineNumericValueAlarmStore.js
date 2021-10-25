@@ -23,7 +23,7 @@ Ext.define('AP.store.alarmQuery.PipelineNumericValueAlarmStore', {
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
             var column = createAlarmQueryColumn(arrColumns);
-            Ext.getCmp("PipelineNumericValueAlarmColumnStr_Id").setValue(column);
+            Ext.getCmp("PipelineNumericValueAlarmDetailsColumnStr_Id").setValue(column);
             var gridPanel = Ext.getCmp("PipelineNumericValueAlarmGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var newColumns = Ext.JSON.decode(column);
@@ -52,7 +52,7 @@ Ext.define('AP.store.alarmQuery.PipelineNumericValueAlarmStore', {
                     	select: function(grid, record, index, eOpts) {}
                     }
                 });
-                var panel = Ext.getCmp("PipelineNumericValueAlarmInfoView_Id");
+                var panel = Ext.getCmp("PipelineNumericValueAlarmDetailsPanel_Id");
                 panel.add(gridPanel);
             }
             
@@ -68,8 +68,9 @@ Ext.define('AP.store.alarmQuery.PipelineNumericValueAlarmStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=1;
-        	var deviceName=Ext.getCmp('PipelineNumericValueAlarmDeviceListComb_Id').getValue();
+        	var deviceName  = Ext.getCmp("PipelineNumericValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var alarmLevel=Ext.getCmp('PipelineNumericValueAlarmLevelComb_Id').getValue();
+        	var isSendMessage=Ext.getCmp('PipelineNumericValueAlarmIsSendMessageComb_Id').getValue();
         	var startDate=Ext.getCmp('PipelineNumericValueAlarmQueryStartDate_Id').rawValue;
             var endDate=Ext.getCmp('PipelineNumericValueAlarmQueryEndDate_Id').rawValue;
             var new_params = {
@@ -77,6 +78,7 @@ Ext.define('AP.store.alarmQuery.PipelineNumericValueAlarmStore', {
                     deviceType:deviceType,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
+                    isSendMessage:isSendMessage,
                     startDate:startDate,
                     endDate:endDate,
                     alarmType:1

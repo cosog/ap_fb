@@ -1,6 +1,6 @@
-Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore', {
+Ext.define('AP.store.alarmQuery.PipelineSwitchingValueAlarmOverviewStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.pumpNumericValueAlarmOverviewStore',
+    alias: 'widget.PipelineSwitchingValueAlarmOverviewStore',
     fields: ['id','deviceType','deviceTypeName','wellName','alarmTime','user_id','loginIp','action','actionName','remark'],
     autoLoad: true,
     pageSize: 50,
@@ -23,8 +23,8 @@ Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore', {
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
             var column = createAlarmOverviewQueryColumn(arrColumns);
-            Ext.getCmp("PumpNumericValueAlarmOverviewColumnStr_Id").setValue(column);
-            var gridPanel = Ext.getCmp("PumpNumericValueAlarmOverviewGridPanel_Id");
+            Ext.getCmp("PipelineSwitchingValueAlarmOverviewColumnStr_Id").setValue(column);
+            var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var newColumns = Ext.JSON.decode(column);
                 var bbar = new Ext.PagingToolbar({
@@ -35,7 +35,7 @@ Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore', {
     	        });
                 
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "PumpNumericValueAlarmOverviewGridPanel_Id",
+                    id: "PipelineSwitchingValueAlarmOverviewGridPanel_Id",
                     border: false,
 //                    autoLoad: true,
                     bbar: bbar,
@@ -49,18 +49,18 @@ Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore', {
                     listeners: {
                     	selectionchange: function (view, selected, o) {
             				if(selected.length>0){
-            					var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+            					var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
                 				if (isNotVal(gridPanel)) {
                 					gridPanel.getStore().load();
                 				}else{
-                					Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmStore');
+                					Ext.create('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore');
                 				}
             				}
                     	},
                     	select: function(grid, record, index, eOpts) {}
                     }
                 });
-                var panel = Ext.getCmp("PumpNumericValueAlarmOverviewPanel_Id");
+                var panel = Ext.getCmp("PipelineSwitchingValueAlarmOverviewPanel_Id");
                 panel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
@@ -69,25 +69,25 @@ Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore', {
             	}
             	gridPanel.getSelectionModel().select(0, true);
             }else{
-            	var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+            	var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
                 if (isNotVal(gridPanel)) {
-                	Ext.getCmp("PumpNumericValueAlarmDetailsPanel_Id").remove(gridPanel);
+                	Ext.getCmp("PipelineSwitchingValueAlarmDetailsPanel_Id").remove(gridPanel);
                 }
             }
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-        	var deviceType=0;
-        	var deviceName=Ext.getCmp('PumpNumericValueAlarmDeviceListComb_Id').getValue();
-        	var alarmLevel=Ext.getCmp('PumpNumericValueAlarmLevelComb_Id').getValue();
-        	var isSendMessage=Ext.getCmp('PumpNumericValueAlarmIsSendMessageComb_Id').getValue();
+        	var deviceType=1;
+        	var deviceName=Ext.getCmp('PipelineSwitchingValueAlarmDeviceListComb_Id').getValue();
+        	var alarmLevel=Ext.getCmp('PipelineSwitchingValueAlarmLevelComb_Id').getValue();
+        	var isSendMessage=Ext.getCmp('PipelineSwitchingValueAlarmIsSendMessageComb_Id').getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
                     isSendMessage:isSendMessage,
-                    alarmType:1
+                    alarmType:3
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

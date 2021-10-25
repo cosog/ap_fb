@@ -1939,7 +1939,7 @@ public class BaseDao extends HibernateDaoSupport {
 		CallableStatement cs=null;
 		
 		try {
-			cs = conn.prepareCall("{call prd_save_alarminfo(?,?,?,?,?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_save_alarminfo(?,?,?,?,?,?,?,?,?,?,?,?)}");
 			for(int i=0;i<acquisitionItemInfoList.size();i++){
 				if(acquisitionItemInfoList.get(i).getAlarmLevel()>0){
 					cs.setString(1, wellName);
@@ -1952,6 +1952,8 @@ public class BaseDao extends HibernateDaoSupport {
 					cs.setString(8, acquisitionItemInfoList.get(i).getAlarmLimit()+"");
 					cs.setString(9, acquisitionItemInfoList.get(i).getHystersis()+"");
 					cs.setInt(10, acquisitionItemInfoList.get(i).getAlarmLevel());
+					cs.setInt(11, acquisitionItemInfoList.get(i).getIsSendMessage());
+					cs.setInt(12, acquisitionItemInfoList.get(i).getIsSendMail());
 					cs.executeUpdate();
 				}
 			}

@@ -23,7 +23,7 @@ Ext.define('AP.store.alarmQuery.PipelineCommunicationAlarmStore', {
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
             var column = createAlarmQueryColumn(arrColumns);
-            Ext.getCmp("PipelineCommunicationAlarmColumnStr_Id").setValue(column);
+            Ext.getCmp("PipelineCommunicationAlarmDetailsColumnStr_Id").setValue(column);
             var gridPanel = Ext.getCmp("PipelineCommunicationAlarmGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var newColumns = Ext.JSON.decode(column);
@@ -52,7 +52,7 @@ Ext.define('AP.store.alarmQuery.PipelineCommunicationAlarmStore', {
                     	select: function(grid, record, index, eOpts) {}
                     }
                 });
-                var panel = Ext.getCmp("PipelineCommunicationAlarmInfoView_Id");
+                var panel = Ext.getCmp("PipelineCommunicationAlarmDetailsPanel_Id");
                 panel.add(gridPanel);
             }
             
@@ -68,13 +68,15 @@ Ext.define('AP.store.alarmQuery.PipelineCommunicationAlarmStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=1;
-        	var deviceName=Ext.getCmp('PipelineCommunicationAlarmDeviceListComb_Id').getValue();
+        	var deviceName  = Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        	var isSendMessage=Ext.getCmp('PipelineCommunicationAlarmIsSendMessageComb_Id').getValue();
         	var startDate=Ext.getCmp('PipelineCommunicationAlarmQueryStartDate_Id').rawValue;
             var endDate=Ext.getCmp('PipelineCommunicationAlarmQueryEndDate_Id').rawValue;
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
                     deviceName:deviceName,
+                    isSendMessage:isSendMessage,
                     startDate:startDate,
                     endDate:endDate,
                     alarmType:0

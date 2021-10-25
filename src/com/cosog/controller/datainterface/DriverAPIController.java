@@ -321,7 +321,7 @@ public class DriverAPIController extends BaseController{
 						commAlarm="insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
 								+ "values("+wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),'通信状态',0,0,'离线',100)";
 						String alarmSMSContent="设备"+wellName+"于"+currentTime+"离线";
-						calculateDataService.sendAlarmSMS(wellName, devicetype, alarmSMSContent);
+						calculateDataService.sendAlarmSMS(wellName, devicetype,true,true,alarmSMSContent,alarmSMSContent);
 					}
 					result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
 					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
@@ -428,7 +428,8 @@ public class DriverAPIController extends BaseController{
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t6.id";
 			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
-					+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+					+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel,"
+					+ " t2.issendmessage,t2.issendmail "
 					+ " from tbl_wellinformation t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
 					+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
@@ -613,6 +614,8 @@ public class DriverAPIController extends BaseController{
 										acquisitionItemInfo.setAlarmInfo("高报");
 										acquisitionItemInfo.setAlarmType(1);
 										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+										acquisitionItemInfo.setIsSendMessage(StringManagerUtils.stringToInteger(alarmItemObj[11]+""));
+										acquisitionItemInfo.setIsSendMail(StringManagerUtils.stringToInteger(alarmItemObj[12]+""));
 									}else if((StringManagerUtils.isNotNull(alarmItemObj[7]+"") && StringManagerUtils.stringToFloat(acquisitionItemInfo.getRawValue())<StringManagerUtils.stringToFloat(alarmItemObj[7]+"")-hystersis)){
 										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
 										acquisitionItemInfo.setAlarmLevel(alarmLevel);
@@ -621,6 +624,8 @@ public class DriverAPIController extends BaseController{
 										acquisitionItemInfo.setAlarmInfo("低报");
 										acquisitionItemInfo.setAlarmType(1);
 										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+										acquisitionItemInfo.setIsSendMessage(StringManagerUtils.stringToInteger(alarmItemObj[11]+""));
+										acquisitionItemInfo.setIsSendMail(StringManagerUtils.stringToInteger(alarmItemObj[12]+""));
 									}
 									break;
 								}else if(alarmType==0){//开关量报警
@@ -631,6 +636,8 @@ public class DriverAPIController extends BaseController{
 											acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getTitle()+":"+acquisitionItemInfo.getValue());
 											acquisitionItemInfo.setAlarmType(3);
 											acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+											acquisitionItemInfo.setIsSendMessage(StringManagerUtils.stringToInteger(alarmItemObj[11]+""));
+											acquisitionItemInfo.setIsSendMail(StringManagerUtils.stringToInteger(alarmItemObj[12]+""));
 										}
 									}
 								}else if(alarmType==1){//枚举量报警
@@ -640,6 +647,8 @@ public class DriverAPIController extends BaseController{
 										acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getTitle()+":"+acquisitionItemInfo.getValue());
 										acquisitionItemInfo.setAlarmType(2);
 										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
+										acquisitionItemInfo.setIsSendMessage(StringManagerUtils.stringToInteger(alarmItemObj[11]+""));
+										acquisitionItemInfo.setIsSendMail(StringManagerUtils.stringToInteger(alarmItemObj[12]+""));
 									}
 								}
 							}
@@ -670,8 +679,8 @@ public class DriverAPIController extends BaseController{
 						
 						//报警项
 						if(alarm){
-							calculateDataService.saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
-							calculateDataService.sendAlarmSMS(wellName,deviceType,acqTime,acquisitionItemInfoList);
+//							calculateDataService.saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
+							calculateDataService.saveAndSendAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
 						}
 						
 						//更新clob类型数据  运行区间

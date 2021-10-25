@@ -28,7 +28,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getAlarmData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
+	public String getAlarmData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		String ddicName="commStatusAlarm";
 		if(StringManagerUtils.stringToInteger(alarmType)==1){
 			ddicName="numericValueAlarm";
@@ -53,6 +53,9 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		}
 		if(StringManagerUtils.isNotNull(alarmLevel)){
 			sql+=" and t.alarmLevel="+alarmLevel;
+		}
+		if(StringManagerUtils.isNotNull(isSendMessage)){
+			sql+=" and t.isSendMessage="+isSendMessage;
 		}
 		sql+=" order by t.alarmtime desc";
 		int maxvalue=pager.getLimit()+pager.getStart();
@@ -62,7 +65,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getAlarmExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
+	public String getAlarmExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		String ddicName="commStatusAlarm";
 		if(StringManagerUtils.stringToInteger(alarmType)==1){
 			ddicName="numericValueAlarm";
@@ -88,13 +91,16 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		if(StringManagerUtils.isNotNull(alarmLevel)){
 			sql+=" and t.alarmLevel="+alarmLevel;
 		}
+		if(StringManagerUtils.isNotNull(isSendMessage)){
+			sql+=" and t.isSendMessage="+isSendMessage;
+		}
 		sql+=" order by t.alarmtime desc";
 		
 		String getResult = this.findExportDataBySqlEntity(sql,sql, columns, 20 + "", pager);
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getAlarmOverviewData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
+	public String getAlarmOverviewData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		String columns="["
 				+ "{\"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[]},"
@@ -103,9 +109,16 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 				+ "]";
 		String sql="select v.wellid,v.wellname,v.devicetype,v.alarmtype,v.alarmtime from "
 				+ " (select t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype,max(t.alarmtime) as alarmtime "
-				+ " from VIW_ALARMINFO_LATEST t "
-				+ " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
+				+ " from VIW_ALARMINFO_LATEST t where 1=1";
+		if(StringManagerUtils.isNotNull(alarmLevel)){
+			sql+=" and t.alarmLevel="+alarmLevel+"";
+		}
+		if(StringManagerUtils.isNotNull(isSendMessage)){
+			sql+=" and t.isSendMessage="+isSendMessage+"";
+		}
+		sql+= " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
 				+ " where v.orgid in("+orgId+") and v.devicetype="+deviceType+" and v.alarmtype="+alarmType;
+		
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and v.wellName='"+deviceName+"'";
 		}
@@ -134,13 +147,20 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getAlarmOverviewExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,Page pager) throws IOException, SQLException{
+	public String getAlarmOverviewExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		String sql="select v.wellid,v.wellname,v.devicetype,v.alarmtype,v.alarmtime from "
 				+ " (select t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype,max(t.alarmtime) as alarmtime "
-				+ " from VIW_ALARMINFO_LATEST t "
-				+ " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
+				+ " from VIW_ALARMINFO_LATEST t where 1=1";
+		if(StringManagerUtils.isNotNull(alarmLevel)){
+			sql+=" and t.alarmLevel="+alarmLevel+"";
+		}
+		if(StringManagerUtils.isNotNull(isSendMessage)){
+			sql+=" and t.isSendMessage="+isSendMessage+"";
+		}
+		sql+= " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
 				+ " where v.orgid in("+orgId+") and v.devicetype="+deviceType+" and v.alarmtype="+alarmType;
+		
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and v.wellName='"+deviceName+"'";
 		}

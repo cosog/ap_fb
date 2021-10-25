@@ -1,12 +1,12 @@
-Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmStore', {
+Ext.define('AP.store.alarmQuery.PumpSwitchingValueAlarmOverviewStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.PumpNumericValueAlarmStore',
-    fields: ['id','deviceType','deviceTypeName','wellName','createTime','user_id','loginIp','action','actionName','remark'],
+    alias: 'widget.pumpSwitchingValueAlarmOverviewStore',
+    fields: ['id','deviceType','deviceTypeName','wellName','alarmTime','user_id','loginIp','action','actionName','remark'],
     autoLoad: true,
     pageSize: 50,
     proxy: {
         type: 'ajax',
-        url: context + '/alarmQueryController/getAlarmData',
+        url: context + '/alarmQueryController/getAlarmOverviewData',
         actionMethods: {
             read: 'POST'
         },
@@ -22,24 +22,25 @@ Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmStore', {
             //获得列表数
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
-            var column = createAlarmQueryColumn(arrColumns);
-            Ext.getCmp("PumpNumericValueAlarmDetailsColumnStr_Id").setValue(column);
-            var gridPanel = Ext.getCmp("PumpNumericValueAlarmGridPanel_Id");
+            var column = createAlarmOverviewQueryColumn(arrColumns);
+            Ext.getCmp("PumpSwitchingValueAlarmOverviewColumnStr_Id").setValue(column);
+            var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var newColumns = Ext.JSON.decode(column);
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,
-                	displayMsg: '当前 {0}~{1}条  共 {2} 条'
+                	displayMsg:''
+//                	displayMsg: '当前 {0}~{1}条  共 {2} 条'
     	        });
                 
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "PumpNumericValueAlarmGridPanel_Id",
+                    id: "PumpSwitchingValueAlarmOverviewGridPanel_Id",
                     border: false,
-                    autoLoad: true,
+//                    autoLoad: true,
                     bbar: bbar,
                     columnLines: true,
-                    forceFit: true,
+                    forceFit: false,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
@@ -47,42 +48,46 @@ Ext.define('AP.store.alarmQuery.PumpNumericValueAlarmStore', {
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		
+            				if(selected.length>0){
+            					var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id");
+                				if (isNotVal(gridPanel)) {
+                					gridPanel.getStore().load();
+                				}else{
+                					Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmStore');
+                				}
+            				}
                     	},
                     	select: function(grid, record, index, eOpts) {}
                     }
                 });
-                var panel = Ext.getCmp("PumpNumericValueAlarmDetailsPanel_Id");
+                var panel = Ext.getCmp("PumpSwitchingValueAlarmOverviewPanel_Id");
                 panel.add(gridPanel);
             }
-            
-            var startDate=Ext.getCmp('PumpNumericValueAlarmQueryStartDate_Id');
-            if(startDate.rawValue==''||null==startDate.rawValue){
-            	startDate.setValue(get_rawData.start_date);
-            }
-            var endDate=Ext.getCmp('PumpNumericValueAlarmQueryEndDate_Id');
-            if(endDate.rawValue==''||null==endDate.rawValue){
-            	endDate.setValue(get_rawData.end_date);
+            if(get_rawData.totalCount>0){
+            	if(gridPanel.getSelectionModel().getSelection().length>0){
+            		gridPanel.getSelectionModel().deselectAll(true);
+            	}
+            	gridPanel.getSelectionModel().select(0, true);
+            }else{
+            	var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id");
+                if (isNotVal(gridPanel)) {
+                	Ext.getCmp("PumpSwitchingValueAlarmDetailsPanel_Id").remove(gridPanel);
+                }
             }
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=0;
-//        	var deviceName=Ext.getCmp('PumpNumericValueAlarmDeviceListComb_Id').getValue();
-        	var deviceName  = Ext.getCmp("PumpNumericValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-        	var alarmLevel=Ext.getCmp('PumpNumericValueAlarmLevelComb_Id').getValue();
-        	var isSendMessage=Ext.getCmp('PumpNumericValueAlarmIsSendMessageComb_Id').getValue();
-        	var startDate=Ext.getCmp('PumpNumericValueAlarmQueryStartDate_Id').rawValue;
-            var endDate=Ext.getCmp('PumpNumericValueAlarmQueryEndDate_Id').rawValue;
+        	var deviceName=Ext.getCmp('PumpSwitchingValueAlarmDeviceListComb_Id').getValue();
+        	var alarmLevel=Ext.getCmp('PumpSwitchingValueAlarmLevelComb_Id').getValue();
+        	var isSendMessage=Ext.getCmp('PumpSwitchingValueAlarmIsSendMessageComb_Id').getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
                     isSendMessage:isSendMessage,
-                    startDate:startDate,
-                    endDate:endDate,
-                    alarmType:1
+                    alarmType:3
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

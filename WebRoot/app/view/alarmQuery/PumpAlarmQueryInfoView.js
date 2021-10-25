@@ -45,11 +45,11 @@ Ext.define("AP.view.alarmQuery.PumpAlarmQueryInfoView", {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
         					if(newCard.id=="PumpCommunicationAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PumpCommunicationAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PumpCommunicationAlarmOverviewStore');
         						}
         					}else if(newCard.id=="PumpNumericValueAlarmInfoPanel_Id"){
         						var gridPanel = Ext.getCmp("PumpNumericValueAlarmOverviewGridPanel_Id");
@@ -59,18 +59,18 @@ Ext.define("AP.view.alarmQuery.PumpAlarmQueryInfoView", {
         							Ext.create('AP.store.alarmQuery.PumpNumericValueAlarmOverviewStore');
         						}
         					}else if(newCard.id=="PumpEnumValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PumpEnumValueAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PumpEnumValueAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PumpEnumValueAlarmOverviewStore');
         						}
         					}else if(newCard.id=="PumpSwitchingValueAlarmInfoPanel_Id"){
-        						var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmGridPanel_Id");
+        						var gridPanel = Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
         						}else{
-        							Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmStore');
+        							Ext.create('AP.store.alarmQuery.PumpSwitchingValueAlarmOverviewStore');
         						}
         					}
         				}

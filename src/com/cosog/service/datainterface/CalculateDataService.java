@@ -52,12 +52,14 @@ public class CalculateDataService<T> extends BaseService<T> {
 		getBaseDao().saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
 	}
 	
-	public void sendAlarmSMS(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException{
-		boolean isSend=false;
-		
+	public void saveAndSendAlarmInfo(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException{
+		boolean isSendSMS=false;
+		boolean isSendMail=false;
 		StringBuffer SMSContent = new StringBuffer();
+		StringBuffer EMailContent = new StringBuffer();
 		SMSContent.append(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"于"+acqTime+"发生报警:");
 		Map<String, String> alarmInfoMap=AlarmInfoMap.getMapObject();
+		List<AcquisitionItemInfo> saveAcquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
 		for(int i=0;i<acquisitionItemInfoList.size();i++){
 			if(acquisitionItemInfoList.get(i).getAlarmLevel()>0){
 				String key=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle()+","+acquisitionItemInfoList.get(i).getAlarmInfo();
@@ -65,14 +67,38 @@ public class CalculateDataService<T> extends BaseService<T> {
 				
 				long timeDiff=StringManagerUtils.getTimeDifference(lastAlarmTime, acqTime, "yyyy-MM-dd HH:mm:ss");
 				if(timeDiff>acquisitionItemInfoList.get(i).getAlarmDelay()*1000){
-					isSend=true;
-					SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
-							+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
-							+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
+					alarmInfoMap.put(key, acqTime);
+					saveAcquisitionItemInfoList.add(acquisitionItemInfoList.get(i));
+					if(acquisitionItemInfoList.get(i).getIsSendMessage()==1){//如果该报警项发送短信
+						isSendSMS=true;
+						if(acquisitionItemInfoList.get(i).getAlarmType()==0){//开关量报警
+							SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==1){//枚举量报警
+							SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==2){//数值量报警
+							SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
+									+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
+									+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
+						}
+					}
+					if(acquisitionItemInfoList.get(i).getIsSendMail()==1){//如果该报警项发送邮件
+						isSendMail=true;
+						if(acquisitionItemInfoList.get(i).getAlarmType()==0){//开关量报警
+							EMailContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==1){//枚举量报警
+							EMailContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==2){//数值量报警
+							EMailContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
+									+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
+									+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
+						}
+					}
+					
 				}
-				alarmInfoMap.put(key, acqTime);
+				
 			}else{
 				String keyIndex=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle();
+//				String keyIndex=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle()+","+acquisitionItemInfoList.get(i).getAlarmInfo();
 				boolean reset=false;
 				 for (String key : alarmInfoMap.keySet()) {
 					 if(key.indexOf(keyIndex)>=0){
@@ -86,12 +112,15 @@ public class CalculateDataService<T> extends BaseService<T> {
 				 }
 			}
 		}
-		if(isSend){
-			sendAlarmSMS(wellName,deviceType,SMSContent.toString());
+		if(saveAcquisitionItemInfoList.size()>0){
+			getBaseDao().saveAlarmInfo(wellName,deviceType,acqTime,saveAcquisitionItemInfoList);
+		}
+		if(isSendSMS || isSendMail){
+			sendAlarmSMS(wellName,deviceType,isSendSMS,isSendMail,SMSContent.toString(),EMailContent.toString());
 		}
 	}
 	
-	public void sendAlarmSMS(String wellName,String deviceType,String content) throws SQLException{
+	public void sendAlarmSMS(String wellName,String deviceType,boolean isSendSMS,boolean isSendMail,String SMSContent,String EMailContent) throws SQLException{
 		String SMSUrl=Config.getInstance().configFile.getDriverConfig().getWriteSMS();
 		String userSql="select u.user_id,u.user_phone,r.receivesms,u.user_in_email,r.receivemail "
 				+ " from tbl_user u,tbl_role r "
@@ -100,17 +129,17 @@ public class CalculateDataService<T> extends BaseService<T> {
 		List<String> receivingEMailAccount=new ArrayList<String>();
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
-			if("1".equalsIgnoreCase(obj[2]+"") && StringManagerUtils.isNotNull(obj[1]+"") && StringManagerUtils.isPhoneLegal(obj[1]+"")){
+			if(isSendSMS&&"1".equalsIgnoreCase(obj[2]+"") && StringManagerUtils.isNotNull(obj[1]+"") && StringManagerUtils.isPhoneLegal(obj[1]+"")){
 				StringBuffer sendContent = new StringBuffer();
-				sendContent.append("{\"Mobile\":\""+obj[1]+"\",\"Value\":\""+content+"\"}");
+				sendContent.append("{\"Mobile\":\""+obj[1]+"\",\"Value\":\""+SMSContent+"\"}");
 				StringManagerUtils.sendPostMethod(SMSUrl, sendContent.toString(), "utf-8");
 			}
 			if("1".equalsIgnoreCase(obj[4]+"") && StringManagerUtils.isNotNull(obj[3]+"") && StringManagerUtils.isMailLegal(obj[3]+"")){
 				receivingEMailAccount.add(obj[3]+"");
 			}
 		}
-		if(receivingEMailAccount.size()>0){
-			StringManagerUtils.sendEMail(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"报警", content, receivingEMailAccount);
+		if(isSendMail&&receivingEMailAccount.size()>0){
+			StringManagerUtils.sendEMail(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"报警", EMailContent, receivingEMailAccount);
 		}
 	}
 }
