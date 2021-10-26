@@ -139,7 +139,8 @@ Ext.define("AP.view.org.OrgInfoWindow", {
                             //var childs_ = myOrg_store.tree.root.childNodes.length;
                             var childs_ = myOrg_store.root.childNodes.length;
                             if (orgName_Parent_Id == '0' || orgName_Parent_Id == "") {
-                                orgCode_ = "0" + (childs_ + 1) + org_Level + "00";
+//                                orgCode_ = "0" + (childs_ + 1) + org_Level + "00";
+                                orgCode_ =(childs_ + 1) + org_Level + "00";
                             } else {
                                 var obj_text = Ext.getCmp("orgCode_hidden_Id").getValue();
                                 if (obj_text != "") {

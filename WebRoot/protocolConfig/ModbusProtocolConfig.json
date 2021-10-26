@@ -314,7 +314,7 @@
                 {
                     "Title": "井口温度",
                     "Addr": 32,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -338,7 +338,7 @@
                 {
                     "Title": "井下温度",
                     "Addr": 36,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -374,7 +374,7 @@
                 {
                     "Title": "柜内温度",
                     "Addr": 42,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -386,7 +386,7 @@
                 {
                     "Title": "自制井下温度",
                     "Addr": 48,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -676,7 +676,7 @@
                 {
                     "Title": "井口温度保护值",
                     "Addr": 82,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -724,7 +724,7 @@
                 {
                     "Title": "井下温度保护值",
                     "Addr": 90,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -748,7 +748,7 @@
                 {
                     "Title": "内置井下温度保护值",
                     "Addr": 94,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1430,7 +1430,7 @@
                 {
                     "Title": "井口温度",
                     "Addr": 32,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1454,7 +1454,7 @@
                 {
                     "Title": "井下温度",
                     "Addr": 36,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1490,7 +1490,7 @@
                 {
                     "Title": "柜内温度",
                     "Addr": 42,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1502,7 +1502,7 @@
                 {
                     "Title": "自制井下温度",
                     "Addr": 48,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1792,7 +1792,7 @@
                 {
                     "Title": "井口温度保护值",
                     "Addr": 82,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1840,7 +1840,7 @@
                 {
                     "Title": "井下温度保护值",
                     "Addr": 90,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
@@ -1864,7 +1864,7 @@
                 {
                     "Title": "内置井下温度保护值",
                     "Addr": 94,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,

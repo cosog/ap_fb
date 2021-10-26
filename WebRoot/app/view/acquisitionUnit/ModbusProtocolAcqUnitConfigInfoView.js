@@ -268,17 +268,32 @@ function CreateProtocolAcqUnitConfigPropertiesInfoTable(data){
 		item2.value=data.typeName;
 		root.push(item2);
 		
-		var item3={};
-		item3.id=3;
-		item3.title='保存周期(s)';
-		item3.value=data.save_cycle;
-		root.push(item3);
+		if(data.type==0){
+			var item3={};
+			item3.id=3;
+			item3.title='采集周期(s)';
+			item3.value=data.acq_cycle;
+			root.push(item3);
+			
+			var item4={};
+			item4.id=4;
+			item4.title='保存周期(s)';
+			item4.value=data.save_cycle;
+			root.push(item4);
+			
+			var item5={};
+			item5.id=5;
+			item5.title='备注';
+			item5.value=data.remark;
+			root.push(item5);
+		}else if(data.type==1){
+			var item3={};
+			item3.id=3;
+			item3.title='备注';
+			item3.value=data.remark;
+			root.push(item3);
+		}
 		
-		var item4={};
-		item4.id=4;
-		item4.title='备注';
-		item4.value=data.remark;
-		root.push(item4);
 	}
 	
 	if(protocolConfigAcqUnitPropertiesHandsontableHelper==null || protocolConfigAcqUnitPropertiesHandsontableHelper.hot==undefined){
@@ -393,10 +408,17 @@ function SaveModbusProtocolAcqUnitConfigTreeData(){
 			protocolProperties.id=selectedItem.data.id;
 			protocolProperties.groupCode=selectedItem.data.code;
 			protocolProperties.groupName=propertiesData[0][2];
-			protocolProperties.acqCycle=300;
 			protocolProperties.typeName=propertiesData[1][2];
-			protocolProperties.saveCycle=propertiesData[2][2];
-			protocolProperties.remark=propertiesData[3][2];
+			if(selectedItem.data.type==0){//采集组
+				protocolProperties.acqCycle=propertiesData[2][2];
+				protocolProperties.saveCycle=propertiesData[3][2];
+				protocolProperties.remark=propertiesData[4][2];
+			}else if(selectedItem.data.type==1){//控制组
+//				protocolProperties.acqCycle=propertiesData[2][2];
+//				protocolProperties.saveCycle=propertiesData[3][2];
+				protocolProperties.remark=propertiesData[2][2];
+			}
+			
 		}
 		if(selectedItem.data.classes==2){//保存采控单元
 			var acqUnitSaveData={};

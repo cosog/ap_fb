@@ -409,8 +409,14 @@ public class OrgManagerController extends BaseController {
 		String result = "";
 		PrintWriter out = response.getWriter();
 		try {
-			if (org.getOrgParent() == null) {
-				org.setOrgParent(0);
+			if (org.getOrgParent() == null || org.getOrgParent()==0) {
+				String sql = "select t.org_id from tbl_org t where t.org_name='组织根节点' and t.org_parent=0 and rownum=1";
+				List list = this.service.findCallSql(sql);
+				if(list.size()>0){
+					org.setOrgParent(StringManagerUtils.stringToInteger(list.get(0)+""));
+				}else{
+					org.setOrgParent(0);
+				}
 			}
 			this.orgService.addOrg(org);
 			result = "{success:true,msg:true}";
