@@ -247,7 +247,10 @@ public class OrgManagerService<T> extends BaseService<T> {
 
 	public List<?> queryOrgs(Class<T> clazz, String orgName,String orgId) {
 		StringBuffer sqlBuffer = new StringBuffer();
-		sqlBuffer.append("SELECT org_id,org_code,org_name,org_memo,org_parent,org_level,org_type,c.itemname as orgTypeName ,org_coordx,org_coordy,show_level as showLevel FROM tbl_org u,tbl_code c WHERE c.itemcode='ORG_TYPE' and c.itemvalue=u.org_type ");
+		sqlBuffer.append("SELECT org_id,org_code,org_name,org_memo,org_parent,org_level,org_type,c.itemname as orgTypeName ,org_coordx,org_coordy,show_level as showLevel "
+				+ "FROM tbl_org u,tbl_code c "
+				+ "WHERE c.itemcode='ORG_TYPE' and c.itemvalue=u.org_type "
+				+ "and u.org_id not in( select o2.org_id from tbl_org o2 where o2.org_name='组织根节点' and o2.org_parent=0 )");
 		if(StringManagerUtils.isNotNull(orgId)){
 			sqlBuffer.append(" and u.org_id in ("+orgId+")");
 		}

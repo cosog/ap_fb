@@ -1003,6 +1003,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 			equipmentDriveMap.put("modbusProtocolConfig", modbusProtocolConfig);
 			if(StringManagerUtils.isNotNull(modbusDriverSaveData.getProtocolName())){
 				EquipmentDriverServerTask.initProtocolConfig(modbusDriverSaveData.getProtocolName(),"update");
+				EquipmentDriverServerTask.initInstanceConfigByProtocolName(modbusDriverSaveData.getProtocolName(),"update");
 			}
 		}
 		json ="{success:true}";
@@ -1331,10 +1332,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 						instanceList=new ArrayList<String>();
 						instanceList.add(modbusProtocolInstanceSaveData.getName());
 						EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
-						
 						EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByProtocolInstanceId(modbusProtocolInstanceSaveData.getId()+"", "update");
 					}
-					
 					
 					json = "{success:true,msg:true}";
 				} catch (Exception e) {

@@ -52,7 +52,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -211,17 +211,28 @@ public class EquipmentDriverServerTask {
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		
 		Map<String, List<String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
-		List<String> acquisitionItemColumns=new ArrayList<String>();
+		List<String> pumpDeviceAcquisitionItemColumns=new ArrayList<String>();
+		List<String> pipelineDeviceAcquisitionItemColumns=new ArrayList<String>();
 		
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
-				if(!StringManagerUtils.existOrNot(acquisitionItemColumns, "ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr(),false)){
-					acquisitionItemColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
+			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==0){
+				for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
+					if(!StringManagerUtils.existOrNot(pumpDeviceAcquisitionItemColumns, "ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr(),false)){
+						pumpDeviceAcquisitionItemColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
+					}
+				}
+			}else{
+				for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
+					if(!StringManagerUtils.existOrNot(pipelineDeviceAcquisitionItemColumns, "ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr(),false)){
+						pipelineDeviceAcquisitionItemColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
+					}
 				}
 			}
+			
 		}
 //		Collections.sort(acquisitionItemColumns);
-		acquisitionItemColumnsMap.put("acquisitionItemColumns", acquisitionItemColumns);
+		acquisitionItemColumnsMap.put("pumpDeviceAcquisitionItemColumns", pumpDeviceAcquisitionItemColumns);
+		acquisitionItemColumnsMap.put("pipelineDeviceAcquisitionItemColumns", pipelineDeviceAcquisitionItemColumns);
 		return 0;
 	}
 	
@@ -258,20 +269,26 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initAcquisitionItemDataBaseColumns(){
-		int result=initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist");
-		result=initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest");
-		result=initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist");
-		result=initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest");
+		int result=initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist",0);
+		result=initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest",0);
+		result=initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist",1);
+		result=initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest",1);
 		return result;
 	}
 	
-	public static int initAcquisitionItemDataBaseColumns(String tableName){
+	public static int initAcquisitionItemDataBaseColumns(String tableName,int deviceType){
+		//pumpDeviceAcquisitionItemColumns  pipelineDeviceAcquisitionItemColumns
+		
 		int result=0;
+		String key="pumpDeviceAcquisitionItemColumns";
+		if(deviceType==1){
+			key="pipelineDeviceAcquisitionItemColumns";
+		}
 		Map<String, List<String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
-		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get("acquisitionItemColumns")==null){
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(key)==null){
 			loadAcquisitionItemColumns();
 		}
-		List<String> acquisitionItemColumns=acquisitionItemColumnsMap.get("acquisitionItemColumns");
+		List<String> acquisitionItemColumns=acquisitionItemColumnsMap.get(key);
 		List<String> acquisitionItemDataBaseColumns=new ArrayList<String>();
 		String sql="select t.COLUMN_NAME from user_tab_cols t where t.TABLE_NAME=UPPER('"+tableName+"') and UPPER(t.COLUMN_NAME) like 'ADDR%'  order by t.COLUMN_ID";
 		conn=OracleJdbcUtis.getConnection();
@@ -340,9 +357,11 @@ public class EquipmentDriverServerTask {
 			}
 		}
 		List<String> dataDictionaryItems=new ArrayList<String>();
-		String sql="select t1.cname,t1.ename,t1.sorts "
-				+ "from tbl_dist_item t1 where t1.sysdataid=(select t2.sysdataid from tbl_dist_name t2 where t2.sysdataid='"+dataDictionaryId+"') "
-				+ "order by t1.sorts";
+		List<String> dataDictionaryItemsId=new ArrayList<String>();
+		String sql="select t1.dataitemid,t1.cname,t1.ename,t1.sorts "
+				+ " from tbl_dist_item t1 where t1.sysdataid=(select t2.sysdataid from tbl_dist_name t2 where t2.sysdataid='"+dataDictionaryId+"') "
+				+ " and UPPER(t1.ename) like 'ADDR%'"
+				+ " order by t1.sorts";
 		
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
@@ -353,8 +372,9 @@ public class EquipmentDriverServerTask {
 			rs=pstmt.executeQuery();
 			int maxSortNum=1;
 			while(rs.next()){
-				dataDictionaryItems.add(rs.getString(2));
-				maxSortNum=rs.getInt(3);
+				dataDictionaryItemsId.add(rs.getString(1));
+				dataDictionaryItems.add(rs.getString(3));
+				maxSortNum=rs.getInt(4);
 			}
 			//如数字典中不存在，添加字典项
 			for(int i=0;i<acquisitionItemColumns.size();i++){
@@ -371,6 +391,23 @@ public class EquipmentDriverServerTask {
 					result++;
 				}
 			}
+			//删除协议中不存在的字典项
+			StringBuffer delItemIds = new StringBuffer();
+			for(int i=0;i<dataDictionaryItems.size();i++){
+				if(!StringManagerUtils.existOrNot(acquisitionItemColumns,dataDictionaryItems.get(i),false)){
+					delItemIds.append("'"+dataDictionaryItemsId.get(i)+"',");
+				}
+			}
+			if(delItemIds.toString().endsWith(",")){
+				delItemIds.deleteCharAt(delItemIds.length() - 1);
+			}
+			if(StringManagerUtils.isNotNull(delItemIds.toString())){
+				String delDataDict="delete from tbl_dist_item t where t.dataitemid in("+delItemIds.toString()+")";
+				pstmt = conn.prepareStatement(delDataDict);
+				pstmt.executeUpdate();
+				System.out.println("删除协议中不存在的字典项:"+delItemIds.toString());
+			}
+			
 			System.out.println("同步数据字典:"+dataDictionaryId);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -408,14 +445,15 @@ public class EquipmentDriverServerTask {
 							initProtocol.setMethod(method);
 							System.out.println("协议初始化："+gson.toJson(initProtocol));
 							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
+							loadAcquisitionItemColumns(modbusProtocolConfig.getProtocol().get(i).getDeviceType());
 							if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==0){
-								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist");
-								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest");
+								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist",0);
+								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest",0);
 								initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
 								initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
 							}else{
-								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist");
-								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest");
+								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist",1);
+								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest",1);
 								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
 								initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
 							}
@@ -429,6 +467,7 @@ public class EquipmentDriverServerTask {
 						System.out.println("协议初始化："+gson.toJson(initProtocol));
 						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 					}
+					loadAcquisitionItemColumns();
 					//同步数据库字段
 					initAcquisitionItemDataBaseColumns();
 					//同步数据字典
@@ -437,8 +476,33 @@ public class EquipmentDriverServerTask {
 					initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
 					initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
 				}
+				
 			}
 		}
+	}
+	
+	public static int initInstanceConfigByProtocolName(String protocolName,String method){
+		String sql="select t.name from tbl_protocolinstance t,tbl_acq_unit_conf t2 where t.unitid=t2.id and t2.protocol='"+protocolName+"'";
+		List<String> instanceList=new ArrayList<String>();
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null){
+        	return -1;
+        }
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				instanceList.add(rs.getString(1));
+			}
+			if(instanceList.size()>0){
+				initInstanceConfig(instanceList,method);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return 0;
 	}
 	
 	public static int initInstanceConfigByAcqUnitName(String unitName,String method){
@@ -559,14 +623,15 @@ public class EquipmentDriverServerTask {
 		}else{
 			String sql="select t.name,t.acqprotocoltype,t.ctrlprotocoltype,"
 					+ "t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
-					+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,"
+					+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,t4.type,"
 					+ "listagg(t5.itemname, ',') within group(order by t5.id ) key "
 					+ " from tbl_protocolinstance t,tbl_acq_unit_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_group_conf t4,tbl_acq_item2group_conf t5  "
 					+ " where t.unitid=t2.id and t2.id=t3.unitid and t3.groupid=t4.id and t4.id=t5.groupid  ";
 			if(StringManagerUtils.isNotNull(instances)){
 				sql+=" and t.name in("+instances+")";
 			}
-			sql+= "group by t.name,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle";
+			sql+= "group by t.name,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
+					+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,t4.type";
 			
 			Map<String,InitInstance> InstanceListMap=new HashMap<String,InitInstance>();
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -605,7 +670,7 @@ public class EquipmentDriverServerTask {
 					InitInstance.Group group=new InitInstance.Group();
 					group.setInterval(rs.getInt(11));
 					group.setAddr(new ArrayList<Integer>());
-					String[] itemsArr=rs.getString(12).split(",");
+					String[] itemsArr=rs.getString(13).split(",");
 					for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(rs.getString(8))){
 							for(int j=0;j<itemsArr.length;j++){
@@ -623,7 +688,7 @@ public class EquipmentDriverServerTask {
 							break;
 						}
 					}
-					if(isCtrl){
+					if(rs.getInt(12)==1){//控制组
 						initInstance.getCtrlGroup().add(group);
 					}else{
 						initInstance.getAcqGroup().add(group);

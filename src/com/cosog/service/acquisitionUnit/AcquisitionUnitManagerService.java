@@ -999,7 +999,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									pipelineTree_json.append("\"save_cycle\":"+groupObj[4]+",");
 									pipelineTree_json.append("\"remark\":\""+groupObj[5]+"\",");
 									pipelineTree_json.append("\"protocol\":\""+groupObj[6]+"\",");
-									pipelineTree_json.append("\"unitId\":"+groupObj[7]+",");
+									pipelineTree_json.append("\"type\":"+groupObj[7]+",");
+									pipelineTree_json.append("\"typeName\":\""+("0".equalsIgnoreCase(groupObj[7]+"")?"采集组":"控制组")+"\",");
+									pipelineTree_json.append("\"unitId\":"+groupObj[groupObj.length-1]+",");
 									pipelineTree_json.append("\"iconCls\": \"AcqGroup\",");
 									pipelineTree_json.append("\"leaf\": true");
 									pipelineTree_json.append("},");
