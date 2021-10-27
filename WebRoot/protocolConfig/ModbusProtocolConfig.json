@@ -175,7 +175,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -199,7 +199,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -223,7 +223,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -247,7 +247,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -259,7 +259,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01kW",
+                    "Unit": "kW",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -283,7 +283,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01Hz",
+                    "Unit": "Hz",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -307,7 +307,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1day",
+                    "Unit": "d",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -319,7 +319,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -331,7 +331,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -343,7 +343,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -355,7 +355,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -367,7 +367,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -379,7 +379,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -391,7 +391,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -403,7 +403,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -427,7 +427,7 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
+                    "Unit": "",
                     "ResolutionMode": 0,
                     "AcqMode": "active",
                     "Meaning": [{
@@ -482,7 +482,7 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
+                    "Unit": "",
                     "ResolutionMode": 0,
                     "AcqMode": "active",
                     "Meaning": [{
@@ -549,7 +549,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -573,7 +573,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -585,7 +585,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -597,7 +597,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -609,7 +609,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                  },
@@ -621,7 +621,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -645,7 +645,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -669,7 +669,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -681,7 +681,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -693,7 +693,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -705,7 +705,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -717,7 +717,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -729,7 +729,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -741,7 +741,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -753,7 +753,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -765,7 +765,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -777,7 +777,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -789,7 +789,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -801,7 +801,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -813,7 +813,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -825,7 +825,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -837,7 +837,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -849,7 +849,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -861,7 +861,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -904,7 +904,7 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -916,7 +916,7 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -928,7 +928,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -940,7 +940,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -952,7 +952,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -964,7 +964,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -988,7 +988,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1Kpa",
+                    "Unit": "Kpa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1000,7 +1000,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1立方米/小时",
+                    "Unit": "m³/h",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1012,7 +1012,7 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "立方米",
+                    "Unit": "m³",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1024,7 +1024,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01方/天",
+                    "Unit": "m³/d",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1291,7 +1291,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1315,7 +1315,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1339,7 +1339,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1363,7 +1363,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1375,7 +1375,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01kW",
+                    "Unit": "kW",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1399,7 +1399,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01Hz",
+                    "Unit": "Hz",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1423,7 +1423,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1day",
+                    "Unit": "d",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1435,7 +1435,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1447,7 +1447,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1459,7 +1459,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1471,7 +1471,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1483,7 +1483,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1495,7 +1495,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1507,7 +1507,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1519,7 +1519,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1543,7 +1543,7 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
+                    "Unit": "",
                     "ResolutionMode": 0,
                     "AcqMode": "active",
                     "Meaning": [{
@@ -1598,7 +1598,7 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
+                    "Unit": "",
                     "ResolutionMode": 0,
                     "AcqMode": "active",
                     "Meaning": [{
@@ -1665,7 +1665,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1689,7 +1689,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1701,7 +1701,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1713,7 +1713,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1725,7 +1725,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                  },
@@ -1737,7 +1737,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1761,7 +1761,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1785,7 +1785,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1797,7 +1797,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1809,7 +1809,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1821,7 +1821,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1833,7 +1833,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1845,7 +1845,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1857,7 +1857,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1869,7 +1869,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1881,7 +1881,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1893,7 +1893,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1905,7 +1905,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1917,7 +1917,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1929,7 +1929,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1941,7 +1941,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1953,7 +1953,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1965,7 +1965,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1977,7 +1977,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2020,7 +2020,7 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2032,7 +2032,7 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2044,7 +2044,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2056,7 +2056,7 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2068,7 +2068,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2080,7 +2080,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2104,7 +2104,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1Kpa",
+                    "Unit": "Kpa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2116,7 +2116,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1立方米/小时",
+                    "Unit": "m³/h",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2128,7 +2128,7 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "立方米",
+                    "Unit": "m³",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -2140,7 +2140,7 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01方/天",
+                    "Unit": "m³/d",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 }

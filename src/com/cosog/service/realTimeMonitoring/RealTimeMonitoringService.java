@@ -274,7 +274,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	}
 
 	public String getDeviceRealTimeMonitoringData(String deviceName,String deviceType) throws IOException, SQLException{
-		int items=4;
+		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -287,7 +287,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_pipelineacqdata_latest";
 		}
-		String itemsSql="select t.wellname,t3.protocol, listagg(t6.itemname, ',') within group(order by t6.id ) key "
+		String itemsSql="select t.wellname,t3.protocol, "
+				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
+				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort "
 				+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
@@ -333,14 +335,17 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			if(protocol!=null && StringManagerUtils.isNotNull(itemsObj[2]+"")){
 				String acqColumns="";
 				String[] itemsArr=(itemsObj[2]+"").split(",");
+				String[] itemsSortArr=(itemsObj[3]+"").split(",");
 //				List<Integer> addrList=new ArrayList<Integer>();
 //				List<String> columnsList=new ArrayList<String>();
 				List<String> columnsNameList=new ArrayList<String>();
+				List<Integer> columnsSortList=new ArrayList<Integer>();
 //				List<String> columnsDataTypeList=new ArrayList<String>();
 				List<ModbusProtocolConfig.Items> protocolItems=new ArrayList<ModbusProtocolConfig.Items>();
 				List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 				for(int j=0;j<protocol.getItems().size();j++){
-					if(!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false)){
+					if((!"w".equalsIgnoreCase(protocol.getItems().get(j).getRWType())) 
+							&& (!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false))){
 						for(int k=0;k<itemsArr.length;k++){
 							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
 								String column="ADDR"+protocol.getItems().get(j).getAddr();
@@ -349,6 +354,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 //								columnsList.add(column);
 								columnsNameList.add(columnName);
 //								columnsDataTypeList.add(protocol.getItems().get(j).getIFDataType());
+								columnsSortList.add(StringManagerUtils.stringToInteger(itemsSortArr[k]));
 								protocolItems.add(protocol.getItems().get(j));
 								break;
 							}
@@ -379,6 +385,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 						String columnDataType="";
 						String resolutionMode="";
 						String bitIndex="";
+						String unit=protocolItems.get(j).getUnit();
+						int sort=columnsSortList.get(j);
 						if(protocolItems.get(j).getResolutionMode()==1){//如果是枚举量
 							boolean isMatch=false;
 							columnName=protocolItems.get(j).getTitle();
@@ -391,14 +399,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 									if(value.equals(protocolItems.get(j).getMeaning().get(l).getValue()+"")){
 										isMatch=true;
 										value=protocolItems.get(j).getMeaning().get(l).getMeaning();
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 										break;
 									}
 								}
 							}
 							if(!isMatch){
-								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 								protocolItemResolutionDataList.add(protocolItemResolutionData);
 							}
 						}else if(protocolItems.get(j).getResolutionMode()==0){//如果是开关量
@@ -425,27 +433,30 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 													value=valueArr[m];
 												}
 												
-												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 												protocolItemResolutionDataList.add(protocolItemResolutionData);
 												break;
 											}
 										}
 									}else{
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
 							}else{
-								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 								protocolItemResolutionDataList.add(protocolItemResolutionData);
 							}
 						}else{//如果是数据量
 							columnName=protocolItems.get(j).getTitle();
+//							if(StringManagerUtils.isNotNull(protocolItems.get(j).getUnit())){
+//								columnName+="("+protocolItems.get(j).getUnit()+")";
+//							}
 							addr=protocolItems.get(j).getAddr()+"";
 							column="ADDR"+addr;
 							columnDataType=protocolItems.get(j).getIFDataType();
 							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
-							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 							protocolItemResolutionDataList.add(protocolItemResolutionData);
 						} 
 					}
@@ -470,10 +481,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							String columnDataType="";
 							String resolutionMode="";
 							String bitIndex="";
+							String unit="";
 							int alarmLevel=0;
 							if(index<protocolItemResolutionDataList.size()){
 								columnName=protocolItemResolutionDataList.get(index).getColumnName();
 								value=protocolItemResolutionDataList.get(index).getValue();
+								unit=protocolItemResolutionDataList.get(index).getUnit();
 								rawValue=protocolItemResolutionDataList.get(index).getRawValue();
 								addr=protocolItemResolutionDataList.get(index).getAddr();
 								column=protocolItemResolutionDataList.get(index).getColumn();
@@ -507,8 +520,18 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 									}
 								}
 							}
-							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							
+							if(StringManagerUtils.isNotNull(columnName)&&StringManagerUtils.isNotNull(unit)){
+								result_json.append("\"name"+(k+1)+"\":\""+(columnName+"("+unit+")")+"\",");
+							}else{
+								result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							}
+							
+							
+							
 							result_json.append("\"value"+(k+1)+"\":\""+value+"\",");
+
+							
 							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"addr\":\""+addr+"\","
 									+ "\"columnName\":\""+columnName+"\","
 									+ "\"column\":\""+column+"\","

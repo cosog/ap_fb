@@ -443,10 +443,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 		AcquisitionGroupItem acquisitionGroupItem = null;
 		try {
 			String params = ParamUtils.getParameter(request, "params");
+			String sorts = ParamUtils.getParameter(request, "sorts");
 			String matrixCodes = ParamUtils.getParameter(request, "matrixCodes");
 			String groupCode = ParamUtils.getParameter(request, "groupCode");
 			log.debug("grantAcquisitionItemsPermission params==" + params);
 			String paramsArr[] = StringManagerUtils.split(params, ",");
+			String sortArr[] = StringManagerUtils.split(sorts, ",");
 			String groupId="";
 			String groupIdSql="select t.id from tbl_acq_group_conf t where t.group_code='"+groupCode+"' ";
 			List list = this.service.findCallSql(groupIdSql);
@@ -463,7 +465,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 						acquisitionGroupItem.setGroupId(Integer.parseInt(groupId));
 						log.debug("groupCode==" + groupCode);
 						acquisitionGroupItem.setItemName(module_[0]);
-						acquisitionGroupItem.setMatrix(module_[1]);
+						acquisitionGroupItem.setSort(StringManagerUtils.isNumber(module_[1])?StringManagerUtils.stringTransferInteger(module_[1]):null);
+						acquisitionGroupItem.setMatrix(module_[2]);
 						this.acquisitionUnitItemManagerService.grantAcquisitionItemsPermission(acquisitionGroupItem);
 					}
 				}
@@ -1082,7 +1085,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 			if(acquisitionGroupHandsontableChangeData.getDelidslist()!=null){
 				for(int i=0;i<acquisitionGroupHandsontableChangeData.getDelidslist().size();i++){
 					this.acquisitionUnitManagerService.doAcquisitionGroupBulkDelete(acquisitionGroupHandsontableChangeData.getDelidslist().get(i));
-					EquipmentDriverServerTask.initInstanceConfigByAcqGroupId(acquisitionGroupHandsontableChangeData.getDelidslist().get(i), "update");
+					EquipmentDriverServerTask.initInstanceConfigByAcqUnitId(unitId, "update");
 				}
 			}
 			if(acquisitionGroupHandsontableChangeData.getUpdatelist()!=null){
@@ -1097,7 +1100,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					acquisitionGroup.setRemark(acquisitionGroupHandsontableChangeData.getUpdatelist().get(i).getRemark());
 					acquisitionGroup.setProtocol(protocol);
 					this.acquisitionUnitManagerService.doAcquisitionGroupEdit(acquisitionGroup);
-					EquipmentDriverServerTask.initInstanceConfigByAcqGroupId(acquisitionGroup.getId()+"", "update");
+//					EquipmentDriverServerTask.initInstanceConfigByAcqGroupId(acquisitionGroup.getId()+"", "update");
 				}
 			}
 			

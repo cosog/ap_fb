@@ -196,21 +196,28 @@ function websocketOnMessage(evt) {
 						var acqTime=data.acqTime;
 						var value='';
 						if(isNotVal(selectedItem)){
-							for(var i=1;i<data.totalRoot.length;i++){
-								if(selectedItem==data.totalRoot[i].name1){
-									value=data.totalRoot[i].value1;
-									break;
-								}
-								if(selectedItem==data.totalRoot[i].name2){
-									value=data.totalRoot[i].value2;
-									break;
-								}
-								if(selectedItem==data.totalRoot[i].name3){
-									value=data.totalRoot[i].value3;
-									break;
-								}
-								if(selectedItem==data.totalRoot[i].name4){
-									value=data.totalRoot[i].value4;
+//							for(var i=1;i<data.totalRoot.length;i++){
+//								if(selectedItem==data.totalRoot[i].name1){
+//									value=data.totalRoot[i].value1;
+//									break;
+//								}
+//								if(selectedItem==data.totalRoot[i].name2){
+//									value=data.totalRoot[i].value2;
+//									break;
+//								}
+//								if(selectedItem==data.totalRoot[i].name3){
+//									value=data.totalRoot[i].value3;
+//									break;
+//								}
+//								if(selectedItem==data.totalRoot[i].name4){
+//									value=data.totalRoot[i].value4;
+//									break;
+//								}
+//							}
+							
+							for(var i=0;i<data.CellInfo.length;i++){
+								if(selectedItem==data.CellInfo[i].columnName){
+									value=data.CellInfo[i].value;
 									break;
 								}
 							}
@@ -306,21 +313,27 @@ function websocketOnMessage(evt) {
 						var acqTime=data.acqTime;
 						var value='';
 						if(isNotVal(selectedItem)){
-							for(var i=1;i<data.totalRoot.length;i++){
-								if(selectedItem==data.totalRoot[i].name1){
-									value=data.totalRoot[i].value1;
-									break;
-								}
-								if(selectedItem==data.totalRoot[i].name2){
-									value=data.totalRoot[i].value2;
-									break;
-								}
-								if(selectedItem==data.totalRoot[i].name3){
-									value=data.totalRoot[i].value3;
-									break;
-								}
-								if(selectedItem==data.totalRoot[i].name4){
-									value=data.totalRoot[i].value4;
+//							for(var i=1;i<data.totalRoot.length;i++){
+//								if(selectedItem==data.totalRoot[i].name1){
+//									value=data.totalRoot[i].value1;
+//									break;
+//								}
+//								if(selectedItem==data.totalRoot[i].name2){
+//									value=data.totalRoot[i].value2;
+//									break;
+//								}
+//								if(selectedItem==data.totalRoot[i].name3){
+//									value=data.totalRoot[i].value3;
+//									break;
+//								}
+//								if(selectedItem==data.totalRoot[i].name4){
+//									value=data.totalRoot[i].value4;
+//									break;
+//								}
+//							}
+							for(var i=0;i<data.CellInfo.length;i++){
+								if(selectedItem==data.CellInfo[i].columnName){
+									value=data.CellInfo[i].value;
 									break;
 								}
 							}

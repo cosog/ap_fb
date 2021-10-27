@@ -144,17 +144,21 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ "{ \"header\":\"单位\",\"dataIndex\":\"unit\",width:80 ,children:[] },"
 				+ "{ \"header\":\"换算比例\",\"dataIndex\":\"ratio\",width:80 ,children:[] },"
 				+ "{ \"header\":\"分析模式\",\"dataIndex\":\"resolutionMode\",width:80 ,children:[] },"
-				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] }"
+				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] },"
+				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
 		
 		List<String> itemsList=new ArrayList<String>();
+		List<String> itemsSortList=new ArrayList<String>();
 		if("3".equalsIgnoreCase(classes)){
-			String sql="select t.itemname from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
+			String sql="select t.itemname,t.sort from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
 			List<?> list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
-				itemsList.add(list.get(i)+"");
+				Object[] obj=(Object[])list.get(i);
+				itemsList.add(obj[0]+"");
+				itemsSortList.add(obj[1]+"");
 			}
 		}
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
@@ -162,7 +166,16 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					boolean checked=false;
+					String sort="";
 					checked=StringManagerUtils.existOrNot(itemsList, protocolConfig.getItems().get(j).getTitle(),false);
+					if(checked){
+						for(int k=0;k<itemsList.size();k++){
+							if(itemsList.get(k).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())){
+								sort=itemsSortList.get(k);
+								break;
+							}
+						}
+					}
 					String resolutionMode="数据量";
 					if(protocolConfig.getItems().get(j).getResolutionMode()==0){
 						resolutionMode="开关量";
@@ -188,7 +201,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							+ "\"RWType\":\""+RWType+"\","
 							+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
 							+ "\"resolutionMode\":\""+resolutionMode+"\","
-							+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\"},");
+							+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
+							+ "\"sort\":\""+sort+"\"},");
 				}
 				break;
 			}
@@ -198,7 +212,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		}
 		result_json.append("]");
 		result_json.append("}");
-		return result_json.toString();
+		return result_json.toString().replaceAll("null", "");
 	}
 	
 	public String getProtocolEnumOrSwitchItemsConfigData(String protocolCode,String resolutionMode){
