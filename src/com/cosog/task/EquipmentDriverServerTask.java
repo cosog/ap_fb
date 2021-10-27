@@ -52,7 +52,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -228,7 +228,6 @@ public class EquipmentDriverServerTask {
 					}
 				}
 			}
-			
 		}
 //		Collections.sort(acquisitionItemColumns);
 		acquisitionItemColumnsMap.put("pumpDeviceAcquisitionItemColumns", pumpDeviceAcquisitionItemColumns);
@@ -307,6 +306,7 @@ public class EquipmentDriverServerTask {
 					String addColumsSql="alter table "+tableName+" add "+acquisitionItemColumns.get(i)+" VARCHAR2(50)";
 					pstmt = conn.prepareStatement(addColumsSql);
 					pstmt.executeUpdate();
+					System.out.println("表"+tableName+"添加字段:"+acquisitionItemColumns.get(i));
 					result++;
 				}
 			}
@@ -318,6 +318,7 @@ public class EquipmentDriverServerTask {
 					pstmt = conn.prepareStatement(deleteColumsSql);
 					pstmt.executeUpdate();
 					result++;
+					System.out.println("表"+tableName+"删除字段:"+acquisitionItemDataBaseColumns.get(i));
 				}
 			}
 			System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-"+tableName+"同步数据库字段");
@@ -345,7 +346,8 @@ public class EquipmentDriverServerTask {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==deviceType){
 				for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
-					if(!StringManagerUtils.existOrNot(acquisitionItemColumns, "addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr(),false)){
+					if((!"w".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getRWType()))//非只写
+						&&(!StringManagerUtils.existOrNot(acquisitionItemColumns, "addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr(),false))){
 						String unit=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getUnit();
 						
 						acquisitionItemColumns.add("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
@@ -357,6 +359,7 @@ public class EquipmentDriverServerTask {
 			}
 		}
 		List<String> dataDictionaryItems=new ArrayList<String>();
+		List<String> dataDictionaryItemsName=new ArrayList<String>();
 		List<String> dataDictionaryItemsId=new ArrayList<String>();
 		String sql="select t1.dataitemid,t1.cname,t1.ename,t1.sorts "
 				+ " from tbl_dist_item t1 where t1.sysdataid=(select t2.sysdataid from tbl_dist_name t2 where t2.sysdataid='"+dataDictionaryId+"') "
@@ -373,6 +376,7 @@ public class EquipmentDriverServerTask {
 			int maxSortNum=1;
 			while(rs.next()){
 				dataDictionaryItemsId.add(rs.getString(1));
+				dataDictionaryItemsName.add(rs.getString(2));
 				dataDictionaryItems.add(rs.getString(3));
 				maxSortNum=rs.getInt(4);
 			}
@@ -389,6 +393,20 @@ public class EquipmentDriverServerTask {
 					pstmt = conn.prepareStatement(addDataDict);
 					pstmt.executeUpdate();
 					result++;
+				}else{//如果存在，判断名称是否改变
+					String tiemColumn=acquisitionItemColumns.get(i);
+					String itemName=acquisitionItemsName.get(i);
+					for(int j=0;j<dataDictionaryItems.size();j++){
+						if(tiemColumn.equalsIgnoreCase(dataDictionaryItems.get(j))){
+							if(!itemName.equalsIgnoreCase(dataDictionaryItemsName.get(j))){//如果名称改变
+								String addDataDict="update tbl_dist_item t set t.cname='"+itemName+"' where t.dataitemid='"+dataDictionaryItemsId.get(j)+"'";
+								pstmt = conn.prepareStatement(addDataDict);
+								pstmt.executeUpdate();
+							}
+							
+							break;
+						}
+					}
 				}
 			}
 			//删除协议中不存在的字典项

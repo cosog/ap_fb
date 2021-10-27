@@ -187,7 +187,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	}
 	
 	public String getDeviceHistoryDetailsData(String deviceName,String deviceType,String recordId,String isHis) throws IOException, SQLException{
-		int items=4;
+		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -262,7 +262,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				List<ModbusProtocolConfig.Items> protocolItems=new ArrayList<ModbusProtocolConfig.Items>();
 				List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 				for(int j=0;j<protocol.getItems().size();j++){
-					if(!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false)){
+					if((!"w".equalsIgnoreCase(protocol.getItems().get(j).getRWType())) 
+							&& (!StringManagerUtils.existOrNot(columnsNameList, protocol.getItems().get(j).getTitle(), false))){
 						for(int k=0;k<itemsArr.length;k++){
 							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
 								String column="ADDR"+protocol.getItems().get(j).getAddr();
@@ -301,6 +302,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 						String columnDataType="";
 						String resolutionMode="";
 						String bitIndex="";
+						String unit=protocolItems.get(j).getUnit();
 						if(protocolItems.get(j).getResolutionMode()==1){//如果是枚举量
 							boolean isMatch=false;
 							columnName=protocolItems.get(j).getTitle();
@@ -313,14 +315,14 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 									if(value.equals(protocolItems.get(j).getMeaning().get(l).getValue()+"")){
 										isMatch=true;
 										value=protocolItems.get(j).getMeaning().get(l).getMeaning();
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 										break;
 									}
 								}
 							}
 							if(!isMatch){
-								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 								protocolItemResolutionDataList.add(protocolItemResolutionData);
 							}
 						}else if(protocolItems.get(j).getResolutionMode()==0){//如果是开关量
@@ -347,18 +349,18 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 													value=valueArr[m];
 												}
 												
-												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 												protocolItemResolutionDataList.add(protocolItemResolutionData);
 												break;
 											}
 										}
 									}else{
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
 							}else{
-								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+								ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 								protocolItemResolutionDataList.add(protocolItemResolutionData);
 							}
 						}else{//如果是数据量
@@ -367,7 +369,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							column="ADDR"+addr;
 							columnDataType=protocolItems.get(j).getIFDataType();
 							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
-							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex);
+							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit);
 							protocolItemResolutionDataList.add(protocolItemResolutionData);
 						} 
 					}
@@ -392,6 +394,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							String columnDataType="";
 							String resolutionMode="";
 							String bitIndex="";
+							String unit="";
 							int alarmLevel=0;
 							if(index<protocolItemResolutionDataList.size()){
 								columnName=protocolItemResolutionDataList.get(index).getColumnName();
@@ -402,6 +405,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 								columnDataType=protocolItemResolutionDataList.get(index).getColumnDataType();
 								resolutionMode=protocolItemResolutionDataList.get(index).getResolutionMode();
 								bitIndex=protocolItemResolutionDataList.get(index).getBitIndex();
+								unit=protocolItemResolutionDataList.get(index).getUnit();
 								for(int l=0;l<alarmItemsList.size();l++){
 									Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
 									if(protocolItemResolutionDataList.get(index).getAddr().equals(alarmItemObj[2]+"")){
@@ -429,7 +433,12 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 									}
 								}
 							}
-							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+//							result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							if(StringManagerUtils.isNotNull(columnName)&&StringManagerUtils.isNotNull(unit)){
+								result_json.append("\"name"+(k+1)+"\":\""+(columnName+"("+unit+")")+"\",");
+							}else{
+								result_json.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							}
 							result_json.append("\"value"+(k+1)+"\":\""+value+"\",");
 							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"addr\":\""+addr+"\","
 									+ "\"columnName\":\""+columnName+"\","

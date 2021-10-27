@@ -9,8 +9,10 @@ public class ProtocolItemResolutionData {
 	public String columnDataType="";
 	public String resolutionMode="";
 	public String bitIndex="";
+	public String unit="";
+	public int sort;
 	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
-			String columnDataType, String resolutionMode,String bitIndex) {
+			String columnDataType, String resolutionMode,String bitIndex,String unit,int sort) {
 		super();
 		this.columnName = columnName;
 		this.value = value;
@@ -20,6 +22,21 @@ public class ProtocolItemResolutionData {
 		this.columnDataType = columnDataType;
 		this.resolutionMode = resolutionMode;
 		this.bitIndex = bitIndex;
+		this.unit=unit;
+		this.sort=sort;
+	}
+	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
+			String columnDataType, String resolutionMode,String bitIndex,String unit) {
+		super();
+		this.columnName = columnName;
+		this.value = value;
+		this.rawValue = rawValue;
+		this.addr = addr;
+		this.column = column;
+		this.columnDataType = columnDataType;
+		this.resolutionMode = resolutionMode;
+		this.bitIndex = bitIndex;
+		this.unit=unit;
 	}
 	public String getColumnName() {
 		return columnName;
@@ -68,5 +85,11 @@ public class ProtocolItemResolutionData {
 	}
 	public void setBitIndex(String bitIndex) {
 		this.bitIndex = bitIndex;
+	}
+	public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 }

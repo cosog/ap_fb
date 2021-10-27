@@ -215,16 +215,14 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 			
 			if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper==null || pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot==undefined){
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper = PipelineDeviceRealTimeMonitoringDataHandsontableHelper.createNew("PipelineRealTimeMonitoringInfoDataTableInfoDiv_id");
-				var colHeaders="['名称','变量','名称','变量','名称','变量','名称','变量']";
+				var colHeaders="['名称','变量','名称','变量','名称','变量']";
 				var columns="[" 
 						+"{data:'name1'}," 
 						+"{data:'value1'}," 
 						+"{data:'name2'},"
 						+"{data:'value2'}," 
 						+"{data:'name3'}," 
-						+"{data:'value3'}," 
-						+"{data:'name4'}," 
-						+"{data:'value4'}" 
+						+"{data:'value3'}"
 						+"]";
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns=Ext.JSON.decode(columns);
@@ -364,16 +362,21 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
         					td.style.fontWeight = 'bold';
    			             	td.style.fontFamily = 'SimHei';
         					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						if(AlarmShowStyle.Details.FirstLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						}
         						td.style.color='#'+AlarmShowStyle.Details.FirstLevel.Color;
         					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						if(AlarmShowStyle.Details.SecondLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						}
         						td.style.color='#'+AlarmShowStyle.Details.SecondLevel.Color;
         					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						if(AlarmShowStyle.Details.ThirdLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						}
         						td.style.color='#'+AlarmShowStyle.Details.ThirdLevel.Color;
         					}
-        					
         				}
                 	}
     			}
@@ -384,7 +387,8 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	        	var hotElement = document.querySelector('#'+pipelineDeviceRealTimeMonitoringDataHandsontableHelper.divid);
 	        	pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
-	        		colWidths: [30,20,30,20,30,20,30,20],
+//	        		colWidths: [30,15,30,15,30,15,30,15],
+	        		colWidths: [30,20,30,20,30,20],
 	                columns:pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                rowHeaders: false,//显示行头
@@ -394,7 +398,7 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
                         "row": 0,
                         "col": 0,
                         "rowspan": 1,
-                        "colspan": 8
+                        "colspan": 6
                     }],
 	                cells: function (row, col, prop) {
 	                	var cellProperties = {};
@@ -421,6 +425,7 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 		                	var resolutionMode=0;
 		                	for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 		        				if(relRow==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
+		        					item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
 		        					columnDataType=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					resolutionMode=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode;
 		        					break;

@@ -524,6 +524,7 @@ public class DriverAPIController extends BaseController{
 								String columnDataType=protocol.getItems().get(j).getIFDataType();
 								String resolutionMode=protocol.getItems().get(j).getResolutionMode()+"";
 								String bitIndex="";
+								String unit=protocol.getItems().get(j).getUnit();
 								int alarmLevel=0;
 								if(StringManagerUtils.existOrNot(columnsList, columnName, false)){
 									updateRealtimeData+=",t."+columnName+"='"+value+"'";
@@ -540,7 +541,7 @@ public class DriverAPIController extends BaseController{
 												}
 											}
 										}
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}else if(protocol.getItems().get(j).getResolutionMode()==0){//如果是开关量
 										boolean isMatch=false;
@@ -560,22 +561,22 @@ public class DriverAPIController extends BaseController{
 																value=valueArr[m];
 															}
 															
-															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
 															protocolItemResolutionDataList.add(protocolItemResolutionData);
 															break;
 														}
 													}
 												}else{
-													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
 													protocolItemResolutionDataList.add(protocolItemResolutionData);
 												}
 											}
 										}else{
-											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
 											protocolItemResolutionDataList.add(protocolItemResolutionData);
 										}
 									}else{
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
@@ -600,6 +601,7 @@ public class DriverAPIController extends BaseController{
 						acquisitionItemInfo.setResolutionMode(protocolItemResolutionDataList.get(i).getResolutionMode());
 						acquisitionItemInfo.setBitIndex(protocolItemResolutionDataList.get(i).getBitIndex());
 						acquisitionItemInfo.setAlarmLevel(alarmLevel);
+						acquisitionItemInfo.setUnit(protocolItemResolutionDataList.get(i).getUnit());
 						for(int l=0;l<alarmItemsList.size();l++){
 							Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
 							if((acquisitionItemInfo.getAddr()+"").equals(alarmItemObj[2]+"")){
@@ -697,7 +699,7 @@ public class DriverAPIController extends BaseController{
 					
 					
 					//处理websocket推送
-					int items=4;
+					int items=3;
 					String columns = "[";
 					for(int i=1;i<=items;i++){
 						columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
@@ -727,6 +729,7 @@ public class DriverAPIController extends BaseController{
 							String column="";
 							String columnDataType="";
 							String resolutionMode="";
+							String unit="";
 							int alarmLevel=0;
 							if(index<acquisitionItemInfoList.size()){
 								columnName=acquisitionItemInfoList.get(index).getTitle();
@@ -735,8 +738,14 @@ public class DriverAPIController extends BaseController{
 								columnDataType=acquisitionItemInfoList.get(index).getDataType();
 								resolutionMode=acquisitionItemInfoList.get(index).getResolutionMode()+"";
 								alarmLevel=acquisitionItemInfoList.get(index).getAlarmLevel();
+								unit=acquisitionItemInfoList.get(index).getUnit();
 							}
-							webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							
+							if(StringManagerUtils.isNotNull(columnName)&&StringManagerUtils.isNotNull(unit)){
+								webSocketSendData.append("\"name"+(k+1)+"\":\""+(columnName+"("+unit+")")+"\",");
+							}else{
+								webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+							}
 							webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
 							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"columnDataType\":\""+columnDataType+"\",\"resolutionMode\":\""+resolutionMode+"\",\"alarmLevel\":"+alarmLevel+"},");
 						}

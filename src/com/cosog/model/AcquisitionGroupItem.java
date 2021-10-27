@@ -18,7 +18,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	private String itemName;
 	private String itemCode;
 	private String matrix;
-
+	private Integer sort;
 	
 
 	
@@ -29,10 +29,16 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public AcquisitionGroupItem(Integer groupId, Integer itemId, String matrix) {
+	public AcquisitionGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
+			String matrix, Integer sort) {
+		super();
+		this.id = id;
 		this.groupId = groupId;
 		this.itemId = itemId;
+		this.itemName = itemName;
+		this.itemCode = itemCode;
 		this.matrix = matrix;
+		this.sort = sort;
 	}
 
 	@Id
@@ -41,6 +47,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -87,6 +94,14 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	public void setItemCode(String itemCode) {
 		this.itemCode = itemCode;
+	}
+	@Column(name = "sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
 	}
 
 	

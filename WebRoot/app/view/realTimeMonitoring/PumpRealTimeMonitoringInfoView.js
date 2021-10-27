@@ -215,16 +215,14 @@ function CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 			var result =  Ext.JSON.decode(response.responseText);
 			if(pumpDeviceRealTimeMonitoringDataHandsontableHelper==null || pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot==undefined){
 				pumpDeviceRealTimeMonitoringDataHandsontableHelper = PumpDeviceRealTimeMonitoringDataHandsontableHelper.createNew("PumpRealTimeMonitoringInfoDataTableInfoDiv_id");
-				var colHeaders="['名称','变量','名称','变量','名称','变量','名称','变量']";
+				var colHeaders="['名称','变量','名称','变量','名称','变量']";
 				var columns="[" 
 						+"{data:'name1'}," 
 						+"{data:'value1'}," 
 						+"{data:'name2'},"
 						+"{data:'value2'}," 
 						+"{data:'name3'}," 
-						+"{data:'value3'}," 
-						+"{data:'name4'}," 
-						+"{data:'value4'}" 
+						+"{data:'value3'}" 
 						+"]";
 				pumpDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				pumpDeviceRealTimeMonitoringDataHandsontableHelper.columns=Ext.JSON.decode(columns);
@@ -382,16 +380,21 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
         					td.style.fontWeight = 'bold';
    			             	td.style.fontFamily = 'SimHei';
         					if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						if(AlarmShowStyle.Details.FirstLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						}
         						td.style.color='#'+AlarmShowStyle.Details.FirstLevel.Color;
         					}else if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						if(AlarmShowStyle.Details.SecondLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						}
         						td.style.color='#'+AlarmShowStyle.Details.SecondLevel.Color;
         					}else if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-        						td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						if(AlarmShowStyle.Details.ThirdLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						}
         						td.style.color='#'+AlarmShowStyle.Details.ThirdLevel.Color;
         					}
-        					
         				}
                 	}
     			}
@@ -402,7 +405,8 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	        	var hotElement = document.querySelector('#'+pumpDeviceRealTimeMonitoringDataHandsontableHelper.divid);
 	        	pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
-	        		colWidths: [30,20,30,20,30,20,30,20],
+//	        		colWidths: [30,15,30,15,30,15,30,15],
+	        		colWidths: [30,20,30,20,30,20],
 	                columns:pumpDeviceRealTimeMonitoringDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                rowHeaders: false,//显示行头
@@ -412,7 +416,7 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
                         "row": 0,
                         "col": 0,
                         "rowspan": 1,
-                        "colspan": 8
+                        "colspan": 6
                     }],
 	                cells: function (row, col, prop) {
 	                	var cellProperties = {};
@@ -439,6 +443,7 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 		                	var resolutionMode=0;
 		                	for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 		        				if(relRow==pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
+		        					item=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
 		        					columnDataType=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					resolutionMode=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode;
 		        					break;
