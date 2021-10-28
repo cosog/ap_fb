@@ -1,6 +1,6 @@
 package com.cosog.utils;
 
-public class ProtocolItemResolutionData {
+public class ProtocolItemResolutionData  implements Comparable<ProtocolItemResolutionData>{
 	public String columnName="";
 	public String value="";
 	public String rawValue="";
@@ -11,6 +11,10 @@ public class ProtocolItemResolutionData {
 	public String bitIndex="";
 	public String unit="";
 	public int sort;
+	
+	public ProtocolItemResolutionData() {
+		super();
+	}
 	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
 			String columnDataType, String resolutionMode,String bitIndex,String unit,int sort) {
 		super();
@@ -25,19 +29,41 @@ public class ProtocolItemResolutionData {
 		this.unit=unit;
 		this.sort=sort;
 	}
-	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
-			String columnDataType, String resolutionMode,String bitIndex,String unit) {
-		super();
-		this.columnName = columnName;
-		this.value = value;
-		this.rawValue = rawValue;
-		this.addr = addr;
-		this.column = column;
-		this.columnDataType = columnDataType;
-		this.resolutionMode = resolutionMode;
-		this.bitIndex = bitIndex;
-		this.unit=unit;
+//	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
+//			String columnDataType, String resolutionMode,String bitIndex,String unit) {
+//		super();
+//		this.columnName = columnName;
+//		this.value = value;
+//		this.rawValue = rawValue;
+//		this.addr = addr;
+//		this.column = column;
+//		this.columnDataType = columnDataType;
+//		this.resolutionMode = resolutionMode;
+//		this.bitIndex = bitIndex;
+//		this.unit=unit;
+//	}
+	
+	@Override
+	public int compareTo(ProtocolItemResolutionData protocolItemResolutionData) {//重写Comparable接口的compareTo方法   按照sort升序 addr升序 bitIndex升序
+		if(this.sort>protocolItemResolutionData.getSort()){
+			return 1;
+		}else if(this.sort<protocolItemResolutionData.getSort()){
+			return -1;
+		}else{
+			if(StringManagerUtils.stringToInteger(this.addr)>StringManagerUtils.stringToInteger(protocolItemResolutionData.getAddr())){
+				return 1;
+			}else if(StringManagerUtils.stringToInteger(this.addr)<StringManagerUtils.stringToInteger(protocolItemResolutionData.getAddr())){
+				return -1;
+			}else{
+				if(StringManagerUtils.stringToInteger(this.bitIndex)>StringManagerUtils.stringToInteger(protocolItemResolutionData.getBitIndex())){
+					return 1;
+				}else{
+					return -1;
+				}
+			}
+		}
 	}
+	
 	public String getColumnName() {
 		return columnName;
 	}
@@ -91,5 +117,13 @@ public class ProtocolItemResolutionData {
 	}
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public int getSort() {
+		return sort;
+	}
+
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 }

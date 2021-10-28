@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -434,10 +435,17 @@ public class DriverAPIController extends BaseController{
 					+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t2.id";
-			
+			String itemsSql="select t.wellname,t3.protocol, "
+					+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
+					+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort "
+					+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
+					+ " group by t.wellname,t3.protocol";
 			
 			List list = commonDataService.findCallSql(sql);
-			if(list.size()>0){
+			List<?> itemsList = commonDataService.findCallSql(itemsSql);
+			if(list.size()>0 && itemsList.size()>0){
 				Object[] obj=(Object[]) list.get(0);
 				String lastSaveTime=obj[1]+"";
 				String acqTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
@@ -448,12 +456,18 @@ public class DriverAPIController extends BaseController{
 					save=true;
 				}
 				String wellId=obj[obj.length-1]+"";
-				String acqColumnsSql="select v1.COLUMN_NAME from "
-						+ " (select * from user_tab_cols t where t.TABLE_NAME=UPPER('"+realtimeTable+"')) v1,"
-						+ " (select * from user_tab_cols t where t.TABLE_NAME=UPPER('"+historyTable+"')) v2 "
-						+ " where v1.COLUMN_NAME=v2.COLUMN_NAME and v1.COLUMN_NAME like 'ADDR%' "
-						+ " order by v1.COLUMN_ID";
-				List<String> columnsList = commonDataService.findCallSql(acqColumnsSql);
+				//配置的采控项
+				Object[] itemsObj=(Object[]) itemsList.get(0);
+				String[] itemsArr=(itemsObj[2]+"").split(",");
+				String[] itemsSortArr=(itemsObj[3]+"").split(",");
+				
+//				String acqColumnsSql="select v1.COLUMN_NAME from "
+//						+ " (select * from user_tab_cols t where t.TABLE_NAME=UPPER('"+realtimeTable+"')) v1,"
+//						+ " (select * from user_tab_cols t where t.TABLE_NAME=UPPER('"+historyTable+"')) v2 "
+//						+ " where v1.COLUMN_NAME=v2.COLUMN_NAME and v1.COLUMN_NAME like 'ADDR%' "
+//						+ " order by v1.COLUMN_ID";
+//				List<String> columnsList = commonDataService.findCallSql(acqColumnsSql);
+				
 				
 				
 				Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -526,10 +540,20 @@ public class DriverAPIController extends BaseController{
 								String bitIndex="";
 								String unit=protocol.getItems().get(j).getUnit();
 								int alarmLevel=0;
-								if(StringManagerUtils.existOrNot(columnsList, columnName, false)){
-									updateRealtimeData+=",t."+columnName+"='"+value+"'";
+								int sort=9999;
+								if(StringManagerUtils.existOrNot(itemsArr, title, false)){
+									for(int k=0;k<itemsArr.length;k++){
+										if(title.equalsIgnoreCase(itemsArr[k])){
+											sort=StringManagerUtils.stringToInteger(itemsSortArr[k]);
+											break;
+										}
+									}
+									
+									
+									
+									updateRealtimeData+=",t."+columnName+"='"+rawValue+"'";
 									insertHistColumns+=","+columnName;
-									insertHistValue+=",'"+value+"'";
+									insertHistValue+=",'"+rawValue+"'";
 									if(protocol.getItems().get(j).getResolutionMode()==1){//如果是枚举量
 										boolean isMatch=false;
 										if(protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
@@ -541,7 +565,7 @@ public class DriverAPIController extends BaseController{
 												}
 											}
 										}
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}else if(protocol.getItems().get(j).getResolutionMode()==0){//如果是开关量
 										boolean isMatch=false;
@@ -561,22 +585,22 @@ public class DriverAPIController extends BaseController{
 																value=valueArr[m];
 															}
 															
-															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
+															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 															protocolItemResolutionDataList.add(protocolItemResolutionData);
 															break;
 														}
 													}
 												}else{
-													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
+													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 													protocolItemResolutionDataList.add(protocolItemResolutionData);
 												}
 											}
 										}else{
-											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
+											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 											protocolItemResolutionDataList.add(protocolItemResolutionData);
 										}
 									}else{
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
@@ -588,6 +612,8 @@ public class DriverAPIController extends BaseController{
 					updateRealtimeData+=" where t.wellId= "+wellId;
 					insertHistSql="insert into "+historyTable+"("+insertHistColumns+")values("+insertHistValue+")";
 					
+					//排序
+					Collections.sort(protocolItemResolutionDataList);
 					//报警判断
 					for(int i=0;i<protocolItemResolutionDataList.size();i++){
 						int alarmLevel=0;
@@ -602,6 +628,7 @@ public class DriverAPIController extends BaseController{
 						acquisitionItemInfo.setBitIndex(protocolItemResolutionDataList.get(i).getBitIndex());
 						acquisitionItemInfo.setAlarmLevel(alarmLevel);
 						acquisitionItemInfo.setUnit(protocolItemResolutionDataList.get(i).getUnit());
+						acquisitionItemInfo.setSort(protocolItemResolutionDataList.get(i).getSort());
 						for(int l=0;l<alarmItemsList.size();l++){
 							Object[] alarmItemObj=(Object[]) alarmItemsList.get(l);
 							if((acquisitionItemInfo.getAddr()+"").equals(alarmItemObj[2]+"")){
@@ -713,11 +740,28 @@ public class DriverAPIController extends BaseController{
 					webSocketSendData.append("\"totalRoot\":[");
 					info_json.append("[");
 					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+" 在线\"},");
+					//排序
+					Collections.sort(acquisitionItemInfoList);
+					//插入排序间隔的空项
+					List<AcquisitionItemInfo> finalAcquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
+					for(int j=0;j<acquisitionItemInfoList.size();j++){
+						if(j>0&&acquisitionItemInfoList.get(j).getSort()<9999
+							&&acquisitionItemInfoList.get(j).getSort()-acquisitionItemInfoList.get(j-1).getSort()>1
+						){
+							int def=acquisitionItemInfoList.get(j).getSort()-acquisitionItemInfoList.get(j-1).getSort();
+							for(int k=1;k<def;k++){
+								AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
+								finalAcquisitionItemInfoList.add(acquisitionItemInfo);
+							}
+						}
+						finalAcquisitionItemInfoList.add(acquisitionItemInfoList.get(j));
+					}
+					
 					int row=1;
-					if(acquisitionItemInfoList.size()%items==0){
-						row=acquisitionItemInfoList.size()/items+1;
+					if(finalAcquisitionItemInfoList.size()%items==0){
+						row=finalAcquisitionItemInfoList.size()/items+1;
 					}else{
-						row=acquisitionItemInfoList.size()/items+2;
+						row=finalAcquisitionItemInfoList.size()/items+2;
 					}
 					
 					for(int j=1;j<row;j++){
@@ -731,14 +775,14 @@ public class DriverAPIController extends BaseController{
 							String resolutionMode="";
 							String unit="";
 							int alarmLevel=0;
-							if(index<acquisitionItemInfoList.size()){
-								columnName=acquisitionItemInfoList.get(index).getTitle();
-								value=acquisitionItemInfoList.get(index).getValue();
-								column=acquisitionItemInfoList.get(index).getColumn();
-								columnDataType=acquisitionItemInfoList.get(index).getDataType();
-								resolutionMode=acquisitionItemInfoList.get(index).getResolutionMode()+"";
-								alarmLevel=acquisitionItemInfoList.get(index).getAlarmLevel();
-								unit=acquisitionItemInfoList.get(index).getUnit();
+							if(index<finalAcquisitionItemInfoList.size() && StringManagerUtils.isNotNull(finalAcquisitionItemInfoList.get(index).getTitle())){
+								columnName=finalAcquisitionItemInfoList.get(index).getTitle();
+								value=finalAcquisitionItemInfoList.get(index).getValue();
+								column=finalAcquisitionItemInfoList.get(index).getColumn();
+								columnDataType=finalAcquisitionItemInfoList.get(index).getDataType();
+								resolutionMode=finalAcquisitionItemInfoList.get(index).getResolutionMode()+"";
+								alarmLevel=finalAcquisitionItemInfoList.get(index).getAlarmLevel();
+								unit=finalAcquisitionItemInfoList.get(index).getUnit();
 							}
 							
 							if(StringManagerUtils.isNotNull(columnName)&&StringManagerUtils.isNotNull(unit)){

@@ -343,6 +343,23 @@ public class StringManagerUtils {
 		return flag;
 	}
 	
+	public static boolean existOrNot(String data[], String key,boolean caseSensitive) {
+		boolean flag = false;
+		for (int i=0;i<data.length;i++) {
+			boolean match=false;
+			if(caseSensitive){
+				match=data[i].equals(key);
+			}else{
+				match=data[i].equalsIgnoreCase(key);
+			}
+			if (match) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+	
 	public static boolean existOrNot(List<String> list, String key,boolean caseSensitive) {
 		boolean flag = false;
 		for (int i=0;i<list.size();i++) {

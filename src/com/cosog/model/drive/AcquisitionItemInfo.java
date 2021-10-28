@@ -1,6 +1,8 @@
 package com.cosog.model.drive;
 
-public class AcquisitionItemInfo {
+import com.cosog.utils.StringManagerUtils;
+
+public class AcquisitionItemInfo implements Comparable<AcquisitionItemInfo>{
 
 	public int addr;
 	public String column;
@@ -14,6 +16,8 @@ public class AcquisitionItemInfo {
 	public String resolutionMode="";
 	public String bitIndex="";
 	
+	public int sort;
+	
 	public float alarmLimit;
 	public float hystersis;
 	public String alarmInfo;
@@ -26,8 +30,8 @@ public class AcquisitionItemInfo {
 	}
 
 	public AcquisitionItemInfo(int addr, String column, String title, String value, String rawValue, String dataType,
-			String unit, int alarmLevel, String resolutionMode, String bitIndex, float alarmLimit, float hystersis,
-			String alarmInfo, int alarmType, int alarmDelay) {
+			String unit, int alarmLevel, String resolutionMode, String bitIndex, int sort, float alarmLimit,
+			float hystersis, String alarmInfo, int alarmType, int alarmDelay, int isSendMessage, int isSendMail) {
 		super();
 		this.addr = addr;
 		this.column = column;
@@ -39,11 +43,35 @@ public class AcquisitionItemInfo {
 		this.alarmLevel = alarmLevel;
 		this.resolutionMode = resolutionMode;
 		this.bitIndex = bitIndex;
+		this.sort = sort;
 		this.alarmLimit = alarmLimit;
 		this.hystersis = hystersis;
 		this.alarmInfo = alarmInfo;
 		this.alarmType = alarmType;
 		this.alarmDelay = alarmDelay;
+		this.isSendMessage = isSendMessage;
+		this.isSendMail = isSendMail;
+	}
+
+	@Override
+	public int compareTo(AcquisitionItemInfo acquisitionItemInfo) {//重写Comparable接口的compareTo方法   按照sort升序 addr升序 bitIndex升序
+		if(this.sort>acquisitionItemInfo.getSort()){
+			return 1;
+		}else if(this.sort<acquisitionItemInfo.getSort()){
+			return -1;
+		}else{
+			if(this.addr>acquisitionItemInfo.getAddr()){
+				return 1;
+			}else if(this.addr<acquisitionItemInfo.getAddr()){
+				return -1;
+			}else{
+				if(StringManagerUtils.stringToInteger(this.bitIndex)>StringManagerUtils.stringToInteger(acquisitionItemInfo.getBitIndex())){
+					return 1;
+				}else{
+					return -1;
+				}
+			}
+		}
 	}
 
 
@@ -193,6 +221,14 @@ public class AcquisitionItemInfo {
 
 	public void setIsSendMail(int isSendMail) {
 		this.isSendMail = isSendMail;
+	}
+
+	public int getSort() {
+		return sort;
+	}
+
+	public void setSort(int sort) {
+		this.sort = sort;
 	}
 	
 }
