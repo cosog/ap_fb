@@ -60,7 +60,7 @@ public class EquipmentDriverServerTask {
 		String probeUrl=Config.getInstance().configFile.getDriverConfig().getProbe().getInit();
 		
 		initWellCommStatus();
-//		
+		
 //		String path="";
 //		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 //		path=stringManagerUtils.getFilePath("test1.json","test/");
