@@ -2520,33 +2520,37 @@ public class StringManagerUtils {
 //	    	String myEMailAccount="271875319@qq.com";
 //	    	String myEMailPassword="aaqpcjvcjdcibhid";
 //	    	String myEMailSMTPHost="smtp.qq.com";
-//	    	String stmpPort="465";
+//	    	String smtpPort="465";
 //	    	String receiveMailAccount="zhaojinmeng1128@126.com";
 	    	
+//	    	for(int i=0;i<receivingAccount.size();i++){
+//	    		System.out.println("发送邮件："+receivingAccount.get(i)+","+topic+","+content);
+//	    	}
 	    	
 	    	String myEMailAccount="zhaojinmeng1128@126.com";
-	    	String myEMailPassword="NLEILMQVNBXGRNBT";
+	    	String myEMailPassword="YAOLBHNROJWHYCVX";//YAOLBHNROJWHYCVX  NLEILMQVNBXGRNBT
 	    	String myEMailSMTPHost="smtp.126.com";
-	    	String stmpPort="465";
+	    	String smtpPort="465";
 	    	String receiveMailAccount="271875319@qq.com";
 	    	
 	    	
 	    	try {
 	    		Properties properties=new Properties();
+	    		//设置邮件服务器
 		    	properties.setProperty("mail.smtp.host", myEMailSMTPHost);
 		    	properties.setProperty("mail.transport.protocol", "smtp");
 		    	properties.setProperty("mail.smtp.auth", "true");
 		    	
-		    	//qq存在一个特性设置SSL加密
+		    	//SSL加密
+		    	properties.put("mail.smtp.socketFactory.port", smtpPort);
+		    	properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		    	properties.setProperty("mail.smtp.socketFactory.fallback", "false");
+		    	properties.setProperty("mail.smtp.socketFactory.port", smtpPort);
 		    	
-//	    		MailSSLSocketFactory sf=new MailSSLSocketFactory();
-//	    		sf.setTrustAllHosts(true);
-	    		properties.put("mail.stmp.port", stmpPort);
-	    		properties.put("mail.stmp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-	    		properties.put("mail.stmp.socketFactory.fallback", "false");
-	    		properties.put("mail.stmp.socketFactory.port", stmpPort);
-//	    		properties.put("mail.stmp.ssl.socketFactory", sf);
-//	    		properties.put("mail.stmp.ssl.enable", "true");
+//		    	properties.put("mail.smtp.port", smtpPort);
+//	    		
+//	    		properties.put("mail.smtp.socketFactory.fallback", "false");
+	    		
 	    		
 	    		
 	    		//创建session对象
@@ -2575,6 +2579,7 @@ public class StringManagerUtils {
 	    			}else{
 	    				mimeMessage.addRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receivingAccount.get(i)));
 	    			}
+	    			System.out.println("发送邮件："+receivingAccount.get(i)+","+topic+","+content);
 	    		}
 	    		//邮件标题
 	    		mimeMessage.setSubject(topic);
@@ -2591,6 +2596,9 @@ public class StringManagerUtils {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				result=false;
+		    	for(int i=0;i<receivingAccount.size();i++){
+		    		System.out.println("发送邮件失败："+receivingAccount.get(i)+","+topic+","+content);
+		    	}
 				e.printStackTrace();
 			}
 	    	return result;

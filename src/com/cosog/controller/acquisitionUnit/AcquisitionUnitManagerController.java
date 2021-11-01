@@ -441,11 +441,18 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String result = "";
 		PrintWriter out = response.getWriter();
 		AcquisitionGroupItem acquisitionGroupItem = null;
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		try {
 			String params = ParamUtils.getParameter(request, "params");
 			String sorts = ParamUtils.getParameter(request, "sorts");
 			String matrixCodes = ParamUtils.getParameter(request, "matrixCodes");
 			String groupCode = ParamUtils.getParameter(request, "groupCode");
+			String protocolName = ParamUtils.getParameter(request, "protocol");
 			log.debug("grantAcquisitionItemsPermission params==" + params);
 			String paramsArr[] = StringManagerUtils.split(params, ",");
 			String sortArr[] = StringManagerUtils.split(sorts, ",");
@@ -455,18 +462,49 @@ public class AcquisitionUnitManagerController extends BaseController {
 			if(list.size()>0){
 				groupId=list.get(0).toString();
 			}
-			if (paramsArr.length > 0 && StringManagerUtils.isNotNull(groupId)) {
+			
+			ModbusProtocolConfig.Protocol protocol=null;
+			for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
+				if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
+					protocol=modbusProtocolConfig.getProtocol().get(j);
+					break;
+				}
+			}
+			
+			if (paramsArr.length > 0 && StringManagerUtils.isNotNull(groupId) && protocol!=null) {
 				this.acquisitionUnitItemManagerService.deleteCurrentAcquisitionGroupOwnItems(groupId);
 				if (matrixCodes != "" || matrixCodes != null) {
 					String module_matrix[] = matrixCodes.split("\\|");
+					List<String> itemsList=new ArrayList<String>();
 					for (int i = 0; i < module_matrix.length; i++) {
 						String module_[] = module_matrix[i].split("\\:");
+						String itemName=module_[0];
+						int itemAddr=StringManagerUtils.stringTransferInteger(module_[1]);
+						String resolutionMode=module_[2];
+						int bitIndex=-99;
+						if("开关量".equalsIgnoreCase(resolutionMode)){//如果是开关量
+							for(int j=0;j<protocol.getItems().size();j++){
+								if(itemAddr==protocol.getItems().get(j).getAddr()){
+									for(int k=0;protocol.getItems().get(j).getMeaning()!=null&&k<protocol.getItems().get(j).getMeaning().size();k++){
+										if(itemName.equalsIgnoreCase(protocol.getItems().get(j).getMeaning().get(k).getMeaning())){
+											itemName=protocol.getItems().get(j).getTitle();
+											bitIndex=protocol.getItems().get(j).getMeaning().get(k).getValue();
+											break;
+										}
+									}
+									break;
+								}
+							}
+						}
+						
+						
 						acquisitionGroupItem = new AcquisitionGroupItem();
 						acquisitionGroupItem.setGroupId(Integer.parseInt(groupId));
 						log.debug("groupCode==" + groupCode);
-						acquisitionGroupItem.setItemName(module_[0]);
-						acquisitionGroupItem.setSort(StringManagerUtils.isNumber(module_[1])?StringManagerUtils.stringTransferInteger(module_[1]):null);
-						acquisitionGroupItem.setMatrix(module_[2]);
+						acquisitionGroupItem.setItemName(itemName);
+						acquisitionGroupItem.setSort(StringManagerUtils.isNumber(module_[3])?StringManagerUtils.stringTransferInteger(module_[3]):null);
+						acquisitionGroupItem.setBitIndex(bitIndex>=0?bitIndex:null);
+						acquisitionGroupItem.setMatrix(module_[4]);
 						this.acquisitionUnitItemManagerService.grantAcquisitionItemsPermission(acquisitionGroupItem);
 					}
 				}
@@ -543,12 +581,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getProtocolEnumItemMeaningConfigData")
-	public String getProtocolEnumItemMeaningConfigData() throws Exception {
+	@RequestMapping("/getProtocolItemMeaningConfigData")
+	public String getProtocolItemMeaningConfigData() throws Exception {
 		String protocolCode = ParamUtils.getParameter(request, "protocolCode");
 		String itemAddr = ParamUtils.getParameter(request, "itemAddr");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolEnumItemMeaningConfigData(protocolCode,itemAddr);
+		json = acquisitionUnitItemManagerService.getProtocolItemMeaningConfigData(protocolCode,itemAddr);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -565,6 +603,22 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String code = ParamUtils.getParameter(request, "code");
 		String json = "";
 		json = acquisitionUnitItemManagerService.getProtocolItemsConfigData(protocolName,classes,code);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getProtocolAcqUnitItemsConfigData")
+	public String getProtocolAcqUnitItemsConfigData() throws Exception {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String classes = ParamUtils.getParameter(request, "classes");
+		String code = ParamUtils.getParameter(request, "code");
+		String json = "";
+		json = acquisitionUnitItemManagerService.getProtocolAcqUnitItemsConfigData(protocolName,classes,code);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -1306,43 +1360,49 @@ public class AcquisitionUnitManagerController extends BaseController {
 			}
 			
 			if(StringManagerUtils.isNotNull(modbusProtocolInstanceSaveData.getName())){
-				ProtocolInstance protocolInstance=new ProtocolInstance();
-				protocolInstance.setId(modbusProtocolInstanceSaveData.getId());
-				protocolInstance.setCode(modbusProtocolInstanceSaveData.getCode());
-				protocolInstance.setName(modbusProtocolInstanceSaveData.getName());
-				protocolInstance.setDeviceType(modbusProtocolInstanceSaveData.getDeviceType());
-				protocolInstance.setUnitId(modbusProtocolInstanceSaveData.getUnitId());
-				protocolInstance.setAcqProtocolType(modbusProtocolInstanceSaveData.getAcqProtocolType());
-				protocolInstance.setCtrlProtocolType(modbusProtocolInstanceSaveData.getCtrlProtocolType());
-				protocolInstance.setSignInPrefix(modbusProtocolInstanceSaveData.getSignInPrefix());
-				protocolInstance.setSignInSuffix(modbusProtocolInstanceSaveData.getSignInSuffix());
-				protocolInstance.setHeartbeatPrefix(modbusProtocolInstanceSaveData.getHeartbeatPrefix());
-				protocolInstance.setHeartbeatSuffix(modbusProtocolInstanceSaveData.getHeartbeatSuffix());
-				protocolInstance.setSort(modbusProtocolInstanceSaveData.getSort());
-				
-				try {
-					this.protocolInstanceManagerService.doModbusProtocolInstanceEdit(protocolInstance);
-					//实例名称是否改变
-					if(modbusProtocolInstanceSaveData.getName().equals(modbusProtocolInstanceSaveData.getOldName())){
-						List<String> instanceList=new ArrayList<String>();
-						instanceList.add(protocolInstance.getName());
-						EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
-					}else{
-						List<String> instanceList=new ArrayList<String>();
-						instanceList.add(modbusProtocolInstanceSaveData.getOldName());
-						EquipmentDriverServerTask.initInstanceConfig(instanceList, "delete");
-						
-						instanceList=new ArrayList<String>();
-						instanceList.add(modbusProtocolInstanceSaveData.getName());
-						EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
-						EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByProtocolInstanceId(modbusProtocolInstanceSaveData.getId()+"", "update");
-					}
+				String sql="select t.id from tbl_acq_unit_conf t where t.unit_name='"+modbusProtocolInstanceSaveData.getUnitName()+"' and rownum=1";
+				String unitId="";
+				List list = this.service.findCallSql(sql);
+				if(list.size()>0){
+					unitId=list.get(0).toString();
+					ProtocolInstance protocolInstance=new ProtocolInstance();
+					protocolInstance.setId(modbusProtocolInstanceSaveData.getId());
+					protocolInstance.setCode(modbusProtocolInstanceSaveData.getCode());
+					protocolInstance.setName(modbusProtocolInstanceSaveData.getName());
+					protocolInstance.setDeviceType(modbusProtocolInstanceSaveData.getDeviceType());
+					protocolInstance.setUnitId(StringManagerUtils.stringToInteger(unitId));
+					protocolInstance.setAcqProtocolType(modbusProtocolInstanceSaveData.getAcqProtocolType());
+					protocolInstance.setCtrlProtocolType(modbusProtocolInstanceSaveData.getCtrlProtocolType());
+					protocolInstance.setSignInPrefix(modbusProtocolInstanceSaveData.getSignInPrefix());
+					protocolInstance.setSignInSuffix(modbusProtocolInstanceSaveData.getSignInSuffix());
+					protocolInstance.setHeartbeatPrefix(modbusProtocolInstanceSaveData.getHeartbeatPrefix());
+					protocolInstance.setHeartbeatSuffix(modbusProtocolInstanceSaveData.getHeartbeatSuffix());
+					protocolInstance.setSort(modbusProtocolInstanceSaveData.getSort());
 					
-					json = "{success:true,msg:true}";
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					json = "{success:false,msg:false}";
+					try {
+						this.protocolInstanceManagerService.doModbusProtocolInstanceEdit(protocolInstance);
+						//实例名称是否改变
+						if(modbusProtocolInstanceSaveData.getName().equals(modbusProtocolInstanceSaveData.getOldName())){
+							List<String> instanceList=new ArrayList<String>();
+							instanceList.add(protocolInstance.getName());
+							EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
+						}else{
+							List<String> instanceList=new ArrayList<String>();
+							instanceList.add(modbusProtocolInstanceSaveData.getOldName());
+							EquipmentDriverServerTask.initInstanceConfig(instanceList, "delete");
+							
+							instanceList=new ArrayList<String>();
+							instanceList.add(modbusProtocolInstanceSaveData.getName());
+							EquipmentDriverServerTask.initInstanceConfig(instanceList, "update");
+							EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByProtocolInstanceId(modbusProtocolInstanceSaveData.getId()+"", "update");
+						}
+						
+						json = "{success:true,msg:true}";
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						json = "{success:false,msg:false}";
+					}
 				}
 			}
 		}

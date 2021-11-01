@@ -308,12 +308,27 @@ function CreatePipelineDeviceHistoryQueryDataTable(recordId,deviceName,deviceTyp
 			}
 			
 			//绘制第一个数据型变量曲线
-			for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
-				if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
-					Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").setValue(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
-                	pipelineHistoryQueryCurve(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
-                	break;
+//			for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
+//				if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
+//					Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").setValue(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
+//                	pipelineHistoryQueryCurve(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
+//                	break;
+//				}
+//			}
+			
+			//绘制第一个float型变量曲线columnDataType resolutionMode
+			var item=Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").getValue();
+			if(!isNotVal(item)){
+				for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
+					if(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
+						Ext.getCmp("PipelineHistoryQuerySelectedCurve_Id").setValue(pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
+	                	item=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName;
+	                	break;
+					}
 				}
+			}
+			if(isNotVal(item)){
+				pipelineHistoryQueryCurve(item);
 			}
 			
 			
@@ -480,6 +495,7 @@ var PipelineDeviceHistoryQueryDataHandsontableHelper = {
 		                	var resolutionMode=0;
 		                	for(var i=0;i<pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
 		        				if(relRow==pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].col*2){
+		        					item=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName;
 		        					columnDataType=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					resolutionMode=pipelineDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].resolutionMode;
 		        					break;

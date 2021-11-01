@@ -243,7 +243,6 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 				for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
 						Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
-//	                	pipelineRealTimeMonitoringCurve(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
 	                	item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
 	                	break;
 					}

@@ -19,7 +19,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	private String itemCode;
 	private String matrix;
 	private Integer sort;
-	
+	private Integer bitIndex;
 
 	
 
@@ -30,7 +30,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	/** full constructor */
 	public AcquisitionGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
-			String matrix, Integer sort) {
+			String matrix, Integer sort, Integer bitIndex) {
 		super();
 		this.id = id;
 		this.groupId = groupId;
@@ -39,6 +39,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 		this.itemCode = itemCode;
 		this.matrix = matrix;
 		this.sort = sort;
+		this.bitIndex = bitIndex;
 	}
 
 	@Id
@@ -102,6 +103,15 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	public void setSort(Integer sort) {
 		this.sort = sort;
+	}
+
+	@Column(name = "bitIndex")
+	public Integer getBitIndex() {
+		return bitIndex;
+	}
+
+	public void setBitIndex(Integer bitIndex) {
+		this.bitIndex = bitIndex;
 	}
 
 	

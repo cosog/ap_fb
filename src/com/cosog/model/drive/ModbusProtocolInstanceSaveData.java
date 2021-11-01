@@ -10,6 +10,8 @@ public class ModbusProtocolInstanceSaveData {
 	String name;
 	int deviceType=0;
 	int unitId;
+	String unitName;
+	
 	String acqProtocolType;
 	String ctrlProtocolType;
 	
@@ -133,5 +135,13 @@ public class ModbusProtocolInstanceSaveData {
 
 	public void setOldName(String oldName) {
 		this.oldName = oldName;
+	}
+
+	public String getUnitName() {
+		return unitName;
+	}
+
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
 	}
 }

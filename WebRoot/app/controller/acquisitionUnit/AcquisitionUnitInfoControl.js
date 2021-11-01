@@ -452,6 +452,7 @@ var grantAcquisitionItemsPermission = function () {
     var selectedItem=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
     
     var groupCode = selectedItem.data.code;
+    var protocol=selectedItem.data.protocol;
     if (!isNotVal(groupCode)) {
 //        Ext.Msg.alert(cosog.string.ts, '请先选择一个采控组!');
         return false
@@ -459,8 +460,10 @@ var grantAcquisitionItemsPermission = function () {
     if (driverConfigItemsData.length > 0) {
         Ext.Array.each(driverConfigItemsData, function (name, index, countriesItSelf) {
             if (driverConfigItemsData[index][0]) {
-                var itemName = driverConfigItemsData[index][2];
-                var itemSort = driverConfigItemsData[index][11];
+            	var itemName = driverConfigItemsData[index][2];
+            	var itemAddr = driverConfigItemsData[index][3];
+            	var resolutionMode = driverConfigItemsData[index][10];
+                var itemSort = driverConfigItemsData[index][12];
                 addjson.push(itemName);
                 addItemSort.push(itemSort);
                 var matrix_value = "";
@@ -468,7 +471,7 @@ var grantAcquisitionItemsPermission = function () {
                 if (matrix_value != "" || matrix_value != null) {
                     matrix_value = matrix_value.substring(0, matrix_value.length - 1);
                 }
-                matrixData += itemName + ":"+itemSort + ":" + matrix_value + "|";
+                matrixData += itemName + ":"+itemAddr+ ":"+resolutionMode+ ":"+itemSort + ":" + matrix_value + "|";
             }
         });
         if (addjson.length > 0) {
@@ -482,6 +485,7 @@ var grantAcquisitionItemsPermission = function () {
                 params: {
                     params: addparams,
                     sorts: addSortParams,
+                    protocol :protocol,
                     groupCode: groupCode,
                     matrixCodes: matrixCodes_
                 },
