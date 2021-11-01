@@ -504,7 +504,9 @@ function SaveModbusProtocolAddrMappingConfigTreeData(){
 						item.Ratio=parseFloat(driverConfigItemsData[i][8]);
 						item.ResolutionMode=driverConfigItemsData[i][9];
 						item.AcqMode=driverConfigItemsData[i][10];
-						if(i==AddrMappingItemsSelectRow && (driverConfigItemsData[i][9]=='开关量' || driverConfigItemsData[i][9]=='枚举量') ){
+						if(i==AddrMappingItemsSelectRow 
+//								&& (driverConfigItemsData[i][9]=='开关量' || driverConfigItemsData[i][9]=='枚举量') 
+							){
 							item.Meaning=[];
 							var itemsMeaningData=protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot.getData();
 							for(var j=0;j<itemsMeaningData.length;j++){
@@ -557,7 +559,7 @@ function CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode
 	}
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/acquisitionUnitManagerController/getProtocolEnumItemMeaningConfigData',
+		url:context + '/acquisitionUnitManagerController/getProtocolItemMeaningConfigData',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
 			Ext.getCmp("ModbusProtocolAddrMappingItemsMeaningConfigPanel_Id").setTitle(result.itemTitle+"含义");

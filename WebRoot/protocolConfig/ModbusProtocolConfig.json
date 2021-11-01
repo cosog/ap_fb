@@ -321,7 +321,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井口压力",
@@ -345,7 +349,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井下压力",
@@ -381,7 +389,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下温度",
@@ -393,7 +405,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下压力",
@@ -988,7 +1004,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "Kpa",
+                    "Unit": "KPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
@@ -1437,7 +1453,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井口压力",
@@ -1461,7 +1481,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井下压力",
@@ -1497,7 +1521,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下温度",
@@ -1509,7 +1537,11 @@
                     "RWType": "r",
                     "Unit": "℃",
                     "ResolutionMode": 2,
-                    "AcqMode": "active"
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下压力",
@@ -2104,7 +2136,7 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "Kpa",
+                    "Unit": "KPa",
                     "ResolutionMode": 2,
                     "AcqMode": "active"
                 },

@@ -374,6 +374,7 @@ function SaveModbusProtocolInstanceConfigTreeData(){
 			saveData.name=propertiesData[0][2];
 			saveData.deviceType=(propertiesData[1][2]=="泵设备"?0:1);
 			saveData.unitId=selectedItem.data.unitId;
+			saveData.unitName=propertiesData[2][2];
 			saveData.acqProtocolType=propertiesData[3][2];
 			saveData.ctrlProtocolType=propertiesData[4][2];
 			

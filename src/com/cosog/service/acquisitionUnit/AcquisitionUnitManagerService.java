@@ -143,7 +143,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ "{ \"header\":\"读写类型\",\"dataIndex\":\"RWType\",width:80 ,children:[] },"
 				+ "{ \"header\":\"单位\",\"dataIndex\":\"unit\",width:80 ,children:[] },"
 				+ "{ \"header\":\"换算比例\",\"dataIndex\":\"ratio\",width:80 ,children:[] },"
-				+ "{ \"header\":\"分析模式\",\"dataIndex\":\"resolutionMode\",width:80 ,children:[] },"
+				+ "{ \"header\":\"解析模式\",\"dataIndex\":\"resolutionMode\",width:80 ,children:[] },"
 				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] },"
 				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] }"
 				+ "]";
@@ -203,6 +203,144 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							+ "\"resolutionMode\":\""+resolutionMode+"\","
 							+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
 							+ "\"sort\":\""+sort+"\"},");
+					
+				}
+				break;
+			}
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString().replaceAll("null", "");
+	}
+	
+	public String getProtocolAcqUnitItemsConfigData(String protocolName,String classes,String code){
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+//				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
+				+ "{ \"header\":\"数量\",\"dataIndex\":\"quantity\",width:80 ,children:[] },"
+				+ "{ \"header\":\"存储数据类型\",\"dataIndex\":\"storeDataType\",width:80 ,children:[] },"
+				+ "{ \"header\":\"接口数据类型\",\"dataIndex\":\"IFDataType\",width:80 ,children:[] },"
+				+ "{ \"header\":\"读写类型\",\"dataIndex\":\"RWType\",width:80 ,children:[] },"
+				+ "{ \"header\":\"单位\",\"dataIndex\":\"unit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"换算比例\",\"dataIndex\":\"ratio\",width:80 ,children:[] },"
+				+ "{ \"header\":\"解析模式\",\"dataIndex\":\"resolutionMode\",width:80 ,children:[] },"
+				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] },"
+				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		
+		List<String> itemsList=new ArrayList<String>();
+		List<String> itemsSortList=new ArrayList<String>();
+		List<String> itemsBitIndexList=new ArrayList<String>();
+		if("3".equalsIgnoreCase(classes)){
+			String sql="select t.itemname,t.sort,t.bitindex from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
+			List<?> list=this.findCallSql(sql);
+			for(int i=0;i<list.size();i++){
+				Object[] obj=(Object[])list.get(i);
+				itemsList.add(obj[0]+"");
+				itemsSortList.add(obj[1]+"");
+				itemsBitIndexList.add(obj[2]+"");
+			}
+		}
+		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
+			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				int index=1;
+				for(int j=0;j<protocolConfig.getItems().size();j++){
+					boolean checked=false;
+					String sort="";
+					
+					if(protocolConfig.getItems().get(j).getResolutionMode()==0){//开关量
+						
+					}else{
+						
+					}
+					
+					
+					String resolutionMode="数据量";
+					if(protocolConfig.getItems().get(j).getResolutionMode()==0){
+						resolutionMode="开关量";
+					}else if(protocolConfig.getItems().get(j).getResolutionMode()==1){
+						resolutionMode="枚举量";
+					}
+					String RWType="只读";
+					if("r".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+						RWType="只读";
+					}else if("w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+						RWType="只写";
+					}else if("rw".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){
+						RWType="读写";
+					}
+					if(protocolConfig.getItems().get(j).getResolutionMode()==0
+							&&protocolConfig.getItems().get(j).getMeaning()!=null
+							&&protocolConfig.getItems().get(j).getMeaning().size()>0){
+						Collections.sort(protocolConfig.getItems().get(j).getMeaning());//排序
+						for(int k=0;k<protocolConfig.getItems().get(j).getMeaning().size();k++){
+							for(int m=0;m<itemsList.size();m++){
+								if(itemsList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())
+										&&itemsBitIndexList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"")
+									){
+									checked=true;
+									sort=itemsSortList.get(m);
+									break;
+								}
+							}
+							
+							result_json.append("{\"checked\":"+checked+","
+									+ "\"id\":"+(index)+","
+									+ "\"title\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\","
+									+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
+									+ "\"quantity\":"+1+","
+									+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
+									+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
+									+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
+									+ "\"RWType\":\""+RWType+"\","
+									+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
+									+ "\"resolutionMode\":\""+resolutionMode+"\","
+									+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
+									+ "\"sort\":\""+sort+"\"},");
+							index++;
+						}
+					}else{
+						checked=StringManagerUtils.existOrNot(itemsList, protocolConfig.getItems().get(j).getTitle(),false);
+						if(checked){
+							for(int k=0;k<itemsList.size();k++){
+								if(itemsList.get(k).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())){
+									sort=itemsSortList.get(k);
+									break;
+								}
+							}
+						}
+						result_json.append("{\"checked\":"+checked+","
+								+ "\"id\":"+(index)+","
+								+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
+								+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
+								+ "\"quantity\":"+protocolConfig.getItems().get(j).getQuantity()+","
+								+ "\"storeDataType\":\""+protocolConfig.getItems().get(j).getStoreDataType()+"\","
+								+ "\"IFDataType\":\""+protocolConfig.getItems().get(j).getIFDataType()+"\","
+								+ "\"ratio\":"+protocolConfig.getItems().get(j).getRatio()+","
+								+ "\"RWType\":\""+RWType+"\","
+								+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
+								+ "\"resolutionMode\":\""+resolutionMode+"\","
+								+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
+								+ "\"sort\":\""+sort+"\"},");
+						index++;
+					}
+					
 				}
 				break;
 			}
@@ -255,7 +393,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getProtocolEnumItemMeaningConfigData(String protocolCode,String itemAddr){
+	public String getProtocolItemMeaningConfigData(String protocolCode,String itemAddr){
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer totalRoot = new StringBuffer();
 		Gson gson = new Gson();

@@ -243,7 +243,6 @@ function CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 				for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 					if(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
 						Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
-//	                	pumpRealTimeMonitoringCurve(pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
 	                	item=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
 	                	break;
 					}

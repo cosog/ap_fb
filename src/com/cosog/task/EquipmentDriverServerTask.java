@@ -694,9 +694,11 @@ public class EquipmentDriverServerTask {
 							for(int j=0;j<itemsArr.length;j++){
 								for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 									if(itemsArr[j].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle())){
-										group.getAddr().add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
-										if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getRWType())){
-											isCtrl=true;
+										if(!StringManagerUtils.existOrNot(group.getAddr(), modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr())){
+											group.getAddr().add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
+											if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getRWType())){
+												isCtrl=true;
+											}
 										}
 										break;
 									}

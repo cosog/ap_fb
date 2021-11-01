@@ -70,28 +70,31 @@ public class CalculateDataService<T> extends BaseService<T> {
 					alarmInfoMap.put(key, acqTime);
 					saveAcquisitionItemInfoList.add(acquisitionItemInfoList.get(i));
 					if(acquisitionItemInfoList.get(i).getIsSendMessage()==1){//如果该报警项发送短信
+						
 						isSendSMS=true;
-						if(acquisitionItemInfoList.get(i).getAlarmType()==0){//开关量报警
-							SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
-						}else if(acquisitionItemInfoList.get(i).getAlarmType()==1){//枚举量报警
-							SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
-						}else if(acquisitionItemInfoList.get(i).getAlarmType()==2){//数值量报警
+						if(acquisitionItemInfoList.get(i).getAlarmType()==3){//开关量报警
+							SMSContent.append(acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==2){//枚举量报警
+							SMSContent.append(acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==1){//数值量报警
 							SMSContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
 									+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
 									+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
 						}
+						System.out.println("符合短信发送条件"+key+"-"+acqTime+","+SMSContent);
 					}
 					if(acquisitionItemInfoList.get(i).getIsSendMail()==1){//如果该报警项发送邮件
 						isSendMail=true;
-						if(acquisitionItemInfoList.get(i).getAlarmType()==0){//开关量报警
-							EMailContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
-						}else if(acquisitionItemInfoList.get(i).getAlarmType()==1){//枚举量报警
-							EMailContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo());
-						}else if(acquisitionItemInfoList.get(i).getAlarmType()==2){//数值量报警
+						if(acquisitionItemInfoList.get(i).getAlarmType()==3){//开关量报警
+							EMailContent.append(acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==2){//枚举量报警
+							EMailContent.append(acquisitionItemInfoList.get(i).getAlarmInfo());
+						}else if(acquisitionItemInfoList.get(i).getAlarmType()==3){//数值量报警
 							EMailContent.append(acquisitionItemInfoList.get(i).getTitle()+acquisitionItemInfoList.get(i).getAlarmInfo()
 									+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
 									+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
 						}
+						System.out.println("符合邮件发送条件"+key+"-"+acqTime+","+EMailContent);
 					}
 					
 				}

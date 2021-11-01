@@ -316,14 +316,21 @@ function CreatePumpDeviceHistoryQueryDataTable(recordId,deviceName,deviceType,is
 				pumpDeviceHistoryQueryDataHandsontableHelper.hot.setCellMeta(row,col,'columnDataType',columnDataType);
 			}
 			
-			//绘制第一个数据型变量曲线
-			for(var i=0;i<pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
-				if(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
-					Ext.getCmp("PumpHistoryQuerySelectedCurve_Id").setValue(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
-                	pumpHistoryQueryCurve(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
-                	break;
+			//绘制第一个float型变量曲线columnDataType resolutionMode
+			var item=Ext.getCmp("PumpHistoryQuerySelectedCurve_Id").getValue();
+			if(!isNotVal(item)){
+				for(var i=0;i<pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
+					if(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
+						Ext.getCmp("PumpHistoryQuerySelectedCurve_Id").setValue(pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName);
+	                	item=pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName;
+	                	break;
+					}
 				}
 			}
+			if(isNotVal(item)){
+				pumpHistoryQueryCurve(item);
+			}
+				
 			
 			
 		},
@@ -489,6 +496,7 @@ var PumpDeviceHistoryQueryDataHandsontableHelper = {
 		                	var resolutionMode=0;
 		                	for(var i=0;i<pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo.length;i++){
 		        				if(relRow==pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].col*2){
+		        					item=pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnName;
 		        					columnDataType=pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].columnDataType;
 		        					resolutionMode=pumpDeviceHistoryQueryDataHandsontableHelper.CellInfo[i].resolutionMode;
 		        					break;
