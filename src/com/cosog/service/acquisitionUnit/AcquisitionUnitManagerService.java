@@ -463,14 +463,18 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		String columns = "["
+				+ "{ \"header\":\"\",\"dataIndex\":\"checked\",width:20 ,children:[] },"
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-//				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
 				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
 				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
 				+ "{ \"header\":\"上限\",\"dataIndex\":\"upperLimit\",width:80 ,children:[] },"
 				+ "{ \"header\":\"下限\",\"dataIndex\":\"lowerLimit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"回差\",\"dataIndex\":\"hystersis\",width:80 ,children:[] },"
+				+ "{ \"header\":\"延时(S)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
 				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
-				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "{ \"header\":\"报警使能\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送短信\",\"dataIndex\":\"isSendMessage\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送邮件\",\"dataIndex\":\"isSendMail\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
@@ -550,14 +554,15 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		String columns = "["
+				+ "{ \"header\":\"\",\"dataIndex\":\"checked\",width:20 ,children:[] },"
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
-//				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
-				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
-				+ "{ \"header\":\"地址\",\"dataIndex\":\"addr\",width:80 ,children:[] },"
-				+ "{ \"header\":\"上限\",\"dataIndex\":\"upperLimit\",width:80 ,children:[] },"
-				+ "{ \"header\":\"下限\",\"dataIndex\":\"lowerLimit\",width:80 ,children:[] },"
+				+ "{ \"header\":\"值\",\"dataIndex\":\"value\",width:120 ,children:[] },"
+				+ "{ \"header\":\"含义\",\"dataIndex\":\"meaning\",width:80 ,children:[] },"
+				+ "{ \"header\":\"延时(S)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
 				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
-				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "{ \"header\":\"报警使能\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送短信\",\"dataIndex\":\"isSendMessage\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送邮件\",\"dataIndex\":\"isSendMail\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
@@ -634,13 +639,16 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		String columns = "["
+				+ "{ \"header\":\"\",\"dataIndex\":\"checked\",width:20 ,children:[] },"
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
 				+ "{ \"header\":\"位\",\"dataIndex\":\"bitIndex\",width:120 ,children:[] },"
 				+ "{ \"header\":\"含义\",\"dataIndex\":\"meaning\",width:80 ,children:[] },"
 				+ "{ \"header\":\"触发状态\",\"dataIndex\":\"value\",width:80 ,children:[] },"
 				+ "{ \"header\":\"延时(S)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
 				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
-				+ "{ \"header\":\"报警开关\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] }"
+				+ "{ \"header\":\"报警使能\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送短信\",\"dataIndex\":\"isSendMessage\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送邮件\",\"dataIndex\":\"isSendMail\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
@@ -704,6 +712,75 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				}
 				break;
 			}
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append("}");
+		return result_json.toString();
+	}
+	
+	public String getModbusProtocolCommStatusAlarmItemsConfigData(String protocolName,String classes,String code){
+		StringBuffer result_json = new StringBuffer();
+		String columns = "["
+				+ "{ \"header\":\"\",\"dataIndex\":\"checked\",width:20 ,children:[] },"
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"title\",width:120 ,children:[] },"
+				+ "{ \"header\":\"延时(s)\",\"dataIndex\":\"delay\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警级别\",\"dataIndex\":\"alarmLevel\",width:80 ,children:[] },"
+				+ "{ \"header\":\"报警使能\",\"dataIndex\":\"alarmSign\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送短信\",\"dataIndex\":\"isSendMessage\",width:80 ,children:[] },"
+				+ "{ \"header\":\"是否发送邮件\",\"dataIndex\":\"isSendMail\",width:80 ,children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalRoot\":[");
+		
+		List<String> itemsList=new ArrayList<String>();
+		List<String> commStatusItemsList=new ArrayList<String>();
+		commStatusItemsList.add("上线");
+		commStatusItemsList.add("离线");
+		List<?> list=null;
+		if("3".equalsIgnoreCase(classes)){
+			String sql="select t.itemname,t.itemcode,t.delay,"
+					+ " t3.itemname as alarmLevel,decode(t.alarmsign,1,'使能','失效') as alarmsign,"
+					+ " decode(t.issendmessage,1,'是','否') as issendmessage,decode(t.issendmail,1,'是','否') as issendmail "
+					+ " from tbl_alarm_item2unit_conf t,tbl_alarm_unit_conf t2,tbl_code t3  "
+					+ " where t.type=3 and t.unitid=t2.id and upper(t3.itemcode)=upper('BJJB') and t.alarmlevel=t3.itemvalue and t2.unit_code='"+code+"' "
+					+ " order by t.id";
+			list=this.findCallSql(sql);
+			for(int i=0;i<list.size();i++){
+				Object[] obj = (Object[]) list.get(i);
+				itemsList.add(obj[0]+"");
+			}
+		}
+		
+		boolean checked=false;
+		String delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
+		for(int i=0;i<commStatusItemsList.size();i++){
+			if(StringManagerUtils.existOrNot(itemsList,commStatusItemsList.get(i),false)){
+				for(int j=0;j<list.size();j++){
+					Object[] obj = (Object[]) list.get(j);
+					if(commStatusItemsList.get(i).equalsIgnoreCase(obj[0]+"")){
+						checked=true;
+						delay=obj[2]+"";
+						alarmLevel=obj[3]+"";
+						alarmSign=obj[4]+"";
+						isSendMessage=obj[5]+"";
+						isSendMail=obj[6]+"";
+						break;
+					}
+				}
+			}
+			result_json.append("{\"checked\":"+checked+","
+					+ "\"id\":"+(i+1)+","
+					+ "\"title\":\""+commStatusItemsList.get(i)+"\","
+					+ "\"delay\":\""+delay+"\","
+					+ "\"alarmLevel\":\""+alarmLevel+"\","
+					+ "\"alarmSign\":\""+alarmSign+"\","
+					+ "\"isSendMessage\":\""+isSendMessage+"\","
+					+ "\"isSendMail\":\""+isSendMail+"\""
+					+ "},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -1096,8 +1173,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									pumpTree_json.append("\"id\":"+groupObj[0]+",");
 									pumpTree_json.append("\"code\":\""+groupObj[1]+"\",");
 									pumpTree_json.append("\"text\":\""+groupObj[2]+"\",");
-									pumpTree_json.append("\"acq_cycle\":"+groupObj[3]+",");
-									pumpTree_json.append("\"save_cycle\":"+groupObj[4]+",");
+									pumpTree_json.append("\"acq_cycle\":\""+groupObj[3]+"\",");
+									pumpTree_json.append("\"save_cycle\":\""+groupObj[4]+"\",");
 									pumpTree_json.append("\"remark\":\""+groupObj[5]+"\",");
 									pumpTree_json.append("\"protocol\":\""+groupObj[6]+"\",");
 									pumpTree_json.append("\"type\":"+groupObj[7]+",");

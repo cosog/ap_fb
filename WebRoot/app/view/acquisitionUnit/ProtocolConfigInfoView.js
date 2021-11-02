@@ -118,6 +118,12 @@ Ext.define('AP.view.acquisitionUnit.ProtocolConfigInfoView', {
     					}
     					protocolAlarmUnitConfigEnumItemsHandsontableHelper=null;
     				}
+    				if(protocolAlarmUnitConfigCommStatusItemsHandsontableHelper!=null){
+    					if(protocolAlarmUnitConfigCommStatusItemsHandsontableHelper.hot!=undefined){
+    						protocolAlarmUnitConfigCommStatusItemsHandsontableHelper.hot.destroy();
+    					}
+    					protocolAlarmUnitConfigCommStatusItemsHandsontableHelper=null;
+    				}
     				
     				//采控实例HandsontableHelper资源
     				if(protocolInstanceConfigItemsHandsontableHelper!=null){

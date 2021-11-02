@@ -148,7 +148,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		
-		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		String sql="select t.id,t.wellname,t2.commstatus,"
+				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
+				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
@@ -162,7 +165,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		
 		sql+= " from tbl_wellinformation t "
-				+ "left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
 				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";

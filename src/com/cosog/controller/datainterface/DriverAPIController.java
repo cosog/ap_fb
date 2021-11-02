@@ -47,6 +47,7 @@ import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.datainterface.CalculateDataService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.AlarmInfoMap;
 import com.cosog.utils.Config;
 import com.cosog.utils.Config2;
 import com.cosog.utils.Constants;
@@ -219,9 +220,9 @@ public class DriverAPIController extends BaseController{
 					+ " where t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
 			List devicetypeList = this.commonDataService.findCallSql(protocolSql);	
 			if(devicetypeList.size()>=0 && StringManagerUtils.isNotNull(devicetypeList.get(0)+"")){
-				String devicetype=devicetypeList.get(0)+"";
+				String deviceType=devicetypeList.get(0)+"";
 				String functionCode="pumpDeviceRealTimeMonitoringStatusData";
-				if("0".equalsIgnoreCase(devicetype)){//如果是泵设备
+				if("0".equalsIgnoreCase(deviceType)){//如果是泵设备
 					realtimeTable="tbl_pumpacqdata_latest";
 					historyTable="tbl_pumpacqdata_hist";
 					functionCode="pumpDeviceRealTimeMonitoringStatusData";
@@ -237,19 +238,22 @@ public class DriverAPIController extends BaseController{
 						+ " from TBL_WELLINFORMATION t,"+realtimeTable+"  t2 "
 						+ " where t.id=t2.wellid"
 						+ " and t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
+				String commAlarmSql="select  t5.itemname,decode(t5.alarmsign,0,0,t5.alarmlevel) as alarmlevel,t5.issendmessage,t5.issendmail,t5.delay"
+						+ " from tbl_wellinformation t"
+						+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+						+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+						+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3 "
+						+ " where t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
 				List list = this.commonDataService.findCallSql(sql);
+				List commAlarmList = this.commonDataService.findCallSql(commAlarmSql);
 				if(list.size()>0){
 					Object[] obj=(Object[]) list.get(0);
-					webSocketSendData.append("{\"functionCode\":\""+functionCode+"\",");
+					
 					String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 					CommResponseData commResponseData=null;
 					String wellName=obj[0]+"";
 					String wellId=obj[obj.length-1]+"";
-					webSocketSendData.append("\"wellName\":\""+wellName+"\",");
-					webSocketSendData.append("\"acqTime\":\""+currentTime+"\",");
-					webSocketSendData.append("\"commStatus\":"+(acqOnline.getStatus()?1:0)+",");
-					webSocketSendData.append("\"commAlarmLevel\":"+(acqOnline.getStatus()?0:100));
-					webSocketSendData.append("}");
+					
 					String commRequest="{"
 							+ "\"AKString\":\"\","
 							+ "\"WellName\":\""+wellName+"\",";
@@ -273,10 +277,10 @@ public class DriverAPIController extends BaseController{
 //					commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
 					type = new TypeToken<CommResponseData>() {}.getType();
 					commResponseData=gson.fromJson(commResponse, type);
-					String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
+					String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
 					String updateRealCommRangeClobSql="update "+realtimeTable+" t set t.commrange=?";
 					
-					String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
+					String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
 					String updateHistCommRangeClobSql="update "+historyTable+" t set t.commrange=?";
 					List<String> clobCont=new ArrayList<String>();
 					
@@ -305,31 +309,91 @@ public class DriverAPIController extends BaseController{
 						commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
 					}
 					for(int i=0;i<commStatusList.size();i++){
-						if(wellName.equals(commStatusList.get(i).getDeviceName()) && devicetype.equals(commStatusList.get(i).getDeviceType()+"")){
+						if(wellName.equals(commStatusList.get(i).getDeviceName()) && deviceType.equals(commStatusList.get(i).getDeviceType()+"")){
 							commStatusList.get(i).setCommStatus(acqOnline.getStatus()?1:0);
 							break;
 						}
 					}
 					
 					String commAlarm="";
+					int commAlarmLevel=0,isSendMessage=0,isSendMail=0,delay=0;
+					String key="";
+					String alarmInfo="";
+					Map<String, String> alarmInfoMap=AlarmInfoMap.getMapObject();
 					if(acqOnline.getStatus()){
-						commAlarm="update tbl_alarminfo t set t.recoverytime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss') "
-								+ " where t.alarmtime=( select max(t2.alarmtime) from tbl_alarminfo t2 where t2.alarmtype=0 and t2.wellid=t.wellid ) "
-								+ " and t.wellid= "+wellId
-								+ " and t.alarmtype=0"
-								+ " and t.recoverytime is null";
+						key=wellName+","+deviceType+",上线";
+						alarmInfo="上线";
+						for(int i=0;i<commAlarmList.size();i++){
+							Object[] alarmObj=(Object[]) commAlarmList.get(i);
+							if("上线".equalsIgnoreCase(alarmObj[0]+"") && StringManagerUtils.isInteger(alarmObj[1]+"")){
+								commAlarmLevel=StringManagerUtils.stringToInteger(alarmObj[1]+"");
+								isSendMessage=StringManagerUtils.stringToInteger(alarmObj[2]+"");
+								isSendMail=StringManagerUtils.stringToInteger(alarmObj[3]+"");
+								delay=StringManagerUtils.stringToInteger(alarmObj[4]+"");
+								break;
+							}
+						}
+						
+						
+						
+						
+						
+//						String keyIndex_Off=wellName+","+deviceType+",离线";
+//						boolean reset=false;
+//						for (String key : alarmInfoMap.keySet()) {
+//							 if(key.equals(keyIndex_Off)){
+//								 reset=true;
+//								 alarmInfoMap.remove(key);
+//								 break;
+//							 }
+//						 }
+//						 if(reset){
+//							 commAlarm="update tbl_alarminfo t set t.recoverytime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss') "
+//										+ " where t.alarmtime=( select max(t2.alarmtime) from tbl_alarminfo t2 where t2.alarmtype=0 and t2.wellid=t.wellid ) "
+//										+ " and t.wellid= "+wellId
+//										+ " and t.alarmtype=0"
+//										+ " and t.recoverytime is null";
+//								result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
+//						 }
+						
 					}else{
-						commAlarm="insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
-								+ "values("+wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),'通信状态',0,0,'离线',100)";
-						String alarmSMSContent="设备"+wellName+"于"+currentTime+"离线";
-						calculateDataService.sendAlarmSMS(wellName, devicetype,true,true,alarmSMSContent,alarmSMSContent);
+						key=wellName+","+deviceType+",离线";
+						alarmInfo="离线";
+						for(int i=0;i<commAlarmList.size();i++){
+							Object[] alarmObj=(Object[]) commAlarmList.get(i);
+							if("离线".equalsIgnoreCase(alarmObj[0]+"") && StringManagerUtils.isInteger(alarmObj[1]+"")){
+								commAlarmLevel=StringManagerUtils.stringToInteger(alarmObj[1]+"");
+								isSendMessage=StringManagerUtils.stringToInteger(alarmObj[2]+"");
+								isSendMail=StringManagerUtils.stringToInteger(alarmObj[3]+"");
+								delay=StringManagerUtils.stringToInteger(alarmObj[4]+"");
+								break;
+							}
+						}
 					}
-					result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
+					
+					commAlarm="insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
+							+ "values("+wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),'通信状态',0,"+(acqOnline.getStatus()?1:0)+",'"+alarmInfo+"',"+commAlarmLevel+")";
+					String alarmSMSContent="设备"+wellName+"于"+currentTime+"离线";
+					
+					String lastAlarmTime=alarmInfoMap.get(key);
+					long timeDiff=StringManagerUtils.getTimeDifference(lastAlarmTime, currentTime, "yyyy-MM-dd HH:mm:ss");
+					if(commAlarmLevel>0&&timeDiff>delay*1000){
+						result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
+						calculateDataService.sendAlarmSMS(wellName, deviceType,isSendMessage==1,isSendMail==1,alarmSMSContent,alarmSMSContent);
+						alarmInfoMap.put(key, currentTime);
+					}
+					
 					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRealCommRangeClobSql,clobCont);
 						result=commonDataService.getBaseDao().executeSqlUpdateClob(updateHistCommRangeClobSql,clobCont);
 					}
 					
+					webSocketSendData.append("{\"functionCode\":\""+functionCode+"\",");
+					webSocketSendData.append("\"wellName\":\""+wellName+"\",");
+					webSocketSendData.append("\"acqTime\":\""+currentTime+"\",");
+					webSocketSendData.append("\"commStatus\":"+(acqOnline.getStatus()?1:0)+",");
+					webSocketSendData.append("\"commAlarmLevel\":"+commAlarmLevel);
+					webSocketSendData.append("}");
 					if(StringManagerUtils.isNotNull(webSocketSendData.toString())){
 						infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
 						infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
@@ -676,7 +740,7 @@ public class DriverAPIController extends BaseController{
 										if(acquisitionItemInfo.getBitIndex().equals(alarmItemObj[4]+"") && StringManagerUtils.stringToInteger(acquisitionItemInfo.getRawValue())==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
 											alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
 											acquisitionItemInfo.setAlarmLevel(alarmLevel);
-											acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getTitle()+":"+acquisitionItemInfo.getValue());
+											acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getValue());
 											acquisitionItemInfo.setAlarmType(3);
 											acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
 											acquisitionItemInfo.setIsSendMessage(StringManagerUtils.stringToInteger(alarmItemObj[11]+""));
@@ -687,7 +751,7 @@ public class DriverAPIController extends BaseController{
 									if(StringManagerUtils.stringToInteger(acquisitionItemInfo.getRawValue())==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
 										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
 										acquisitionItemInfo.setAlarmLevel(alarmLevel);
-										acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getTitle()+":"+acquisitionItemInfo.getValue());
+										acquisitionItemInfo.setAlarmInfo(acquisitionItemInfo.getValue());
 										acquisitionItemInfo.setAlarmType(2);
 										acquisitionItemInfo.setAlarmDelay(StringManagerUtils.stringToInteger(alarmItemObj[9]+""));
 										acquisitionItemInfo.setIsSendMessage(StringManagerUtils.stringToInteger(alarmItemObj[11]+""));
