@@ -83,6 +83,16 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitTreeInfoStore', {
                         		}else{
                         			Ext.create('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitEnumItemsStore');
                         		}
+                        	}else if(activeId=="ModbusProtocolAlarmUnitCommStatusConfigTableInfoPanel_Id"){
+                    			if(record.data.classes==0){
+                            		if(isNotVal(record.data.children) && record.data.children.length>0){
+                            			CreateProtocolAlarmUnitCommStatusItemsConfigInfoTable(record.data.children[0].text,record.data.children[0].classes,record.data.children[0].code);
+                            		}
+                            	}else if(record.data.classes==1){
+                            		CreateProtocolAlarmUnitCommStatusItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
+                            	}else if(record.data.classes==2||record.data.classes==3){
+                            		CreateProtocolAlarmUnitCommStatusItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
+                            	}
                         	}
                         	CreateProtocolAlarmUnitConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件

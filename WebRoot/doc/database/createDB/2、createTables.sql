@@ -14,8 +14,8 @@ create table TBL_ACQ_GROUP_CONF
   acq_cycle  NUMBER(10) default 1,
   save_cycle NUMBER(10) default 5,
   protocol   VARCHAR2(50),
-  remark     VARCHAR2(2000),
-  type       NUMBER(1) default 0
+  type       NUMBER(1) default 0,
+  remark     VARCHAR2(2000)
 )
 tablespace AP_FB_DATA
   storage
@@ -27,6 +27,12 @@ tablespace AP_FB_DATA
 /
 alter table TBL_ACQ_GROUP_CONF
   add constraint PK_ACQUISITIONGROUP primary key (ID)
+/
+create index IDX_ACQ_GROUP_CONF_TYPE on TBL_ACQ_GROUP_CONF (TYPE)
+/
+create index IDX_ACQ_GROUP_CONF_CODE on TBL_ACQ_GROUP_CONF (GROUP_CODE)
+/
+create index IDX_ACQ_GROUP_CONF_PROTOCOL on TBL_ACQ_GROUP_CONF (PROTOCOL)
 /
 
 /*==============================================================*/
@@ -51,6 +57,10 @@ tablespace AP_FB_DATA
 alter table TBL_ACQ_UNIT_CONF
   add constraint PK_T_ACQUISITIONUNIT primary key (ID)
 /
+create index IDX_ACQ_UNIT_CONF_CODE on TBL_ACQ_UNIT_CONF (UNIT_CODE)
+/
+create index IDX_ACQ_UNIT_CONF_PROTOCOL on TBL_ACQ_UNIT_CONF (PROTOCOL)
+/
 
 /*==============================================================*/
 /* Table: TBL_ACQ_ITEM2GROUP_CONF                                  */
@@ -61,8 +71,10 @@ create table TBL_ACQ_ITEM2GROUP_CONF
   itemid   NUMBER(10),
   itemname VARCHAR2(100),
   itemcode VARCHAR2(100),
-  matrix   VARCHAR2(8),
-  groupid  NUMBER(10) not null
+  groupid  NUMBER(10) not null,
+  sort     NUMBER(10),
+  bitindex NUMBER(3),
+  matrix   VARCHAR2(8)
 )
 tablespace AP_FB_DATA
   storage
@@ -77,7 +89,13 @@ alter table TBL_ACQ_ITEM2GROUP_CONF
 /
 create index IDX_ACQ_GROUP_ITEM_GROUPID on TBL_ACQ_ITEM2GROUP_CONF (GROUPID)
 /
+create index IDX_ACQ_GROUP_ITEM_INDEX on TBL_ACQ_ITEM2GROUP_CONF (BITINDEX)
+/
 create index IDX_ACQ_GROUP_ITEM_ITEMID on TBL_ACQ_ITEM2GROUP_CONF (ITEMID)
+/
+create index IDX_ACQ_GROUP_ITEM_ITEMNAME on TBL_ACQ_ITEM2GROUP_CONF (ITEMNAME)
+/
+create index IDX_ACQ_GROUP_ITEM_SORT on TBL_ACQ_ITEM2GROUP_CONF (SORT)
 /
 
 /*==============================================================*/
@@ -87,8 +105,8 @@ create table TBL_ACQ_GROUP2UNIT_CONF
 (
   id      NUMBER(10) not null,
   groupid NUMBER(10) not null,
-  matrix  VARCHAR2(8) not null,
-  unitid  NUMBER(10) not null
+  unitid  NUMBER(10) not null,
+  matrix  VARCHAR2(8) not null
 )
 tablespace AP_FB_DATA
   storage
@@ -112,17 +130,19 @@ create index IDX_ACQ_UNIT_GROUP_UNITID on TBL_ACQ_GROUP2UNIT_CONF (UNITID)
 /*==============================================================*/
 create table TBL_ALARMINFO
 (
-  id           NUMBER(10) not null,
-  wellid       NUMBER(10),
-  alarmtime    DATE,
-  itemname     VARCHAR2(100),
-  alarmtype    NUMBER(1),
-  alarmvalue   NUMBER(10,3),
-  alarminfo    VARCHAR2(100),
-  alarmlimit   NUMBER(10,3),
-  hystersis    NUMBER(10,3),
-  alarmlevel   NUMBER(3),
-  recoverytime DATE
+  id            NUMBER(10) not null,
+  wellid        NUMBER(10),
+  alarmtime     DATE,
+  itemname      VARCHAR2(100),
+  alarmtype     NUMBER(1),
+  alarmvalue    NUMBER(10,3),
+  alarminfo     VARCHAR2(100),
+  alarmlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  alarmlevel    NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0,
+  recoverytime  DATE
 )
 tablespace AP_FB_DATA
   storage
@@ -135,6 +155,8 @@ tablespace AP_FB_DATA
 alter table TBL_ALARMINFO
   add constraint PK_ALARMINFO primary key (ID)
 /
+create index IDX_ALARMINFO_ITEM on TBL_ALARMINFO (ITEMNAME)
+/
 create index IDX_ALARMINFO_LEVEL on TBL_ALARMINFO (ALARMLEVEL)
 /
 create index IDX_ALARMINFO_TIME on TBL_ALARMINFO (ALARMTIME)
@@ -143,6 +165,49 @@ create index IDX_ALARMINFO_TYPE on TBL_ALARMINFO (ALARMTYPE)
 /
 create index IDX_ALARMINFO_WELLID on TBL_ALARMINFO (WELLID)
 /
+
+
+/*==============================================================*/
+/* Table: TBL_ALARMINFO_LATEST                                  */
+/*==============================================================*/
+create table TBL_ALARMINFO_LATEST
+(
+  id            NUMBER(10) not null,
+  wellid        NUMBER(10),
+  alarmtime     DATE,
+  itemname      VARCHAR2(100),
+  alarmtype     NUMBER(1),
+  alarmvalue    NUMBER(10,3),
+  alarminfo     VARCHAR2(100),
+  alarmlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  alarmlevel    NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0,
+  recoverytime  DATE
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_ALARMINFO_LATEST
+  add constraint PK_ALARMINFO_LATEST primary key (ID)
+/
+create index IDX_ALARMINFO_L_ITEM on TBL_ALARMINFO_LATEST (ITEMNAME)
+/
+create index IDX_ALARMINFO_L_LEVEL on TBL_ALARMINFO_LATEST (ALARMLEVEL)
+/
+create index IDX_ALARMINFO_L_TIME on TBL_ALARMINFO_LATEST (ALARMTIME)
+/
+create index IDX_ALARMINFO_L_TYPE on TBL_ALARMINFO_LATEST (ALARMTYPE)
+/
+create index IDX_ALARMINFO_L_WELLID on TBL_ALARMINFO_LATEST (WELLID)
+/
+
 
 /*==============================================================*/
 /* Table: TBL_ALARM_UNIT_CONF                                    */
@@ -168,27 +233,31 @@ alter table TBL_ALARM_UNIT_CONF
 /
 create index IDX_ALARM_UNIT_PROROCOL on TBL_ALARM_UNIT_CONF (PROTOCOL)
 /
+create index IDX_ALARM_UNIT_CODE on TBL_ALARM_UNIT_CONF (UNIT_CODE)
+/
 
 /*==============================================================*/
 /* Table: TBL_ALARM_ITEM2UNIT_CONF                                    */
 /*==============================================================*/
 create table TBL_ALARM_ITEM2UNIT_CONF
 (
-  id         NUMBER(10) not null,
-  unitid     NUMBER(10) not null,
-  itemid     NUMBER(10),
-  itemname   VARCHAR2(100),
-  itemcode   VARCHAR2(100),
-  itemaddr   NUMBER(10),
-  upperlimit NUMBER(10,3),
-  lowerlimit NUMBER(10,3),
-  hystersis  NUMBER(10,3),
-  delay      NUMBER(10),
-  alarmlevel NUMBER(3),
-  alarmsign  NUMBER(1),
-  type       NUMBER(1),
-  value      NUMBER(10,3),
-  bitindex   NUMBER(3)
+  id            NUMBER(10) not null,
+  unitid        NUMBER(10) not null,
+  itemid        NUMBER(10),
+  itemname      VARCHAR2(100),
+  itemcode      VARCHAR2(100),
+  itemaddr      NUMBER(10),
+  value         NUMBER(10,3),
+  upperlimit    NUMBER(10,3),
+  lowerlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  delay         NUMBER(10),
+  alarmlevel    NUMBER(3),
+  alarmsign     NUMBER(1),
+  type          NUMBER(1),
+  bitindex      NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0
 )
 tablespace AP_FB_DATA
   storage
@@ -198,8 +267,11 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_ALARM_ITEM2UNIT_CONF
-  add constraint PK_ALARM_ITEM2UNIT_CONF primary key (ID)
+alter table TBL_ALARM_ITEM2UNIT_CONF add constraint PK_ALARM_ITEM2UNIT_CONF primary key (ID)
+/
+create index IDX_ALARM_ITEM2UNIT_ITEMNAME on TBL_ALARM_ITEM2UNIT_CONF (ITEMNAME)
+/
+create index IDX_ALARM_ITEM2UNIT_TYPE on TBL_ALARM_ITEM2UNIT_CONF (TYPE)
 /
 create index IDX_ALARM_ITEM2UNIT_UNIT on TBL_ALARM_ITEM2UNIT_CONF (UNITID)
 /
@@ -212,10 +284,10 @@ create table TBL_CODE
   id        NUMBER(10) not null,
   itemcode  VARCHAR2(200),
   itemname  VARCHAR2(200),
-  remark    VARCHAR2(200),
-  state     NUMBER(10),
   itemvalue VARCHAR2(20),
-  tablecode VARCHAR2(200)
+  tablecode VARCHAR2(200),
+  state     NUMBER(10),
+  remark    VARCHAR2(200)
 )
 tablespace AP_FB_DATA
   storage
@@ -246,8 +318,8 @@ create table TBL_DEVICEOPERATIONLOG
   user_id    VARCHAR2(20),
   loginip    VARCHAR2(20),
   action     NUMBER(2),
-  remark     VARCHAR2(200),
-  devicetype NUMBER(2)
+  devicetype NUMBER(2),
+  remark     VARCHAR2(200)
 )
 tablespace AP_FB_DATA
   storage
@@ -267,6 +339,35 @@ create index IDX_DEVICEOPERATIONLOG_TIME on TBL_DEVICEOPERATIONLOG (CREATETIME)
 create index IDX_DEVICEOPERATIONLOG_USERID on TBL_DEVICEOPERATIONLOG (USER_ID)
 /
 create index IDX_DEVICEOPERATIONLOG_WELLID on TBL_DEVICEOPERATIONLOG (WELLNAME)
+/
+
+/*==============================================================*/
+/* Table: TBL_SYSTEMLOG                                    */
+/*==============================================================*/
+create table TBL_SYSTEMLOG
+(
+  id         NUMBER(10) not null,
+  createtime DATE,
+  user_id    VARCHAR2(20),
+  loginip    VARCHAR2(20),
+  action     NUMBER(2),
+  remark     VARCHAR2(200)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_SYSTEMLOG add constraint PK_TBL_SYSTEMLOG primary key (ID)
+/
+create index IDX_SYSTEMLOG_ACTION on TBL_SYSTEMLOG (ACTION)
+/
+create index IDX_SYSTEMLOG_TOME on TBL_SYSTEMLOG (CREATETIME)
+/
+create index IDX_SYSTEMLOG_USER on TBL_SYSTEMLOG (USER_ID)
 /
 
 /*==============================================================*/
@@ -293,8 +394,13 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_DIST_NAME
-  add constraint PK_SYSTEMDATAINFO primary key (SYSDATAID)
+alter table TBL_DIST_NAME add constraint PK_SYSTEMDATAINFO primary key (SYSDATAID)
+/
+create index IDX_DIST_NAME_CNAME on TBL_DIST_NAME (CNAME)
+/
+create index IDX_DIST_NAME_ENAME on TBL_DIST_NAME (ENAME)
+/
+create index IDX_DIST_NAME_SORT on TBL_DIST_NAME (SORTS)
 /
 
 /*==============================================================*/
@@ -328,6 +434,13 @@ alter table TBL_DIST_ITEM
 /
 alter table TBL_DIST_ITEM
   add constraint FK_PK_DATAITEMSINFO_SYSID foreign key (SYSDATAID)
+  references TBL_DIST_NAME (SYSDATAID) on delete cascade
+/
+create index IDX_DIST_ITEM_SORT on TBL_DIST_ITEM (SORTS)
+/
+create index IDX_DIST_ITEM_STATUS on TBL_DIST_ITEM (STATUS)
+/
+create index IDX_DIST_ITEM_SYSID on TBL_DIST_ITEM (SYSDATAID)
 /
 
 /*==============================================================*/
@@ -356,12 +469,15 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_MODULE
-  add constraint P_MD primary key (MD_ID)
+alter table TBL_MODULE add constraint P_MD primary key (MD_ID)
 /
 create index INDEXD_MODULE_MDCODE on TBL_MODULE (MD_CODE)
 /
 create index INDEX_MODULE_PARENTID on TBL_MODULE (MD_PARENTID)
+/
+create index INDEX_MODULE_SORT on TBL_MODULE (MD_SEQ)
+/
+create index INDEX_MODULE_TYPE on TBL_MODULE (MD_TYPE)
 /
 
 /*==============================================================*/
@@ -373,9 +489,9 @@ create table TBL_ROLE
   role_code   VARCHAR2(50) not null,
   role_name   VARCHAR2(40) not null,
   role_flag   NUMBER(10),
-  remark      VARCHAR2(2000),
   receivesms  NUMBER(10) default 0,
-  receivemail NUMBER(10) default 0
+  receivemail NUMBER(10) default 0,
+  remark      VARCHAR2(2000)
 )
 tablespace AP_FB_DATA
   storage
@@ -396,10 +512,10 @@ create index IDX_ROLE_CODE on TBL_ROLE (ROLE_CODE)
 /*==============================================================*/
 create table TBL_MODULE2ROLE
 (
-  rm_moduleid NUMBER(10) not null,
-  rm_matrix   VARCHAR2(8) not null,
   rm_id       NUMBER(10) not null,
-  rm_roleid   NUMBER(10) not null
+  rm_moduleid NUMBER(10) not null,
+  rm_roleid   NUMBER(10) not null,
+  rm_matrix   VARCHAR2(8) not null
 )
 tablespace AP_FB_DATA
   storage
@@ -409,8 +525,7 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_MODULE2ROLE
-  add constraint PK_RM_ID primary key (RM_ID)
+alter table TBL_MODULE2ROLE add constraint PK_RM_ID primary key (RM_ID)
 /
 alter table TBL_MODULE2ROLE
   add constraint FK_ORG_MODULEID foreign key (RM_MODULEID)
@@ -421,6 +536,8 @@ alter table TBL_MODULE2ROLE
   references TBL_ROLE (ROLE_ID) on delete cascade
 /
 create index IDX_RM_MODULEID on TBL_MODULE2ROLE (RM_MODULEID)
+/
+create index IDX_RM_ROLEID on TBL_MODULE2ROLE (RM_ROLEID)
 /
 
 /*==============================================================*/
@@ -450,8 +567,7 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_ORG
-  add constraint PK_SC_ORG primary key (ORG_ID)
+alter table TBL_ORG add constraint PK_SC_ORG primary key (ORG_ID)
 /
 create unique index IDX_ORG_CODE on TBL_ORG (ORG_CODE)
 /
@@ -560,6 +676,8 @@ tablespace AP_FB_DATA
 alter table TBL_PIPELINEACQDATA_HIST
   add constraint PK_TBL_PIPELINEACQDATA_HIST primary key (ID)
 /
+create index IDX_PIPELINEACQDATA_H_COMM on TBL_PIPELINEACQDATA_HIST (COMMSTATUS)
+/
 create index IDX_PIPELINEACQDATA_H_TIME on TBL_PIPELINEACQDATA_HIST (ACQTIME)
 /
 create index IDX_PIPELINEACQDATA_H_WELLID on TBL_PIPELINEACQDATA_HIST (WELLID)
@@ -665,6 +783,8 @@ tablespace AP_FB_DATA
 alter table TBL_PIPELINEACQDATA_LATEST
   add constraint PK_TBL_PIPELINEACQDATA_LATEST primary key (ID)
 /
+create index IDX_PIPELINEACQDATA_L_COMM on TBL_PIPELINEACQDATA_LATEST (COMMSTATUS)
+/
 create index IDX_PIPELINEACQDATA_L_TIME on TBL_PIPELINEACQDATA_LATEST (ACQTIME)
 /
 create index IDX_PIPELINEACQDATA_L_WELLID on TBL_PIPELINEACQDATA_LATEST (WELLID)
@@ -690,8 +810,11 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_PROTOCOLALARMINSTANCE
-  add constraint PK_PROTOCOLALARMINSTANCE primary key (ID)
+alter table TBL_PROTOCOLALARMINSTANCE add constraint PK_PROTOCOLALARMINSTANCE primary key (ID)
+/
+create index IDX_ALARMINSTANCE_CODE on TBL_PROTOCOLALARMINSTANCE (CODE)
+/
+create index IDX_ALARMINSTANCE_SORT on TBL_PROTOCOLALARMINSTANCE (SORT)
 /
 create index IDX_ALARMINSTANCE_UNITID on TBL_PROTOCOLALARMINSTANCE (ALARMUNITID)
 /
@@ -712,9 +835,9 @@ create table TBL_PROTOCOLINSTANCE
   signinsuffix     VARCHAR2(50),
   heartbeatprefix  VARCHAR2(50),
   heartbeatsuffix  VARCHAR2(50),
-  sort             NUMBER(10),
   unitid           NUMBER(10),
-  devicetype       NUMBER(1) default 0
+  devicetype       NUMBER(1) default 0,
+  sort             NUMBER(10)
 )
 tablespace AP_FB_DATA
   storage
@@ -724,8 +847,11 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_PROTOCOLINSTANCE
-  add constraint PK_PROTOCOLINSTANCE primary key (ID)
+alter table TBL_PROTOCOLINSTANCE  add constraint PK_PROTOCOLINSTANCE primary key (ID)
+/
+create index IDX_PROTOCOLINSTANCE_CODE on TBL_PROTOCOLINSTANCE (CODE)
+/
+create index IDX_PROTOCOLINSTANCE_SORT on TBL_PROTOCOLINSTANCE (SORT)
 /
 create index IDX_PROTOCOLINSTANCE_TYPE on TBL_PROTOCOLINSTANCE (DEVICETYPE)
 /
@@ -752,8 +878,11 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_PROTOCOLSMSINSTANCE
-  add constraint PK_PROTOCOLSMSINSTANCE primary key (ID)
+alter table TBL_PROTOCOLSMSINSTANCE add constraint PK_PROTOCOLSMSINSTANCE primary key (ID)
+/
+create index IDX_PROTOCOLSMSINSTANCE_CODE on TBL_PROTOCOLSMSINSTANCE (CODE)
+/
+create index IDX_PROTOCOLSMSINSTANCE_SORT on TBL_PROTOCOLSMSINSTANCE (SORT)
 /
 
 /*==============================================================*/
@@ -855,6 +984,8 @@ tablespace AP_FB_DATA
 /
 alter table TBL_PUMPACQDATA_HIST
   add constraint PK_TBL_PUMPACQDATA_HIST primary key (ID)
+/
+create index IDX_PUMPACQDATA_HIST_COMM on TBL_PUMPACQDATA_HIST (COMMSTATUS)
 /
 create index IDX_PUMPACQDATA_HIST_TIME on TBL_PUMPACQDATA_HIST (ACQTIME)
 /
@@ -961,38 +1092,11 @@ tablespace AP_FB_DATA
 alter table TBL_PUMPACQDATA_LATEST
   add constraint PK_TBL_PUMPACQDATA_LATEST primary key (ID)
 /
+create index IDX_PUMPACQDATA_LATEST_COMM on TBL_PUMPACQDATA_LATEST (COMMSTATUS)
+/
 create index IDX_PUMPACQDATA_LATEST_TIME on TBL_PUMPACQDATA_LATEST (ACQTIME)
 /
 create index IDX_PUMPACQDATA_LATEST_WELLID on TBL_PUMPACQDATA_LATEST (WELLID)
-/
-
-/*==============================================================*/
-/* Table: TBL_RESOURCEMONITORING                                    */
-/*==============================================================*/
-create table TBL_RESOURCEMONITORING
-(
-  ID             NUMBER(10) not null,
-  ACQTIME        DATE,
-  APPRUNSTATUS   NUMBER(2),
-  APPVERSION     VARCHAR2(50),
-  ADRUNSTATUS   NUMBER(2),
-  ADVERSION     VARCHAR2(50),
-  CPUUSEDPERCENT VARCHAR2(50),
-  MEMUSEDPERCENT NUMBER(8,2),
-  TABLESPACESIZE NUMBER(10,2)
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_RESOURCEMONITORING
-  add constraint PK_TBL_RESOURCEMONITORING primary key (ID)
-/
-create index IDX_RESOURCEMONITORING_ACQTIME on TBL_RESOURCEMONITORING (ACQTIME)
 /
 
 /*==============================================================*/
@@ -1018,40 +1122,9 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_RESOURCEMONITORING
-  add constraint PK_TBL_RESOURCEMONITORING primary key (ID)
+alter table TBL_RESOURCEMONITORING add constraint PK_TBL_RESOURCEMONITORING primary key (ID)
 /
 create index IDX_RESOURCEMONITORING_ACQTIME on TBL_RESOURCEMONITORING (ACQTIME)
-/
-
-/*==============================================================*/
-/* Table: TBL_SYSTEMLOG                                    */
-/*==============================================================*/
-create table TBL_SYSTEMLOG
-(
-  id         NUMBER(10) not null,
-  createtime DATE,
-  user_id    VARCHAR2(20),
-  loginip    VARCHAR2(20),
-  action     NUMBER(2),
-  remark     VARCHAR2(200)
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_SYSTEMLOG
-  add constraint PK_TBL_SYSTEMLOG primary key (ID)
-/
-create index IDX_SYSTEMLOG_ACTION on TBL_SYSTEMLOG (ACTION)
-/
-create index IDX_SYSTEMLOG_TOME on TBL_SYSTEMLOG (CREATETIME)
-/
-create index IDX_SYSTEMLOG_USER on TBL_SYSTEMLOG (USER_ID)
 /
 
 /*==============================================================*/
@@ -1085,8 +1158,7 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_USER
-  add constraint PK_USER_NO primary key (USER_NO)
+alter table TBL_USER add constraint PK_USER_NO primary key (USER_NO)
 /
 create index IDX_REQUIREPASS on TBL_USER (USER_QUICKLOGIN)
 /
@@ -1104,7 +1176,7 @@ create unique index UNI_USER_ID on TBL_USER (USER_ID)
 /*==============================================================*/
 create table TBL_WELLINFORMATION
 (
- id                  NUMBER(10) not null,
+  id                  NUMBER(10) not null,
   orgid               NUMBER(10),
   wellname            VARCHAR2(200) not null,
   signinid            VARCHAR2(200),
@@ -1133,9 +1205,17 @@ tablespace AP_FB_DATA
 alter table TBL_WELLINFORMATION
   add constraint PK_WELLINFORMATION primary key (ID)
 /
+create index IDX_WELLINFORMATION_ALARMINS on TBL_WELLINFORMATION (ALARMINSTANCECODE)
+/
+create index IDX_WELLINFORMATION_INS on TBL_WELLINFORMATION (INSTANCECODE)
+/
 create index IDX_WELLINFORMATION_NAME on TBL_WELLINFORMATION (WELLNAME)
 /
 create index IDX_WELLINFORMATION_ORG on TBL_WELLINFORMATION (ORGID)
+/
+create index IDX_WELLINFORMATION_SIGNINID on TBL_WELLINFORMATION (SIGNINID)
+/
+create index IDX_WELLINFORMATION_SLAVE on TBL_WELLINFORMATION (SLAVE)
 /
 create index IDX_WELLINFORMATION_SORT on TBL_WELLINFORMATION (SORTNUM)
 /

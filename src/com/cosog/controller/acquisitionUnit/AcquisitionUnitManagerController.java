@@ -240,6 +240,14 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String acqUnit = ParamUtils.getParameter(request, "acquisitionGroup.acqUnit");
 		PrintWriter out = response.getWriter();
 		try {
+			if(acquisitionGroup.getType()==0){
+				if(acquisitionGroup.getAcqCycle()==null || acquisitionGroup.getAcqCycle()==0){
+					acquisitionGroup.setAcqCycle(60);
+				}
+				if(acquisitionGroup.getSaveCycle()==null || acquisitionGroup.getSaveCycle()==0){
+					acquisitionGroup.setSaveCycle(300);
+				}
+			}
 			this.acquisitionGroupManagerService.doAcquisitionGroupAdd(acquisitionGroup);
 			String sql="select t.id from TBL_ACQ_GROUP_CONF t where t.group_name='"+acquisitionGroup.getGroupName()+"' and t.protocol='"+acquisitionGroup.getProtocol()+"'";
 			String groupId="";
@@ -667,6 +675,23 @@ public class AcquisitionUnitManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	@RequestMapping("/getModbusProtocolCommStatusAlarmItemsConfigData")
+	public String getModbusProtocolCommStatusAlarmItemsConfigData() throws Exception {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String classes = ParamUtils.getParameter(request, "classes");
+		String code = ParamUtils.getParameter(request, "code");
+		String json = "";
+		json = acquisitionUnitItemManagerService.getModbusProtocolCommStatusAlarmItemsConfigData(protocolName,classes,code);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	
 	@RequestMapping("/getProtocolInstanceItemsConfigData")
 	public String getProtocolInstanceItemsConfigData() throws Exception {

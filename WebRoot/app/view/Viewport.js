@@ -228,9 +228,10 @@ function websocketOnMessage(evt) {
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
-							record.set("commStatusName",(data.commStatus==1?"在线":"离线"));
+							record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
 							record.set("commStatus",data.commStatus);
-							record.set("commAlarmLevel",(data.commStatus==1?0:100));
+//							record.set("commAlarmLevel",(data.commStatus==1?0:100));
+							record.set("commAlarmLevel",data.commAlarmLevel);
 							record.set("acqTime",data.acqTime);
 							record.commit();
 							break;
@@ -326,9 +327,10 @@ function websocketOnMessage(evt) {
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
-							record.set("commStatusName",(data.commStatus==1?"在线":"离线"));
+							record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
 							record.set("commStatus",data.commStatus);
-							record.set("commAlarmLevel",(data.commStatus==1?0:100));
+//							record.set("commAlarmLevel",(data.commStatus==1?0:100));
+							record.set("commAlarmLevel",data.commAlarmLevel);
 							record.set("acqTime",data.acqTime);
 							record.commit();
 							break;

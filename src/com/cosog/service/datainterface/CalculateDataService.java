@@ -81,7 +81,6 @@ public class CalculateDataService<T> extends BaseService<T> {
 									+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
 									+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
 						}
-						System.out.println("符合短信发送条件"+key+"-"+acqTime+","+SMSContent);
 					}
 					if(acquisitionItemInfoList.get(i).getIsSendMail()==1){//如果该报警项发送邮件
 						isSendMail=true;
@@ -94,14 +93,12 @@ public class CalculateDataService<T> extends BaseService<T> {
 									+",报警值"+acquisitionItemInfoList.get(i).getValue()+",限值"+acquisitionItemInfoList.get(i).getAlarmLimit()
 									+",回差"+acquisitionItemInfoList.get(i).getHystersis()+";");
 						}
-						System.out.println("符合邮件发送条件"+key+"-"+acqTime+","+EMailContent);
 					}
 					
 				}
 				
 			}else{
 				String keyIndex=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle();
-//				String keyIndex=wellName+","+deviceType+","+acquisitionItemInfoList.get(i).getTitle()+","+acquisitionItemInfoList.get(i).getAlarmInfo();
 				boolean reset=false;
 				 for (String key : alarmInfoMap.keySet()) {
 					 if(key.indexOf(keyIndex)>=0){

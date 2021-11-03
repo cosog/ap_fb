@@ -148,7 +148,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		
-		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		String sql="select t.id,t.wellname,t2.commstatus,"
+				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
+				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
@@ -162,7 +165,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		
 		sql+= " from tbl_wellinformation t "
-				+ "left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
 				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
@@ -371,7 +377,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 					for(int j=0;j<protocolItems.size();j++){
 						String columnName="";
 						String value=obj[j+6]+"";
-						String rawValue=obj[j+6]+"";
+						String rawValue=value;
 						String addr="";
 						String column="";
 						String columnDataType="";
@@ -391,7 +397,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							column="ADDR"+addr;
 							columnDataType=protocolItems.get(j).getIFDataType();
 							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
-							if(protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
+							if(StringManagerUtils.isNotNull(value)&&protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
 								for(int l=0;l<protocolItems.get(j).getMeaning().size();l++){
 									if(StringManagerUtils.stringToFloat(value)==(protocolItems.get(j).getMeaning().get(l).getValue())){
 										value=protocolItems.get(j).getMeaning().get(l).getMeaning();
@@ -441,12 +447,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 										}
 									}else{
 										for(int m=0;m<itemsArr.length;m++){
-											if(itemsArr[m].equalsIgnoreCase(protocolItems.get(j).getTitle())){
+											if(itemsArr[m].equalsIgnoreCase(protocolItems.get(j).getTitle()) && itemsBitIndexArr[m].equalsIgnoreCase(protocolItems.get(j).getMeaning().get(l).getValue()+"") ){
 												sort=StringManagerUtils.stringToInteger(itemsSortArr[m]);
 												break;
 											}
 										}
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,protocolItems.get(j).getMeaning().get(l).getValue()+"",unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
