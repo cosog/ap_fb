@@ -4,6 +4,7 @@ drop sequence SEQ_ACQUISITIONUNIT;
 drop sequence SEQ_ACQ_GROUP_ITEM;
 drop sequence SEQ_ACQ_UNIT_GROUP;
 drop sequence SEQ_ALARMINFO;
+drop sequence SEQ_ALARMINFO_LATEST;
 drop sequence SEQ_ALARM_ITEM2UNIT_CONF;
 drop sequence SEQ_ALARM_UNIT_CONF;
 drop sequence SEQ_CODE;

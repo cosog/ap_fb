@@ -63,6 +63,49 @@ begin
 end;
 /
 
+CREATE OR REPLACE PROCEDURE prd_reset_sequence (sequencename IN VARCHAR2) as
+  curr_val INTEGER;
+BEGIN
+  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' MINVALUE 0';
+  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' cache 20';
+  EXECUTE IMMEDIATE 'SELECT ' || sequencename || '.nextval FROM dual'
+    INTO curr_val;
+  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' increment by -' ||
+                    curr_val;
+  EXECUTE IMMEDIATE 'SELECT ' || sequencename || '.nextval FROM dual'
+    INTO curr_val;
+  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' increment by 1';
+END prd_reset_sequence;
+/
+
+CREATE OR REPLACE PROCEDURE prd_clear_data is
+begin
+--清空所有数据
+EXECUTE IMMEDIATE 'truncate table tbl_pipelineacqdata_latest';
+EXECUTE IMMEDIATE 'truncate table tbl_pipelineacqdata_hist';
+EXECUTE IMMEDIATE 'truncate table tbl_pumpacqdata_latest';
+EXECUTE IMMEDIATE 'truncate table tbl_pumpacqdata_hist';
+EXECUTE IMMEDIATE 'truncate table tbl_alarminfo_latest';
+EXECUTE IMMEDIATE 'truncate table tbl_alarminfo';
+EXECUTE IMMEDIATE 'truncate table tbl_deviceoperationlog';
+EXECUTE IMMEDIATE 'truncate table tbl_systemlog';
+EXECUTE IMMEDIATE 'truncate table tbl_resourcemonitoring';
+EXECUTE IMMEDIATE 'truncate table tbl_wellinformation';
+
+--重置所有序列
+ prd_reset_sequence('seq_pipelineacqdata_latest');
+ prd_reset_sequence('seq_pipelineacqdata_hist');
+ prd_reset_sequence('seq_pumpacqdata_latest');
+ prd_reset_sequence('seq_pumpacqdata_hist');
+ prd_reset_sequence('seq_alarminfo_latest');
+ prd_reset_sequence('seq_alarminfo');
+ prd_reset_sequence('seq_deviceoperationlog');
+ prd_reset_sequence('seq_systemlog');
+ prd_reset_sequence('seq_resourcemonitoring');
+ prd_reset_sequence('seq_wellinformation');
+end prd_clear_data;
+/
+
 CREATE OR REPLACE PROCEDURE prd_change_wellname (v_oldWellName    in varchar2,
                                                     v_newWellName    in varchar2,
                                                     v_orgId     in varchar2) as
@@ -94,6 +137,10 @@ begin
            commit;
            update tbl_pipelineacqdata_hist t set t.wellid=newWellId where t.wellid=oldWellId;
            commit;
+           update tbl_alarminfo_latest t set t.wellid=newWellId where t.wellid=oldWellId;
+           commit;
+           update tbl_alarminfo t set t.wellid=newWellId where t.wellid=oldWellId;
+           commit;
            delete tbl_wellinformation t where t.wellname=v_oldWellName;
            commit;
            p_msg := '新井名存在，修改成功';
@@ -103,12 +150,10 @@ begin
         commit;
          p_msg := '新井名不存在，修改成功';
      end if;
-
   elsif wellcount>0 then
      p_msg := '该井号已存在于其他组织下';
   end if;
   dbms_output.put_line('p_msg:' || p_msg);
-
 Exception
   When Others Then
     p_msg := Sqlerrm || ',' || '操作失败';
@@ -116,78 +161,7 @@ Exception
 end prd_change_wellname;
 /
 
-CREATE OR REPLACE PROCEDURE prd_reset_sequence (sequencename IN VARCHAR2) as
-  curr_val INTEGER;
-BEGIN
-  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' MINVALUE 0';
-  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' cache 20';
-  EXECUTE IMMEDIATE 'SELECT ' || sequencename || '.nextval FROM dual'
-    INTO curr_val;
-  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' increment by -' ||
-                    curr_val;
-  EXECUTE IMMEDIATE 'SELECT ' || sequencename || '.nextval FROM dual'
-    INTO curr_val;
-  EXECUTE IMMEDIATE 'alter sequence ' || sequencename || ' increment by 1';
-END prd_reset_sequence;
-/
 
-CREATE OR REPLACE PROCEDURE prd_clear_data is
-begin
---清空所有数据
-EXECUTE IMMEDIATE 'truncate table tbl_org';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_productiondata_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_productiondata_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_discrete_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_discrete_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_diagram_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_diagram_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_diagram_total';
-EXECUTE IMMEDIATE 'truncate table tbl_a9rawdata_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_a9rawdata_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_a9rawwatercutdata_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_a9rawwatercutdata_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_motor';
-EXECUTE IMMEDIATE 'truncate table tbl_rpcinformation';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_inver_opt';
-EXECUTE IMMEDIATE 'truncate table tbl_rpc_total_day';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_productiondata_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_productiondata_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_discrete_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_discrete_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_rpm_latest';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_rpm_hist';
-EXECUTE IMMEDIATE 'truncate table tbl_pcp_total_day';
-EXECUTE IMMEDIATE 'truncate table tbl_wellboretrajectory';
-EXECUTE IMMEDIATE 'truncate table tbl_wellinformation';
-
---重置所有序列
- prd_reset_sequence('seq_org');
- prd_reset_sequence('seq_outputwellproduction_rt');
- prd_reset_sequence('seq_outputwellproduction');
- prd_reset_sequence('seq_discretedata_rt');
- prd_reset_sequence('seq_discretedata');
- prd_reset_sequence('seq_indicatordiagram_rt');
- prd_reset_sequence('seq_indicatordiagram');
- prd_reset_sequence('seq_rpc_diagram_total');
- prd_reset_sequence('seq_a9rawdata_hist');
- prd_reset_sequence('seq_a9rawdata_latest');
- prd_reset_sequence('seq_a9rawwatercutdata_hist');
- prd_reset_sequence('seq_a9rawwatercutdata_latest');
- prd_reset_sequence('seq_inver_motor');
- prd_reset_sequence('seq_inver_pumpingunit');
- prd_reset_sequence('seq_inver_optimize');
- prd_reset_sequence('seq_outputwellaggregation');
- prd_reset_sequence('seq_pcp_productiondata_latest');
- prd_reset_sequence('seq_pcp_productiondata_hist');
- prd_reset_sequence('seq_pcp_discrete_latest');
- prd_reset_sequence('seq_pcp_discrete_hist');
- prd_reset_sequence('seq_pcp_rpm_latest');
- prd_reset_sequence('seq_pcp_rpm_hist');
- prd_reset_sequence('seq_pcp_total_day');
- prd_reset_sequence('seq_wellboretrajectory');
- prd_reset_sequence('seq_wellinformation');
-end prd_clear_data;
-/
 
 CREATE OR REPLACE PROCEDURE prd_save_alarmcolor (    overviewBackgroundColor0   in varchar2,
                                                         overviewBackgroundColor1     in varchar2,
@@ -277,7 +251,6 @@ begin
     Update tbl_code t1 set t1.itemname=statOpacity3 where t1.itemcode='BJYSTMD3' and t1.itemvalue=300;
     commit;
     p_msg := '修改成功';
-
   dbms_output.put_line('p_msg:' || p_msg);
 Exception
   When Others Then
@@ -296,7 +269,9 @@ CREATE OR REPLACE PROCEDURE prd_save_alarminfo (
   v_alarmInfo in varchar2,
   v_alarmLimit in number,
   v_hystersis in number,
-  v_alarmLevel in number
+  v_alarmLevel in number,
+  v_isSendMessage in number,
+  v_isSendMail in number
   ) is
   p_msg varchar2(3000) := 'error';
   counts number :=0;
@@ -308,7 +283,8 @@ begin
   and t.itemname=v_itemName;
   if counts=0 then
     select t.id into p_wellid from tbl_wellinformation t where t.wellname=v_wellName and t.devicetype=v_deviceType ;
-    insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlimit,hystersis,alarmlevel)
+    insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlimit,
+    hystersis,alarmlevel,issendmessage,issendmail)
     values(
          p_wellid,
          to_date(v_alarmTime,'yyyy-mm-dd hh24:mi:ss'),
@@ -318,13 +294,16 @@ begin
          v_alarmInfo,
          v_alarmLimit,
          v_hystersis,
-         v_alarmLevel
+         v_alarmLevel,
+         v_isSendMessage,
+         v_isSendMail
       );
     commit;
     p_msg := '插入成功';
   elsif counts>0 then
     update tbl_alarminfo t set t.alarmtype=v_alarmType,alarmvalue=v_alarmValue,
-    alarminfo=v_alarmInfo,alarmlimit=v_alarmLimit,hystersis=v_hystersis,alarmlevel=v_alarmLevel
+    alarminfo=v_alarmInfo,alarmlimit=v_alarmLimit,hystersis=v_hystersis,alarmlevel=v_alarmLevel,
+    issendmessage=v_isSendMessage,issendmail=v_isSendMail
     where t.wellid=( select t2.id from tbl_wellinformation t2 where t2.wellname=v_wellName and t2.devicetype=v_deviceType )
     and t.alarmtime=to_date(v_alarmTime,'yyyy-mm-dd hh24:mi:ss')
     and t.itemname=v_itemName;

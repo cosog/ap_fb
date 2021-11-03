@@ -325,7 +325,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							column="ADDR"+addr;
 							columnDataType=protocolItems.get(j).getIFDataType();
 							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
-							if(protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
+							if(StringManagerUtils.isNotNull(value)&&protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
 								for(int l=0;l<protocolItems.get(j).getMeaning().size();l++){
 									if(StringManagerUtils.stringToFloat(value)==(protocolItems.get(j).getMeaning().get(l).getValue())){
 										value=protocolItems.get(j).getMeaning().get(l).getMeaning();
@@ -375,12 +375,12 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 										}
 									}else{
 										for(int m=0;m<itemsArr.length;m++){
-											if(itemsArr[m].equalsIgnoreCase(protocolItems.get(j).getTitle())){
+											if(itemsArr[m].equalsIgnoreCase(protocolItems.get(j).getTitle()) && itemsBitIndexArr[m].equalsIgnoreCase(protocolItems.get(j).getMeaning().get(l).getValue()+"") ){
 												sort=StringManagerUtils.stringToInteger(itemsSortArr[m]);
 												break;
 											}
 										}
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,protocolItems.get(j).getMeaning().get(l).getValue()+"",unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
