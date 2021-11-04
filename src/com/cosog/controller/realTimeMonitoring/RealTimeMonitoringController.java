@@ -261,7 +261,7 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
-	public boolean DeviceControlOperation_Mdubus(String protocolCode,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
+	public boolean DeviceControlOperation_Mdubus(String protocolName,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
 		boolean result=true;
 		try {
 //			String json="";
@@ -278,7 +278,7 @@ public class RealTimeMonitoringController extends BaseController {
 			
 			ModbusProtocolConfig.Protocol protocol=null;
 			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-				if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
+				if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
 					protocol=modbusProtocolConfig.getProtocol().get(i);
 					break;
 				}

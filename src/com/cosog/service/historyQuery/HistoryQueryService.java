@@ -245,7 +245,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		info_json.append("[");
 		for(int i=0;i<itemsList.size();i++){
 			Object[] itemsObj=(Object[]) itemsList.get(i);
-			String protocolCode=itemsObj[1]+"";
+			String protocolName=itemsObj[1]+"";
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			if(equipmentDriveMap.size()==0){
 				EquipmentDriverServerTask.loadProtocolConfig();
@@ -255,7 +255,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			
 			ModbusProtocolConfig.Protocol protocol=null;
 			for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
-				if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
+				if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
 					protocol=modbusProtocolConfig.getProtocol().get(j);
 					break;
 				}
@@ -530,7 +530,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		String protocolSql="select upper(t3.protocol) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
 				+ " and  t.wellname='"+deviceName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
 		List<?> protocolList = this.findCallSql(protocolSql);
-		String protocolCode="";
+		String protocolName="";
 		String column="";
 		String unit="";
 		String dataType="";
@@ -540,7 +540,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			tableName="tbl_pipelineacqdata_hist";
 		}
 		if(protocolList.size()>0){
-			protocolCode=protocolList.get(0)+"";
+			protocolName=protocolList.get(0)+"";
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			if(equipmentDriveMap.size()==0){
 				EquipmentDriverServerTask.loadProtocolConfig();
@@ -549,7 +549,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-					if(protocolCode.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getCode())){
+					if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
 						for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
 							if(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle().equalsIgnoreCase(item)){
 								column="ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr();
