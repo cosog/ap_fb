@@ -932,7 +932,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 //						modbusDriverSaveData.setProtocolCode(modbusProtocolConfig.getProtocol().get(i).getCode());
 						
 						modbusProtocolConfig.getProtocol().get(i).setName(modbusDriverSaveData.getProtocolName());
-						modbusProtocolConfig.getProtocol().get(i).setCode(modbusDriverSaveData.getProtocolCode());
+//						modbusProtocolConfig.getProtocol().get(i).setCode(modbusDriverSaveData.getProtocolCode());
+						modbusProtocolConfig.getProtocol().get(i).setCode(modbusDriverSaveData.getProtocolName());
 						modbusProtocolConfig.getProtocol().get(i).setDeviceType(modbusDriverSaveData.getDeviceType());
 						modbusProtocolConfig.getProtocol().get(i).setSort(modbusDriverSaveData.getSort());
 						for(int j=0;j<modbusDriverSaveData.getDataConfig().size();j++){
@@ -1025,10 +1026,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 						//如果协议名称改变，更新数据库
 						if(!oldName.equals(modbusDriverSaveData.getProtocolName())){
 							EquipmentDriverServerTask.initProtocolConfig(oldName,"delete");
-							String sql="update tbl_acq_unit_conf t set t.protocol='"+modbusDriverSaveData.getProtocolName()+"' where t.protocol='"+oldName+"'";
+							String unitSql="update tbl_acq_unit_conf t set t.protocol='"+modbusDriverSaveData.getProtocolName()+"' where t.protocol='"+oldName+"'";
 							String groupSql="update tbl_acq_group_conf t set t.protocol='"+modbusDriverSaveData.getProtocolName()+"' where t.protocol='"+oldName+"'";
-							service.updateSql(sql);
+							String alatmUnitSql="update tbl_alarm_unit_conf t set t.protocol='"+modbusDriverSaveData.getProtocolName()+"' where t.protocol='"+oldName+"'";
+							service.updateSql(unitSql);
 							service.updateSql(groupSql);
+							service.updateSql(alatmUnitSql);
 						}
 						break;
 					}
