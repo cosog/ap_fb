@@ -290,6 +290,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							&&protocolConfig.getItems().get(j).getMeaning().size()>0){
 						Collections.sort(protocolConfig.getItems().get(j).getMeaning());//排序
 						for(int k=0;k<protocolConfig.getItems().get(j).getMeaning().size();k++){
+							checked=false;
+							sort="";
 							for(int m=0;m<itemsList.size();m++){
 								if(itemsList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())
 										&&itemsBitIndexList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"")
@@ -414,6 +416,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					if(protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
 						resolutionMode=protocolConfig.getItems().get(j).getResolutionMode();
 						title=protocolConfig.getItems().get(j).getTitle();
+						if(protocolConfig.getItems().get(j).getMeaning()!=null&&protocolConfig.getItems().get(j).getMeaning().size()>0){
+							Collections.sort(protocolConfig.getItems().get(j).getMeaning());
+						}
 						for(int k=0;protocolConfig.getItems().get(j).getMeaning()!=null&&k<protocolConfig.getItems().get(j).getMeaning().size();k++){
 							totolCount=k+1;
 							totalRoot.append("{\"id\":"+(k+1)+","

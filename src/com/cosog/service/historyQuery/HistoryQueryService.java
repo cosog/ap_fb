@@ -266,8 +266,6 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				String[] itemsArr=(itemsObj[2]+"").split(",");
 				String[] itemsSortArr=(itemsObj[3]+"").split(",");
 				String[] itemsBitIndexArr=(itemsObj[4]+"").split(",");
-//				List<String> columnsNameList=new ArrayList<String>();
-//				List<Integer> columnsSortList=new ArrayList<Integer>();
 				List<ModbusProtocolConfig.Items> protocolItems=new ArrayList<ModbusProtocolConfig.Items>();
 				List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 				for(int j=0;j<protocol.getItems().size();j++){
@@ -277,8 +275,6 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
 								String column="ADDR"+protocol.getItems().get(j).getAddr();
 								String columnName=protocol.getItems().get(j).getTitle();
-//								columnsNameList.add(columnName);
-//								columnsSortList.add(StringManagerUtils.stringToInteger(itemsSortArr[k]));
 								protocolItems.add(protocol.getItems().get(j));
 								break;
 							}
@@ -346,7 +342,22 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							if(protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
 								String[] valueArr=value.split(",");
 								for(int l=0;l<protocolItems.get(j).getMeaning().size();l++){
+									isMatch=false;
 									columnName=protocolItems.get(j).getMeaning().get(l).getMeaning();
+									sort=9999;
+									
+									for(int n=0;n<itemsArr.length;n++){
+										if(itemsArr[n].equalsIgnoreCase(protocolItems.get(j).getTitle()) 
+												&&StringManagerUtils.stringToInteger(itemsBitIndexArr[n])==protocolItems.get(j).getMeaning().get(l).getValue()
+												){
+											sort=StringManagerUtils.stringToInteger(itemsSortArr[n]);
+											isMatch=true;
+											break;
+										}
+									}
+									if(!isMatch){
+										continue;
+									}
 									if(StringManagerUtils.isNotNull(value)){
 										for(int m=0;valueArr!=null&&m<valueArr.length;m++){
 											if(m==protocolItems.get(j).getMeaning().get(l).getValue()  ){
@@ -357,15 +368,6 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 													rawValue=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"1":"0";
 												}else{
 													value=valueArr[m];
-												}
-												
-												for(int n=0;n<itemsArr.length;n++){
-													if(itemsArr[n].equalsIgnoreCase(protocolItems.get(j).getTitle()) 
-															&&itemsBitIndexArr[n].equalsIgnoreCase(bitIndex)
-															){
-														sort=StringManagerUtils.stringToInteger(itemsSortArr[n]);
-														break;
-													}
 												}
 												
 												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);

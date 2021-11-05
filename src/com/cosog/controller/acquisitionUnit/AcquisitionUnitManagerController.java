@@ -980,6 +980,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 											itemsMeaning.setMeaning(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getMeaning());
 											modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning().add(itemsMeaning);
 										}
+										if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning()!=null&&modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning().size()>0){
+											Collections.sort(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning());
+										}
 									}
 									break;
 								}
@@ -1004,6 +1007,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 										itemsMeaning.setValue(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getValue());
 										itemsMeaning.setMeaning(modbusDriverSaveData.getDataConfig().get(j).getMeaning().get(m).getMeaning());
 										item.getMeaning().add(itemsMeaning);
+									}
+									if(item.getMeaning()!=null&&item.getMeaning().size()>0){
+										Collections.sort(item.getMeaning());
 									}
 								}
 								modbusProtocolConfig.getProtocol().get(i).getItems().add(item);

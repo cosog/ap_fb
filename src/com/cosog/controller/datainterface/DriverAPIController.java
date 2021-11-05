@@ -624,10 +624,23 @@ public class DriverAPIController extends BaseController{
 											String[] valueArr=value.split(",");
 											for(int l=0;l<protocol.getItems().get(j).getMeaning().size();l++){
 												title=protocol.getItems().get(j).getMeaning().get(l).getMeaning();
+												sort=9999;
+												isMatch=false;
+												for(int n=0;n<itemsArr.length;n++){
+													if(itemsArr[n].equalsIgnoreCase(protocol.getItems().get(j).getTitle()) 
+															&&StringManagerUtils.stringToInteger(itemsBitIndexArr[n])==protocol.getItems().get(j).getMeaning().get(l).getValue()
+															){
+														sort=StringManagerUtils.stringToInteger(itemsSortArr[n]);
+														isMatch=true;
+														break;
+													}
+												}
+												if(!isMatch){
+													continue;
+												}
 												if(StringManagerUtils.isNotNull(value)){
 													for(int m=0;valueArr!=null&&m<valueArr.length;m++){
-														if(m==protocol.getItems().get(j).getMeaning().get(l).getValue()  ){
-															isMatch=true;
+														if(m==protocol.getItems().get(j).getMeaning().get(l).getValue()){
 															bitIndex=m+"";
 															if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
 																value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
@@ -635,16 +648,6 @@ public class DriverAPIController extends BaseController{
 															}else{
 																value=valueArr[m];
 															}
-															
-															for(int n=0;n<itemsArr.length;n++){
-																if(itemsArr[n].equalsIgnoreCase(protocol.getItems().get(j).getTitle()) 
-																		&&itemsBitIndexArr[n].equalsIgnoreCase(bitIndex)
-																		){
-																	sort=StringManagerUtils.stringToInteger(itemsSortArr[n]);
-																	break;
-																}
-															}
-															
 															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 															protocolItemResolutionDataList.add(protocolItemResolutionData);
 															break;

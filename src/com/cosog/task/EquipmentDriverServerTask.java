@@ -52,7 +52,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -256,12 +256,11 @@ public class EquipmentDriverServerTask {
 						acquisitionItemColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr());
 					}
 				}
-				if(deviceType==0){
-					acquisitionItemColumnsMap.put("pumpDeviceAcquisitionItemColumns", acquisitionItemColumns);
-				}else{
-					acquisitionItemColumnsMap.put("pipelineDeviceAcquisitionItemColumns", acquisitionItemColumns);
-				}
-				break;
+			}
+			if(deviceType==0){
+				acquisitionItemColumnsMap.put("pumpDeviceAcquisitionItemColumns", acquisitionItemColumns);
+			}else{
+				acquisitionItemColumnsMap.put("pipelineDeviceAcquisitionItemColumns", acquisitionItemColumns);
 			}
 		}
 		return 0;
@@ -285,7 +284,7 @@ public class EquipmentDriverServerTask {
 		}
 		Map<String, List<String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
 		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(key)==null){
-			loadAcquisitionItemColumns();
+			loadAcquisitionItemColumns(deviceType);
 		}
 		List<String> acquisitionItemColumns=acquisitionItemColumnsMap.get(key);
 		List<String> acquisitionItemDataBaseColumns=new ArrayList<String>();
