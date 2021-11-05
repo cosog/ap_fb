@@ -418,11 +418,26 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							if(protocolItems.get(j).getMeaning()!=null&&protocolItems.get(j).getMeaning().size()>0){
 								String[] valueArr=value.split(",");
 								for(int l=0;l<protocolItems.get(j).getMeaning().size();l++){
+									isMatch=false;
 									columnName=protocolItems.get(j).getMeaning().get(l).getMeaning();
+									sort=9999;
+									
+									for(int n=0;n<itemsArr.length;n++){
+										if(itemsArr[n].equalsIgnoreCase(protocolItems.get(j).getTitle()) 
+												&&StringManagerUtils.stringToInteger(itemsBitIndexArr[n])==protocolItems.get(j).getMeaning().get(l).getValue()
+												){
+											sort=StringManagerUtils.stringToInteger(itemsSortArr[n]);
+											isMatch=true;
+											break;
+										}
+									}
+									if(!isMatch){
+										continue;
+									}
 									if(StringManagerUtils.isNotNull(value)){
 										for(int m=0;valueArr!=null&&m<valueArr.length;m++){
-											if(m==protocolItems.get(j).getMeaning().get(l).getValue()  ){
-												isMatch=true;
+											if(m==protocolItems.get(j).getMeaning().get(l).getValue()){
+												
 												bitIndex=m+"";
 												if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
 													value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
@@ -431,14 +446,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 													value=valueArr[m];
 												}
 												
-												for(int n=0;n<itemsArr.length;n++){
-													if(itemsArr[n].equalsIgnoreCase(protocolItems.get(j).getTitle()) 
-															&&itemsBitIndexArr[n].equalsIgnoreCase(bitIndex)
-															){
-														sort=StringManagerUtils.stringToInteger(itemsSortArr[n]);
-														break;
-													}
-												}
+												
 												
 												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
 												protocolItemResolutionDataList.add(protocolItemResolutionData);
