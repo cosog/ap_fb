@@ -84,6 +84,12 @@ driverConfig:
          http://8.130.30.138:19200/api/probe/disk
       host: 
          http://8.130.30.138:19200/api/probe/host
+email:
+   snedAccount:
+      account: zhaojinmeng1128@126.com
+      password: YAOLBHNROJWHYCVX
+      smtpHost: smtp.126.com
+      smtpPort: 465
 others:
    cache: false
    language: zh_CN

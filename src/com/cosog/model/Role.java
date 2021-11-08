@@ -25,6 +25,7 @@ public class Role implements java.io.Serializable {
 	private Integer roleFlag;
 	private Integer receiveSMS;
 	private Integer receiveMail;
+	private Integer showLevel;
 	private String remark;
 
 	// Constructors
@@ -34,7 +35,7 @@ public class Role implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Role(Integer roleId, String roleCode, String roleName, Integer roleFlag, Integer receiveSMS,Integer receiveMail, String remark) {
+	public Role(Integer roleId, String roleCode, String roleName, Integer roleFlag, Integer receiveSMS,Integer receiveMail,Integer showLevel, String remark) {
 		super();
 		this.roleId = roleId;
 		this.roleCode = roleCode;
@@ -42,6 +43,7 @@ public class Role implements java.io.Serializable {
 		this.roleFlag = roleFlag;
 		this.receiveSMS = receiveSMS;
 		this.receiveMail = receiveMail;
+		this.showLevel=showLevel;
 		this.remark = remark;
 	}
 
@@ -108,6 +110,15 @@ public class Role implements java.io.Serializable {
 
 	public void setReceiveMail(Integer receiveMail) {
 		this.receiveMail = receiveMail;
+	}
+
+	@Column(name = "showLevel", nullable = false, length = 10)
+	public Integer getShowLevel() {
+		return showLevel;
+	}
+
+	public void setShowLevel(Integer showLevel) {
+		this.showLevel = showLevel;
 	}
 
 }

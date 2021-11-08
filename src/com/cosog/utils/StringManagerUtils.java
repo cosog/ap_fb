@@ -2527,11 +2527,16 @@ public class StringManagerUtils {
 //	    		System.out.println("发送邮件："+receivingAccount.get(i)+","+topic+","+content);
 //	    	}
 	    	
-	    	String myEMailAccount="zhaojinmeng1128@126.com";
-	    	String myEMailPassword="YAOLBHNROJWHYCVX";//YAOLBHNROJWHYCVX  NLEILMQVNBXGRNBT
-	    	String myEMailSMTPHost="smtp.126.com";
-	    	String smtpPort="465";
-	    	String receiveMailAccount="271875319@qq.com";
+//	    	String myEMailAccount="zhaojinmeng1128@126.com";
+//	    	String myEMailPassword="YAOLBHNROJWHYCVX";//YAOLBHNROJWHYCVX  NLEILMQVNBXGRNBT
+//	    	String myEMailSMTPHost="smtp.126.com";
+//	    	String smtpPort="465";
+//	    	String receiveMailAccount="271875319@qq.com";
+	    	
+	    	String myEMailAccount=Config.getInstance().configFile.getEmail().getSnedAccount().getAccount();
+	    	String myEMailPassword=Config.getInstance().configFile.getEmail().getSnedAccount().getPassword();//YAOLBHNROJWHYCVX  NLEILMQVNBXGRNBT
+	    	String myEMailSMTPHost=Config.getInstance().configFile.getEmail().getSnedAccount().getSmtpHost();
+	    	String smtpPort=Config.getInstance().configFile.getEmail().getSnedAccount().getSmtpPort();
 	    	
 	    	
 	    	try {
