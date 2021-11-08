@@ -184,11 +184,15 @@ public class RealTimeMonitoringController extends BaseController {
 	@RequestMapping("/getDeviceRealTimeMonitoringData")
 	public String getDeviceRealTimeMonitoringData() throws Exception {
 		String json = "";
+		HttpSession session=request.getSession();
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		json = realTimeMonitoringService.getDeviceRealTimeMonitoringData(deviceName,deviceType);
+		User user = (User) session.getAttribute("userLogin");
+		if(user!=null){
+			json = realTimeMonitoringService.getDeviceRealTimeMonitoringData(deviceName,deviceType,user.getUserId());
+		}
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");

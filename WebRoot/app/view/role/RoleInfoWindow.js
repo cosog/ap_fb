@@ -140,6 +140,15 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 value: '',
                 name: "role.roleCode"
             },RoleTypeCombox,receiveSMSCombox,receiveMailCombox, {
+            	xtype: 'numberfield',
+            	id: "roleShowLevel_Id",
+                name: 'role.showLevel',
+                fieldLabel: '数据显示级别',
+                allowBlank: false,
+                minValue: 1,
+                anchor: '100%',
+                msgTarget: 'side'
+            }, {
                 fieldLabel: '角色描述',
                 id: 'roleRemark_Id',
                 anchor: '100',

@@ -18,6 +18,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	private String itemName;
 	private String itemCode;
 	private String matrix;
+	private Integer showLevel;
 	private Integer sort;
 	private Integer bitIndex;
 
@@ -30,7 +31,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	/** full constructor */
 	public AcquisitionGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
-			String matrix, Integer sort, Integer bitIndex) {
+			String matrix, Integer sort, Integer bitIndex, Integer showLevel) {
 		super();
 		this.id = id;
 		this.groupId = groupId;
@@ -40,6 +41,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 		this.matrix = matrix;
 		this.sort = sort;
 		this.bitIndex = bitIndex;
+		this.showLevel=showLevel;
 	}
 
 	@Id
@@ -112,6 +114,15 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	public void setBitIndex(Integer bitIndex) {
 		this.bitIndex = bitIndex;
+	}
+
+	@Column(name = "showLevel")
+	public Integer getShowLevel() {
+		return showLevel;
+	}
+
+	public void setShowLevel(Integer showLevel) {
+		this.showLevel = showLevel;
 	}
 
 	

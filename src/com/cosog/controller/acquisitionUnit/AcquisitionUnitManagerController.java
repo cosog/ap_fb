@@ -457,13 +457,11 @@ public class AcquisitionUnitManagerController extends BaseController {
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		try {
 			String params = ParamUtils.getParameter(request, "params");
-			String sorts = ParamUtils.getParameter(request, "sorts");
 			String matrixCodes = ParamUtils.getParameter(request, "matrixCodes");
 			String groupCode = ParamUtils.getParameter(request, "groupCode");
 			String protocolName = ParamUtils.getParameter(request, "protocol");
 			log.debug("grantAcquisitionItemsPermission params==" + params);
 			String paramsArr[] = StringManagerUtils.split(params, ",");
-			String sortArr[] = StringManagerUtils.split(sorts, ",");
 			String groupId="";
 			String groupIdSql="select t.id from tbl_acq_group_conf t where t.group_code='"+groupCode+"' ";
 			List list = this.service.findCallSql(groupIdSql);
@@ -512,7 +510,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 						acquisitionGroupItem.setItemName(itemName);
 						acquisitionGroupItem.setSort(StringManagerUtils.isNumber(module_[3])?StringManagerUtils.stringTransferInteger(module_[3]):null);
 						acquisitionGroupItem.setBitIndex(bitIndex>=0?bitIndex:null);
-						acquisitionGroupItem.setMatrix(module_[4]);
+						acquisitionGroupItem.setShowLevel(StringManagerUtils.isNumber(module_[4])?StringManagerUtils.stringTransferInteger(module_[4]):null);
+						acquisitionGroupItem.setMatrix(module_[5]);
 						this.acquisitionUnitItemManagerService.grantAcquisitionItemsPermission(acquisitionGroupItem);
 					}
 				}

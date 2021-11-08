@@ -153,13 +153,18 @@ public class HistoryQueryController extends BaseController  {
 	@RequestMapping("/getDeviceHistoryDetailsData")
 	public String getDeviceHistoryDetailsData() throws Exception {
 		String json = "";
+		HttpSession session=request.getSession();
 		orgId = ParamUtils.getParameter(request, "orgId");
 		String recordId = ParamUtils.getParameter(request, "recordId");
 		deviceName = ParamUtils.getParameter(request, "deviceName");
 		String isHis = ParamUtils.getParameter(request, "isHis");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		json = historyQueryService.getDeviceHistoryDetailsData(deviceName,deviceType,recordId,isHis);
+		User user = (User) session.getAttribute("userLogin");
+		if(user!=null){
+			json = historyQueryService.getDeviceHistoryDetailsData(deviceName,deviceType,recordId,isHis,user.getUserId());
+		}
+		
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);

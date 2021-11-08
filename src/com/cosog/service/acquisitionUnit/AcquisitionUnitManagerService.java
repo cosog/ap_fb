@@ -238,6 +238,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ "{ \"header\":\"换算比例\",\"dataIndex\":\"ratio\",width:80 ,children:[] },"
 				+ "{ \"header\":\"解析模式\",\"dataIndex\":\"resolutionMode\",width:80 ,children:[] },"
 				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] },"
+				+ "{ \"header\":\"显示级别\",\"dataIndex\":\"showLevel\",width:80 ,children:[] },"
 				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
@@ -246,14 +247,16 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<String> itemsList=new ArrayList<String>();
 		List<String> itemsSortList=new ArrayList<String>();
 		List<String> itemsBitIndexList=new ArrayList<String>();
+		List<String> itemsShowLevelList=new ArrayList<String>();
 		if("3".equalsIgnoreCase(classes)){
-			String sql="select t.itemname,t.sort,t.bitindex from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
+			String sql="select t.itemname,t.sort,t.bitindex,t.showlevel from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
 			List<?> list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
 				Object[] obj=(Object[])list.get(i);
 				itemsList.add(obj[0]+"");
 				itemsSortList.add(obj[1]+"");
 				itemsBitIndexList.add(obj[2]+"");
+				itemsShowLevelList.add(obj[3]+"");
 			}
 		}
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
@@ -263,7 +266,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					boolean checked=false;
 					String sort="";
-					
+					String showLevel="";
 					if(protocolConfig.getItems().get(j).getResolutionMode()==0){//开关量
 						
 					}else{
@@ -292,12 +295,14 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 						for(int k=0;k<protocolConfig.getItems().get(j).getMeaning().size();k++){
 							checked=false;
 							sort="";
+							showLevel="";
 							for(int m=0;m<itemsList.size();m++){
 								if(itemsList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())
 										&&itemsBitIndexList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"")
 									){
 									checked=true;
 									sort=itemsSortList.get(m);
+									showLevel=itemsShowLevelList.get(m);
 									break;
 								}
 							}
@@ -314,6 +319,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
 									+ "\"resolutionMode\":\""+resolutionMode+"\","
 									+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
+									+ "\"showLevel\":\""+showLevel+"\","
 									+ "\"sort\":\""+sort+"\"},");
 							index++;
 						}
@@ -323,6 +329,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							for(int k=0;k<itemsList.size();k++){
 								if(itemsList.get(k).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())){
 									sort=itemsSortList.get(k);
+									showLevel=itemsShowLevelList.get(k);
 									break;
 								}
 							}
@@ -339,6 +346,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								+ "\"unit\":\""+protocolConfig.getItems().get(j).getUnit()+"\","
 								+ "\"resolutionMode\":\""+resolutionMode+"\","
 								+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
+								+ "\"showLevel\":\""+showLevel+"\","
 								+ "\"sort\":\""+sort+"\"},");
 						index++;
 					}

@@ -17,6 +17,8 @@ public class ConfigFile {
     private ViewInformation viewInformation;
     
     private DriverConfig driverConfig;
+    
+    private Email email;
 
     private Others others;
 
@@ -56,6 +58,24 @@ public class ConfigFile {
     public Others getOthers(){
         return this.others;
     }
+	public TcpServer getTcpServer() {
+		return tcpServer;
+	}
+	public void setTcpServer(TcpServer tcpServer) {
+		this.tcpServer = tcpServer;
+	}
+	public DriverConfig getDriverConfig() {
+		return driverConfig;
+	}
+	public void setDriverConfig(DriverConfig driverConfig) {
+		this.driverConfig = driverConfig;
+	}
+	public Email getEmail() {
+		return email;
+	}
+	public void setEmail(Email email) {
+		this.email = email;
+	}
 	
 	public static class Server
 	{
@@ -563,6 +583,49 @@ public class ConfigFile {
 		}
 	}
 	
+	public static class mailAccount{
+		private String account;
+		private String password;
+		private String smtpHost;
+		private String smtpPort;
+		public String getAccount() {
+			return account;
+		}
+		public void setAccount(String account) {
+			this.account = account;
+		}
+		public String getPassword() {
+			return password;
+		}
+		public void setPassword(String password) {
+			this.password = password;
+		}
+		public String getSmtpHost() {
+			return smtpHost;
+		}
+		public void setSmtpHost(String smtpHost) {
+			this.smtpHost = smtpHost;
+		}
+		public String getSmtpPort() {
+			return smtpPort;
+		}
+		public void setSmtpPort(String smtpPort) {
+			this.smtpPort = smtpPort;
+		}
+	}
+	
+	public static class Email{
+		private mailAccount snedAccount;
+
+		public mailAccount getSnedAccount() {
+			return snedAccount;
+		}
+
+		public void setSnedAccount(mailAccount snedAccount) {
+			this.snedAccount = snedAccount;
+		}
+	}
+	
 	public static class Others
 	{
 	    private boolean cache;
@@ -637,18 +700,5 @@ public class ConfigFile {
 		public void setProductionUnit(int productionUnit) {
 			this.productionUnit = productionUnit;
 		}
-	}
-
-	public TcpServer getTcpServer() {
-		return tcpServer;
-	}
-	public void setTcpServer(TcpServer tcpServer) {
-		this.tcpServer = tcpServer;
-	}
-	public DriverConfig getDriverConfig() {
-		return driverConfig;
-	}
-	public void setDriverConfig(DriverConfig driverConfig) {
-		this.driverConfig = driverConfig;
 	}
 }
