@@ -1,6 +1,7 @@
 package com.cosog.utils;
 
 public class ProtocolItemResolutionData  implements Comparable<ProtocolItemResolutionData>{
+	public String rawColumnName="";
 	public String columnName="";
 	public String value="";
 	public String rawValue="";
@@ -15,9 +16,10 @@ public class ProtocolItemResolutionData  implements Comparable<ProtocolItemResol
 	public ProtocolItemResolutionData() {
 		super();
 	}
-	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
+	public ProtocolItemResolutionData(String rawColumnName,String columnName, String value,String rawValue, String addr, String column,
 			String columnDataType, String resolutionMode,String bitIndex,String unit,int sort) {
 		super();
+		this.rawColumnName = rawColumnName;
 		this.columnName = columnName;
 		this.value = value;
 		this.rawValue = rawValue;
@@ -29,19 +31,6 @@ public class ProtocolItemResolutionData  implements Comparable<ProtocolItemResol
 		this.unit=unit;
 		this.sort=sort;
 	}
-//	public ProtocolItemResolutionData(String columnName, String value,String rawValue, String addr, String column,
-//			String columnDataType, String resolutionMode,String bitIndex,String unit) {
-//		super();
-//		this.columnName = columnName;
-//		this.value = value;
-//		this.rawValue = rawValue;
-//		this.addr = addr;
-//		this.column = column;
-//		this.columnDataType = columnDataType;
-//		this.resolutionMode = resolutionMode;
-//		this.bitIndex = bitIndex;
-//		this.unit=unit;
-//	}
 	
 	@Override
 	public int compareTo(ProtocolItemResolutionData protocolItemResolutionData) {//重写Comparable接口的compareTo方法   按照sort升序 addr升序 bitIndex升序
@@ -125,5 +114,11 @@ public class ProtocolItemResolutionData  implements Comparable<ProtocolItemResol
 
 	public void setSort(int sort) {
 		this.sort = sort;
+	}
+	public String getRawColumnName() {
+		return rawColumnName;
+	}
+	public void setRawColumnName(String rawColumnName) {
+		this.rawColumnName = rawColumnName;
 	}
 }

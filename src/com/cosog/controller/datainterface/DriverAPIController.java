@@ -458,6 +458,13 @@ public class DriverAPIController extends BaseController{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
+		List<String> websocketClientUserList=new ArrayList<>();
+		for (WebSocketByJavax item : WebSocketByJavax.clients.values()) { 
+            String[] clientInfo=item.userId.split("_");
+            if(clientInfo!=null && clientInfo.length==3 && !StringManagerUtils.existOrNot(websocketClientUserList, clientInfo[1], true)){
+            	websocketClientUserList.add(clientInfo[1]);
+            }
+        }
 		
 		StringBuffer webSocketSendData = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
@@ -591,6 +598,7 @@ public class DriverAPIController extends BaseController{
 								String rawValue=value;
 								String addr=protocol.getItems().get(j).getAddr()+"";
 								String title=protocol.getItems().get(j).getTitle();
+								String rawTitle=title;
 								String columnDataType=protocol.getItems().get(j).getIFDataType();
 								String resolutionMode=protocol.getItems().get(j).getResolutionMode()+"";
 								String bitIndex="";
@@ -616,7 +624,7 @@ public class DriverAPIController extends BaseController{
 												}
 											}
 										}
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}else if(protocol.getItems().get(j).getResolutionMode()==0){//如果是开关量
 										boolean isMatch=false;
@@ -648,7 +656,7 @@ public class DriverAPIController extends BaseController{
 															}else{
 																value=valueArr[m];
 															}
-															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 															protocolItemResolutionDataList.add(protocolItemResolutionData);
 															break;
 														}
@@ -660,7 +668,7 @@ public class DriverAPIController extends BaseController{
 															break;
 														}
 													}
-													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 													protocolItemResolutionDataList.add(protocolItemResolutionData);
 												}
 											}
@@ -671,7 +679,7 @@ public class DriverAPIController extends BaseController{
 													break;
 												}
 											}
-											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 											protocolItemResolutionDataList.add(protocolItemResolutionData);
 										}
 									}else{
@@ -681,7 +689,7 @@ public class DriverAPIController extends BaseController{
 												break;
 											}
 										}
-										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
 								}
@@ -702,6 +710,7 @@ public class DriverAPIController extends BaseController{
 						acquisitionItemInfo.setAddr(StringManagerUtils.stringToInteger(protocolItemResolutionDataList.get(i).getAddr()));
 						acquisitionItemInfo.setColumn(protocolItemResolutionDataList.get(i).getColumn());
 						acquisitionItemInfo.setTitle(protocolItemResolutionDataList.get(i).getColumnName());
+						acquisitionItemInfo.setRawTitle(protocolItemResolutionDataList.get(i).getRawColumnName());
 						acquisitionItemInfo.setValue(protocolItemResolutionDataList.get(i).getValue());
 						acquisitionItemInfo.setRawValue(protocolItemResolutionDataList.get(i).getRawValue());
 						acquisitionItemInfo.setDataType(protocolItemResolutionDataList.get(i).getColumnDataType());
@@ -807,95 +816,121 @@ public class DriverAPIController extends BaseController{
 					
 					
 					//处理websocket推送
-					int items=3;
-					String columns = "[";
-					for(int i=1;i<=items;i++){
-						columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
-								+ "{ \"header\":\"变量\",\"dataIndex\":\"value"+i+"\",children:[] }";
-						if(i<items){
-							columns+=",";
-						}
-					}
-					columns+= "]";
-					webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"acqTime\":\""+acqTime+"\",\"columns\":"+columns+",");
-					webSocketSendData.append("\"totalRoot\":[");
-					info_json.append("[");
-					webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+" 在线\"},");
-					//排序
-					Collections.sort(acquisitionItemInfoList);
-					//插入排序间隔的空项
-					List<AcquisitionItemInfo> finalAcquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
-					for(int j=0;j<acquisitionItemInfoList.size();j++){
-						if(j>0&&acquisitionItemInfoList.get(j).getSort()<9999
-							&&acquisitionItemInfoList.get(j).getSort()-acquisitionItemInfoList.get(j-1).getSort()>1
-						){
-							int def=acquisitionItemInfoList.get(j).getSort()-acquisitionItemInfoList.get(j-1).getSort();
-							for(int k=1;k<def;k++){
-								AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
-								finalAcquisitionItemInfoList.add(acquisitionItemInfo);
+					for (String websocketClientUser : websocketClientUserList) {
+						int items=3;
+						
+						String columns = "[";
+						for(int i=1;i<=items;i++){
+							columns+= "{ \"header\":\"名称\",\"dataIndex\":\"name"+i+"\",children:[] },"
+									+ "{ \"header\":\"变量\",\"dataIndex\":\"value"+i+"\",children:[] }";
+							if(i<items){
+								columns+=",";
 							}
 						}
-						finalAcquisitionItemInfoList.add(acquisitionItemInfoList.get(j));
-					}
-					
-					int row=1;
-					if(finalAcquisitionItemInfoList.size()%items==0){
-						row=finalAcquisitionItemInfoList.size()/items+1;
-					}else{
-						row=finalAcquisitionItemInfoList.size()/items+2;
-					}
-					
-					for(int j=1;j<row;j++){
-						webSocketSendData.append("{");
-						for(int k=0;k<items;k++){
-							int index=items*(j-1)+k;
-							String columnName="";
-							String value="";
-							String rawValue="";
-							String column="";
-							String columnDataType="";
-							String resolutionMode="";
-							String unit="";
-							int alarmLevel=0;
-							if(index<finalAcquisitionItemInfoList.size() && StringManagerUtils.isNotNull(finalAcquisitionItemInfoList.get(index).getTitle())){
-								columnName=finalAcquisitionItemInfoList.get(index).getTitle();
-								value=finalAcquisitionItemInfoList.get(index).getValue();
-								rawValue=finalAcquisitionItemInfoList.get(index).getRawValue();
-								column=finalAcquisitionItemInfoList.get(index).getColumn();
-								columnDataType=finalAcquisitionItemInfoList.get(index).getDataType();
-								resolutionMode=finalAcquisitionItemInfoList.get(index).getResolutionMode()+"";
-								alarmLevel=finalAcquisitionItemInfoList.get(index).getAlarmLevel();
-								unit=finalAcquisitionItemInfoList.get(index).getUnit();
+						columns+= "]";
+						
+						String userItemsSql="select "
+								+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key"
+								+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+								+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+								+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
+								+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_id='"+websocketClientUser+"' )"
+								+ " group by t.wellname,t3.protocol";
+						
+						List<?> userItemsList = commonDataService.findCallSql(userItemsSql);
+						if(userItemsList.size()>0&&userItemsList.get(0)!=null){
+							String[] userItems=userItemsList.get(0).toString().split(",");
+							
+							
+							webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"acqTime\":\""+acqTime+"\",\"columns\":"+columns+",");
+							webSocketSendData.append("\"totalRoot\":[");
+							info_json.append("[");
+							webSocketSendData.append("{\"name1\":\""+wellName+":"+acqTime+" 在线\"},");
+							//排序
+							Collections.sort(acquisitionItemInfoList);
+							//筛选
+							List<AcquisitionItemInfo> userAcquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
+							for(int j=0;j<acquisitionItemInfoList.size();j++){
+								if(StringManagerUtils.existOrNot(userItems, acquisitionItemInfoList.get(j).getRawTitle(), false)){
+									userAcquisitionItemInfoList.add(acquisitionItemInfoList.get(j));
+								}
+							}
+							//插入排序间隔的空项
+							List<AcquisitionItemInfo> finalAcquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
+							for(int j=0;j<userAcquisitionItemInfoList.size();j++){
+								if(j>0&&userAcquisitionItemInfoList.get(j).getSort()<9999
+										&&userAcquisitionItemInfoList.get(j).getSort()-userAcquisitionItemInfoList.get(j-1).getSort()>1
+									){
+										int def=userAcquisitionItemInfoList.get(j).getSort()-userAcquisitionItemInfoList.get(j-1).getSort();
+										for(int k=1;k<def;k++){
+											AcquisitionItemInfo acquisitionItemInfo=new AcquisitionItemInfo();
+											finalAcquisitionItemInfoList.add(acquisitionItemInfo);
+										}
+									}
+									finalAcquisitionItemInfoList.add(userAcquisitionItemInfoList.get(j));
 							}
 							
-							if(StringManagerUtils.isNotNull(columnName)&&StringManagerUtils.isNotNull(unit)){
-								webSocketSendData.append("\"name"+(k+1)+"\":\""+(columnName+"("+unit+")")+"\",");
+							int row=1;
+							if(finalAcquisitionItemInfoList.size()%items==0){
+								row=finalAcquisitionItemInfoList.size()/items+1;
 							}else{
-								webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+								row=finalAcquisitionItemInfoList.size()/items+2;
 							}
-							webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
-							info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"rawValue\":\""+rawValue+"\",\"columnDataType\":\""+columnDataType+"\",\"resolutionMode\":\""+resolutionMode+"\",\"alarmLevel\":"+alarmLevel+"},");
+							
+							for(int j=1;j<row;j++){
+								webSocketSendData.append("{");
+								for(int k=0;k<items;k++){
+									int index=items*(j-1)+k;
+									String columnName="";
+									String value="";
+									String rawValue="";
+									String column="";
+									String columnDataType="";
+									String resolutionMode="";
+									String unit="";
+									int alarmLevel=0;
+									if(index<finalAcquisitionItemInfoList.size() 
+											&& StringManagerUtils.isNotNull(finalAcquisitionItemInfoList.get(index).getTitle())
+//											&&StringManagerUtils.existOrNot(userItems, finalAcquisitionItemInfoList.get(index).getRawTitle(),false)
+											){
+										columnName=finalAcquisitionItemInfoList.get(index).getTitle();
+										value=finalAcquisitionItemInfoList.get(index).getValue();
+										rawValue=finalAcquisitionItemInfoList.get(index).getRawValue();
+										column=finalAcquisitionItemInfoList.get(index).getColumn();
+										columnDataType=finalAcquisitionItemInfoList.get(index).getDataType();
+										resolutionMode=finalAcquisitionItemInfoList.get(index).getResolutionMode()+"";
+										alarmLevel=finalAcquisitionItemInfoList.get(index).getAlarmLevel();
+										unit=finalAcquisitionItemInfoList.get(index).getUnit();
+									}
+									
+									if(StringManagerUtils.isNotNull(columnName)&&StringManagerUtils.isNotNull(unit)){
+										webSocketSendData.append("\"name"+(k+1)+"\":\""+(columnName+"("+unit+")")+"\",");
+									}else{
+										webSocketSendData.append("\"name"+(k+1)+"\":\""+columnName+"\",");
+									}
+									webSocketSendData.append("\"value"+(k+1)+"\":\""+value+"\",");
+									info_json.append("{\"row\":"+j+",\"col\":"+k+",\"columnName\":\""+columnName+"\",\"column\":\""+column+"\",\"value\":\""+value+"\",\"rawValue\":\""+rawValue+"\",\"columnDataType\":\""+columnDataType+"\",\"resolutionMode\":\""+resolutionMode+"\",\"alarmLevel\":"+alarmLevel+"},");
+								}
+								if(webSocketSendData.toString().endsWith(",")){
+									webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
+								}
+								webSocketSendData.append("},");
+							}
+							if(webSocketSendData.toString().endsWith(",")){
+								webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
+							}
+							
+							if(info_json.toString().endsWith(",")){
+								info_json.deleteCharAt(info_json.length() - 1);
+							}
+							info_json.append("]");
+							
+							webSocketSendData.append("]");
+							webSocketSendData.append(",\"CellInfo\":"+info_json);
+							webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
+							infoHandler2().sendMessageToUser(websocketClientUser, webSocketSendData.toString());
 						}
-						if(webSocketSendData.toString().endsWith(",")){
-							webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
-						}
-						webSocketSendData.append("},");
 					}
-					if(webSocketSendData.toString().endsWith(",")){
-						webSocketSendData.deleteCharAt(webSocketSendData.length() - 1);
-					}
-					
-					if(info_json.toString().endsWith(",")){
-						info_json.deleteCharAt(info_json.length() - 1);
-					}
-					info_json.append("]");
-					
-					webSocketSendData.append("]");
-					webSocketSendData.append(",\"CellInfo\":"+info_json);
-					webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
-//					System.out.println(webSocketSendData.toString());
-					infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
-					infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 				}
 			}
 		}
