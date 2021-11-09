@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 
 @ServerEndpoint(value="/websocketServer/{userId}")
 public class WebSocketByJavax {
-	private Logger logger = LoggerFactory.getLogger(WebSocketByJavax.class);
-	private static int onlineCount = 0; 
-    private String userId;
-    private Session session; 
-    private static Map<String, WebSocketByJavax> clients;
+	public Logger logger = LoggerFactory.getLogger(WebSocketByJavax.class);
+	public static int onlineCount = 0; 
+	public String userId;
+	public Session session; 
+    public static Map<String, WebSocketByJavax> clients;
     
     static {
     	clients =  new ConcurrentHashMap<String, WebSocketByJavax>();
@@ -30,7 +30,7 @@ public class WebSocketByJavax {
     //连接时执行
     @OnOpen
     public void onOpen(@PathParam("userId") String userId,Session session) throws IOException{
-        this.userId = userId+new Date().getTime();
+        this.userId = userId+"_"+new Date().getTime();
         this.session=session;
         clients.put(this.userId,this);
         addOnlineCount();
@@ -78,6 +78,15 @@ public class WebSocketByJavax {
         for (WebSocketByJavax item : clients.values()) { 
             if (item.userId.contains(To) ) 
                 item.session.getAsyncRemote().sendText(message);
+        }
+    }
+    
+    public void sendMessageToUser(String userAccount,String message) throws IOException {
+        for (WebSocketByJavax item : clients.values()) { 
+            String[] clientInfo=item.userId.split("_");
+            if(clientInfo!=null && clientInfo.length==3&&userAccount.equals(clientInfo[1])){
+            	item.session.getAsyncRemote().sendText(message);
+            }
         }
     }
     

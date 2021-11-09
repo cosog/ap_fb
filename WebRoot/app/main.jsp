@@ -51,9 +51,10 @@
  var viewInformation = ${configFile}.viewInformation;
  
  var productionUnit = ${configFile}.others.productionUnit;
-if (user_ == null || "" == (user_)) {
-			window.location.href = "../login/toLogin";
-}
+ var userAccount="${userLogin.userId}";
+ if (user_ == null || "" == (user_)) {
+	 window.location.href = "../login/toLogin";
+ }
 </script>
 <!-- 加载类库 -->
 <jsp:include flush="true" page="./tags.jsp" />

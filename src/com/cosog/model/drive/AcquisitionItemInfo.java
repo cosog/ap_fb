@@ -7,6 +7,7 @@ public class AcquisitionItemInfo implements Comparable<AcquisitionItemInfo>{
 	public int addr;
 	public String column;
 	public String title;
+	public String rawTitle;
 	public String value;
 	public String rawValue="";
 	public String dataType;
@@ -29,13 +30,14 @@ public class AcquisitionItemInfo implements Comparable<AcquisitionItemInfo>{
 		super();
 	}
 
-	public AcquisitionItemInfo(int addr, String column, String title, String value, String rawValue, String dataType,
+	public AcquisitionItemInfo(int addr, String column, String title,String rawTitle, String value, String rawValue, String dataType,
 			String unit, int alarmLevel, String resolutionMode, String bitIndex, int sort, float alarmLimit,
 			float hystersis, String alarmInfo, int alarmType, int alarmDelay, int isSendMessage, int isSendMail) {
 		super();
 		this.addr = addr;
 		this.column = column;
 		this.title = title;
+		this.rawTitle = rawTitle;
 		this.value = value;
 		this.rawValue = rawValue;
 		this.dataType = dataType;
@@ -229,6 +231,14 @@ public class AcquisitionItemInfo implements Comparable<AcquisitionItemInfo>{
 
 	public void setSort(int sort) {
 		this.sort = sort;
+	}
+
+	public String getRawTitle() {
+		return rawTitle;
+	}
+
+	public void setRawTitle(String rawTitle) {
+		this.rawTitle = rawTitle;
 	}
 	
 }
