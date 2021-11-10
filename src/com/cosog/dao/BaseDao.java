@@ -76,6 +76,7 @@ import com.cosog.model.drive.AcquisitionGroupResolutionData;
 import com.cosog.model.drive.AcquisitionItemInfo;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
+import com.cosog.model.gridmodel.AuxiliaryDeviceHandsontableChangedData;
 import com.cosog.model.gridmodel.CalculateManagerHandsontableChangedData;
 import com.cosog.model.gridmodel.ElecInverCalculateManagerHandsontableChangedData;
 import com.cosog.model.gridmodel.InverOptimizeHandsontableChangedData;
@@ -1197,6 +1198,56 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
+	@SuppressWarnings("resource")
+	public Boolean saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws SQLException {
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		PreparedStatement ps=null;
+		try {
+			cs = conn.prepareCall("{call prd_save_auxiliarydevice(?,?,?,?,?)}");
+			if(auxiliaryDeviceHandsontableChangedData.getUpdatelist()!=null){
+				for(int i=0;i<auxiliaryDeviceHandsontableChangedData.getUpdatelist().size();i++){
+					if(StringManagerUtils.isNotNull(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getName())){
+						cs.setString(1, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getName());
+						cs.setInt(2, "管辅件".equals(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getType())?1:0);
+						cs.setString(3, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getModel());
+						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getRemark());
+						cs.setString(5, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort():"9999");
+						cs.executeUpdate();
+					}
+				}
+			}
+			if(auxiliaryDeviceHandsontableChangedData.getInsertlist()!=null){
+				for(int i=0;i<auxiliaryDeviceHandsontableChangedData.getInsertlist().size();i++){
+					if(StringManagerUtils.isNotNull(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getName())){
+						cs.setString(1, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getName());
+						cs.setInt(2, "管辅件".equals(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getType())?1:0);
+						cs.setString(3, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getModel());
+						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getRemark());
+						cs.setString(5, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort():"9999");
+						cs.executeUpdate();
+					}
+				}
+			}
+			if(auxiliaryDeviceHandsontableChangedData.getDelidslist()!=null){
+				String delSql="delete from tbl_auxiliarydevice t where t.id in ("+StringUtils.join(auxiliaryDeviceHandsontableChangedData.getDelidslist(), ",")+")";
+				ps=conn.prepareStatement(delSql);
+				int result=ps.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			if(ps!=null){
+				ps.close();
+			}
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
 	public boolean saveDeviceOperationLog(List<String> updateWellList,List<String> addWellList,List<String> deleteWellList,int deviceType,User user) throws SQLException{
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
@@ -1378,6 +1429,25 @@ public class BaseDao extends HibernateDaoSupport {
 			cs.setString(1,oldWellName);
 			cs.setString(2, newWellName);
 			cs.setString(3, orgid);
+			cs.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
+	public Boolean editAuxiliaryDeviceName(String oldName,String newName) throws SQLException {
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		try {
+			cs = conn.prepareCall("{call prd_change_auxiliarydevicename(?,?)}");
+			cs.setString(1,oldName);
+			cs.setString(2, newName);
 			cs.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
