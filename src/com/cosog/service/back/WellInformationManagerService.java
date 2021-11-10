@@ -1,5 +1,6 @@
 package com.cosog.service.back;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,6 +15,7 @@ import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
+import com.cosog.model.gridmodel.AuxiliaryDeviceHandsontableChangedData;
 import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.base.BaseService;
@@ -145,8 +147,16 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
+	public void saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws Exception {
+		getBaseDao().saveAuxiliaryDeviceHandsontableData(auxiliaryDeviceHandsontableChangedData);
+	}
+	
 	public void editWellName(String oldWellName,String newWellName,String orgid) throws Exception {
 		getBaseDao().editWellName(oldWellName,newWellName,orgid);
+	}
+	
+	public void editAuxiliaryDeviceName(String oldName,String newName) throws Exception {
+		getBaseDao().editAuxiliaryDeviceName(oldName,newName);
 	}
 
 	public List<T> loadWellInformationID(Class<T> clazz) {
@@ -496,6 +506,90 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		json=result_json.toString().replaceAll("null", "");
+		return json;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public String doAuxiliaryDeviceShow(Map map,Page pager,String deviceType,int recordCount) {
+		StringBuffer result_json = new StringBuffer();
+		String ddicName="auxiliaryDeviceManager";
+		
+		String columns=service.showTableHeadersColumns(ddicName);
+		String sql = "select t.id,t.name,decode(t.type,1,'管辅件','泵辅件') as type,t.model,t.remark,t.sort from tbl_auxiliarydevice t where 1=1";
+		if(StringManagerUtils.isNotNull(deviceType)){
+			sql+= " and t.type="+deviceType;
+		}
+		sql+= " order by t.sort,t.name";
+		
+		String json = "";
+		
+		List<?> list = this.findCallSql(sql);
+		
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"columns\":"+columns+",\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			
+			result_json.append("{\"id\":\""+obj[0]+"\",");
+			result_json.append("\"name\":\""+obj[1]+"\",");
+			result_json.append("\"type\":\""+obj[2]+"\",");
+			result_json.append("\"model\":\""+obj[3]+"\",");
+			result_json.append("\"remark\":\""+obj[4]+"\",");
+			result_json.append("\"sort\":\""+obj[5]+"\"},");
+		}
+		for(int i=1;i<=recordCount-list.size();i++){
+			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		json=result_json.toString().replaceAll("null", "");
+		return json;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public String getPumpAuxiliaryDevice(String deviceName,String deviceType) {
+		StringBuffer result_json = new StringBuffer();
+		List<Integer> auxiliaryIdList=new ArrayList<Integer>();
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
+				+ "{ \"header\":\"规格型号\",\"dataIndex\":\"model\",width:80 ,children:[] }"
+				+ "]";
+		String sql = "select t.id,t.name,decode(t.type,1,'管辅件','泵辅件') as type,t.model,t.remark,t.sort from tbl_auxiliarydevice t where 1=1";
+		String auxiliarySql="select t2.auxiliaryid from tbl_wellinformation t,tbl_auxiliary2master t2 "
+				+ " where t.id=t2.masterid and t.devicetype="+deviceType+" and t.wellname='"+deviceName+"'";
+		if(StringManagerUtils.isNotNull(deviceType)){
+			sql+= " and t.type="+deviceType;
+		}
+		sql+= " order by t.sort,t.name";
+		
+		String json = "";
+		
+		List<?> list = this.findCallSql(sql);
+		List<?> auxiliaryList = this.findCallSql(auxiliarySql);
+		for(int i=0;i<auxiliaryList.size();i++){
+			auxiliaryIdList.add(StringManagerUtils.stringToInteger(auxiliaryList.get(i)+""));
+		}
+		
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"columns\":"+columns+",\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			boolean checked=false;
+			if(StringManagerUtils.existOrNot(auxiliaryIdList, StringManagerUtils.stringToInteger(obj[0]+""))){
+				checked=true;
+			}
+			result_json.append("{\"checked\":"+checked+",");
+			result_json.append("\"id\":\""+(i+1)+"\",");
+			result_json.append("\"realId\":\""+obj[0]+"\",");
+			result_json.append("\"name\":\""+obj[1]+"\",");
+			result_json.append("\"model\":\""+obj[3]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);

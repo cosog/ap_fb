@@ -554,7 +554,9 @@ function saveModbusProtocolAddrMappingConfigData(configInfo){
 
 function CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode,itemAddr,isNew){
 	if(isNew&&protocolAddrMappingItemsMeaningConfigHandsontableHelper!=null){
-		protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot.destroy();
+		if(protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot!=undefined){
+			protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot.destroy();
+		}
 		protocolAddrMappingItemsMeaningConfigHandsontableHelper=null;
 	}
 	Ext.Ajax.request({
