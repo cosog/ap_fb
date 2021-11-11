@@ -192,11 +192,27 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                             scrollable: true
                 		},{
                 			title:'设备信息',
-                			id: 'PipelineRealTimeMonitoringRightDeviceInfoPanel',
-                            border: false,
-                            layout: 'fit',
-                            autoScroll: true,
-                            scrollable: true
+                			layout: 'border',
+                			items:[{
+                				region: 'center',
+                				id: 'PipelineRealTimeMonitoringRightDeviceInfoPanel',
+                                border: false,
+                                layout: 'fit',
+                                autoScroll: true,
+                                scrollable: true
+                			},{
+                				region: 'south',
+                				id: 'PipelineRealTimeMonitoringRightAuxiliaryDeviceInfoPanel',
+                				title:'辅件设备',
+                				height: '50%',
+                				border: false,
+                                layout: 'fit',
+                                split: true,
+                                collapsible: true,
+                                autoScroll: true,
+                                scrollable: true
+                			}]
+                			
                 		}]
                     }]
                 }]

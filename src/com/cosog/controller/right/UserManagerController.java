@@ -117,7 +117,8 @@ public class UserManagerController extends BaseController {
 		String result = "{success:true,msg:false}";
 		try {
 			log.debug("userTitle" + user.getUserTitle());
-			user.setUserPwd(UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd()));
+//			user.setUserPwd(UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd()));
+			user.setUserPwd(StringManagerUtils.stringToMD5(user.getUserPwd()));
 			this.userService.addUser(user);
 			
 //			HttpSession session=request.getSession();
@@ -200,7 +201,8 @@ public class UserManagerController extends BaseController {
 			log.debug("edit user success==" + user.getUserNo());
 			String userOldPass = ParamUtils.getParameter(request, "userPass");
 			if (!userOldPass.equals(user.getUserPwd())) {
-				String newPass = UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd());
+//				String newPass = UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd());
+				String newPass = StringManagerUtils.stringToMD5(user.getUserPwd());
 				user.setUserPwd(newPass);
 			}
 //			this.userService.modifyUser(user);

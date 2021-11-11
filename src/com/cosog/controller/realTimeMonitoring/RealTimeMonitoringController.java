@@ -343,7 +343,8 @@ public class RealTimeMonitoringController extends BaseController {
 		// 用户不存在
 		if (null != userInfo) {
 			String getUpwd = userInfo.getUserPwd();
-			String getOld = UnixPwdCrypt.crypt("dogVSgod", password);
+//			String getOld = UnixPwdCrypt.crypt("dogVSgod", password);
+			String getOld = StringManagerUtils.stringToMD5(password);
 			if (getOld.equals(getUpwd)&&StringManagerUtils.isNumber(controlValue)) {
 				String sql="select t3.protocol, t.signinid,to_number(t.slave) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
 						+ " where t.instancecode=t2.code and t2.unitid=t3.id"

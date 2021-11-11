@@ -19,9 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cosog.controller.base.BaseController;
+import com.cosog.model.MasterAndAuxiliaryDevice;
 import com.cosog.model.Org;
 import com.cosog.model.User;
 import com.cosog.model.WellInformation;
+import com.cosog.model.gridmodel.AuxiliaryDeviceConfig;
 import com.cosog.model.gridmodel.AuxiliaryDeviceHandsontableChangedData;
 import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
@@ -186,13 +188,42 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/getPumpAuxiliaryDevice")
-	public String getPumpAuxiliaryDevice() throws IOException {
+	@RequestMapping("/exportAuxiliaryDeviceData")
+	public String exportAuxiliaryDeviceData() throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int recordCount =StringManagerUtils.stringToInteger(ParamUtils.getParameter(request, "recordCount"));
+		int intPage = Integer.parseInt((page == null || page == "0") ? "1" : page);
+		int pageSize = Integer.parseInt((limit == null || limit == "0") ? "20" : limit);
+		int offset = (intPage - 1) * pageSize + 1;
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		map.put(PagingConstants.PAGE_NO, intPage);
+		map.put(PagingConstants.PAGE_SIZE, pageSize);
+		map.put(PagingConstants.OFFSET, offset);
+		map.put("deviceType", deviceType);
+		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
+		this.pager = new Page("pagerForm", request);
+		String json = this.wellInformationManagerService.getAuxiliaryDeviceExportData(map, pager,deviceType,recordCount);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getAuxiliaryDevice")
+	public String getAuxiliaryDevice() throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String deviceName= ParamUtils.getParameter(request, "deviceName");
 		deviceType= ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		String json = this.wellInformationManagerService.getPumpAuxiliaryDevice(deviceName,deviceType);
+		String json = this.wellInformationManagerService.getAuxiliaryDevice(deviceName,deviceType);
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -410,12 +441,35 @@ public class WellInformationManagerController extends BaseController {
 		User user = (User) session.getAttribute("userLogin");
 		String orgids=user.getUserorgids();
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
+		String deviceAuxiliaryData = ParamUtils.getParameter(request, "deviceAuxiliaryData").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
+		
+		type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
+		AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
 		this.wellInformationManagerService.saveWellEditerGridData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		
+		if(auxiliaryDeviceConfig!=null){
+			String sql="select t.id from tbl_wellinformation t "
+					+ " where t.orgid ="+auxiliaryDeviceConfig.getOrgId()+" and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
+			List list = this.service.findCallSql(sql);
+			if(list.size()>0&&StringManagerUtils.isInteger(list.get(0)+"")){
+				int masterId=StringManagerUtils.stringToInteger(list.get(0)+"");
+				this.wellInformationManagerService.deleteMasterAndAuxiliary(masterId);
+				for(int i=0;i<auxiliaryDeviceConfig.getAuxiliaryDevice().size();i++){
+					MasterAndAuxiliaryDevice masterAndAuxiliaryDevice =new MasterAndAuxiliaryDevice();
+					masterAndAuxiliaryDevice.setMasterid(masterId);
+					masterAndAuxiliaryDevice.setAuxiliaryid(auxiliaryDeviceConfig.getAuxiliaryDevice().get(i));
+					masterAndAuxiliaryDevice.setMatrix("0,0,0");
+					this.wellInformationManagerService.grantMasterAuxiliaryDevice(masterAndAuxiliaryDevice);
+				}
+				
+			}
+		}
+		
 		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");

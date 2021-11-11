@@ -97,9 +97,10 @@ public class UserLoginManagerController extends BaseController {
 		// 用户不存在
 		if (null != userInfo) {
 			String getUpwd = userInfo.getUserPwd();
-			String getOld = UnixPwdCrypt.crypt("dogVSgod", oldPassword);
+			String getOld =StringManagerUtils.stringToMD5(oldPassword);// UnixPwdCrypt.crypt("dogVSgod", oldPassword);
 			if (getOld.equals(getUpwd)) {
-				userInfo.setUserPwd(UnixPwdCrypt.crypt("dogVSgod", newPassword));
+//				userInfo.setUserPwd(UnixPwdCrypt.crypt("dogVSgod", newPassword));
+				userInfo.setUserPwd(StringManagerUtils.stringToMD5(newPassword));
 				//service.edit(userInfo);
 				this.service.modifyUser(userInfo);
 				jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>密码修改成功。</font>'}";
@@ -189,7 +190,8 @@ public class UserLoginManagerController extends BaseController {
 			if("1".equals(autoLogin)){
 				user = this.service.doLogin(username, userPass);
 			}else{
-				user = this.service.doLogin(username, UnixPwdCrypt.crypt("dogVSgod", userPass));
+//				user = this.service.doLogin(username, UnixPwdCrypt.crypt("dogVSgod", userPass));
+				user = this.service.doLogin(username, StringManagerUtils.stringToMD5(userPass));
 			}
 			if (user != null) {
 				user.setPicUrl(picUrl);// 通过session传到前台
@@ -243,7 +245,8 @@ public class UserLoginManagerController extends BaseController {
 		} else if (null == userPass || "".equals(userPass)) {
 			out.print("");
 		} else {
-			user = this.service.doLogin(username, UnixPwdCrypt.crypt("dogVSgod", userPass));
+//			user = this.service.doLogin(username, UnixPwdCrypt.crypt("dogVSgod", userPass));
+			user = this.service.doLogin(username, StringManagerUtils.stringToMD5(userPass));
 			if (user != null&&user.getUserType()==3) {
 				String 	orgId = this.systemdataInfoService.findCurrentUserOrgIdInfo(user.getUserOrgid()+"");
 				if(!StringManagerUtils.isNotNull(orgId)){

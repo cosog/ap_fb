@@ -10,6 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cosog.model.AcquisitionUnitGroup;
+import com.cosog.model.MasterAndAuxiliaryDevice;
 import com.cosog.model.User;
 import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
@@ -145,6 +147,15 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	
 	public void saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
 		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData,orgId,deviceType,user);
+	}
+	
+	public void deleteMasterAndAuxiliary(final int masterid) throws Exception {
+		final String hql = "DELETE MasterAndAuxiliaryDevice u where u.masterid ="+masterid+"";
+		getBaseDao().bulkObjectDelete(hql);
+	}
+	
+	public void grantMasterAuxiliaryDevice(MasterAndAuxiliaryDevice r) throws Exception {
+		getBaseDao().saveOrUpdateObject(r);
 	}
 	
 	public void saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws Exception {
@@ -554,7 +565,39 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public String getPumpAuxiliaryDevice(String deviceName,String deviceType) {
+	public String getAuxiliaryDeviceExportData(Map map,Page pager,String deviceType,int recordCount) {
+		StringBuffer result_json = new StringBuffer();
+		String sql = "select t.id,t.name,decode(t.type,1,'管辅件','泵辅件') as type,t.model,t.remark,t.sort from tbl_auxiliarydevice t where 1=1";
+		if(StringManagerUtils.isNotNull(deviceType)){
+			sql+= " and t.type="+deviceType;
+		}
+		sql+= " order by t.sort,t.name";
+		
+		String json = "";
+		
+		List<?> list = this.findCallSql(sql);
+		
+		result_json.append("[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			
+			result_json.append("{\"id\":\""+obj[0]+"\",");
+			result_json.append("\"name\":\""+obj[1]+"\",");
+			result_json.append("\"type\":\""+obj[2]+"\",");
+			result_json.append("\"model\":\""+obj[3]+"\",");
+			result_json.append("\"remark\":\""+obj[4]+"\",");
+			result_json.append("\"sort\":\""+obj[5]+"\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		json=result_json.toString().replaceAll("null", "");
+		return json;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public String getAuxiliaryDevice(String deviceName,String deviceType) {
 		StringBuffer result_json = new StringBuffer();
 		List<Integer> auxiliaryIdList=new ArrayList<Integer>();
 		String columns = "["

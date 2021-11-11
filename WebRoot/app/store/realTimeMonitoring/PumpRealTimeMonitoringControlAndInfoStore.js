@@ -22,6 +22,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         	var isControl=get_rawData.isControl;
         	var commStatus=get_rawData.commStatus;
         	var deviceInfoDataList=get_rawData.deviceInfoDataList;
+        	var auxiliaryDeviceList=get_rawData.auxiliaryDeviceList;
         	var deviceControlList=get_rawData.deviceControlList;
         	
         	var deviceInfoDataStr="{\"items\":[";
@@ -79,7 +80,58 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			deviceInfoGridPanel.reconfigure(deviceInfoStore);
     		}
         	
+    		//辅件设备
+    		var deviceAuxiliaryInfoDataStr="{\"items\":[";
+        	for(var i=0;i<auxiliaryDeviceList.length;i++){
+        		deviceAuxiliaryInfoDataStr+="{\"id\":"+auxiliaryDeviceList[i].id+",\"name\":\""+auxiliaryDeviceList[i].name+"\"},";
+        	}
+        	if(stringEndWith(deviceAuxiliaryInfoDataStr,",")){
+        		deviceAuxiliaryInfoDataStr = deviceAuxiliaryInfoDataStr.substring(0, deviceAuxiliaryInfoDataStr.length - 1);
+    		}
+        	deviceAuxiliaryInfoDataStr+="]}";
         	
+        	var deviceAuxiliaryInfoStoreData=Ext.JSON.decode(deviceAuxiliaryInfoDataStr);
+        	var deviceAuxiliaryInfoStore=Ext.create('Ext.data.Store', {
+			    fields:['id', 'name'],
+			    data:deviceAuxiliaryInfoStoreData,
+			    proxy: {
+			        type: 'memory',
+			        reader: {
+			            type: 'json',
+			            root: 'items'
+			        }
+			    }
+			});
+        	var deviceAuxiliaryInfoGridPanel=Ext.getCmp("PumpRealTimeMonitoringAuxiliaryDeviceInfoDataGridPanel_Id");
+    		if(!isNotVal(deviceAuxiliaryInfoGridPanel)){
+    			deviceAuxiliaryInfoGridPanel=Ext.create('Ext.grid.Panel', {
+    				id:'PumpRealTimeMonitoringAuxiliaryDeviceInfoDataGridPanel_Id',
+    				border: false,
+    				columnLines: true,
+    				forceFit: false,
+    				store: deviceAuxiliaryInfoStore,
+    			    columns: [
+    			    	{ 
+    			        	header: '序号',  
+    			        	xtype: 'rownumberer',
+    			        	align: 'center',
+    			        	width: 50
+    			        },
+    			        { 
+    			        	header: '名称', 
+    			        	dataIndex: 'name',
+    			        	align:'center',
+    			        	flex:10,
+    			        	renderer:function(value){
+    			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
+    			        	}
+    			        }
+    			    ]
+    			});
+    			Ext.getCmp("PumpRealTimeMonitoringRightAuxiliaryDeviceInfoPanel").add(deviceAuxiliaryInfoGridPanel);
+    		}else{
+    			deviceAuxiliaryInfoGridPanel.reconfigure(deviceAuxiliaryInfoStore);
+    		}
         	
         	//控制
         	var controlDataStr="{\"items\":[";

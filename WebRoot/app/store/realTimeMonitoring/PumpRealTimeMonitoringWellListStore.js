@@ -82,6 +82,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
             	
             	Ext.getCmp("PumpRealTimeMonitoringRightControlPanel").removeAll();
             	Ext.getCmp("PumpRealTimeMonitoringRightDeviceInfoPanel").removeAll();
+            	Ext.getCmp("PumpRealTimeMonitoringRightAuxiliaryDeviceInfoPanel").removeAll();
             }
         },
         beforeload: function (store, options) {
