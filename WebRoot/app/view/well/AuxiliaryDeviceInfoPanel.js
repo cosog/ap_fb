@@ -48,9 +48,8 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
                 handler: function (v, o) {
                     var fields = "";
                     var heads = "";
-                    var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellInformationName = Ext.getCmp('auxiliaryDeviceListComb_Id').getValue();
-                    var url = context + '/wellInformationManagerController/exportWellInformationData';
+                    var deviceType = Ext.getCmp('AuxiliaryDeviceTypeComb_Id').getValue();
+                    var url = context + '/wellInformationManagerController/exportAuxiliaryDeviceData';
                     for (var i = 0; i < auxiliaryDeviceInfoHandsontableHelper.colHeaders.length; i++) {
                         fields += auxiliaryDeviceInfoHandsontableHelper.columns[i].data + ",";
                         heads += auxiliaryDeviceInfoHandsontableHelper.colHeaders[i] + ","
@@ -59,8 +58,21 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
                         fields = fields.substring(0, fields.length - 1);
                         heads = heads.substring(0, heads.length - 1);
                     }
+                    
+                    var fileName='辅件设备';
+                    var title='辅件设备';
+                    if(deviceType===0){
+                    	fileName='泵辅件设备';
+                    	title='泵辅件设备';
+                    }else if(deviceType===1){
+                    	fileName='管辅件设备';
+                    	title='泵辅件设备';
+                    }
 
-                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=0&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("泵设备")) + "&title=" + URLencode(URLencode("泵设备"));
+                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
+                    + "&orgId=" + leftOrg_Id + "&deviceType=" + deviceType + "&recordCount=10000" 
+                    + "&fileName=" + URLencode(URLencode(fileName)) 
+                    + "&title=" + URLencode(URLencode(title));
                     openExcelWindow(url + '?flag=true' + param);
                 }
             }, '-', {

@@ -80,6 +80,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             	
             	Ext.getCmp("PipelineRealTimeMonitoringRightControlPanel").removeAll();
             	Ext.getCmp("PipelineRealTimeMonitoringRightDeviceInfoPanel").removeAll();
+            	Ext.getCmp("PipelineRealTimeMonitoringRightAuxiliaryDeviceInfoPanel").removeAll();
             }
         },
         beforeload: function (store, options) {

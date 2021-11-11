@@ -7,7 +7,6 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
     layout: 'fit',
     border: false,
     initComponent: function () {
-        //        var wellStore = Ext.create('AP.store.well.WellInfoStore');
         var pumpCombStore = new Ext.data.JsonStore({
             pageSize: defaultWellComboxSize,
             fields: [{
@@ -83,6 +82,11 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                 hidden: false,
                 tpl: cosog.string.totalCount + ': {count}',
                 style: 'margin-right:15px'
+            },{
+                id: 'PumpDeviceSelectRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
             }, '->', {
                 xtype: 'button',
                 text: cosog.string.exportExcel,
@@ -156,6 +160,7 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
             	region: 'east',
                 width: '20%',
                 title:'辅件设备列表',
+                id:'PumpAuxiliaryDevicePanel_Id',
                 autoScroll: true,
                 split: true,
                 collapsible: true,
@@ -163,7 +168,7 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                 listeners: {
                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                         if (pumpAuxiliaryDeviceInfoHandsontableHelper != null && pumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && pumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-                            CreateAndLoadPumpAuxiliaryDeviceInfoTable();
+//                            CreateAndLoadPumpAuxiliaryDeviceInfoTable();
                         }
                     }
                 }
@@ -190,12 +195,12 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
 });
 
 function CreateAndLoadPumpDeviceInfoTable(isNew) {
-    	if(isNew&&pumpDeviceInfoHandsontableHelper!=null){
-    		if (pumpDeviceInfoHandsontableHelper.hot != undefined) {
-                pumpDeviceInfoHandsontableHelper.hot.destroy();
-            }
-            pumpDeviceInfoHandsontableHelper = null;
-    	}
+	if(isNew&&pumpDeviceInfoHandsontableHelper!=null){
+		if (pumpDeviceInfoHandsontableHelper.hot != undefined) {
+			pumpDeviceInfoHandsontableHelper.hot.destroy();
+		}
+		pumpDeviceInfoHandsontableHelper = null;
+	}
     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
     var wellInformationName_Id = Ext.getCmp('pumpDeviceListComb_Id').getValue();
     Ext.Ajax.request({
@@ -257,8 +262,10 @@ function CreateAndLoadPumpDeviceInfoTable(isNew) {
                 pumpDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
             if(result.totalRoot.length==0){
+            	Ext.getCmp("PumpDeviceSelectRow_Id").setValue('');
             	CreateAndLoadPumpAuxiliaryDeviceInfoTable();
             }else{
+            	Ext.getCmp("PumpDeviceSelectRow_Id").setValue(0);
             	var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
             	CreateAndLoadPumpAuxiliaryDeviceInfoTable(rowdata[2]);
             }
@@ -367,6 +374,7 @@ var PumpDeviceInfoHandsontableHelper = {
                     var visualColIndex = this.instance.toVisualColumn(col);
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
+                	Ext.getCmp("PumpDeviceSelectRow_Id").setValue(row);
                 	var row1=pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
                 	CreateAndLoadPumpAuxiliaryDeviceInfoTable(row1[2]);
                 },
@@ -460,6 +468,29 @@ var PumpDeviceInfoHandsontableHelper = {
                 //插入的数据的获取
                 pumpDeviceInfoHandsontableHelper.insertExpressCount();
                 var orgId = IframeViewSelection[0].data.orgId;
+                
+                //获取辅件配置数据
+                var deviceAuxiliaryData={};
+                var PumpDeviceSelectRow= Ext.getCmp("PumpDeviceSelectRow_Id").getValue();
+                
+                if(isNotVal(PumpDeviceSelectRow)){
+                	var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(PumpDeviceSelectRow);
+                	deviceAuxiliaryData.orgId=orgId;
+                	deviceAuxiliaryData.deviceType=0;
+                	deviceAuxiliaryData.deviceName=rowdata[2];
+                	deviceAuxiliaryData.auxiliaryDevice=[];
+                	
+                	var auxiliaryDeviceData=pumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
+                	
+                	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
+                        if (auxiliaryDeviceData[index][0]) {
+                        	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
+                        	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
+                        }
+                    });
+                	
+                }
+                
                 if (JSON.stringify(pumpDeviceInfoHandsontableHelper.AllData) != "{}" && pumpDeviceInfoHandsontableHelper.validresult) {
                     Ext.Ajax.request({
                         method: 'POST',
@@ -482,6 +513,7 @@ var PumpDeviceInfoHandsontableHelper = {
                         },
                         params: {
                             data: JSON.stringify(pumpDeviceInfoHandsontableHelper.AllData),
+                            deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
                             deviceType: 0
                         }
@@ -604,9 +636,10 @@ function CreateAndLoadPumpAuxiliaryDeviceInfoTable(pumpDeviceName,isNew){
 	}
 	Ext.Ajax.request({
 		method:'POST',
-		url:context + '/wellInformationManagerController/getPumpAuxiliaryDevice',
+		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
+			Ext.getCmp("PumpAuxiliaryDevicePanel_Id").setTitle(pumpDeviceName+"辅件设备列表");
 			if(pumpAuxiliaryDeviceInfoHandsontableHelper==null || pumpAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				pumpAuxiliaryDeviceInfoHandsontableHelper = PumpAuxiliaryDeviceInfoHandsontableHelper.createNew("PumpAuxiliaryDeviceTableDiv_id");
 				var colHeaders="['','序号','名称','规格型号','']";

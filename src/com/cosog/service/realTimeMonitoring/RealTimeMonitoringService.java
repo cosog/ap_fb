@@ -621,9 +621,15 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " and t.wellname='"+wellName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)+" and t5.type=1"
 				+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_no="+userId+" )"
 				+ " group by t.wellname,t3.protocol";
+		String auxiliaryDeviceSql="select t3.id,t3.name "
+				+ " from tbl_wellinformation t,tbl_auxiliary2master t2,tbl_auxiliarydevice t3 "
+				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t.devicetype="+deviceType+" and t.wellname='"+wellName+"' "
+				+ " order by t3.sort,t3.name";
+		
 		
 		List<?> isControlList = this.findCallSql(isControlSql);
 		List<?> itemsList = this.findCallSql(protocolItemsSql);
+		List<?> auxiliaryDeviceQueryList = this.findCallSql(auxiliaryDeviceSql);
 		
 		String isControl=isControlList.size()>0?isControlList.get(0).toString():"0";
 		
@@ -634,8 +640,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		List<String> controlItemMeaningList=new ArrayList<String>();
 		StringBuffer deviceInfoDataList=new StringBuffer();
 		StringBuffer deviceControlList=new StringBuffer();
+		StringBuffer auxiliaryDeviceList=new StringBuffer();
 		deviceInfoDataList.append("[");
 		deviceControlList.append("[");
+		auxiliaryDeviceList.append("[");
 		
 		String protocolCode="";
 		for(int i=0;i<itemsList.size();i++){
@@ -689,6 +697,16 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		
+		for(int i=0;i<auxiliaryDeviceQueryList.size();i++){
+			Object[] obj=(Object[]) auxiliaryDeviceQueryList.get(i);
+			auxiliaryDeviceList.append("{\"id\":"+obj[0]+","
+					+ "\"name\":\""+obj[1]+"\"},");
+		}
+		
+		if(auxiliaryDeviceList.toString().endsWith(",")){
+			auxiliaryDeviceList.deleteCharAt(auxiliaryDeviceList.length() - 1);
+		}
+		
 		String tableName="tbl_pumpacqdata_latest";
 		String sql="select t2.commStatus,t.factorynumber,t.model,t.productiondate,t.deliverydate,t.commissioningdate,t.controlcabinetmodel ";
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
@@ -725,8 +743,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		deviceInfoDataList.append("]");
+		auxiliaryDeviceList.append("]");
 		deviceControlList.append("]");
 		result_json.append("\"deviceInfoDataList\":"+deviceInfoDataList+",");
+		result_json.append("\"auxiliaryDeviceList\":"+auxiliaryDeviceList+",");
 		result_json.append("\"deviceControlList\":"+deviceControlList);
 		result_json.append("}");
 		return result_json.toString().replaceAll("null", "");

@@ -193,11 +193,26 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             scrollable: true
                 		},{
                 			title:'设备信息',
-                			id: 'PumpRealTimeMonitoringRightDeviceInfoPanel',
-                            border: false,
-                            layout: 'fit',
-                            autoScroll: true,
-                            scrollable: true
+                			layout: 'border',
+                			items:[{
+                				region: 'center',
+                				id: 'PumpRealTimeMonitoringRightDeviceInfoPanel',
+                                border: false,
+                                layout: 'fit',
+                                autoScroll: true,
+                                scrollable: true
+                			},{
+                				region: 'south',
+                				id: 'PumpRealTimeMonitoringRightAuxiliaryDeviceInfoPanel',
+                				title:'辅件设备',
+                				height: '50%',
+                				border: false,
+                                layout: 'fit',
+                                split: true,
+                                collapsible: true,
+                                autoScroll: true,
+                                scrollable: true
+                			}]
                 		}]
                     }]
                 }]
