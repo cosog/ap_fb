@@ -108,6 +108,19 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                            	 var columnStr=Ext.getCmp("PipelineRealTimeMonitoringColumnStr_Id").getValue();
                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
                             }
+                        }, '->', {
+                         	xtype: 'button',
+                            text:'查看历史',
+                            tooltip:'点击按钮或者双击表格，查看历史数据',
+                            pressed: true,
+                            handler: function (v, o) {
+                            	var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
+                        		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+                        		if(isNotVal(gridPanel)){
+                        			var record=gridPanel.getStore().getAt(selectRow);
+                        			gotoDeviceHistory(record.data.wellName,1);
+                        		}
+                            }
                         }]
                     },{
                     	title:'状态统计',
@@ -184,13 +197,6 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'设备控制',
-                			id: 'PipelineRealTimeMonitoringRightControlPanel',
-                            border: false,
-                            layout: 'fit',
-                            autoScroll: true,
-                            scrollable: true
-                		},{
                 			title:'设备信息',
                 			layout: 'border',
                 			items:[{
@@ -213,6 +219,13 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 scrollable: true
                 			}]
                 			
+                		},{
+                			title:'设备控制',
+                			id: 'PipelineRealTimeMonitoringRightControlPanel',
+                            border: false,
+                            layout: 'fit',
+                            autoScroll: true,
+                            scrollable: true
                 		}]
                     }]
                 }]

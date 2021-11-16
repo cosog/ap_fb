@@ -417,6 +417,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		StringBuffer instanceDropdownData = new StringBuffer();
 		StringBuffer alarmInstanceDropdownData = new StringBuffer();
 		StringBuffer SMSInstanceDropdownData = new StringBuffer();
+		StringBuffer applicationScenariosDropdownData = new StringBuffer();
 		String ddicName="pumpDeviceManager";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -439,7 +440,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}
 		
 		String columns=service.showTableHeadersColumns(ddicName);
-		String sql = "select id,orgName,wellName,instanceName,alarmInstanceName,signInId,slave,"
+		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
 				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
@@ -454,9 +455,12 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype="+deviceType+" order by t.sort";
 		String alarmInstanceSql="select t.name from tbl_protocolalarminstance t where t.devicetype="+deviceType+" order by t.sort";
 		String SMSInstanceSql="select t.name from tbl_protocolsmsinstance t order by t.sort";
+		String applicationScenariosSql="select c.itemname from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' order by c.itemvalue";
+		
 		instanceDropdownData.append("[");
 		SMSInstanceDropdownData.append("[");
 		alarmInstanceDropdownData.append("[");
+		applicationScenariosDropdownData.append("[");
 		if(deviceType==2){
 			List<?> SMSInstanceList = this.findCallSql(SMSInstanceSql);
 			for(int i=0;i<SMSInstanceList.size();i++){
@@ -468,6 +472,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}else{
 			List<?> instanceList = this.findCallSql(instanceSql);
 			List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
+			List<?> applicationScenariosList = this.findCallSql(applicationScenariosSql);
 			
 			for(int i=0;i<instanceList.size();i++){
 				instanceDropdownData.append("'"+instanceList.get(i)+"',");
@@ -481,39 +486,52 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			if(alarmInstanceDropdownData.toString().endsWith(",")){
 				alarmInstanceDropdownData.deleteCharAt(alarmInstanceDropdownData.length() - 1);
 			}
+			
+			for(int i=0;i<applicationScenariosList.size();i++){
+				applicationScenariosDropdownData.append("'"+applicationScenariosList.get(i)+"',");
+			}
+			if(applicationScenariosDropdownData.toString().endsWith(",")){
+				applicationScenariosDropdownData.deleteCharAt(applicationScenariosDropdownData.length() - 1);
+			}
 		}
 		instanceDropdownData.append("]");
 		alarmInstanceDropdownData.append("]");
 		SMSInstanceDropdownData.append("]");
-		
+		applicationScenariosDropdownData.append("]");
 		
 		String json = "";
 		
 		List<?> list = this.findCallSql(sql);
 		
-		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"instanceDropdownData\":"+instanceDropdownData.toString()+",\"alarmInstanceDropdownData\":"+alarmInstanceDropdownData.toString()+",\"SMSInstanceDropdownData\":"+SMSInstanceDropdownData.toString()+",\"columns\":"+columns+",\"totalRoot\":[");
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+","
+				+ "\"instanceDropdownData\":"+instanceDropdownData.toString()+","
+				+ "\"alarmInstanceDropdownData\":"+alarmInstanceDropdownData.toString()+","
+				+ "\"SMSInstanceDropdownData\":"+SMSInstanceDropdownData.toString()+","
+				+ "\"applicationScenariosDropdownData\":"+applicationScenariosDropdownData.toString()+","
+				+ "\"columns\":"+columns+",\"totalRoot\":[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[]) list.get(i);
 			
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
 			result_json.append("\"wellName\":\""+obj[2]+"\",");
-			result_json.append("\"instanceName\":\""+obj[3]+"\",");
-			result_json.append("\"alarmInstanceName\":\""+obj[4]+"\",");
-			result_json.append("\"signInId\":\""+obj[5]+"\",");
-			result_json.append("\"slave\":\""+obj[6]+"\",");
+			result_json.append("\"applicationScenariosName\":\""+obj[3]+"\",");
+			result_json.append("\"instanceName\":\""+obj[4]+"\",");
+			result_json.append("\"alarmInstanceName\":\""+obj[5]+"\",");
+			result_json.append("\"signInId\":\""+obj[6]+"\",");
+			result_json.append("\"slave\":\""+obj[7]+"\",");
 			
-			result_json.append("\"factoryNumber\":\""+obj[7]+"\",");
-			result_json.append("\"model\":\""+obj[8]+"\",");
-			result_json.append("\"productionDate\":\""+obj[9]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[10]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
+			result_json.append("\"factoryNumber\":\""+obj[8]+"\",");
+			result_json.append("\"model\":\""+obj[9]+"\",");
+			result_json.append("\"productionDate\":\""+obj[10]+"\",");
+			result_json.append("\"deliveryDate\":\""+obj[11]+"\",");
+			result_json.append("\"commissioningDate\":\""+obj[12]+"\",");
+			result_json.append("\"controlcabinetDodel\":\""+obj[13]+"\",");
 			
-			result_json.append("\"pipelineLength\":\""+obj[13]+"\",");
+			result_json.append("\"pipelineLength\":\""+obj[14]+"\",");
 			
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[15]+"\",");
+			result_json.append("\"sortNum\":\""+obj[16]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
@@ -678,7 +696,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		}else if(deviceType==2){
 			ddicName="SMSDeviceManager";
 		}
-		String sql = "select id,orgName,wellName,instanceName,alarmInstanceName,signInId,slave,"
+		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
 				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from viw_wellinformation t where 1=1"
@@ -701,22 +719,23 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("{\"id\":\""+obj[0]+"\",");
 			result_json.append("\"orgName\":\""+obj[1]+"\",");
 			result_json.append("\"wellName\":\""+obj[2]+"\",");
-			result_json.append("\"instanceName\":\""+obj[3]+"\",");
-			result_json.append("\"alarmInstanceName\":\""+obj[4]+"\",");
-			result_json.append("\"signInId\":\""+obj[5]+"\",");
-			result_json.append("\"slave\":\""+obj[6]+"\",");
+			result_json.append("\"applicationScenariosName\":\""+obj[3]+"\",");
+			result_json.append("\"instanceName\":\""+obj[4]+"\",");
+			result_json.append("\"alarmInstanceName\":\""+obj[5]+"\",");
+			result_json.append("\"signInId\":\""+obj[6]+"\",");
+			result_json.append("\"slave\":\""+obj[7]+"\",");
 			
-			result_json.append("\"factoryNumber\":\""+obj[7]+"\",");
-			result_json.append("\"model\":\""+obj[8]+"\",");
-			result_json.append("\"productionDate\":\""+obj[9]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[10]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[11]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[12]+"\",");
+			result_json.append("\"factoryNumber\":\""+obj[8]+"\",");
+			result_json.append("\"model\":\""+obj[9]+"\",");
+			result_json.append("\"productionDate\":\""+obj[10]+"\",");
+			result_json.append("\"deliveryDate\":\""+obj[11]+"\",");
+			result_json.append("\"commissioningDate\":\""+obj[12]+"\",");
+			result_json.append("\"controlcabinetDodel\":\""+obj[13]+"\",");
 			
-			result_json.append("\"pipelineLength\":\""+obj[13]+"\",");
+			result_json.append("\"pipelineLength\":\""+obj[14]+"\",");
 			
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[15]+"\",");
+			result_json.append("\"sortNum\":\""+obj[16]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);

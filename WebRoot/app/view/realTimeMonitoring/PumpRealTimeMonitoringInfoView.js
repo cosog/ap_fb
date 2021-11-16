@@ -109,7 +109,20 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             	 var columnStr=Ext.getCmp("PumpRealTimeMonitoringColumnStr_Id").getValue();
                             	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
                              }
-                         }]
+                         }, '->', {
+                         	xtype: 'button',
+                            text:'查看历史',
+                            tooltip:'点击按钮或者双击表格，查看历史数据',
+                            pressed: true,
+                            handler: function (v, o) {
+                            	var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
+                        		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+                        		if(isNotVal(gridPanel)){
+                        			var record=gridPanel.getStore().getAt(selectRow);
+                        			gotoDeviceHistory(record.data.wellName,0);
+                        		}
+                            }
+                        }]
                     },{
                     	title:'状态统计',
                     	region: 'south',
@@ -185,13 +198,6 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'设备控制',
-                			id: 'PumpRealTimeMonitoringRightControlPanel',
-                            border: false,
-                            layout: 'fit',
-                            autoScroll: true,
-                            scrollable: true
-                		},{
                 			title:'设备信息',
                 			layout: 'border',
                 			items:[{
@@ -213,6 +219,13 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                 autoScroll: true,
                                 scrollable: true
                 			}]
+                		},{
+                			title:'设备控制',
+                			id: 'PumpRealTimeMonitoringRightControlPanel',
+                            border: false,
+                            layout: 'fit',
+                            autoScroll: true,
+                            scrollable: true
                 		}]
                     }]
                 }]

@@ -621,7 +621,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " and t.wellname='"+wellName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)+" and t5.type=1"
 				+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_no="+userId+" )"
 				+ " group by t.wellname,t3.protocol";
-		String auxiliaryDeviceSql="select t3.id,t3.name "
+		String auxiliaryDeviceSql="select t3.id,t3.name,t3.model,t3.remark "
 				+ " from tbl_wellinformation t,tbl_auxiliary2master t2,tbl_auxiliarydevice t3 "
 				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t.devicetype="+deviceType+" and t.wellname='"+wellName+"' "
 				+ " order by t3.sort,t3.name";
@@ -700,7 +700,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		for(int i=0;i<auxiliaryDeviceQueryList.size();i++){
 			Object[] obj=(Object[]) auxiliaryDeviceQueryList.get(i);
 			auxiliaryDeviceList.append("{\"id\":"+obj[0]+","
-					+ "\"name\":\""+obj[1]+"\"},");
+					+ "\"name\":\""+obj[1]+"\","
+					+ "\"model\":\""+obj[2]+"\","
+					+ "\"remark\":\""+obj[3]+"\"},");
 		}
 		
 		if(auxiliaryDeviceList.toString().endsWith(",")){

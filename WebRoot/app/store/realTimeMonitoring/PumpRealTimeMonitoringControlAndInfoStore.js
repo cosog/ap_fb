@@ -81,9 +81,14 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		}
         	
     		//辅件设备
+    		
     		var deviceAuxiliaryInfoDataStr="{\"items\":[";
         	for(var i=0;i<auxiliaryDeviceList.length;i++){
-        		deviceAuxiliaryInfoDataStr+="{\"id\":"+auxiliaryDeviceList[i].id+",\"name\":\""+auxiliaryDeviceList[i].name+"\"},";
+        		deviceAuxiliaryInfoDataStr+="{\"id\":"+auxiliaryDeviceList[i].id+","
+        		+"\"name\":\""+auxiliaryDeviceList[i].name+"\","
+        		+"\"model\":\""+auxiliaryDeviceList[i].model+"\","
+        		+"\"remark\":\""+auxiliaryDeviceList[i].remark+"\""
+        		+"},";
         	}
         	if(stringEndWith(deviceAuxiliaryInfoDataStr,",")){
         		deviceAuxiliaryInfoDataStr = deviceAuxiliaryInfoDataStr.substring(0, deviceAuxiliaryInfoDataStr.length - 1);
@@ -92,7 +97,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         	
         	var deviceAuxiliaryInfoStoreData=Ext.JSON.decode(deviceAuxiliaryInfoDataStr);
         	var deviceAuxiliaryInfoStore=Ext.create('Ext.data.Store', {
-			    fields:['id', 'name'],
+			    fields:['id', 'name','model','remark'],
 			    data:deviceAuxiliaryInfoStoreData,
 			    proxy: {
 			        type: 'memory',
@@ -102,10 +107,15 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
 			        }
 			    }
 			});
+        	
         	var deviceAuxiliaryInfoGridPanel=Ext.getCmp("PumpRealTimeMonitoringAuxiliaryDeviceInfoDataGridPanel_Id");
+        	
+        	
+        	
     		if(!isNotVal(deviceAuxiliaryInfoGridPanel)){
     			deviceAuxiliaryInfoGridPanel=Ext.create('Ext.grid.Panel', {
     				id:'PumpRealTimeMonitoringAuxiliaryDeviceInfoDataGridPanel_Id',
+    				xtype: 'row-expander-grid',
     				border: false,
     				columnLines: true,
     				forceFit: false,
@@ -126,13 +136,32 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
     			        }
-    			    ]
+    			    ],
+    			    plugins: [{
+    			        ptype: 'rowexpander',
+    			        rowBodyTpl : new Ext.XTemplate(
+    			            '<p><b>规格型号:</b> {model}</p>',
+    			            '<p><b>备注:</b> {remark}</p>',
+    			        {
+    			            formatChange: function(v){
+    			                var color = v >= 0 ? 'green' : 'red';
+    			                return '<span style="color: ' + color + ';">' + Ext.util.Format.usMoney(v) + '</span>';
+    			            }
+    			        })
+    			    }]
     			});
     			Ext.getCmp("PumpRealTimeMonitoringRightAuxiliaryDeviceInfoPanel").add(deviceAuxiliaryInfoGridPanel);
     		}else{
     			deviceAuxiliaryInfoGridPanel.reconfigure(deviceAuxiliaryInfoStore);
     		}
-        	
+    		var total=deviceAuxiliaryInfoGridPanel.getStore().getCount();
+    		if(total>0){
+//    			deviceAuxiliaryInfoGridPanel.getSelectionModel().select(0, true);
+    			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0);
+    		}
+    		
+    		
+    		
         	//控制
         	var controlDataStr="{\"items\":[";
         	for(var i=0;i<deviceControlList.length;i++){
