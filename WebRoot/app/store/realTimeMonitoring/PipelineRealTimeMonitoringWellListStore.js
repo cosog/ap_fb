@@ -58,6 +58,9 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     		var deviceType=1;
                     		CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
                     		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
+                    	},
+                    	itemdblclick: function (view,record,item,index,e,eOpts) {
+                    		gotoDeviceHistory(record.data.wellName,1);
                     	}
                     }
                 });

@@ -453,3 +453,73 @@ function exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatu
     + "&title=" + URLencode(URLencode(title));
     openExcelWindow(url + '?flag=true' + param);
 };
+
+
+
+function gotoDeviceHistory(deviceName,deviceType){
+	var tabPanel = Ext.getCmp("frame_center_ids");
+	var moduleId="DeviceHistoryQuery";
+	var getTabId = tabPanel.getComponent(moduleId);
+	var haveModule=false;
+	if(!getTabId){
+		var moduleStore=Ext.getCmp("MainIframeView_Id").getStore();
+		var moduleCount=moduleStore.getCount();
+		for(var i=0;i<moduleCount;i++){
+			var rec=moduleStore.getAt(i);
+			if(rec.isLeaf()&&rec.id=="DeviceHistoryQuery"){
+				tabPanel.add(Ext.create(rec.data.viewsrc, {
+                    id: rec.data.id,
+                    closable: true,
+                    iconCls: rec.data.md_icon,
+                    closeAction: 'destroy',
+                    title: rec.data.text,
+                    listeners: {
+                        afterrender: function () {
+                        },
+                        delay: 150
+                    }
+                })).show();
+                Ext.getCmp("topModule_Id").setValue(rec.data.mdCode);
+				haveModule=true;
+				break;
+			}
+		}
+	}else{
+		haveModule=true;
+	}
+	if(haveModule){
+		if(deviceType===0){
+			Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue(deviceName);
+			var historyGridPanel=Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
+			
+			Ext.getCmp("PumpHistoryQueryHisBtn_Id").hide();
+	    	Ext.getCmp("PumpHistoryQueryAllBtn_Id").show();
+			
+			Ext.getCmp("PumpHistoryQueryStartDate_Id").show();
+			Ext.getCmp("PumpHistoryQueryEndDate_Id").show();
+			tabPanel.setActiveTab(moduleId);
+			
+			
+			var historyQueryTabPanel = Ext.getCmp("HistoryQueryTabPanel");
+			if(historyQueryTabPanel.getActiveTab().id=="PipelineHistoryQueryInfoPanel_Id"){
+				historyQueryTabPanel.setActiveTab("PumpHistoryQueryInfoPanel_Id");
+			}
+		}if(deviceType===1){
+			Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue(deviceName);
+			var historyGridPanel=Ext.getCmp("PipelineHistoryQueryListGridPanel_Id");
+			
+			Ext.getCmp("PipelineHistoryQueryHisBtn_Id").hide();
+        	Ext.getCmp("PipelineHistoryQueryAllBtn_Id").show();
+    		
+    		Ext.getCmp("PipelineHistoryQueryStartDate_Id").show();
+    		Ext.getCmp("PipelineHistoryQueryEndDate_Id").show();
+			tabPanel.setActiveTab(moduleId);
+			
+			
+			var historyQueryTabPanel = Ext.getCmp("HistoryQueryTabPanel");
+			if(historyQueryTabPanel.getActiveTab().id=="PumpHistoryQueryInfoPanel_Id"){
+				historyQueryTabPanel.setActiveTab("PipelineHistoryQueryInfoPanel_Id");
+			}
+		}
+	}
+}

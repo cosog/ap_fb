@@ -58,6 +58,9 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     		var deviceType=0;
                     		CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
                     		Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStore');
+                    	},
+                    	itemdblclick: function (view,record,item,index,e,eOpts) {
+                    		gotoDeviceHistory(record.data.wellName,0);
                     	}
                     }
                 });
