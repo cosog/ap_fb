@@ -560,13 +560,20 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		
 		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"resolutionMode\":"+resolutionMode+",\"list\":[");
 		if(resolutionMode==2){//只查询数据量的曲线
-			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss'), t."+column+" "
+			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss') as acqtime, t."+column+" "
 					+ " from "+tableName +" t,tbl_wellinformation t2 "
 					+ " where t.wellid=t2.id "
 					+ " and t.acqtime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1"
-					+ " and t2.wellname='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType)
-					+ " order by t.acqtime";
-			List<?> list = this.findCallSql(sql);
+					+ " and t2.wellname='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+			int total=this.getTotalCountRows(sql);
+			int rarefy=total/500+1;
+			sql+= " order by t.acqtime";
+			
+			String finalSql=sql;
+			if(rarefy>1){
+				finalSql="select acqtime,"+column+" from  (select v.*, rownum as rn from ("+sql+") v ) v2 where mod(rn-1,"+rarefy+")=0";
+			}
+			List<?> list = this.findCallSql(finalSql);
 			for(int i=0;i<list.size();i++){
 				Object[] obj=(Object[]) list.get(i);
 				result_json.append("{acqTime:\"" + obj[0] + "\",");

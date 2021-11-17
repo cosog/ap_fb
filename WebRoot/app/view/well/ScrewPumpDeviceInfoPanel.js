@@ -1,13 +1,13 @@
-var pumpDeviceInfoHandsontableHelper = null;
-var pumpAuxiliaryDeviceInfoHandsontableHelper = null;
-Ext.define('AP.view.well.PumpDeviceInfoPanel', {
+var screwPumpDeviceInfoHandsontableHelper = null;
+var screwPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.pumpDeviceInfoPanel',
-    id: 'PumpDeviceInfoPanel_Id',
+    alias: 'widget.screwPumpDeviceInfoPanel',
+    id: 'ScrewPumpDeviceInfoPanel_Id',
     layout: 'fit',
     border: false,
     initComponent: function () {
-        var pumpCombStore = new Ext.data.JsonStore({
+        var screwPumpCombStore = new Ext.data.JsonStore({
             pageSize: defaultWellComboxSize,
             fields: [{
                 name: "boxkey",
@@ -32,7 +32,7 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
             listeners: {
                 beforeload: function (store, options) {
                     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('pumpDeviceListComb_Id').getValue();
+                    var wellName = Ext.getCmp('screwPumpDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: 0,
@@ -43,16 +43,16 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
             }
         });
 
-        var pumpDeviceCombo = Ext.create(
+        var screwPumpDeviceCombo = Ext.create(
             'Ext.form.field.ComboBox', {
                 fieldLabel: cosog.string.wellName,
-                id: "pumpDeviceListComb_Id",
+                id: "screwPumpDeviceListComb_Id",
                 labelWidth: 35,
                 width: 145,
                 labelAlign: 'left',
                 queryMode: 'remote',
                 typeAhead: true,
-                store: pumpCombStore,
+                store: screwPumpCombStore,
                 autoSelect: false,
                 editable: true,
                 triggerAction: 'all',
@@ -64,11 +64,11 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                 blankText: cosog.string.all,
                 listeners: {
                     expand: function (sm, selections) {
-                        pumpDeviceCombo.getStore().loadPage(1); // 加载井下拉框的store
+                        screwPumpDeviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                     },
                     select: function (combo, record, index) {
                         try {
-                            CreateAndLoadPumpDeviceInfoTable();
+                            CreateAndLoadScrewPumpDeviceInfoTable();
                         } catch (ex) {
                             Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
                         }
@@ -76,14 +76,14 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                 }
             });
         Ext.apply(this, {
-            tbar: [pumpDeviceCombo, '-', {
-                id: 'PumpDeviceTotalCount_Id',
+            tbar: [screwPumpDeviceCombo, '-', {
+                id: 'ScrewPumpDeviceTotalCount_Id',
                 xtype: 'component',
                 hidden: false,
                 tpl: cosog.string.totalCount + ': {count}',
                 style: 'margin-right:15px'
             },{
-                id: 'PumpDeviceSelectRow_Id',
+                id: 'ScrewPumpDeviceSelectRow_Id',
                 xtype: 'textfield',
                 value: 0,
                 hidden: true
@@ -96,11 +96,11 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                     var fields = "";
                     var heads = "";
                     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellInformationName = Ext.getCmp('pumpDeviceListComb_Id').getValue();
+                    var wellInformationName = Ext.getCmp('screwPumpDeviceListComb_Id').getValue();
                     var url = context + '/wellInformationManagerController/exportWellInformationData';
-                    for (var i = 0; i < pumpDeviceInfoHandsontableHelper.colHeaders.length; i++) {
-                        fields += pumpDeviceInfoHandsontableHelper.columns[i].data + ",";
-                        heads += pumpDeviceInfoHandsontableHelper.colHeaders[i] + ","
+                    for (var i = 0; i < screwPumpDeviceInfoHandsontableHelper.colHeaders.length; i++) {
+                        fields += screwPumpDeviceInfoHandsontableHelper.columns[i].data + ",";
+                        heads += screwPumpDeviceInfoHandsontableHelper.colHeaders[i] + ","
                     }
                     if (isNotVal(fields)) {
                         fields = fields.substring(0, fields.length - 1);
@@ -117,42 +117,42 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
                 pressed: true,
                 hidden: false,
                 handler: function (v, o) {
-                    CreateAndLoadPumpDeviceInfoTable();
+                    CreateAndLoadScrewPumpDeviceInfoTable();
                 }
             }, '-', {
                 xtype: 'button',
-                itemId: 'savePumpDeviceDataBtnId',
-                id: 'savePumpDeviceDataBtn_Id',
+                itemId: 'saveScrewPumpDeviceDataBtnId',
+                id: 'saveScrewPumpDeviceDataBtn_Id',
                 disabled: false,
                 hidden: false,
                 pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
-                    pumpDeviceInfoHandsontableHelper.saveData();
+                    screwPumpDeviceInfoHandsontableHelper.saveData();
                 }
             }, '-', {
                 xtype: 'button',
-                itemId: 'editPumpDeviceNameBtnId',
-                id: 'editPumpDeviceNameBtn_Id',
+                itemId: 'editScrewPumpDeviceNameBtnId',
+                id: 'editScrewPumpDeviceNameBtn_Id',
                 disabled: false,
                 hidden: false,
                 pressed: true,
                 text: '修改设备名称',
                 iconCls: 'edit',
                 handler: function (v, o) {
-                    pumpDeviceInfoHandsontableHelper.editWellName();
+                    screwPumpDeviceInfoHandsontableHelper.editWellName();
                 }
             }],
             layout: 'border',
             items: [{
             	region: 'center',
             	title:'泵设备列表',
-            	html: '<div class="PumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="PumpDeviceTableDiv_id"></div></div>',
+            	html: '<div class="ScrewPumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ScrewPumpDeviceTableDiv_id"></div></div>',
                 listeners: {
                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (pumpDeviceInfoHandsontableHelper != null && pumpDeviceInfoHandsontableHelper.hot != null && pumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            CreateAndLoadPumpDeviceInfoTable();
+                        if (screwPumpDeviceInfoHandsontableHelper != null && screwPumpDeviceInfoHandsontableHelper.hot != null && screwPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                            CreateAndLoadScrewPumpDeviceInfoTable();
                         }
                     }
                 }
@@ -160,32 +160,32 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
             	region: 'east',
                 width: '20%',
                 title:'辅件设备列表',
-                id:'PumpAuxiliaryDevicePanel_Id',
+                id:'ScrewPumpAuxiliaryDevicePanel_Id',
                 autoScroll: true,
                 split: true,
                 collapsible: true,
-                html: '<div class="PumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="PumpAuxiliaryDeviceTableDiv_id"></div></div>',
+                html: '<div class="ScrewPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ScrewPumpAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (pumpAuxiliaryDeviceInfoHandsontableHelper != null && pumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && pumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-//                            CreateAndLoadPumpAuxiliaryDeviceInfoTable();
+                        if (screwPumpAuxiliaryDeviceInfoHandsontableHelper != null && screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+//                            CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable();
                         }
                     }
                 }
             }],
             listeners: {
                 beforeclose: function (panel, eOpts) {
-                    if (pumpDeviceInfoHandsontableHelper != null) {
-                        if (pumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            pumpDeviceInfoHandsontableHelper.hot.destroy();
+                    if (screwPumpDeviceInfoHandsontableHelper != null) {
+                        if (screwPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                            screwPumpDeviceInfoHandsontableHelper.hot.destroy();
                         }
-                        pumpDeviceInfoHandsontableHelper = null;
+                        screwPumpDeviceInfoHandsontableHelper = null;
                     }
-                    if (pumpAuxiliaryDeviceInfoHandsontableHelper != null) {
-                        if (pumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-                        	pumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                    if (screwPumpAuxiliaryDeviceInfoHandsontableHelper != null) {
+                        if (screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                        	screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
                         }
-                        pumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        screwPumpAuxiliaryDeviceInfoHandsontableHelper = null;
                     }
                 }
             }
@@ -194,29 +194,29 @@ Ext.define('AP.view.well.PumpDeviceInfoPanel', {
     }
 });
 
-function CreateAndLoadPumpDeviceInfoTable(isNew) {
-	if(isNew&&pumpDeviceInfoHandsontableHelper!=null){
-		if (pumpDeviceInfoHandsontableHelper.hot != undefined) {
-			pumpDeviceInfoHandsontableHelper.hot.destroy();
+function CreateAndLoadScrewPumpDeviceInfoTable(isNew) {
+	if(isNew&&screwPumpDeviceInfoHandsontableHelper!=null){
+		if (screwPumpDeviceInfoHandsontableHelper.hot != undefined) {
+			screwPumpDeviceInfoHandsontableHelper.hot.destroy();
 		}
-		pumpDeviceInfoHandsontableHelper = null;
+		screwPumpDeviceInfoHandsontableHelper = null;
 	}
     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-    var wellInformationName_Id = Ext.getCmp('pumpDeviceListComb_Id').getValue();
+    var wellInformationName_Id = Ext.getCmp('screwPumpDeviceListComb_Id').getValue();
     Ext.Ajax.request({
         method: 'POST',
         url: context + '/wellInformationManagerController/doWellInformationShow',
         success: function (response) {
             var result = Ext.JSON.decode(response.responseText);
-            if (pumpDeviceInfoHandsontableHelper == null || pumpDeviceInfoHandsontableHelper.hot == null || pumpDeviceInfoHandsontableHelper.hot == undefined) {
-                pumpDeviceInfoHandsontableHelper = PumpDeviceInfoHandsontableHelper.createNew("PumpDeviceTableDiv_id");
+            if (screwPumpDeviceInfoHandsontableHelper == null || screwPumpDeviceInfoHandsontableHelper.hot == null || screwPumpDeviceInfoHandsontableHelper.hot == undefined) {
+                screwPumpDeviceInfoHandsontableHelper = ScrewPumpDeviceInfoHandsontableHelper.createNew("ScrewPumpDeviceTableDiv_id");
                 var colHeaders = "[";
                 var columns = "[";
 
                 for (var i = 0; i < result.columns.length; i++) {
                     colHeaders += "'" + result.columns[i].header + "'";
                     if (result.columns[i].dataIndex.toUpperCase() === "orgName".toUpperCase()) {
-                        columns += "{data:'" + result.columns[i].dataIndex + "',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Org(val, callback,this.row, this.col,pumpDeviceInfoHandsontableHelper);}}";
+                        columns += "{data:'" + result.columns[i].dataIndex + "',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Org(val, callback,this.row, this.col,screwPumpDeviceInfoHandsontableHelper);}}";
                     } else if (result.columns[i].dataIndex.toUpperCase() === "liftingTypeName".toUpperCase()) {
                         if (pcpHidden) {
                             columns += "{data:'" + result.columns[i].dataIndex + "',type:'dropdown',strict:true,allowInvalid:false,source:['抽油机']}";
@@ -254,7 +254,7 @@ function CreateAndLoadPumpDeviceInfoTable(isNew) {
                         source += "]";
                         columns += "{data:'" + result.columns[i].dataIndex + "',type:'dropdown',strict:true,allowInvalid:false,source:" + source + "}";
                     } else if (result.columns[i].dataIndex.toUpperCase() === "sortNum".toUpperCase()) {
-                        columns += "{data:'" + result.columns[i].dataIndex + "',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,pumpDeviceInfoHandsontableHelper);}}";
+                        columns += "{data:'" + result.columns[i].dataIndex + "',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,screwPumpDeviceInfoHandsontableHelper);}}";
                     } else {
                         columns += "{data:'" + result.columns[i].dataIndex + "'}";
                     }
@@ -265,22 +265,22 @@ function CreateAndLoadPumpDeviceInfoTable(isNew) {
                 }
                 colHeaders += "]";
                 columns += "]";
-                pumpDeviceInfoHandsontableHelper.colHeaders = Ext.JSON.decode(colHeaders);
-                pumpDeviceInfoHandsontableHelper.columns = Ext.JSON.decode(columns);
-                pumpDeviceInfoHandsontableHelper.createTable(result.totalRoot);
+                screwPumpDeviceInfoHandsontableHelper.colHeaders = Ext.JSON.decode(colHeaders);
+                screwPumpDeviceInfoHandsontableHelper.columns = Ext.JSON.decode(columns);
+                screwPumpDeviceInfoHandsontableHelper.createTable(result.totalRoot);
             } else {
-                pumpDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
+                screwPumpDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
             if(result.totalRoot.length==0){
-            	Ext.getCmp("PumpDeviceSelectRow_Id").setValue('');
-            	CreateAndLoadPumpAuxiliaryDeviceInfoTable();
+            	Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue('');
+            	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable();
             }else{
-            	Ext.getCmp("PumpDeviceSelectRow_Id").setValue(0);
-            	var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
-            	CreateAndLoadPumpAuxiliaryDeviceInfoTable(rowdata[2]);
+            	Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(0);
+            	var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
+            	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(rowdata[2]);
             }
             
-            Ext.getCmp("PumpDeviceTotalCount_Id").update({
+            Ext.getCmp("ScrewPumpDeviceTotalCount_Id").update({
                 count: result.totalCount
             });
             
@@ -299,40 +299,40 @@ function CreateAndLoadPumpDeviceInfoTable(isNew) {
     });
 };
 
-var PumpDeviceInfoHandsontableHelper = {
+var ScrewPumpDeviceInfoHandsontableHelper = {
     createNew: function (divid) {
-        var pumpDeviceInfoHandsontableHelper = {};
-        pumpDeviceInfoHandsontableHelper.hot = '';
-        pumpDeviceInfoHandsontableHelper.divid = divid;
-        pumpDeviceInfoHandsontableHelper.validresult = true; //数据校验
-        pumpDeviceInfoHandsontableHelper.colHeaders = [];
-        pumpDeviceInfoHandsontableHelper.columns = [];
+        var screwPumpDeviceInfoHandsontableHelper = {};
+        screwPumpDeviceInfoHandsontableHelper.hot = '';
+        screwPumpDeviceInfoHandsontableHelper.divid = divid;
+        screwPumpDeviceInfoHandsontableHelper.validresult = true; //数据校验
+        screwPumpDeviceInfoHandsontableHelper.colHeaders = [];
+        screwPumpDeviceInfoHandsontableHelper.columns = [];
 
-        pumpDeviceInfoHandsontableHelper.AllData = {};
-        pumpDeviceInfoHandsontableHelper.updatelist = [];
-        pumpDeviceInfoHandsontableHelper.delidslist = [];
-        pumpDeviceInfoHandsontableHelper.insertlist = [];
-        pumpDeviceInfoHandsontableHelper.editWellNameList = [];
+        screwPumpDeviceInfoHandsontableHelper.AllData = {};
+        screwPumpDeviceInfoHandsontableHelper.updatelist = [];
+        screwPumpDeviceInfoHandsontableHelper.delidslist = [];
+        screwPumpDeviceInfoHandsontableHelper.insertlist = [];
+        screwPumpDeviceInfoHandsontableHelper.editWellNameList = [];
 
-        pumpDeviceInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+        screwPumpDeviceInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             td.style.backgroundColor = 'rgb(242, 242, 242)';
         }
 
-        pumpDeviceInfoHandsontableHelper.createTable = function (data) {
-            $('#' + pumpDeviceInfoHandsontableHelper.divid).empty();
-            var hotElement = document.querySelector('#' + pumpDeviceInfoHandsontableHelper.divid);
-            pumpDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+        screwPumpDeviceInfoHandsontableHelper.createTable = function (data) {
+            $('#' + screwPumpDeviceInfoHandsontableHelper.divid).empty();
+            var hotElement = document.querySelector('#' + screwPumpDeviceInfoHandsontableHelper.divid);
+            screwPumpDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
                 data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
                 },
-                columns: pumpDeviceInfoHandsontableHelper.columns,
+                columns: screwPumpDeviceInfoHandsontableHelper.columns,
                 stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
                 autoWrapRow: true,
                 rowHeaders: true, //显示行头
-                colHeaders: pumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
+                colHeaders: screwPumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
                 contextMenu: {
                     items: {
@@ -384,9 +384,9 @@ var PumpDeviceInfoHandsontableHelper = {
                     var visualColIndex = this.instance.toVisualColumn(col);
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	Ext.getCmp("PumpDeviceSelectRow_Id").setValue(row);
-                	var row1=pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
-                	CreateAndLoadPumpAuxiliaryDeviceInfoTable(row1[2]);
+                	Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(row);
+                	var row1=screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
+                	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(row1[2]);
                 },
                 afterDestroy: function () {
                 },
@@ -395,11 +395,11 @@ var PumpDeviceInfoHandsontableHelper = {
                     //封装id成array传入后台
                     if (amount != 0) {
                         for (var i = index; i < amount + index; i++) {
-                            var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+                            var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
                             ids.push(rowdata[0]);
                         }
-                        pumpDeviceInfoHandsontableHelper.delExpressCount(ids);
-                        pumpDeviceInfoHandsontableHelper.screening();
+                        screwPumpDeviceInfoHandsontableHelper.delExpressCount(ids);
+                        screwPumpDeviceInfoHandsontableHelper.screening();
                     }
                 },
                 afterChange: function (changes, source) {
@@ -410,7 +410,7 @@ var PumpDeviceInfoHandsontableHelper = {
                             for (var i = 0; i < changes.length; i++) {
                                 var params = [];
                                 var index = changes[i][0]; //行号码
-                                var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(index);
+                                var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(index);
                                 params.push(rowdata[0]);
                                 params.push(changes[i][1]);
                                 params.push(changes[i][2]);
@@ -418,24 +418,24 @@ var PumpDeviceInfoHandsontableHelper = {
 
                                 if ("edit" == source && params[1] == "wellName") { //编辑井名单元格
                                     var data = "{\"oldWellName\":\"" + params[2] + "\",\"newWellName\":\"" + params[3] + "\"}";
-                                    pumpDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
+                                    screwPumpDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
                                 }
 
                                 if (params[1] == "protocolName" && params[3] == "Kafka协议") {
-                                    pumpDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
+                                    screwPumpDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
                                 }
 
                                 //仅当单元格发生改变的时候,id!=null,说明是更新
                                 if (params[2] != params[3] && params[0] != null && params[0] > 0) {
                                     var data = "{";
-                                    for (var j = 0; j < pumpDeviceInfoHandsontableHelper.columns.length; j++) {
-                                        data += pumpDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
-                                        if (j < pumpDeviceInfoHandsontableHelper.columns.length - 1) {
+                                    for (var j = 0; j < screwPumpDeviceInfoHandsontableHelper.columns.length; j++) {
+                                        data += screwPumpDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
+                                        if (j < screwPumpDeviceInfoHandsontableHelper.columns.length - 1) {
                                             data += ","
                                         }
                                     }
                                     data += "}"
-                                    pumpDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
+                                    screwPumpDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
                                 }
                             }
                         } else {
@@ -446,51 +446,51 @@ var PumpDeviceInfoHandsontableHelper = {
             });
         }
         //插入的数据的获取
-        pumpDeviceInfoHandsontableHelper.insertExpressCount = function () {
-            var idsdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtCol(0); //所有的id
+        screwPumpDeviceInfoHandsontableHelper.insertExpressCount = function () {
+            var idsdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtCol(0); //所有的id
             for (var i = 0; i < idsdata.length; i++) {
                 //id=null时,是插入数据,此时的i正好是行号
                 if (idsdata[i] == null || idsdata[i] < 0) {
                     //获得id=null时的所有数据封装进data
-                    var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+                    var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
                     //var collength = hot.countCols();
                     if (rowdata != null) {
                         var data = "{";
-                        for (var j = 0; j < pumpDeviceInfoHandsontableHelper.columns.length; j++) {
-                            data += pumpDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
-                            if (j < pumpDeviceInfoHandsontableHelper.columns.length - 1) {
+                        for (var j = 0; j < screwPumpDeviceInfoHandsontableHelper.columns.length; j++) {
+                            data += screwPumpDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
+                            if (j < screwPumpDeviceInfoHandsontableHelper.columns.length - 1) {
                                 data += ","
                             }
                         }
                         data += "}"
-                        pumpDeviceInfoHandsontableHelper.insertlist.push(Ext.JSON.decode(data));
+                        screwPumpDeviceInfoHandsontableHelper.insertlist.push(Ext.JSON.decode(data));
                     }
                 }
             }
-            if (pumpDeviceInfoHandsontableHelper.insertlist.length != 0) {
-                pumpDeviceInfoHandsontableHelper.AllData.insertlist = pumpDeviceInfoHandsontableHelper.insertlist;
+            if (screwPumpDeviceInfoHandsontableHelper.insertlist.length != 0) {
+                screwPumpDeviceInfoHandsontableHelper.AllData.insertlist = screwPumpDeviceInfoHandsontableHelper.insertlist;
             }
         }
         //保存数据
-        pumpDeviceInfoHandsontableHelper.saveData = function () {
+        screwPumpDeviceInfoHandsontableHelper.saveData = function () {
             var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
             if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {
                 //插入的数据的获取
-                pumpDeviceInfoHandsontableHelper.insertExpressCount();
+                screwPumpDeviceInfoHandsontableHelper.insertExpressCount();
                 var orgId = IframeViewSelection[0].data.orgId;
                 
                 //获取辅件配置数据
                 var deviceAuxiliaryData={};
-                var PumpDeviceSelectRow= Ext.getCmp("PumpDeviceSelectRow_Id").getValue();
+                var ScrewPumpDeviceSelectRow= Ext.getCmp("ScrewPumpDeviceSelectRow_Id").getValue();
                 
-                if(isNotVal(PumpDeviceSelectRow)){
-                	var rowdata = pumpDeviceInfoHandsontableHelper.hot.getDataAtRow(PumpDeviceSelectRow);
+                if(isNotVal(ScrewPumpDeviceSelectRow)){
+                	var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(ScrewPumpDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
                 	deviceAuxiliaryData.deviceType=0;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
-                	var auxiliaryDeviceData=pumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
+                	var auxiliaryDeviceData=screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
                 	
                 	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
                         if (auxiliaryDeviceData[index][0]) {
@@ -501,7 +501,7 @@ var PumpDeviceInfoHandsontableHelper = {
                 	
                 }
                 
-                if (JSON.stringify(pumpDeviceInfoHandsontableHelper.AllData) != "{}" && pumpDeviceInfoHandsontableHelper.validresult) {
+                if (JSON.stringify(screwPumpDeviceInfoHandsontableHelper.AllData) != "{}" && screwPumpDeviceInfoHandsontableHelper.validresult) {
                     Ext.Ajax.request({
                         method: 'POST',
                         url: context + '/wellInformationManagerController/saveWellHandsontableData',
@@ -510,8 +510,8 @@ var PumpDeviceInfoHandsontableHelper = {
                             if (rdata.success) {
                                 Ext.MessageBox.alert("信息", "保存成功");
                                 //保存以后重置全局容器
-                                pumpDeviceInfoHandsontableHelper.clearContainer();
-                                CreateAndLoadPumpDeviceInfoTable();
+                                screwPumpDeviceInfoHandsontableHelper.clearContainer();
+                                CreateAndLoadScrewPumpDeviceInfoTable();
                             } else {
                                 Ext.MessageBox.alert("信息", "数据保存失败");
 
@@ -519,17 +519,17 @@ var PumpDeviceInfoHandsontableHelper = {
                         },
                         failure: function () {
                             Ext.MessageBox.alert("信息", "请求失败");
-                            pumpDeviceInfoHandsontableHelper.clearContainer();
+                            screwPumpDeviceInfoHandsontableHelper.clearContainer();
                         },
                         params: {
-                            data: JSON.stringify(pumpDeviceInfoHandsontableHelper.AllData),
+                            data: JSON.stringify(screwPumpDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
                             deviceType: 0
                         }
                     });
                 } else {
-                    if (!pumpDeviceInfoHandsontableHelper.validresult) {
+                    if (!screwPumpDeviceInfoHandsontableHelper.validresult) {
                         Ext.MessageBox.alert("信息", "数据类型错误");
                     } else {
                         Ext.MessageBox.alert("信息", "无数据变化");
@@ -542,11 +542,11 @@ var PumpDeviceInfoHandsontableHelper = {
         }
 
         //修改井名
-        pumpDeviceInfoHandsontableHelper.editWellName = function () {
+        screwPumpDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
 
-            if (pumpDeviceInfoHandsontableHelper.editWellNameList.length > 0 && pumpDeviceInfoHandsontableHelper.validresult) {
-                //	            	alert(JSON.stringify(pumpDeviceInfoHandsontableHelper.editWellNameList));
+            if (screwPumpDeviceInfoHandsontableHelper.editWellNameList.length > 0 && screwPumpDeviceInfoHandsontableHelper.validresult) {
+                //	            	alert(JSON.stringify(screwPumpDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -554,8 +554,8 @@ var PumpDeviceInfoHandsontableHelper = {
                         rdata = Ext.JSON.decode(response.responseText);
                         if (rdata.success) {
                             Ext.MessageBox.alert("信息", "保存成功");
-                            pumpDeviceInfoHandsontableHelper.clearContainer();
-                            CreateAndLoadPumpDeviceInfoTable();
+                            screwPumpDeviceInfoHandsontableHelper.clearContainer();
+                            CreateAndLoadScrewPumpDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
 
@@ -563,14 +563,14 @@ var PumpDeviceInfoHandsontableHelper = {
                     },
                     failure: function () {
                         Ext.MessageBox.alert("信息", "请求失败");
-                        pumpDeviceInfoHandsontableHelper.clearContainer();
+                        screwPumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(pumpDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(screwPumpDeviceInfoHandsontableHelper.editWellNameList)
                     }
                 });
             } else {
-                if (!pumpDeviceInfoHandsontableHelper.validresult) {
+                if (!screwPumpDeviceInfoHandsontableHelper.validresult) {
                     Ext.MessageBox.alert("信息", "数据类型错误");
                 } else {
                     Ext.MessageBox.alert("信息", "无数据变化");
@@ -580,138 +580,138 @@ var PumpDeviceInfoHandsontableHelper = {
 
 
         //删除的优先级最高
-        pumpDeviceInfoHandsontableHelper.delExpressCount = function (ids) {
+        screwPumpDeviceInfoHandsontableHelper.delExpressCount = function (ids) {
             //传入的ids.length不可能为0
             $.each(ids, function (index, id) {
                 if (id != null) {
-                    pumpDeviceInfoHandsontableHelper.delidslist.push(id);
+                    screwPumpDeviceInfoHandsontableHelper.delidslist.push(id);
                 }
             });
-            pumpDeviceInfoHandsontableHelper.AllData.delidslist = pumpDeviceInfoHandsontableHelper.delidslist;
+            screwPumpDeviceInfoHandsontableHelper.AllData.delidslist = screwPumpDeviceInfoHandsontableHelper.delidslist;
         }
 
         //updatelist数据更新
-        pumpDeviceInfoHandsontableHelper.screening = function () {
-            if (pumpDeviceInfoHandsontableHelper.updatelist.length != 0 && pumpDeviceInfoHandsontableHelper.delidslist.lentgh != 0) {
-                for (var i = 0; i < pumpDeviceInfoHandsontableHelper.delidslist.length; i++) {
-                    for (var j = 0; j < pumpDeviceInfoHandsontableHelper.updatelist.length; j++) {
-                        if (pumpDeviceInfoHandsontableHelper.updatelist[j].id == pumpDeviceInfoHandsontableHelper.delidslist[i]) {
+        screwPumpDeviceInfoHandsontableHelper.screening = function () {
+            if (screwPumpDeviceInfoHandsontableHelper.updatelist.length != 0 && screwPumpDeviceInfoHandsontableHelper.delidslist.lentgh != 0) {
+                for (var i = 0; i < screwPumpDeviceInfoHandsontableHelper.delidslist.length; i++) {
+                    for (var j = 0; j < screwPumpDeviceInfoHandsontableHelper.updatelist.length; j++) {
+                        if (screwPumpDeviceInfoHandsontableHelper.updatelist[j].id == screwPumpDeviceInfoHandsontableHelper.delidslist[i]) {
                             //更新updatelist
-                            pumpDeviceInfoHandsontableHelper.updatelist.splice(j, 1);
+                            screwPumpDeviceInfoHandsontableHelper.updatelist.splice(j, 1);
                         }
                     }
                 }
                 //把updatelist封装进AllData
-                pumpDeviceInfoHandsontableHelper.AllData.updatelist = pumpDeviceInfoHandsontableHelper.updatelist;
+                screwPumpDeviceInfoHandsontableHelper.AllData.updatelist = screwPumpDeviceInfoHandsontableHelper.updatelist;
             }
         }
 
         //更新数据
-        pumpDeviceInfoHandsontableHelper.updateExpressCount = function (data) {
+        screwPumpDeviceInfoHandsontableHelper.updateExpressCount = function (data) {
             if (JSON.stringify(data) != "{}") {
                 var flag = true;
                 //判断记录是否存在,更新数据     
-                $.each(pumpDeviceInfoHandsontableHelper.updatelist, function (index, node) {
+                $.each(screwPumpDeviceInfoHandsontableHelper.updatelist, function (index, node) {
                     if (node.id == data.id) {
                         //此记录已经有了
                         flag = false;
                         //用新得到的记录替换原来的,不用新增
-                        pumpDeviceInfoHandsontableHelper.updatelist[index] = data;
+                        screwPumpDeviceInfoHandsontableHelper.updatelist[index] = data;
                     }
                 });
-                flag && pumpDeviceInfoHandsontableHelper.updatelist.push(data);
+                flag && screwPumpDeviceInfoHandsontableHelper.updatelist.push(data);
                 //封装
-                pumpDeviceInfoHandsontableHelper.AllData.updatelist = pumpDeviceInfoHandsontableHelper.updatelist;
+                screwPumpDeviceInfoHandsontableHelper.AllData.updatelist = screwPumpDeviceInfoHandsontableHelper.updatelist;
             }
         }
 
-        pumpDeviceInfoHandsontableHelper.clearContainer = function () {
-            pumpDeviceInfoHandsontableHelper.AllData = {};
-            pumpDeviceInfoHandsontableHelper.updatelist = [];
-            pumpDeviceInfoHandsontableHelper.delidslist = [];
-            pumpDeviceInfoHandsontableHelper.insertlist = [];
-            pumpDeviceInfoHandsontableHelper.editWellNameList = [];
+        screwPumpDeviceInfoHandsontableHelper.clearContainer = function () {
+            screwPumpDeviceInfoHandsontableHelper.AllData = {};
+            screwPumpDeviceInfoHandsontableHelper.updatelist = [];
+            screwPumpDeviceInfoHandsontableHelper.delidslist = [];
+            screwPumpDeviceInfoHandsontableHelper.insertlist = [];
+            screwPumpDeviceInfoHandsontableHelper.editWellNameList = [];
         }
 
-        return pumpDeviceInfoHandsontableHelper;
+        return screwPumpDeviceInfoHandsontableHelper;
     }
 };
 
-function CreateAndLoadPumpAuxiliaryDeviceInfoTable(pumpDeviceName,isNew){
-	if(isNew&&pumpAuxiliaryDeviceInfoHandsontableHelper!=null){
-		if(pumpAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
-			pumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+function CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(screwPumpDeviceName,isNew){
+	if(isNew&&screwPumpAuxiliaryDeviceInfoHandsontableHelper!=null){
+		if(screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
+			screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
 		}
-		pumpAuxiliaryDeviceInfoHandsontableHelper=null;
+		screwPumpAuxiliaryDeviceInfoHandsontableHelper=null;
 	}
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			Ext.getCmp("PumpAuxiliaryDevicePanel_Id").setTitle(pumpDeviceName+"辅件设备列表");
-			if(pumpAuxiliaryDeviceInfoHandsontableHelper==null || pumpAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
-				pumpAuxiliaryDeviceInfoHandsontableHelper = PumpAuxiliaryDeviceInfoHandsontableHelper.createNew("PumpAuxiliaryDeviceTableDiv_id");
+			Ext.getCmp("ScrewPumpAuxiliaryDevicePanel_Id").setTitle(screwPumpDeviceName+"辅件设备列表");
+			if(screwPumpAuxiliaryDeviceInfoHandsontableHelper==null || screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
+				screwPumpAuxiliaryDeviceInfoHandsontableHelper = ScrewPumpAuxiliaryDeviceInfoHandsontableHelper.createNew("ScrewPumpAuxiliaryDeviceTableDiv_id");
 				var colHeaders="['','序号','名称','规格型号','']";
 				var columns="[{data:'checked',type:'checkbox'},{data:'id'},{data:'name'},{data:'model'},{data:'realId'}]";
 				
-				pumpAuxiliaryDeviceInfoHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
-				pumpAuxiliaryDeviceInfoHandsontableHelper.columns=Ext.JSON.decode(columns);
+				screwPumpAuxiliaryDeviceInfoHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				screwPumpAuxiliaryDeviceInfoHandsontableHelper.columns=Ext.JSON.decode(columns);
 				if(result.totalRoot.length==0){
-					pumpAuxiliaryDeviceInfoHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+					screwPumpAuxiliaryDeviceInfoHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
 				}else{
-					pumpAuxiliaryDeviceInfoHandsontableHelper.createTable(result.totalRoot);
+					screwPumpAuxiliaryDeviceInfoHandsontableHelper.createTable(result.totalRoot);
 				}
 			}else{
-				pumpAuxiliaryDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
+				screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:pumpDeviceName,
+			deviceName:screwPumpDeviceName,
 			deviceType:0
         }
 	});
 };
 
-var PumpAuxiliaryDeviceInfoHandsontableHelper = {
+var ScrewPumpAuxiliaryDeviceInfoHandsontableHelper = {
 		createNew: function (divid) {
-	        var pumpAuxiliaryDeviceInfoHandsontableHelper = {};
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.hot1 = '';
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.divid = divid;
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.validresult=true;//数据校验
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.colHeaders=[];
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.columns=[];
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.AllData=[];
+	        var screwPumpAuxiliaryDeviceInfoHandsontableHelper = {};
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot1 = '';
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.divid = divid;
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.validresult=true;//数据校验
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.colHeaders=[];
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.columns=[];
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.AllData=[];
 	        
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = 'rgb(242, 242, 242)';    
 	        }
 	        
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
 	            td.style.backgroundColor = 'rgb(184, 184, 184)';
 	        }
 	        
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.createTable = function (data) {
-	        	$('#'+pumpAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
-	        	var hotElement = document.querySelector('#'+pumpAuxiliaryDeviceInfoHandsontableHelper.divid);
-	        	pumpAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.createTable = function (data) {
+	        	$('#'+screwPumpAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
+	        	var hotElement = document.querySelector('#'+screwPumpAuxiliaryDeviceInfoHandsontableHelper.divid);
+	        	screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
 	                    indicators: true
 	                },
 	        		colWidths: [25,50,80,80],
-	                columns:pumpAuxiliaryDeviceInfoHandsontableHelper.columns,
-	                columns:pumpAuxiliaryDeviceInfoHandsontableHelper.columns,
+	                columns:screwPumpAuxiliaryDeviceInfoHandsontableHelper.columns,
+	                columns:screwPumpAuxiliaryDeviceInfoHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
 	                rowHeaders: false,//显示行头
-	                colHeaders:pumpAuxiliaryDeviceInfoHandsontableHelper.colHeaders,//显示列头
+	                colHeaders:screwPumpAuxiliaryDeviceInfoHandsontableHelper.colHeaders,//显示列头
 	                columnSorting: true,//允许排序
 	                sortIndicator: true,
 	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
@@ -733,10 +733,10 @@ var PumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        	});
 	        }
 	        //保存数据
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.saveData = function () {}
-	        pumpAuxiliaryDeviceInfoHandsontableHelper.clearContainer = function () {
-	        	pumpAuxiliaryDeviceInfoHandsontableHelper.AllData = [];
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.saveData = function () {}
+	        screwPumpAuxiliaryDeviceInfoHandsontableHelper.clearContainer = function () {
+	        	screwPumpAuxiliaryDeviceInfoHandsontableHelper.AllData = [];
 	        }
-	        return pumpAuxiliaryDeviceInfoHandsontableHelper;
+	        return screwPumpAuxiliaryDeviceInfoHandsontableHelper;
 	    }
 };

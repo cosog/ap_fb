@@ -438,6 +438,20 @@ function getDeviceCommStatusTotal(){
 					}
 				}
 			}
+			
+			
+			var chart = $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
+			if(isNotVal(chart)){
+				var series=chart.series[0];
+				
+				var pieDataStr="[";
+				pieDataStr+="['在线',"+online+"],";
+				pieDataStr+="['离线',"+offline+"]";
+				pieDataStr+="]";
+				var pieData = Ext.JSON.decode(pieDataStr);
+				series.setData(pieData);
+			}
+			
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");

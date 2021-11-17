@@ -124,14 +124,38 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             }
                         }]
                     },{
-                    	title:'状态统计',
+//                    	title:'状态统计',
                     	region: 'south',
                     	split: true,
                         collapsible: true,
                     	height: '40%',
-                    	id:'PumpRealTimeMonitoringStatInfoPanel_Id',
-                        border: false,
-                        layout: 'fit',
+                    	xtype: 'tabpanel',
+                    	activeTab: 0,
+                        header: false,
+                		tabPosition: 'top',
+                		items: [{
+                			title:'状态统计图',
+                			layout: 'fit',
+                        	id:'PumpRealTimeMonitoringStatGraphPanel_Id',
+                        	html: '<div id="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
+                        	listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	if ($("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts() != undefined) {
+                                        $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts().setSize($("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").offsetWidth, $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").offsetHeight,true);
+                                    }else{
+                                    	Ext.create('Ext.tip.ToolTip', {
+                                            target: 'PumpRealTimeMonitoringStatGraphPanelPieDiv_Id',
+                                            html: '点击饼图不同区域或标签，查看相应统计数据'
+                                        });
+                                    }
+                                }
+                            }
+                		},{
+                			title:'状态统计表',
+                			id:'PumpRealTimeMonitoringStatInfoPanel_Id',
+                            border: false,
+                            layout: 'fit'
+                		}]
                     }]
                 }, {
                 	region: 'east',

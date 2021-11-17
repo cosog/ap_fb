@@ -25,8 +25,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-//                var column = createRealTimeMonitoringStatColumn(arrColumns);
-//                var newColumns = Ext.JSON.decode(column);
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PumpRealTimeMonitoringStatGridPanel_Id",
                     border: false,
@@ -37,7 +35,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
                     store: store,
-//                    columns: newColumns,
                     columns: [{
                         text: '序号',
                         lockable: true,
@@ -91,6 +88,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
             	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
+            
+            initRealTimeMonitoringStatPieOrColChat(get_rawData);
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
