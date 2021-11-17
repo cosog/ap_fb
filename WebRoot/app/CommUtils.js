@@ -2317,7 +2317,14 @@ color16ToRgba = function(sColor,Opacity){
 	 		backgroundColor='#'+alarmShowStyle.Statistics.FirstLevel.BackgroundColor;
 	 		color='#'+alarmShowStyle.Statistics.FirstLevel.Color;
 	 		opacity=alarmShowStyle.Statistics.FirstLevel.Opacity
-//	 		color='#'+alarmShowStyle.FirstLevel.BackgroundColor;
+		}else if (alarmLevel == 200) {
+	 		backgroundColor='#'+alarmShowStyle.Statistics.SecondLevel.BackgroundColor;
+	 		color='#'+alarmShowStyle.Statistics.SecondLevel.Color;
+	 		opacity=alarmShowStyle.Statistics.SecondLevel.Opacity
+		}else if (alarmLevel == 300) {
+	 		backgroundColor='#'+alarmShowStyle.Statistics.ThirdLevel.BackgroundColor;
+	 		color='#'+alarmShowStyle.Statistics.ThirdLevel.Color;
+	 		opacity=alarmShowStyle.Statistics.ThirdLevel.Opacity
 		}
 	 	var rgba=color16ToRgba(backgroundColor,opacity);
 	 	o.style='background-color:'+rgba+';color:'+color+';';

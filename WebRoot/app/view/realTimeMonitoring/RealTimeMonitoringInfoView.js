@@ -523,3 +523,93 @@ function gotoDeviceHistory(deviceName,deviceType){
 		}
 	}
 }
+
+
+function initRealTimeMonitoringStatPieOrColChat(get_rawData) {
+	var divid="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id";
+	var title="状态统计图";
+//	var get_rawData = store.proxy.reader.rawData;
+	var datalist=get_rawData.totalRoot;
+	
+	var pieDataStr="[";
+	for(var i=0;i<datalist.length;i++){
+		if(datalist[i].itemCode!='all'){
+			pieDataStr+="['"+datalist[i].item+"',"+datalist[i].count+"],";
+		}
+	}
+	
+	if(stringEndWith(pieDataStr,",")){
+		pieDataStr = pieDataStr.substring(0, pieDataStr.length - 1);
+	}
+	pieDataStr+="]";
+	var pieData = Ext.JSON.decode(pieDataStr);
+	
+	var alarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
+	var colors=[];
+	colors.push('#'+alarmShowStyle.Statistics.Normal.BackgroundColor);
+	colors.push('#'+alarmShowStyle.Statistics.FirstLevel.BackgroundColor);
+	
+	ShowRealTimeMonitoringStatPieOrColChat(title,divid, "设备数占", pieData,colors);
+	
+}
+
+function ShowRealTimeMonitoringStatPieOrColChat(title,divid, name, data,colors) {
+	Highcharts.chart(divid, {
+		chart : {
+			plotBackgroundColor : null,
+			plotBorderWidth : null,
+			plotShadow : false
+		},
+		credits : {
+			enabled : false
+		},
+		title : {
+			text : title
+		},
+		colors : colors,
+		tooltip : {
+			pointFormat : '设备数: <b>{point.y}</b> 占: <b>{point.percentage:.1f}%</b>'
+		},
+		legend : {
+			align : 'center',
+			verticalAlign : 'bottom',
+			layout : 'horizontal' //vertical 竖直 horizontal-水平
+		},
+		plotOptions : {
+			pie : {
+				allowPointSelect : true,
+				cursor : 'pointer',
+				dataLabels : {
+					enabled : true,
+					color : '#000000',
+					connectorColor : '#000000',
+					format : '<b>{point.name}</b>: {point.y}口'
+				},
+				events: {
+					click: function(e) {
+//						if(!e.point.selected){//如果没被选中
+//							Ext.getCmp("FSDiagramAnalysisSingleDetailsSelectedStatValue_Id").setValue(e.point.name);
+//						}else{
+//							Ext.getCmp("FSDiagramAnalysisSingleDetailsSelectedStatValue_Id").setValue('');
+//						}
+//						Ext.getCmp("FSDiagramAnalysisSingleDetailsWellCom_Id").setValue("");
+//	            		Ext.getCmp("FSDiagramAnalysisSingleDetailsWellCom_Id").setRawValue("");
+//						Ext.getCmp('FSDiagramAnalysisSingleDetails_Id').getSelectionModel().clearSelections();
+//                        Ext.getCmp('FSDiagramAnalysisSingleDetails_Id').getStore().loadPage(1);
+					}
+				},
+				showInLegend : true
+			}
+		},
+		exporting:{ 
+            enabled:true,    
+            filename:'class-booking-chart',    
+            url:context + '/exportHighcharsPicController/export'
+		},
+		series : [{
+					type : 'pie',
+					name : name,
+					data : data
+				}]
+		});
+}
