@@ -1,3 +1,4 @@
+//采水管
 var waterGatheringPipelineDeviceInfoHandsontableHelper = null;
 var waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
 Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
@@ -116,7 +117,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                         heads = heads.substring(0, heads.length - 1);
                     }
 
-                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=1&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("管设备")) + "&title=" + URLencode(URLencode("管设备"));
+                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=202&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("采水管设备")) + "&title=" + URLencode(URLencode("采水管设备"));
                     openExcelWindow(url + '?flag=true' + param);
                 }
             }, '-', {
@@ -157,7 +158,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'泵设备列表',
+            	title:'设备列表',
             	html: '<div class="WaterGatheringPipelineDeviceContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineDeviceTableDiv_id"></div></div>',
                 listeners: {
                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
@@ -299,7 +300,7 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
         },
         params: {
             wellInformationName: wellInformationName_Id,
-            deviceType: 1,
+            deviceType: 202,
             recordCount: 50,
             orgId: leftOrg_Id,
             page: 1,

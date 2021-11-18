@@ -1,3 +1,4 @@
+//直线电机泵
 var linearMotorPumpDeviceInfoHandsontableHelper = null;
 var linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper = null;
 Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
@@ -107,7 +108,7 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                         heads = heads.substring(0, heads.length - 1);
                     }
 
-                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=0&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("泵设备")) + "&title=" + URLencode(URLencode("泵设备"));
+                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=103&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("直线电机泵设备")) + "&title=" + URLencode(URLencode("直线电机泵设备"));
                     openExcelWindow(url + '?flag=true' + param);
                 }
             }, '-', {
@@ -290,7 +291,7 @@ function CreateAndLoadLinearMotorPumpDeviceInfoTable(isNew) {
         },
         params: {
             wellInformationName: wellInformationName_Id,
-            deviceType: 0,
+            deviceType: 103,
             recordCount: 50,
             orgId: leftOrg_Id,
             page: 1,

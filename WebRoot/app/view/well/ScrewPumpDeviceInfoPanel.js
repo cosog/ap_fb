@@ -1,3 +1,4 @@
+//螺杆泵
 var screwPumpDeviceInfoHandsontableHelper = null;
 var screwPumpAuxiliaryDeviceInfoHandsontableHelper = null;
 Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
@@ -107,7 +108,7 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
                         heads = heads.substring(0, heads.length - 1);
                     }
 
-                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=0&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("泵设备")) + "&title=" + URLencode(URLencode("泵设备"));
+                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=102&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("螺杆泵设备")) + "&title=" + URLencode(URLencode("螺杆泵设备"));
                     openExcelWindow(url + '?flag=true' + param);
                 }
             }, '-', {
@@ -290,7 +291,7 @@ function CreateAndLoadScrewPumpDeviceInfoTable(isNew) {
         },
         params: {
             wellInformationName: wellInformationName_Id,
-            deviceType: 0,
+            deviceType: 102,
             recordCount: 50,
             orgId: leftOrg_Id,
             page: 1,
@@ -486,7 +487,7 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
                 if(isNotVal(ScrewPumpDeviceSelectRow)){
                 	var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(ScrewPumpDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=0;
+                	deviceAuxiliaryData.deviceType=102;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -525,7 +526,7 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(screwPumpDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 0
+                            deviceType: 102
                         }
                     });
                 } else {

@@ -154,7 +154,14 @@ public class WellInformationManagerController extends BaseController {
 		map.put("orgId", orgId);
 		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
 		this.pager = new Page("pagerForm", request);
-		String json = this.wellInformationManagerService.getWellInformationProList(map, pager,recordCount);
+		String json="";
+		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+			json = this.wellInformationManagerService.getPumpDeviceInfoList(map, pager,recordCount);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+			json = this.wellInformationManagerService.getPipeDeviceInfoList(map, pager,recordCount);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
+			json = this.wellInformationManagerService.getSMSDeviceInfoList(map, pager,recordCount);
+		}
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -283,7 +290,14 @@ public class WellInformationManagerController extends BaseController {
 		map.put("orgId", orgId);
 		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
 		this.pager = new Page("pagerForm", request);// 新疆分页Page 工具类
-		String json = this.wellInformationManagerService.exportWellInformationData(map, pager,recordCount);
+		String json="[]";
+		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+			json = this.wellInformationManagerService.getPumpDeviceInfoExportData(map, pager,recordCount);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+			json = this.wellInformationManagerService.getPipeDeviceInfoExportData(map, pager,recordCount);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
+			json = this.wellInformationManagerService.getSMSDeviceInfoExportData(map, pager,recordCount);
+		}
 		
 		
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
