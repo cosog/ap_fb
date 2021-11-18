@@ -285,9 +285,30 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			CreateAndLoadPipelineDeviceInfoTable();
 		}
 	}else if(module_Code == "PumpDeviceManager"){
-		CreateAndLoadPumpDeviceInfoTable(true);
+		var tabPanel = Ext.getCmp("PumpDeviceManagerTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="DiaphragmPumpDeviceInfoTabPanel_Id"){
+			CreateAndLoadDiaphragmPumpDeviceInfoTable(true);
+		}else if(activeId=="ScrewPumpDeviceInfoTabPanel_Id"){
+			CreateAndLoadScrewPumpDeviceInfoTable(true);
+		}else if(activeId=="LinearMotorPumpDeviceInfoTabPanel_Id"){
+			CreateAndLoadLinearMotorPumpDeviceInfoTable(true);
+		}else if(activeId=="ElectricSubmersiblePumpDeviceInfoTabPanel_Id"){
+			CreateAndLoadElectricSubmersiblePumpDeviceInfoTable(true);
+		}else if(activeId=="JetPumpDeviceInfoTabPanel_Id"){
+			CreateAndLoadGatheringPipelineDeviceInfoTable(true);
+		}
 	}else if(module_Code == "PipelineDeviceManager"){
-		CreateAndLoadPipelineDeviceInfoTable(true);
+//		CreateAndLoadPipelineDeviceInfoTable(true);
+		var tabPanel = Ext.getCmp("PipelineDeviceManagerTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="HeatingPipelineDeviceInfoTabPanel_Id"){
+			CreateAndLoadHeatingPipelineDeviceInfoTable(true);
+		}else if(activeId=="WaterGatheringPipelineDeviceInfoTabPanel_Id"){
+			CreateAndLoadWaterGatheringPipelineDeviceInfoTable(true);
+		}else if(activeId=="GatheringPipelineDeviceInfoTabPanel_Id"){
+			CreateAndLoadlinearMotorPipelineDeviceInfoTable(true);
+		}
 	}else if(module_Code == "SMSDeviceManager"){
 		CreateAndLoadSMSDeviceInfoTable(true);
 	}else if(module_Code == "AuxiliaryDeviceManager"){

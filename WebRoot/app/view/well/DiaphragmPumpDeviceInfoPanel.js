@@ -1,3 +1,4 @@
+//隔膜泵
 var diaphragmPumpDeviceInfoHandsontableHelper = null;
 var diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = null;
 Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
@@ -107,7 +108,7 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                         heads = heads.substring(0, heads.length - 1);
                     }
 
-                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=0&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("泵设备")) + "&title=" + URLencode(URLencode("泵设备"));
+                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=101&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("隔膜泵设备")) + "&title=" + URLencode(URLencode("隔膜泵设备"));
                     openExcelWindow(url + '?flag=true' + param);
                 }
             }, '-', {
@@ -290,7 +291,7 @@ function CreateAndLoadDiaphragmPumpDeviceInfoTable(isNew) {
         },
         params: {
             wellInformationName: wellInformationName_Id,
-            deviceType: 0,
+            deviceType: 101,
             recordCount: 50,
             orgId: leftOrg_Id,
             page: 1,
@@ -525,7 +526,7 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(diaphragmPumpDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 0
+                            deviceType: 101
                         }
                     });
                 } else {

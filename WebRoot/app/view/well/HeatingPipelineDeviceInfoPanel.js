@@ -1,3 +1,4 @@
+//加热管
 var heatingPipelineDeviceInfoHandsontableHelper = null;
 var heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
 Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
@@ -116,7 +117,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                         heads = heads.substring(0, heads.length - 1);
                     }
 
-                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=1&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("管设备")) + "&title=" + URLencode(URLencode("管设备"));
+                    var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id + "&deviceType=201&wellInformationName=" + URLencode(URLencode(wellInformationName)) + "&recordCount=10000" + "&fileName=" + URLencode(URLencode("加热管设备")) + "&title=" + URLencode(URLencode("加热管设备"));
                     openExcelWindow(url + '?flag=true' + param);
                 }
             }, '-', {
@@ -157,7 +158,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'泵设备列表',
+            	title:'设备列表',
             	html: '<div class="HeatingPipelineDeviceContainer" style="width:100%;height:100%;"><div class="con" id="HeatingPipelineDeviceTableDiv_id"></div></div>',
                 listeners: {
                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
@@ -299,7 +300,7 @@ function CreateAndLoadHeatingPipelineDeviceInfoTable(isNew) {
         },
         params: {
             wellInformationName: wellInformationName_Id,
-            deviceType: 1,
+            deviceType: 201,
             recordCount: 50,
             orgId: leftOrg_Id,
             page: 1,

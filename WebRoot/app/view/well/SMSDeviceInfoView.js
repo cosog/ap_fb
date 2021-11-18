@@ -1,3 +1,4 @@
+//短信设备
 var smsDeviceInfoHandsontableHelper=null;
 Ext.define('AP.view.well.SMSDeviceInfoView', {
     extend: 'Ext.panel.Panel',
@@ -101,7 +102,7 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
             			        heads = heads.substring(0, heads.length - 1);
             			    }
             				
-            			    var param = "&fields=" + fields +"&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id+ "&deviceType=2&wellInformationName=" + URLencode(URLencode(wellInformationName)) +"&recordCount=10000"+ "&fileName="+URLencode(URLencode("短信设备"))+ "&title="+URLencode(URLencode("短信设备"));
+            			    var param = "&fields=" + fields +"&heads=" + URLencode(URLencode(heads)) + "&orgId=" + leftOrg_Id+ "&deviceType=300&wellInformationName=" + URLencode(URLencode(wellInformationName)) +"&recordCount=10000"+ "&fileName="+URLencode(URLencode("短信设备"))+ "&title="+URLencode(URLencode("短信设备"));
             			    openExcelWindow(url + '?flag=true' + param);
             			}
             		},'-',{
@@ -202,7 +203,7 @@ function CreateAndLoadSMSDeviceInfoTable(isNew){
 		},
 		params: {
             wellInformationName: deviceName,
-            deviceType: 2,
+            deviceType: 300,
             recordCount:50,
             orgId:leftOrg_Id,
             page:1,
