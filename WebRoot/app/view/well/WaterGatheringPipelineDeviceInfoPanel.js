@@ -36,7 +36,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                     var wellName = Ext.getCmp('waterGatheringPipelineDeviceComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 1,
+                        deviceType: 202,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -489,7 +489,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 if(isNotVal(WaterGatheringPipelineDeviceSelectRow)){
                 	var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(WaterGatheringPipelineDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=1;
+                	deviceAuxiliaryData.deviceType=202;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -528,7 +528,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 1
+                            deviceType: 202
                         }
                     });
                 } else {
@@ -566,7 +566,8 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                         waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:202
                     }
                 });
             } else {
@@ -667,7 +668,7 @@ function CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(waterGather
 		},
 		params: {
 			deviceName:waterGatheringPipelineDeviceName,
-			deviceType:1
+			deviceType:202
         }
 	});
 };

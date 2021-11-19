@@ -36,7 +36,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                     var wellName = Ext.getCmp('heatingPipelineDeviceComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 1,
+                        deviceType: 201,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -489,7 +489,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 if(isNotVal(HeatingPipelineDeviceSelectRow)){
                 	var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(HeatingPipelineDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=1;
+                	deviceAuxiliaryData.deviceType=201;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -528,7 +528,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 1
+                            deviceType: 201
                         }
                     });
                 } else {
@@ -566,7 +566,8 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                         heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:201
                     }
                 });
             } else {
@@ -667,7 +668,7 @@ function CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(heatingPipelineDev
 		},
 		params: {
 			deviceName:heatingPipelineDeviceName,
-			deviceType:1
+			deviceType:201
         }
 	});
 };

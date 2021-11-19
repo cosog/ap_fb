@@ -63,11 +63,13 @@ public class HistoryQueryController extends BaseController  {
 		}
 		
 		String tableName="tbl_pumpacqdata_hist";
-		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
 		}
 		if(StringManagerUtils.isNotNull(deviceName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType)+" ) ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' "+" ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -120,12 +122,14 @@ public class HistoryQueryController extends BaseController  {
 			}
 		}
 		
+		String deviceTableName="tbl_pumpdevice";
 		String tableName="tbl_pumpacqdata_hist";
-		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			deviceTableName="tbl_pipelinedevice";
 			tableName="tbl_pipelineacqdata_hist";
 		}
 		if(StringManagerUtils.isNotNull(deviceName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType)+" ) ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -186,12 +190,14 @@ public class HistoryQueryController extends BaseController  {
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
+		String deviceTableName="tbl_pumpdevice";
 		String tableName="tbl_pumpacqdata_hist";
-		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			deviceTableName="tbl_pipelinedevice";
 			tableName="tbl_pipelineacqdata_hist";
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from tbl_wellinformation t2 where t2.wellName='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType)+" ) ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();

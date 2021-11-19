@@ -340,15 +340,22 @@ public class RealTimeMonitoringController extends BaseController {
 		String jsonLogin = "";
 		String clientIP=StringManagerUtils.getIpAddr(request);
 		User userInfo = (User) request.getSession().getAttribute("userLogin");
+		
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			deviceTableName="tbl_pipelinedevice";
+		}
+		
+		
 		// 用户不存在
 		if (null != userInfo) {
 			String getUpwd = userInfo.getUserPwd();
 //			String getOld = UnixPwdCrypt.crypt("dogVSgod", password);
 			String getOld = StringManagerUtils.stringToMD5(password);
 			if (getOld.equals(getUpwd)&&StringManagerUtils.isNumber(controlValue)) {
-				String sql="select t3.protocol, t.signinid,to_number(t.slave) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+				String sql="select t3.protocol, t.signinid,to_number(t.slave) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
 						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
-						+ " and t.wellname='"+wellName+"' and t.deviceType="+deviceType;
+						+ " and t.wellname='"+wellName+"' ";
 				List list = this.service.findCallSql(sql);
 				if(list.size()>0){
 					Object[] obj=(Object[]) list.get(0);
@@ -398,12 +405,17 @@ public class RealTimeMonitoringController extends BaseController {
 		String jsonLogin = "";
 		String clientIP=StringManagerUtils.getIpAddr(request);
 		User userInfo = (User) request.getSession().getAttribute("userLogin");
+		
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			deviceTableName="tbl_pipelinedevice";
+		}
 		// 用户不存在
 		if (null != userInfo) {
 			if (StringManagerUtils.isNumber(controlValue)) {
-				String sql="select t3.protocol, t.signinid,to_number(t.slave) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+				String sql="select t3.protocol, t.signinid,to_number(t.slave) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
 						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
-						+ " and t.wellname='"+wellName+"' and t.deviceType="+deviceType;
+						+ " and t.wellname='"+wellName+"' ";
 				List list = this.service.findCallSql(sql);
 				if(list.size()>0){
 					Object[] obj=(Object[]) list.get(0);

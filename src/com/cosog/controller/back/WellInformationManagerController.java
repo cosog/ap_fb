@@ -459,15 +459,25 @@ public class WellInformationManagerController extends BaseController {
 		String orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		Gson gson = new Gson();
+		String deviceTableName="tbl_pumpdevice";
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
 		
 		type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
 		AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
-		this.wellInformationManagerService.saveWellEditerGridData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+			deviceTableName="tbl_pumpdevice";
+			this.wellInformationManagerService.savePumpDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+			deviceTableName="tbl_pipelinedevice";
+			this.wellInformationManagerService.savePipelineDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
+			this.wellInformationManagerService.saveSMSDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		}
+		
 		
 		if(auxiliaryDeviceConfig!=null){
-			String sql="select t.id from tbl_wellinformation t "
+			String sql="select t.id from "+deviceTableName+" t "
 					+ " where t.orgid ="+auxiliaryDeviceConfig.getOrgId()+" and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
 			List list = this.service.findCallSql(sql);
 			if(list.size()>0&&StringManagerUtils.isInteger(list.get(0)+"")){
@@ -530,13 +540,23 @@ public class WellInformationManagerController extends BaseController {
 		User user = (User) session.getAttribute("userLogin");
 		String orgid=user.getUserorgids();
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
 		JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+data+"}");//解析数据
 		JSONArray jsonArray = jsonObject.getJSONArray("data");
 		for(int i=0;i<jsonArray.size();i++){
 			JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
 			String oldWellName=everydata.getString("oldWellName");
 			String newWellName=everydata.getString("newWellName");
-			this.wellInformationManagerService.editWellName(oldWellName,newWellName,orgid);
+			
+			if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+				this.wellInformationManagerService.editPumpDeviceName(oldWellName,newWellName,orgid);
+			}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+				this.wellInformationManagerService.editPipelineDeviceName(oldWellName,newWellName,orgid);
+			}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
+				this.wellInformationManagerService.editSMSDeviceName(oldWellName,newWellName,orgid);
+			}
+			
+			
 		}
 		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");

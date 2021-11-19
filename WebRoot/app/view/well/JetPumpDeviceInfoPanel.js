@@ -36,7 +36,7 @@ Ext.define('AP.view.well.JetPumpDeviceInfoPanel', {
                     var wellName = Ext.getCmp('jetPumpDeviceInfoPanelDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 0,
+                        deviceType: 105,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -487,7 +487,7 @@ var JetPumpDeviceInfoHandsontableHelper = {
                 if(isNotVal(JetPumpDeviceInfoPanelDeviceSelectRow)){
                 	var rowdata = jetPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(JetPumpDeviceInfoPanelDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=0;
+                	deviceAuxiliaryData.deviceType=105;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -526,7 +526,7 @@ var JetPumpDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(jetPumpDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 0
+                            deviceType: 105
                         }
                     });
                 } else {
@@ -567,7 +567,8 @@ var JetPumpDeviceInfoHandsontableHelper = {
                         jetPumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(jetPumpDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(jetPumpDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:105
                     }
                 });
             } else {
@@ -672,7 +673,7 @@ function CreateAndLoadJetPumpDeviceInfoPanelAuxiliaryDeviceInfoTable(jetPumpDevi
 		},
 		params: {
 			deviceName:jetPumpDeviceInfoPanelDeviceName,
-			deviceType:0
+			deviceType:105
         }
 	});
 };

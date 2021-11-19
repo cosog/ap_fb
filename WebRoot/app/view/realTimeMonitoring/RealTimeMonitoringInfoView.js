@@ -527,8 +527,14 @@ function gotoDeviceHistory(deviceName,deviceType){
 
 function initRealTimeMonitoringStatPieOrColChat(get_rawData) {
 	var divid="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id";
+	var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+	var activeId = tabPanel.getActiveTab().id;
+	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+		divid="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id";
+	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+		divid="PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id";
+	}
 	var title="状态统计图";
-//	var get_rawData = store.proxy.reader.rawData;
 	var datalist=get_rawData.totalRoot;
 	
 	var pieDataStr="[";

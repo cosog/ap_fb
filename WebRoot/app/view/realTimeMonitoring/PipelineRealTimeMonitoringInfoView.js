@@ -123,14 +123,38 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                             }
                         }]
                     },{
-                    	title:'状态统计',
+//                    	title:'状态统计',
                     	region: 'south',
-                    	height: '40%',
                     	split: true,
                         collapsible: true,
-                    	id:'PipelineRealTimeMonitoringStatInfoPanel_Id',
-                        border: false,
-                        layout: 'fit',
+                    	height: '40%',
+                    	xtype: 'tabpanel',
+                    	activeTab: 0,
+                        header: false,
+                		tabPosition: 'top',
+                		items: [{
+                			title:'状态统计图',
+                			layout: 'fit',
+                        	id:'PipelineRealTimeMonitoringStatGraphPanel_Id',
+                        	html: '<div id="PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
+                        	listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	if ($("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts() != undefined) {
+                                        $("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts().setSize($("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").offsetWidth, $("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").offsetHeight,true);
+                                    }else{
+                                    	Ext.create('Ext.tip.ToolTip', {
+                                            target: 'PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id',
+                                            html: '点击饼图不同区域或标签，查看相应统计数据'
+                                        });
+                                    }
+                                }
+                            }
+                		},{
+                			title:'状态统计表',
+                			id:'PipelineRealTimeMonitoringStatInfoPanel_Id',
+                            border: false,
+                            layout: 'fit'
+                		}]
                     }]
                 }, {
                 	region: 'east',

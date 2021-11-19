@@ -61,15 +61,11 @@ public class AlarmQueryController extends BaseController{
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
 		this.pager = new Page("pagerForm", request);
-//		User user=null;
-//		HttpSession session=request.getSession();
-//		user = (User) session.getAttribute("userLogin");
-//		if (user != null) {
-//			orgId = "" + user.getUserorgids();
-//			if(user.getUserOrgid()==0){
-//				orgId+=",0";
-//			}
-//		}
+		
+		String tableName="viw_pumpalarminfo_hist";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="viw_pipelinealarminfo_hist";
+		}
 		if(!StringManagerUtils.isNotNull(orgId)){
 			User user=null;
 			HttpSession session=request.getSession();
@@ -79,7 +75,7 @@ public class AlarmQueryController extends BaseController{
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from viw_alarminfo t where t.deviceType="+deviceType+" and t.alarmType="+alarmType;
+			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from "+tableName+" t where  t.alarmType="+alarmType;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -123,6 +119,10 @@ public class AlarmQueryController extends BaseController{
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
 		
 		this.pager = new Page("pagerForm", request);
+		String tableName="viw_pumpalarminfo_hist";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="viw_pipelinealarminfo_hist";
+		}
 		if(!StringManagerUtils.isNotNull(orgId)){
 			User user=null;
 			HttpSession session=request.getSession();
@@ -132,7 +132,7 @@ public class AlarmQueryController extends BaseController{
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from viw_alarminfo t ";
+			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from "+tableName+" t where  t.alarmType="+alarmType;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
