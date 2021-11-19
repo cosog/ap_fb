@@ -440,7 +440,13 @@ function getDeviceCommStatusTotal(){
 			}
 			
 			
-			var chart = $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
+			var chart =null;
+			if(deviceType===0){
+				chart= $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
+			}else if(deviceType===1){
+				chart= $("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
+			}
+			
 			if(isNotVal(chart)){
 				var series=chart.series[0];
 				

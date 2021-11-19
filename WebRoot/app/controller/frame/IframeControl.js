@@ -296,7 +296,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		}else if(activeId=="ElectricSubmersiblePumpDeviceInfoTabPanel_Id"){
 			CreateAndLoadElectricSubmersiblePumpDeviceInfoTable(true);
 		}else if(activeId=="JetPumpDeviceInfoTabPanel_Id"){
-			CreateAndLoadGatheringPipelineDeviceInfoTable(true);
+			CreateAndLoadJetPumpDeviceInfoTable(true);
 		}
 	}else if(module_Code == "PipelineDeviceManager"){
 //		CreateAndLoadPipelineDeviceInfoTable(true);
@@ -307,7 +307,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		}else if(activeId=="WaterGatheringPipelineDeviceInfoTabPanel_Id"){
 			CreateAndLoadWaterGatheringPipelineDeviceInfoTable(true);
 		}else if(activeId=="GatheringPipelineDeviceInfoTabPanel_Id"){
-			CreateAndLoadlinearMotorPipelineDeviceInfoTable(true);
+			CreateAndLoadGatheringPipelineDeviceInfoTable(true);
 		}
 	}else if(module_Code == "SMSDeviceManager"){
 		CreateAndLoadSMSDeviceInfoTable(true);
@@ -319,34 +319,17 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
 			var statGridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
 			if (isNotVal(statGridPanel)) {
-//				statGridPanel.getSelectionModel().deselectAll(true);
 				statGridPanel.getStore().load();
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore');
 			}
-			
-			
-//			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-//			if (isNotVal(gridPanel)) {
-//				gridPanel.getStore().load();
-//			}else{
-//				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
-//			}
 		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 			var statGridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
 			if (isNotVal(statGridPanel)) {
-//				statGridPanel.getSelectionModel().deselectAll(true);
 				statGridPanel.getStore().load();
 			}else{
 				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore');
 			}
-			
-//			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-//			if (isNotVal(gridPanel)) {
-//				gridPanel.getStore().load();
-//			}else{
-//				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
-//			}
 		}
 	}else if(module_Code == "DeviceHistoryQuery"){
 		var tabPanel = Ext.getCmp("HistoryQueryTabPanel");

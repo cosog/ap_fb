@@ -85,6 +85,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore', {
             	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
             }
+            initRealTimeMonitoringStatPieOrColChat(get_rawData);
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();

@@ -36,7 +36,7 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                     var wellName = Ext.getCmp('linearMotorPumpDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 0,
+                        deviceType: 103,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -487,7 +487,7 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
                 if(isNotVal(LinearMotorPumpDeviceSelectRow)){
                 	var rowdata = linearMotorPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(LinearMotorPumpDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=0;
+                	deviceAuxiliaryData.deviceType=103;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -526,7 +526,7 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(linearMotorPumpDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 0
+                            deviceType: 103
                         }
                     });
                 } else {
@@ -567,7 +567,8 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
                         linearMotorPumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(linearMotorPumpDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(linearMotorPumpDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:103
                     }
                 });
             } else {
@@ -672,7 +673,7 @@ function CreateAndLoadLinearMotorPumpAuxiliaryDeviceInfoTable(linearMotorPumpDev
 		},
 		params: {
 			deviceName:linearMotorPumpDeviceName,
-			deviceType:0
+			deviceType:103
         }
 	});
 };

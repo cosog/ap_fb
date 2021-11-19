@@ -36,7 +36,7 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
                     var wellName = Ext.getCmp('screwPumpDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 0,
+                        deviceType: 102,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -567,7 +567,8 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
                         screwPumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(screwPumpDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(screwPumpDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:102
                     }
                 });
             } else {
@@ -672,7 +673,7 @@ function CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(screwPumpDeviceName,isNe
 		},
 		params: {
 			deviceName:screwPumpDeviceName,
-			deviceType:0
+			deviceType:102
         }
 	});
 };

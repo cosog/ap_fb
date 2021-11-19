@@ -36,7 +36,7 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                     var wellName = Ext.getCmp('diaphragmPumpDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 0,
+                        deviceType: 101,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -487,7 +487,7 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                 if(isNotVal(DiaphragmPumpDeviceSelectRow)){
                 	var rowdata = diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(DiaphragmPumpDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=0;
+                	deviceAuxiliaryData.deviceType=101;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -567,7 +567,8 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                         diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(diaphragmPumpDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(diaphragmPumpDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:101
                     }
                 });
             } else {
@@ -672,7 +673,7 @@ function CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(diaphragmPumpDeviceN
 		},
 		params: {
 			deviceName:diaphragmPumpDeviceName,
-			deviceType:0
+			deviceType:101
         }
 	});
 };

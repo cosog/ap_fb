@@ -41,13 +41,15 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		String tableName="tbl_pumpacqdata_latest";
 		String hisTableName="tbl_pumpacqdata_hist";
+		String deviceTableName="tbl_pumpdevice";
 		String table="";
 		String ddicName="pumpHistoryQuery";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
-		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="tbl_pipelineacqdata_latest";
 			hisTableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineHistoryQuery";
 		}
 		table=tableName;
@@ -75,12 +77,12 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		
 		
-		sql+= " from tbl_wellinformation t "
+		sql+= " from "+deviceTableName+" t "
 				+ " left outer join "+table+" t2 on t2.wellid=t.id"
 				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
-				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
+				+ " where  t.orgid in ("+orgId+") ";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'";
 		}
@@ -128,6 +130,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		
 		String tableName="tbl_pumpacqdata_latest";
 		String hisTableName="tbl_pumpacqdata_hist";
+		String deviceTableName="tbl_pumpdevice";
 		String table="";
 		String ddicName="pumpHistoryQuery";
 		DataDictionary ddic = null;
@@ -135,6 +138,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_pipelineacqdata_latest";
 			hisTableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineHistoryQuery";
 		}
 		table=tableName;
@@ -156,9 +160,9 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		
 		
-		sql+= " from tbl_wellinformation t "
+		sql+= " from "+deviceTableName+" t "
 				+ "left outer join "+table+" t2 on t2.wellid=t.id"
-				+ " where  t.orgid in ("+orgId+") and t.devicetype="+deviceType;
+				+ " where  t.orgid in ("+orgId+") ";
 		
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'";
@@ -204,10 +208,12 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		String tableName="tbl_pumpacqdata_latest";
 		String hisTableName="tbl_pumpacqdata_hist";
+		String deviceTableName="tbl_pumpdevice";
 		String table="";
-		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="tbl_pipelineacqdata_latest";
 			hisTableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
 		}
 		table=tableName;
 		if(StringManagerUtils.stringToInteger(isHis)!=0){
@@ -218,16 +224,16 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
 				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort, "
 				+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
-				+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " and t.wellname='"+deviceName+"' "
 				+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_id='"+userAccount+"' )"
 				+ " group by t.wellname,t3.protocol";
 		String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
 				+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
-				+ " from tbl_wellinformation t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
+				+ " from "+deviceTableName+" t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
 				+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
-				+ " and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " and t.wellname='"+deviceName+"' "
 				+ " order by t2.id";
 		
 		List<?> itemsList = this.findCallSql(itemsSql);
@@ -287,11 +293,11 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				for(int j=0;j<protocolItems.size();j++){
 					sql+=",t2.ADDR"+protocolItems.get(j).getAddr();
 				}
-				sql+= " from tbl_wellinformation t "
+				sql+= " from "+deviceTableName+" t "
 						+ " left outer join "+table+" t2 on t2.wellid=t.id"
 						+ " where 1=1 ";
 				if(StringManagerUtils.stringToInteger(isHis)==0){
-					sql+=" and t.wellName='"+deviceName+"' and t.devicetype="+deviceType;
+					sql+=" and t.wellName='"+deviceName+"' ";
 				}else{
 					sql+=" and t2.id="+recordId;
 				}
@@ -520,18 +526,21 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	
 	public String getHistoryQueryCurveData(String deviceName,String item,String deviceType,String startDate,String endDate)throws Exception {
 		StringBuffer result_json = new StringBuffer();
-		String protocolSql="select upper(t3.protocol) from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
-				+ " and  t.wellname='"+deviceName+"' and t.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+		String tableName="tbl_pumpacqdata_hist";
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
+		}
+		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
+				+ " and  t.wellname='"+deviceName+"' ";
 		List<?> protocolList = this.findCallSql(protocolSql);
 		String protocolName="";
 		String column="";
 		String unit="";
 		String dataType="";
 		int resolutionMode=0;
-		String tableName="tbl_pumpacqdata_hist";
-		if(StringManagerUtils.stringToInteger(deviceType)>0){
-			tableName="tbl_pipelineacqdata_hist";
-		}
+		
 		if(protocolList.size()>0){
 			protocolName=protocolList.get(0)+"";
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -561,10 +570,10 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"resolutionMode\":"+resolutionMode+",\"list\":[");
 		if(resolutionMode==2){//只查询数据量的曲线
 			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss') as acqtime, t."+column+" "
-					+ " from "+tableName +" t,tbl_wellinformation t2 "
+					+ " from "+tableName +" t,"+deviceTableName+" t2 "
 					+ " where t.wellid=t2.id "
 					+ " and t.acqtime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1"
-					+ " and t2.wellname='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType);
+					+ " and t2.wellname='"+deviceName+"' ";
 			int total=this.getTotalCountRows(sql);
 			int rarefy=total/500+1;
 			sql+= " order by t.acqtime";

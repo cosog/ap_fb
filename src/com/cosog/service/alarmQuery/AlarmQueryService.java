@@ -37,14 +37,20 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		}else if(StringManagerUtils.stringToInteger(alarmType)==3){
 			ddicName="switchingValueAlarm";
 		}
+		
+		String tableName="viw_pumpalarminfo_hist";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="viw_pipelinealarminfo_hist";
+		}
+		
 		DataDictionary ddic = null;
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
-		String sql=ddic.getSql()+" from viw_alarminfo t where t.orgid in ("+orgId+") "
+		String sql=ddic.getSql()+" from "+tableName+" t where t.orgid in ("+orgId+") "
 				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
-		if(StringManagerUtils.isNotNull(deviceType)){
-			sql+=" and t.devicetype="+deviceType;
-		}
+//		if(StringManagerUtils.isNotNull(deviceType)){
+//			sql+=" and t.devicetype="+deviceType;
+//		}
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
 		}
@@ -74,14 +80,18 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		}else if(StringManagerUtils.stringToInteger(alarmType)==3){
 			ddicName="switchingValueAlarm";
 		}
+		String tableName="viw_pumpalarminfo_hist";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="viw_pipelinealarminfo_hist";
+		}
 		DataDictionary ddic = null;
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
-		String sql=ddic.getSql()+" from viw_alarminfo t where t.orgid in ("+orgId+") "
+		String sql=ddic.getSql()+" from "+tableName+" t where t.orgid in ("+orgId+") "
 				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
-		if(StringManagerUtils.isNotNull(deviceType)){
-			sql+=" and t.devicetype="+deviceType;
-		}
+//		if(StringManagerUtils.isNotNull(deviceType)){
+//			sql+=" and t.devicetype="+deviceType;
+//		}
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
 		}
@@ -102,6 +112,12 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 	
 	public String getAlarmOverviewData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
+		
+		String tableName="viw_pumpalarminfo_latest";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="viw_pipelinealarminfo_latest";
+		}
+		
 		String columns="["
 				+ "{\"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[]},"
 				+ "{\"header\":\"井名\",\"dataIndex\":\"wellName\",width:80,children:[]},"
@@ -109,7 +125,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 				+ "]";
 		String sql="select v.wellid,v.wellname,v.devicetype,v.alarmtype,v.alarmtime from "
 				+ " (select t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype,max(t.alarmtime) as alarmtime "
-				+ " from VIW_ALARMINFO_LATEST t where 1=1";
+				+ " from "+tableName+" t where 1=1";
 		if(StringManagerUtils.isNotNull(alarmLevel)){
 			sql+=" and t.alarmLevel="+alarmLevel+"";
 		}
@@ -117,7 +133,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 			sql+=" and t.isSendMessage="+isSendMessage+"";
 		}
 		sql+= " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
-				+ " where v.orgid in("+orgId+") and v.devicetype="+deviceType+" and v.alarmtype="+alarmType;
+				+ " where v.orgid in("+orgId+") and v.alarmtype="+alarmType;
 		
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and v.wellName='"+deviceName+"'";
@@ -149,9 +165,13 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 	
 	public String getAlarmOverviewExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
+		String tableName="viw_pumpalarminfo_latest";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="viw_pipelinealarminfo_latest";
+		}
 		String sql="select v.wellid,v.wellname,v.devicetype,v.alarmtype,v.alarmtime from "
 				+ " (select t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype,max(t.alarmtime) as alarmtime "
-				+ " from VIW_ALARMINFO_LATEST t where 1=1";
+				+ " from "+tableName+" t where 1=1";
 		if(StringManagerUtils.isNotNull(alarmLevel)){
 			sql+=" and t.alarmLevel="+alarmLevel+"";
 		}
@@ -159,7 +179,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 			sql+=" and t.isSendMessage="+isSendMessage+"";
 		}
 		sql+= " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
-				+ " where v.orgid in("+orgId+") and v.devicetype="+deviceType+" and v.alarmtype="+alarmType;
+				+ " where v.orgid in("+orgId+") and v.alarmtype="+alarmType;
 		
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and v.wellName='"+deviceName+"'";

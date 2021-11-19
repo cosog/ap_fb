@@ -36,7 +36,7 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                     var wellName = Ext.getCmp('electricSubmersiblePumpDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 0,
+                        deviceType: 104,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -487,7 +487,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                 if(isNotVal(ElectricSubmersiblePumpDeviceSelectRow)){
                 	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(ElectricSubmersiblePumpDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=0;
+                	deviceAuxiliaryData.deviceType=104;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -526,7 +526,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 0
+                            deviceType: 104
                         }
                     });
                 } else {
@@ -567,7 +567,8 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                         electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(electricSubmersiblePumpDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(electricSubmersiblePumpDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:104
                     }
                 });
             } else {
@@ -672,7 +673,7 @@ function CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(electricSu
 		},
 		params: {
 			deviceName:electricSubmersiblePumpDeviceName,
-			deviceType:0
+			deviceType:104
         }
 	});
 };

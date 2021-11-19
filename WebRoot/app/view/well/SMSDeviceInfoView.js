@@ -35,7 +35,7 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
                     var wellName = Ext.getCmp('SMSDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 2,
+                        deviceType: 300,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams,new_params);
@@ -401,7 +401,7 @@ var SMSDeviceInfoHandsontableHelper = {
 	        //保存数据
 	        smsDeviceInfoHandsontableHelper.saveData = function () {
 	        	var IframeViewSelection  = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-
+	        	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
         		//插入的数据的获取
 	        	smsDeviceInfoHandsontableHelper.insertExpressCount();
 	            if (JSON.stringify(smsDeviceInfoHandsontableHelper.AllData) != "{}" && smsDeviceInfoHandsontableHelper.validresult) {
@@ -426,7 +426,8 @@ var SMSDeviceInfoHandsontableHelper = {
 	            		},
 	            		params: {
 	                    	data: JSON.stringify(smsDeviceInfoHandsontableHelper.AllData),
-	                    	deviceType:2
+	                    	orgId:leftOrg_Id,
+	                    	deviceType:300
 	                    }
 	            	}); 
 	            } else {
@@ -463,7 +464,8 @@ var SMSDeviceInfoHandsontableHelper = {
 	                        smsDeviceInfoHandsontableHelper.clearContainer();
 	            		},
 	            		params: {
-	                    	data: JSON.stringify(smsDeviceInfoHandsontableHelper.editWellNameList)
+	                    	data: JSON.stringify(smsDeviceInfoHandsontableHelper.editWellNameList),
+	                        deviceType:300
 	                    }
 	            	}); 
 	            } else {

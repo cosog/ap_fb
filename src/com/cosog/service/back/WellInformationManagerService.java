@@ -40,9 +40,23 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer sqlCuswhere = new StringBuffer();
 		int deviceType=StringManagerUtils.stringToInteger(deviceTypeStr);
-		String sql = " select  t.wellName as wellName,t.wellName as dm from  tbl_wellinformation t  ,tbl_org  g where 1=1 and  t.orgId=g.org_id  and g.org_id in ("
+		String tableName="tbl_pumpdevice";
+		if(deviceType>=200&&deviceType<300){
+			tableName="tbl_pipelinedevice";
+		}else if(deviceType>=300){
+			tableName="tbl_smsdevice";
+		}
+		
+		if(deviceType==1){
+			tableName="tbl_pipelinedevice";
+		}else if(deviceType==2){
+			tableName="tbl_smsdevice";
+		}
+		
+		
+		String sql = " select  t.wellName as wellName,t.wellName as dm from  "+tableName+" t  ,tbl_org  g where 1=1 and  t.orgId=g.org_id  and g.org_id in ("
 				+ orgId + ")";
-		if(StringManagerUtils.isNotNull(deviceTypeStr)){
+		if(StringManagerUtils.isNotNull(deviceTypeStr) && deviceType>=100){
 			sql += " and t.deviceType ="+deviceType;
 		}
 		if (StringManagerUtils.isNotNull(wellName)) {
@@ -149,6 +163,18 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
+	public void savePumpDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
+		getBaseDao().savePumpDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
+	}
+	
+	public void savePipelineDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
+		getBaseDao().savePipelineDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
+	}
+	
+	public void saveSMSDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
+		getBaseDao().saveSMSDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
+	}
+	
 	public void deleteMasterAndAuxiliary(final int masterid) throws Exception {
 		final String hql = "DELETE MasterAndAuxiliaryDevice u where u.masterid ="+masterid+"";
 		getBaseDao().bulkObjectDelete(hql);
@@ -164,6 +190,18 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	
 	public void editWellName(String oldWellName,String newWellName,String orgid) throws Exception {
 		getBaseDao().editWellName(oldWellName,newWellName,orgid);
+	}
+	
+	public void editPumpDeviceName(String oldWellName,String newWellName,String orgid) throws Exception {
+		getBaseDao().editPumpDeviceName(oldWellName,newWellName,orgid);
+	}
+	
+	public void editPipelineDeviceName(String oldWellName,String newWellName,String orgid) throws Exception {
+		getBaseDao().editPipelineDeviceName(oldWellName,newWellName,orgid);
+	}
+	
+	public void editSMSDeviceName(String oldWellName,String newWellName,String orgid) throws Exception {
+		getBaseDao().editSMSDeviceName(oldWellName,newWellName,orgid);
 	}
 	
 	public void editAuxiliaryDeviceName(String oldName,String newName) throws Exception {
@@ -1077,11 +1115,20 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 				+ "{ \"header\":\"名称\",\"dataIndex\":\"name\",width:120 ,children:[] },"
 				+ "{ \"header\":\"规格型号\",\"dataIndex\":\"model\",width:80 ,children:[] }"
 				+ "]";
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){
+			deviceTableName="tbl_pipelinedevice";
+		}
+		
+		
+		
 		String sql = "select t.id,t.name,decode(t.type,1,'管辅件','泵辅件') as type,t.model,t.remark,t.sort from tbl_auxiliarydevice t where 1=1";
-		String auxiliarySql="select t2.auxiliaryid from tbl_wellinformation t,tbl_auxiliary2master t2 "
+		String auxiliarySql="select t2.auxiliaryid from "+deviceTableName+" t,tbl_auxiliary2master t2 "
 				+ " where t.id=t2.masterid and t.devicetype="+deviceType+" and t.wellname='"+deviceName+"'";
-		if(StringManagerUtils.isNotNull(deviceType)){
-			sql+= " and t.type="+deviceType;
+		if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){
+			sql+= " and t.type=1";
+		}else{
+			sql+= " and t.type=0";
 		}
 		sql+= " order by t.sort,t.name";
 		

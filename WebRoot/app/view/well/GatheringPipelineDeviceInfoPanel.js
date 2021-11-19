@@ -36,7 +36,7 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                     var wellName = Ext.getCmp('gatheringPipelineDeviceComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
-                        deviceType: 1,
+                        deviceType: 203,
                         wellName: wellName
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
@@ -489,7 +489,7 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                 if(isNotVal(GatheringPipelineDeviceSelectRow)){
                 	var rowdata = gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(GatheringPipelineDeviceSelectRow);
                 	deviceAuxiliaryData.orgId=orgId;
-                	deviceAuxiliaryData.deviceType=1;
+                	deviceAuxiliaryData.deviceType=203;
                 	deviceAuxiliaryData.deviceName=rowdata[2];
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	
@@ -528,7 +528,7 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                             data: JSON.stringify(gatheringPipelineDeviceInfoHandsontableHelper.AllData),
                             deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                             orgId: orgId,
-                            deviceType: 1
+                            deviceType: 203
                         }
                     });
                 } else {
@@ -566,7 +566,8 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                         gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                        data: JSON.stringify(gatheringPipelineDeviceInfoHandsontableHelper.editWellNameList)
+                        data: JSON.stringify(gatheringPipelineDeviceInfoHandsontableHelper.editWellNameList),
+                        deviceType:203
                     }
                 });
             } else {
@@ -667,7 +668,7 @@ function CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(gatheringPipelin
 		},
 		params: {
 			deviceName:gatheringPipelineDeviceName,
-			deviceType:1
+			deviceType:203
         }
 	});
 };
