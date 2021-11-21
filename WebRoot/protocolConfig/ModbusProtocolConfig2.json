@@ -1,15 +1,10 @@
 {
     "Protocol": [
         {
-            "Name": "private-lq1000",
-            "Code": "private-lq1000",
-            "ReadProtocolType": "private-lq1000",
-            "WriteProtocolType ": "modbus-rtu",
-            "SignInPrefix": "",
-            "SignInSuffix": "",
-            "HeartbeatPrefix": "",
-            "HeartbeatSuffix": "",
-            "Sort": 0,
+            "Name": "飞舟泵产品协议",
+            "Code": "飞舟泵产品协议",
+            "DeviceType": 0,
+            "Sort": 1,
             "Items": [
                 {
                     "Title": "设备型号标识位",
@@ -20,6 +15,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -31,7 +27,24 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "AcqMode": "active"
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "正转运行中"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "反转运行中"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "变频停机中"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "变频故障中"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "变频POFF状态"
+                    }]
                 },
                 {
                     "Title": "变频器故障代码",
@@ -42,7 +55,105 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "AcqMode": "active"
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "无故障"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "逆变单元U相保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "逆变单元V相保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "逆变单元W相保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "加速过电流"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "减速过电流"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "恒速过电流"
+                    }, {
+                        "Value": 7,
+                        "Meaning": "加速过电压"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "减速过电压"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "恒速过电压"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "母线欠压故障"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "电机过载"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "变频器过载"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "输入侧缺相"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "输出侧缺相"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "整流模块过热"
+                    }, {
+                        "Value": 16,
+                        "Meaning": "逆变模块过热"
+                    }, {
+                        "Value": 17,
+                        "Meaning": "外部故障"
+                    }, {
+                        "Value": 18,
+                        "Meaning": "485通讯故障"
+                    }, {
+                        "Value": 19,
+                        "Meaning": "电流检测故障"
+                    }, {
+                        "Value": 20,
+                        "Meaning": "电机自学习故障"
+                    }, {
+                        "Value": 21,
+                        "Meaning": "EEPROM操作故障"
+                    }, {
+                        "Value": 22,
+                        "Meaning": "PID反馈断线故障"
+                    }, {
+                        "Value": 23,
+                        "Meaning": "制动单元故障"
+                    }, {
+                        "Value": 24,
+                        "Meaning": "运行时间达到"
+                    }, {
+                        "Value": 25,
+                        "Meaning": "电子过载"
+                    }, {
+                        "Value": 26,
+                        "Meaning": "键盘通讯故障"
+                    }, {
+                        "Value": 27,
+                        "Meaning": "参数上传错误"
+                    }, {
+                        "Value": 28,
+                        "Meaning": "参数下载错误"
+                    }, {
+                        "Value": 32,
+                        "Meaning": "对地短路故障1"
+                    }, {
+                        "Value": 33,
+                        "Meaning": "对地短路故障2"
+                    }, {
+                        "Value": 36,
+                        "Meaning": "欠载故障"
+                    }]
                 },
                 {
                     "Title": "A相电压",
@@ -53,6 +164,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -63,7 +175,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -75,6 +188,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -85,7 +199,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -97,6 +212,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -107,7 +223,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -119,6 +236,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -129,7 +247,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -140,7 +259,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01kW",
+                    "Unit": "kW",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -152,6 +272,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "%",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -162,7 +283,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01Hz",
+                    "Unit": "Hz",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -174,6 +296,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "kWh",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -184,19 +307,25 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1day",
+                    "Unit": "d",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井口温度",
                     "Addr": 32,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井口压力",
@@ -206,19 +335,25 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井下温度",
                     "Addr": 36,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井下压力",
@@ -228,7 +363,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -239,30 +375,41 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "柜内温度",
                     "Addr": 42,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下温度",
                     "Addr": 48,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下压力",
@@ -272,7 +419,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -284,6 +432,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -294,8 +443,52 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
-                    "AcqMode": "active"
+                    "Unit": "",
+                    "ResolutionMode": 0,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "外置井下温度开关"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力开关"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力开关"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置井下温度开关"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "外置液面保护开关"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "内置液面保护开关"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护开关"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护开关"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护开关"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护开关"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护开关"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护开关"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度开关"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力开关"
+                    }]
                 },
                 {
                     "Title": "保护执行状态",
@@ -305,8 +498,52 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
-                    "AcqMode": "active"
+                    "Unit": "",
+                    "ResolutionMode": 0,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "井下温度保护"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "外置液面保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置液面保护"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "内置井下温度保护"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度保护"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力保护"
+                    }]
                 },
                 {
                     "Title": "欠压保护值",
@@ -317,6 +554,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -327,7 +565,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -339,6 +578,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -349,7 +589,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -360,7 +601,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -371,7 +613,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -382,7 +625,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                  },
                 {
@@ -393,7 +637,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -405,6 +650,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "%",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -415,7 +661,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -427,6 +674,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "%",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -437,18 +685,20 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井口温度保护值",
                     "Addr": 82,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -459,7 +709,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -470,7 +721,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -481,18 +733,20 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井下温度保护值",
                     "Addr": 90,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -503,18 +757,20 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "内置井下温度保护值",
                     "Addr": 94,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -525,7 +781,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -536,7 +793,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -547,7 +805,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -558,7 +817,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -569,7 +829,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -580,7 +841,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -591,7 +853,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -602,7 +865,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -613,7 +877,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -625,7 +890,27 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "AcqMode": "active"
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "手动控制"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "流压闭环控制"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "间歇自动控制"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "流压自动控制"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "液面自动控制"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "液面闭环控制"
+                    }]
                 },
                 {
                     "Title": "间歇运行时间",
@@ -635,7 +920,8 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -646,7 +932,8 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -657,7 +944,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -668,7 +956,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -679,7 +968,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -690,7 +980,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -702,6 +993,7 @@
                     "Ratio": 0.01,
                     "RWType": "r",
                     "Unit": "",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -712,7 +1004,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1Kpa",
+                    "Unit": "KPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -723,7 +1016,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1立方米/小时",
+                    "Unit": "m³/h",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -734,7 +1028,8 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "立方米",
+                    "Unit": "m³",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -745,21 +1040,103 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01方/天",
+                    "Unit": "m³/d",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
+                },
+                {
+                    "Title": "欠压保护开关",
+                    "Addr": 40201,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "int",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "w",
+                    "Unit": "",
+                    "ResolutionMode": 1,
+                    "AcqMode": "passive",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "启用"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "禁用"
+                    }]
+                },
+                {
+                    "Title": "设定欠压保护值",
+                    "Addr": 40202,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "int",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "w",
+                    "Unit": "",
+                    "ResolutionMode": 2,
+                    "AcqMode": "passive"
+                },
+                {
+                    "Title": "设定欠压保护延时值",
+                    "Addr": 40203,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "int",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "w",
+                    "Unit": "",
+                    "ResolutionMode": 2,
+                    "AcqMode": "passive"
+                },
+                {
+                    "Title": "设定工作模式",
+                    "Addr": 40243,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "int",
+                    "Quantity": 1,
+                    "Ratio": 1,
+                    "RWType": "w",
+                    "Unit": "",
+                    "ResolutionMode": 1,
+                    "AcqMode": "passive",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "手动控制"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "流压闭环控制"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "间歇自动控制"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "流压自动控制"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "液面自动控制"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "液面闭环控制"
+                    }]
+                },
+                {
+                    "Title": "设定运行频率",
+                    "Addr": 40251,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "float32",
+                    "Quantity": 1,
+                    "Ratio": 0.01,
+                    "RWType": "w",
+                    "Unit": "Hz",
+                    "ResolutionMode": 2,
+                    "AcqMode": "passive"
                 }
             ]
         },
         {
-            "Name": "private-kd93",
-            "Code": "private-kd93",
-            "ReadProtocolType": "private-kd93",
-            "WriteProtocolType ": "modbus-rtu",
-            "SignInPrefix": "",
-            "SignInSuffix": "",
-            "HeartbeatPrefix": "",
-            "HeartbeatSuffix": "",
-            "Sort": 0,
+            "Name": "飞舟管产品协议",
+            "Code": "飞舟管产品协议",
+            "DeviceType": 1,
+            "Sort": 2,
             "Items": [
                 {
                     "Title": "设备型号标识位",
@@ -770,6 +1147,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -781,7 +1159,24 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "AcqMode": "active"
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "正转运行中"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "反转运行中"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "变频停机中"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "变频故障中"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "变频POFF状态"
+                    }]
                 },
                 {
                     "Title": "变频器故障代码",
@@ -792,7 +1187,105 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "AcqMode": "active"
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "无故障"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "逆变单元U相保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "逆变单元V相保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "逆变单元W相保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "加速过电流"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "减速过电流"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "恒速过电流"
+                    }, {
+                        "Value": 7,
+                        "Meaning": "加速过电压"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "减速过电压"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "恒速过电压"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "母线欠压故障"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "电机过载"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "变频器过载"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "输入侧缺相"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "输出侧缺相"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "整流模块过热"
+                    }, {
+                        "Value": 16,
+                        "Meaning": "逆变模块过热"
+                    }, {
+                        "Value": 17,
+                        "Meaning": "外部故障"
+                    }, {
+                        "Value": 18,
+                        "Meaning": "485通讯故障"
+                    }, {
+                        "Value": 19,
+                        "Meaning": "电流检测故障"
+                    }, {
+                        "Value": 20,
+                        "Meaning": "电机自学习故障"
+                    }, {
+                        "Value": 21,
+                        "Meaning": "EEPROM操作故障"
+                    }, {
+                        "Value": 22,
+                        "Meaning": "PID反馈断线故障"
+                    }, {
+                        "Value": 23,
+                        "Meaning": "制动单元故障"
+                    }, {
+                        "Value": 24,
+                        "Meaning": "运行时间达到"
+                    }, {
+                        "Value": 25,
+                        "Meaning": "电子过载"
+                    }, {
+                        "Value": 26,
+                        "Meaning": "键盘通讯故障"
+                    }, {
+                        "Value": 27,
+                        "Meaning": "参数上传错误"
+                    }, {
+                        "Value": 28,
+                        "Meaning": "参数下载错误"
+                    }, {
+                        "Value": 32,
+                        "Meaning": "对地短路故障1"
+                    }, {
+                        "Value": 33,
+                        "Meaning": "对地短路故障2"
+                    }, {
+                        "Value": 36,
+                        "Meaning": "欠载故障"
+                    }]
                 },
                 {
                     "Title": "A相电压",
@@ -803,6 +1296,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -813,7 +1307,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -825,6 +1320,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -835,7 +1331,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -847,6 +1344,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -857,7 +1355,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -869,6 +1368,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -879,7 +1379,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -890,7 +1391,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01kW",
+                    "Unit": "kW",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -902,6 +1404,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "%",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -912,7 +1415,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01Hz",
+                    "Unit": "Hz",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -924,6 +1428,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "kWh",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -934,19 +1439,25 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1day",
+                    "Unit": "d",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井口温度",
                     "Addr": 32,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井口压力",
@@ -956,19 +1467,25 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井下温度",
                     "Addr": 36,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "井下压力",
@@ -978,7 +1495,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -989,30 +1507,41 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "柜内温度",
                     "Addr": 42,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下温度",
                     "Addr": 48,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
-                    "AcqMode": "active"
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": -50,
+                        "Meaning": "N/A"
+                    }]
                 },
                 {
                     "Title": "自制井下压力",
@@ -1022,7 +1551,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1034,6 +1564,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1044,8 +1575,52 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
-                    "AcqMode": "active"
+                    "Unit": "",
+                    "ResolutionMode": 0,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "外置井下温度开关"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力开关"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力开关"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置井下温度开关"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "外置液面保护开关"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "内置液面保护开关"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护开关"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护开关"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护开关"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护开关"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护开关"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护开关"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度开关"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力开关"
+                    }]
                 },
                 {
                     "Title": "保护执行状态",
@@ -1055,8 +1630,52 @@
                     "Quantity": 16,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "位数组",
-                    "AcqMode": "active"
+                    "Unit": "",
+                    "ResolutionMode": 0,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 0,
+                        "Meaning": "井下温度保护"
+                    }, {
+                        "Value": 1,
+                        "Meaning": "外置井下压力保护"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "内置井下压力保护"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "外置液面保护"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "内置液面保护"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "内置井下温度保护"
+                    }, {
+                        "Value": 8,
+                        "Meaning": "欠压保护"
+                    }, {
+                        "Value": 9,
+                        "Meaning": "过压保护"
+                    }, {
+                        "Value": 10,
+                        "Meaning": "欠流保护"
+                    }, {
+                        "Value": 11,
+                        "Meaning": "过流保护"
+                    }, {
+                        "Value": 12,
+                        "Meaning": "电压不平衡保护"
+                    }, {
+                        "Value": 13,
+                        "Meaning": "电流不平衡保护"
+                    }, {
+                        "Value": 14,
+                        "Meaning": "井口温度保护"
+                    }, {
+                        "Value": 15,
+                        "Meaning": "井口压力保护"
+                    }]
                 },
                 {
                     "Title": "欠压保护值",
@@ -1067,6 +1686,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1077,7 +1697,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1089,6 +1710,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "V",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1099,7 +1721,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1110,7 +1733,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1121,7 +1745,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1132,9 +1757,10 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01A",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
-                },
+                 },
                 {
                     "Title": "过载延时值",
                     "Addr": 72,
@@ -1143,7 +1769,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1155,6 +1782,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "%",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1165,7 +1793,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1177,6 +1806,7 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "%",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1187,18 +1817,20 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井口温度保护值",
                     "Addr": 82,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1209,7 +1841,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1220,7 +1853,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1231,18 +1865,20 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "井下温度保护值",
                     "Addr": 90,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1253,18 +1889,20 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
                     "Title": "内置井下温度保护值",
                     "Addr": 94,
-                    "StoreDataType": "uint16",
+                    "StoreDataType": "int16",
                     "IFDataType": "float32",
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1℃",
+                    "Unit": "℃",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1275,7 +1913,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1286,7 +1925,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1297,7 +1937,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1308,7 +1949,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1319,7 +1961,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1330,7 +1973,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1341,7 +1985,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1352,7 +1997,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1363,7 +2009,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1S",
+                    "Unit": "s",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1375,7 +2022,27 @@
                     "Ratio": 1.0,
                     "RWType": "r",
                     "Unit": "",
-                    "AcqMode": "active"
+                    "ResolutionMode": 1,
+                    "AcqMode": "active",
+                    "Meaning": [{
+                        "Value": 1,
+                        "Meaning": "手动控制"
+                    }, {
+                        "Value": 2,
+                        "Meaning": "流压闭环控制"
+                    }, {
+                        "Value": 3,
+                        "Meaning": "间歇自动控制"
+                    }, {
+                        "Value": 4,
+                        "Meaning": "流压自动控制"
+                    }, {
+                        "Value": 5,
+                        "Meaning": "液面自动控制"
+                    }, {
+                        "Value": 6,
+                        "Meaning": "液面闭环控制"
+                    }]
                 },
                 {
                     "Title": "间歇运行时间",
@@ -1385,7 +2052,8 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1396,7 +2064,8 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "分钟",
+                    "Unit": "min",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1407,7 +2076,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1418,7 +2088,8 @@
                     "Quantity": 1,
                     "Ratio": 0.001,
                     "RWType": "r",
-                    "Unit": "0.001MPa",
+                    "Unit": "MPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1429,7 +2100,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1440,7 +2112,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1m",
+                    "Unit": "m",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1452,6 +2125,7 @@
                     "Ratio": 0.01,
                     "RWType": "r",
                     "Unit": "",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1462,7 +2136,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1Kpa",
+                    "Unit": "KPa",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1473,7 +2148,8 @@
                     "Quantity": 1,
                     "Ratio": 0.1,
                     "RWType": "r",
-                    "Unit": "0.1立方米/小时",
+                    "Unit": "m³/h",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1484,7 +2160,8 @@
                     "Quantity": 1,
                     "Ratio": 1.0,
                     "RWType": "r",
-                    "Unit": "立方米",
+                    "Unit": "m³",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 },
                 {
@@ -1495,7 +2172,8 @@
                     "Quantity": 1,
                     "Ratio": 0.01,
                     "RWType": "r",
-                    "Unit": "0.01方/天",
+                    "Unit": "m³/d",
+                    "ResolutionMode": 2,
                     "AcqMode": "active"
                 }
             ]

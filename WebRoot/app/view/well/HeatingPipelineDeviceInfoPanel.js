@@ -186,18 +186,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
             }],
             listeners: {
                 beforeclose: function (panel, eOpts) {
-                    if (heatingPipelineDeviceInfoHandsontableHelper != null) {
-                        if (heatingPipelineDeviceInfoHandsontableHelper.hot != undefined) {
-                            heatingPipelineDeviceInfoHandsontableHelper.hot.destroy();
-                        }
-                        heatingPipelineDeviceInfoHandsontableHelper = null;
-                    }
-                    if (heatingPipelineAuxiliaryDeviceInfoHandsontableHelper != null) {
-                        if (heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-                        	heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
-                        }
-                        heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
-                    }
+                    
                 }
             }
         })
@@ -413,39 +402,34 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 },
                 afterChange: function (changes, source) {
                     if (changes != null) {
-                        var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-                        if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {
-                            for (var i = 0; i < changes.length; i++) {
-                                var params = [];
-                                var index = changes[i][0]; //行号码
-                                var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(index);
-                                params.push(rowdata[0]);
-                                params.push(changes[i][1]);
-                                params.push(changes[i][2]);
-                                params.push(changes[i][3]);
+                        for (var i = 0; i < changes.length; i++) {
+                            var params = [];
+                            var index = changes[i][0]; //行号码
+                            var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(index);
+                            params.push(rowdata[0]);
+                            params.push(changes[i][1]);
+                            params.push(changes[i][2]);
+                            params.push(changes[i][3]);
 
-                                if ("edit" == source && params[1] == "wellName") { //编辑井名单元格
-                                    var data = "{\"oldWellName\":\"" + params[2] + "\",\"newWellName\":\"" + params[3] + "\"}";
-                                    heatingPipelineDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
-                                }
-
-                                if (params[1] == "protocolName" && params[3] == "Kafka协议") {
-                                    heatingPipelineDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
-                                }
-                                if (params[2] != params[3] && params[0] != null && params[0] > 0) {
-                                    var data = "{";
-                                    for (var j = 0; j < heatingPipelineDeviceInfoHandsontableHelper.columns.length; j++) {
-                                        data += heatingPipelineDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
-                                        if (j < heatingPipelineDeviceInfoHandsontableHelper.columns.length - 1) {
-                                            data += ","
-                                        }
-                                    }
-                                    data += "}"
-                                    heatingPipelineDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
-                                }
+                            if ("edit" == source && params[1] == "wellName") { //编辑井名单元格
+                                var data = "{\"oldWellName\":\"" + params[2] + "\",\"newWellName\":\"" + params[3] + "\"}";
+                                heatingPipelineDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
                             }
-                        } else {
-                            Ext.MessageBox.alert("信息", "编辑前，请先在左侧选择对应组织节点");
+
+                            if (params[1] == "protocolName" && params[3] == "Kafka协议") {
+                                heatingPipelineDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
+                            }
+                            if (params[2] != params[3] && params[0] != null && params[0] > 0) {
+                                var data = "{";
+                                for (var j = 0; j < heatingPipelineDeviceInfoHandsontableHelper.columns.length; j++) {
+                                    data += heatingPipelineDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
+                                    if (j < heatingPipelineDeviceInfoHandsontableHelper.columns.length - 1) {
+                                        data += ","
+                                    }
+                                }
+                                data += "}"
+                                heatingPipelineDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
+                            }
                         }
                     }
                 }
@@ -476,72 +460,112 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
         }
         //保存数据
         heatingPipelineDeviceInfoHandsontableHelper.saveData = function () {
-            var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-            if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {
-                //插入的数据的获取
-                heatingPipelineDeviceInfoHandsontableHelper.insertExpressCount();
-                var orgId = IframeViewSelection[0].data.orgId;
-                
-                //获取辅件配置数据
-                var deviceAuxiliaryData={};
-                var HeatingPipelineDeviceSelectRow= Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").getValue();
-                
-                if(isNotVal(HeatingPipelineDeviceSelectRow)){
-                	var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(HeatingPipelineDeviceSelectRow);
-                	deviceAuxiliaryData.orgId=orgId;
+        	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
+        	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+        	//插入的数据的获取
+            heatingPipelineDeviceInfoHandsontableHelper.insertExpressCount();
+            //获取辅件配置数据
+            var deviceAuxiliaryData={};
+            var HeatingPipelineDeviceSelectRow= Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").getValue();
+            if(isNotVal(HeatingPipelineDeviceSelectRow)){
+            	var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(HeatingPipelineDeviceSelectRow);
+            	deviceName=rowdata[2];
+            	if(isNotVal(deviceName)){
                 	deviceAuxiliaryData.deviceType=201;
-                	deviceAuxiliaryData.deviceName=rowdata[2];
+                	deviceAuxiliaryData.deviceName=deviceName;
                 	deviceAuxiliaryData.auxiliaryDevice=[];
-                	
                 	var auxiliaryDeviceData=heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
-                	
                 	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
                         if (auxiliaryDeviceData[index][0]) {
                         	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
                         	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
                         }
                     });
-                }
-                
-                
-                if (JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.AllData) != "{}" && heatingPipelineDeviceInfoHandsontableHelper.validresult) {
-                    Ext.Ajax.request({
-                        method: 'POST',
-                        url: context + '/wellInformationManagerController/saveWellHandsontableData',
-                        success: function (response) {
-                            rdata = Ext.JSON.decode(response.responseText);
-                            if (rdata.success) {
-                                Ext.MessageBox.alert("信息", "保存成功");
-                                //保存以后重置全局容器
-                                heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
-                                CreateAndLoadHeatingPipelineDeviceInfoTable();
-                            } else {
-                                Ext.MessageBox.alert("信息", "数据保存失败");
-
-                            }
-                        },
-                        failure: function () {
-                            Ext.MessageBox.alert("信息", "请求失败");
-                            heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
-                        },
-                        params: {
-                            data: JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.AllData),
-                            deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
-                            orgId: orgId,
-                            deviceType: 201
-                        }
-                    });
-                } else {
-                    if (!heatingPipelineDeviceInfoHandsontableHelper.validresult) {
-                        Ext.MessageBox.alert("信息", "数据类型错误");
-                    } else {
-                        Ext.MessageBox.alert("信息", "无数据变化");
-                    }
-                }
-            } else {
-                Ext.MessageBox.alert("信息", "请先选择组织节点");
+            	}
             }
-
+            
+            if (JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.AllData) != "{}" && heatingPipelineDeviceInfoHandsontableHelper.validresult) {
+            	var orgArr=leftOrg_Name.split(",");
+            	var saveData={};
+            	saveData.updatelist=[];
+            	saveData.insertlist=[];
+            	saveData.delidslist=heatingPipelineDeviceInfoHandsontableHelper.delidslist;
+            	
+            	var invalidData1=[];
+            	var invalidData2=[];
+            	var invalidDataInfo="";
+            	if(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
+                	for(var i=0;i<heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
+                		var orgName=heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
+                		var diveceName=heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
+                		if(isNotVal(diveceName)){
+                			var orgCount=isExist(orgArr,orgName);
+                    		if(orgCount>1){//所选组织下具有多个同名组织
+                    			invalidData1.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+                    		}else if(orgCount===1){//所选组织下无重复组织
+                    			saveData.updatelist.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+                    		}else{//不具备所填写组织权限
+                    			invalidData2.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+                    		}
+                		}
+                	}
+                }
+            	if(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
+                	for(var i=0;i<heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
+                		var orgName=heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
+                		var diveceName=heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
+                		if(isNotVal(diveceName)){
+                			var orgCount=isExist(orgArr,orgName);
+                    		if(orgCount>1){//所选组织下具有多个同名组织
+                    			invalidData1.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+                    		}else if(orgCount===1){//所选组织下无重复组织
+                    			saveData.insertlist.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+                    		}else{//不具备所填写组织权限
+                    			invalidData2.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+                    		}
+                		}
+                	}
+                }
+            	Ext.Ajax.request({
+                    method: 'POST',
+                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
+                    success: function (response) {
+                        rdata = Ext.JSON.decode(response.responseText);
+                        if (rdata.success) {
+                        	if(invalidData1.length>0 || invalidData2.length>0){
+                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
+                        	}else{
+                        		Ext.MessageBox.alert("信息", "保存成功");
+                        	}
+                            //保存以后重置全局容器
+                            heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
+                            CreateAndLoadHeatingPipelineDeviceInfoTable();
+                        } else {
+                            Ext.MessageBox.alert("信息", "数据保存失败");
+                        }
+                    },
+                    failure: function () {
+                        Ext.MessageBox.alert("信息", "请求失败");
+                        heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
+                    },
+                    params: {
+                    	data: JSON.stringify(saveData),
+                        deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
+                        orgId: leftOrg_Id,
+                        deviceType: 201
+                    }
+                });
+            } else {
+                if (!heatingPipelineDeviceInfoHandsontableHelper.validresult) {
+                    Ext.MessageBox.alert("信息", "数据类型错误");
+                } else {
+                    Ext.MessageBox.alert("信息", "无数据变化");
+                }
+            }
         }
 
         //修改井名
@@ -646,6 +670,9 @@ function CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(heatingPipelineDev
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
+			if(!isNotVal(heatingPipelineDeviceName)){
+				heatingPipelineDeviceName='';
+			}
 			Ext.getCmp("HeatingPipelineAuxiliaryDevicePanel_Id").setTitle(heatingPipelineDeviceName+"辅件设备列表");
 			if(heatingPipelineAuxiliaryDeviceInfoHandsontableHelper==null || heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = HeatingPipelineAuxiliaryDeviceInfoHandsontableHelper.createNew("HeatingPipelineAuxiliaryDeviceTableDiv_id");

@@ -64,7 +64,76 @@ Ext.define("AP.view.well.PumpDeviceInfoPanel", {
         					}
         				}
         			}
-            	}]
+            	}],
+            	listeners: {
+        			beforeclose: function ( panel, eOpts) {
+        				//隔膜泵
+        				if (diaphragmPumpDeviceInfoHandsontableHelper != null) {
+                            if (diaphragmPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                                diaphragmPumpDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            diaphragmPumpDeviceInfoHandsontableHelper = null;
+                        }
+                        if (diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        //螺杆泵
+                        if (screwPumpDeviceInfoHandsontableHelper != null) {
+                            if (screwPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                                screwPumpDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            screwPumpDeviceInfoHandsontableHelper = null;
+                        }
+                        if (screwPumpAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            screwPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        //直线电机泵
+                        if (linearMotorPumpDeviceInfoHandsontableHelper != null) {
+                            if (linearMotorPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                                linearMotorPumpDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            linearMotorPumpDeviceInfoHandsontableHelper = null;
+                        }
+                        if (linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        //电潜泵
+                        if (electricSubmersiblePumpDeviceInfoHandsontableHelper != null) {
+                            if (electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != undefined) {
+                                electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            electricSubmersiblePumpDeviceInfoHandsontableHelper = null;
+                        }
+                        if (electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        //射流泵
+                        if (jetPumpDeviceInfoHandsontableHelper != null) {
+                            if (jetPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                                jetPumpDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            jetPumpDeviceInfoHandsontableHelper = null;
+                        }
+                        if (jetPumpAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            jetPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+        			}
+            	}
         });
         me.callParent(arguments);
     }

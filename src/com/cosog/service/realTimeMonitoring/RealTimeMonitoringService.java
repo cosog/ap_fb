@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.CommStatus;
 import com.cosog.model.User;
-import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
@@ -105,6 +104,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	public String getDeviceRealTimeCommStatusStat(String orgId,String deviceType) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		int deviceTypeLower=100;
+		int deviceTypeUpper=200;
+		if(StringManagerUtils.stringToInteger(deviceType) ==1){
+			deviceTypeLower=200;
+			deviceTypeUpper=300;
+		}
+		
+		
 		List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
 		if(commStatusList==null){
 			EquipmentDriverServerTask.LoadDeviceCommStatus();
@@ -115,7 +122,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		int all=0,online=0,offline=0;
 		for(int i=0;i<commStatusList.size();i++){
 			CommStatus commStatus=commStatusList.get(i);
-			if(commStatus.getDeviceType()==StringManagerUtils.stringToInteger(deviceType) && StringManagerUtils.existOrNot(orgId.split(","), commStatus.getOrgId()+"")){
+			if(commStatus.getDeviceType()>=deviceTypeLower&&commStatus.getDeviceType()<deviceTypeUpper
+					&& StringManagerUtils.existOrNot(orgId.split(","), commStatus.getOrgId()+"")){
 				if(commStatus.getCommStatus()==1){
 					online+=1;
 				}else{
@@ -839,7 +847,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 					+ " from "+tableName +" t,"+deviceTableName+" t2 "
 					+ " where t.wellid=t2.id "
 					+ " and t.acqtime >to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd")+"','yyyy-mm-dd') "
-					+ " and t2.wellname='"+deviceName+"' and t2.devicetype="+StringManagerUtils.stringToInteger(deviceType)
+					+ " and t2.wellname='"+deviceName+"' "
 					+ " order by t.acqtime";
 			List<?> list = this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){

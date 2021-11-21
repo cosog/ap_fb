@@ -46,7 +46,50 @@ Ext.define("AP.view.well.PipelineDeviceInfoPanel", {
         					}
         				}
         			}
-            	}]
+            	}],
+            	listeners: {
+        			beforeclose: function ( panel, eOpts) {
+        				//加热管
+        				if (heatingPipelineDeviceInfoHandsontableHelper != null) {
+                            if (heatingPipelineDeviceInfoHandsontableHelper.hot != undefined) {
+                                heatingPipelineDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            heatingPipelineDeviceInfoHandsontableHelper = null;
+                        }
+                        if (heatingPipelineAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        //采水管
+                        if (waterGatheringPipelineDeviceInfoHandsontableHelper != null) {
+                            if (waterGatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
+                                waterGatheringPipelineDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            waterGatheringPipelineDeviceInfoHandsontableHelper = null;
+                        }
+                        if (waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        //集输管
+                        if (gatheringPipelineDeviceInfoHandsontableHelper != null) {
+                            if (gatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
+                                gatheringPipelineDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            gatheringPipelineDeviceInfoHandsontableHelper = null;
+                        }
+                        if (gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper != null) {
+                            if (gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                            	gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
+                            }
+                            gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+        			}
+            	}
         });
         me.callParent(arguments);
     }

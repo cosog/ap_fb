@@ -95,7 +95,7 @@ function selectEachTreeText(chlidArray) {
 		if (!Ext.isEmpty(chlidArray)) {
 			Ext.Array.each(chlidArray, function(childArrNode, index, fog) {
 						var x_node_seId = fog[index].data.text;
-						selectReeTextRsult.push("'"+x_node_seId+"'");
+						selectReeTextRsult.push(""+x_node_seId+"");
 						// 递归
 						if (childArrNode.childNodes != null) {
 							selectEachTreeText(childArrNode.childNodes);
@@ -105,7 +105,7 @@ function selectEachTreeText(chlidArray) {
 	} else {
 		if (isNotVal(chlidArray)) {
 			var x_node_seId = chlidArray.data.text;
-			selectReeTextRsult.push("'"+x_node_seId+"'");
+			selectReeTextRsult.push(""+x_node_seId+"");
 		}
 	}
 	return selectReeTextRsult.join(",");
@@ -7786,3 +7786,15 @@ function initTimeAndDataCurveChartFn(series, tickInterval, divId, title, subtitl
         series: series
     });
 };
+
+function isExist(arr,data){
+	var r=0;
+	if(isNotVal(arr) && arr.length>0){
+		for(var i=0;i<arr.length;i++){
+			if(arr[i]===data){
+				r+=1;
+			}
+		}
+	}
+	return r;
+}

@@ -92,11 +92,52 @@ public class DriverAPIController extends BaseController{
 	
 	@RequestMapping("/acq/allDeviceOffline")
 	public String AllDeviceOffline() throws Exception {
+		String updatePumpRealData="update tbl_pumpacqdata_latest t "
+				+ "set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0 "
+				+ "where t.CommStatus=1";
+		String updatePumpHistData="update tbl_pumpacqdata_hist t "
+				+ " set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0"
+				+ " where t.CommStatus=1 and t.acqtime=( select max(t2.acqtime) from tbl_pumpacqdata_hist t2 where t2.wellid=t.wellid ) ";
+		
+		String updatePipelineRealData="update tbl_pipelineacqdata_latest t "
+				+ "set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0 "
+				+ "where t.CommStatus=1";
+		String updatePipelineHistData="update tbl_pipelineacqdata_hist t "
+				+ " set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0"
+				+ " where t.CommStatus=1 and t.acqtime=( select max(t2.acqtime) from tbl_pipelineacqdata_hist t2 where t2.wellid=t.wellid ) ";
+		
+		int result=commonDataService.getBaseDao().updateOrDeleteBySql(updatePumpRealData);
+		result=commonDataService.getBaseDao().updateOrDeleteBySql(updatePumpHistData);
+		
+		result=commonDataService.getBaseDao().updateOrDeleteBySql(updatePipelineRealData);
+		result=commonDataService.getBaseDao().updateOrDeleteBySql(updatePipelineHistData);
+		
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+		if(commStatusList!=null&&commStatusList.size()>0){
+			for(int i=0;i<commStatusList.size();i++){
+				commStatusList.get(i).setCommStatus(0);
+			}
+			dataModelMap.put("DeviceCommStatus", commStatusList);
+		}
+		
+		String json = "{success:true,flag:true}";
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/acq/allDeviceOffline2")
+	public String AllDeviceOffline2() throws Exception {
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
-		System.out.println(currentTime+"：ad未运行，所有井离线");
+		System.out.println(currentTime+"：ad未运行，所有设备离线");
 		String protocols="";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -112,18 +153,97 @@ public class DriverAPIController extends BaseController{
 		}
 		if(StringManagerUtils.isNotNull(protocols)){
 			String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
-					+ "decode(t.devicetype,0,t2.commstatus,t3.commstatus) as commstatus,"
-					+ "decode(t.devicetype,0,t2.commtime,t3.commtime) as commtime,"
-					+ "decode(t.devicetype,0,t2.commtimeefficiency,t3.commtimeefficiency) as commtimeefficiency,"
-					+ "decode(t.devicetype,0,t2.commrange,t3.commrange) as commrange,"
-					+ "t.devicetype,t.id from TBL_WELLINFORMATION t "
+					+ "t2.commstatus,"
+					+ "t2.commtime"
+					+ "t2.commtimeefficiency,"
+					+ "t2.commrange,"
+					+ "t.devicetype,t.id from tbl_pumpdevice t "
 					+ " left outer join tbl_pumpacqdata_latest  t2 on t.id=t2.wellid "
-					+ " left outer join tbl_pipelineacqdata_latest t3 on t.id =t3.wellid"
 					+ " left outer join tbl_protocolinstance t4 on t.instancecode=t4.code"
 					+ " left outer join tbl_acq_unit_conf t5 on t4.unitid=t5.id"
 					+ " where t5.protocol in("+protocols+")"
 					+ " and decode(t.devicetype,0,t2.commstatus,t3.commstatus)=1";
 			List list = this.commonDataService.findCallSql(sql);
+			
+			for(int i=0;i<list.size();i++){
+				Object[] obj=(Object[]) list.get(i);
+				String wellId=obj[obj.length-1]+"";
+				String devicetype=obj[obj.length-2]+"";
+				
+				String realtimeTable="tbl_pumpacqdata_latest";
+				String historyTable="tbl_pumpacqdata_hist";
+				if("0".equalsIgnoreCase(devicetype)){//如果是泵设备
+					realtimeTable="tbl_pumpacqdata_latest";
+					historyTable="tbl_pumpacqdata_hist";
+				}else{//否则管设备
+					realtimeTable="tbl_pipelineacqdata_latest";
+					historyTable="tbl_pipelineacqdata_hist";
+				}
+				CommResponseData commResponseData=null;
+				String commRequest="{"
+						+ "\"AKString\":\"\","
+						+ "\"WellName\":\""+obj[0]+"\",";
+				if(StringManagerUtils.isNotNull(obj[1]+"")&&StringManagerUtils.isNotNull(StringManagerUtils.CLOBObjectToString(obj[5]))){
+					commRequest+= "\"Last\":{"
+							+ "\"AcqTime\": \""+obj[1]+"\","
+							+ "\"CommStatus\": "+("1".equals(obj[2]+"")?true:false)+","
+							+ "\"CommEfficiency\": {"
+							+ "\"Efficiency\": "+obj[4]+","
+							+ "\"Time\": "+obj[3]+","
+							+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(StringManagerUtils.CLOBObjectToString(obj[5]))+""
+							+ "}"
+							+ "},";
+				}	
+				commRequest+= "\"Current\": {"
+						+ "\"AcqTime\":\""+currentTime+"\","
+						+ "\"CommStatus\":false"
+						+ "}"
+						+ "}";
+				String commResponse="";
+//				commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
+				type = new TypeToken<CommResponseData>() {}.getType();
+				commResponseData=gson.fromJson(commResponse, type);
+				String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0";
+				String updateRealCommRangeClobSql="update "+realtimeTable+" t set t.commrange=?";
+				
+				String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0";
+				String updateHistCommRangeClobSql="update "+historyTable+" t set t.commrange=?";
+				List<String> clobCont=new ArrayList<String>();
+				
+				if(commResponseData!=null&&commResponseData.getResultStatus()==1){
+					updateRealData+=",t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
+							+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime();
+					updateHistData+=",t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
+							+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime();
+					
+					clobCont.add(commResponseData.getCurrent().getCommEfficiency().getRangeString());
+				}
+				updateRealData+=" where t.wellId= "+wellId;
+				updateRealCommRangeClobSql+=" where t.wellId= "+wellId;
+				
+				updateHistData+=" where t.wellId= "+wellId+" and t.acqtime=( select max(t2.acqtime) from "+historyTable+" t2 where t2.wellid=t.wellid )";
+				updateHistCommRangeClobSql+=" where t.wellId= "+wellId+" and t.acqtime=( select max(t2.acqtime) from "+historyTable+" t2 where t2.wellid=t.wellid )";;
+				
+				int result=commonDataService.getBaseDao().updateOrDeleteBySql(updateRealData);
+				result=commonDataService.getBaseDao().updateOrDeleteBySql(updateHistData);
+				if(commResponseData!=null&&commResponseData.getResultStatus()==1){
+					result=commonDataService.getBaseDao().executeSqlUpdateClob(updateRealCommRangeClobSql,clobCont);
+					result=commonDataService.getBaseDao().executeSqlUpdateClob(updateHistCommRangeClobSql,clobCont);
+				}
+			}
+			
+			sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
+					+ "t2.commstatus,"
+					+ "t2.commtime"
+					+ "t2.commtimeefficiency,"
+					+ "t2.commrange,"
+					+ "t.devicetype,t.id from tbl_pipelinedevice t "
+					+ " left outer join tbl_pipelineacqdata_latest t2 on t.id =t2.wellid"
+					+ " left outer join tbl_protocolinstance t4 on t.instancecode=t4.code"
+					+ " left outer join tbl_acq_unit_conf t5 on t4.unitid=t5.id"
+					+ " where t5.protocol in("+protocols+")"
+					+ " and decode(t.devicetype,0,t2.commstatus,t3.commstatus)=1";
+			list = this.commonDataService.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
 				Object[] obj=(Object[]) list.get(i);
 				String wellId=obj[obj.length-1]+"";
@@ -213,20 +333,42 @@ public class DriverAPIController extends BaseController{
 		java.lang.reflect.Type type = new TypeToken<AcqOnline>() {}.getType();
 		AcqOnline acqOnline=gson.fromJson(data, type);
 		if(acqOnline!=null){
+			String deviceType="";
 			String realtimeTable="";
 			String historyTable="";
-			String protocolSql="select t.devicetype"
-					+ " from TBL_WELLINFORMATION t   "
+			
+			
+			//判断设备类型
+			String deviceTypeSql="select t.devicetype"
+					+ " from tbl_pumpdevice t   "
 					+ " where t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
-			List devicetypeList = this.commonDataService.findCallSql(protocolSql);	
-			if(devicetypeList.size()>=0 && StringManagerUtils.isNotNull(devicetypeList.get(0)+"")){
-				String deviceType=devicetypeList.get(0)+"";
+			List devicetypeList = this.commonDataService.findCallSql(deviceTypeSql);
+			if(devicetypeList.size()>0 && StringManagerUtils.isNotNull(devicetypeList.get(0)+"")){
+				deviceType=devicetypeList.get(0)+"";
+			}
+			if(!StringManagerUtils.isNotNull(deviceType)){//如果泵设备表中未找到对应设备，查找管设备表
+				deviceTypeSql="select t.devicetype"
+						+ " from tbl_pipelinedevice t   "
+						+ " where t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
+				devicetypeList = this.commonDataService.findCallSql(deviceTypeSql);
+				if(devicetypeList.size()>0 && StringManagerUtils.isNotNull(devicetypeList.get(0)+"")){
+					deviceType=devicetypeList.get(0)+"";
+				}
+			}
+			
+			if(StringManagerUtils.isNotNull(deviceType)){
 				String functionCode="pumpDeviceRealTimeMonitoringStatusData";
-				if("0".equalsIgnoreCase(deviceType)){//如果是泵设备
+				String deviceTableName="tbl_pumpdevice";
+				String alarmTableName="tbl_pumpalarminfo_hist";
+				if(StringManagerUtils.stringToInteger(deviceType)>=100 && StringManagerUtils.stringToInteger(deviceType)<200){//如果是泵设备
+					deviceTableName="tbl_pumpdevice";
+					alarmTableName="tbl_pumpalarminfo_hist";
 					realtimeTable="tbl_pumpacqdata_latest";
 					historyTable="tbl_pumpacqdata_hist";
 					functionCode="pumpDeviceRealTimeMonitoringStatusData";
-				}else{//否则管设备
+				}else if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){//否则管设备
+					deviceTableName="tbl_pipelinedevice";
+					alarmTableName="tbl_pipelinealarminfo_hist";
 					realtimeTable="tbl_pipelineacqdata_latest";
 					historyTable="tbl_pipelineacqdata_hist";
 					functionCode="pipelineDeviceRealTimeMonitoringStatusData";
@@ -235,11 +377,11 @@ public class DriverAPIController extends BaseController{
 				String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 						+ " t2.commstatus,t2.commtime,t2.commtimeefficiency,t2.commrange,"
 						+ " t.id"
-						+ " from TBL_WELLINFORMATION t,"+realtimeTable+"  t2 "
+						+ " from "+deviceTableName+" t,"+realtimeTable+"  t2 "
 						+ " where t.id=t2.wellid"
 						+ " and t.signinid='"+acqOnline.getID()+"' and to_number(t.slave)="+acqOnline.getSlave();
 				String commAlarmSql="select  t5.itemname,decode(t5.alarmsign,0,0,t5.alarmlevel) as alarmlevel,t5.issendmessage,t5.issendmail,t5.delay"
-						+ " from tbl_wellinformation t"
+						+ " from "+deviceTableName+" t"
 						+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 						+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 						+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3 "
@@ -333,29 +475,6 @@ public class DriverAPIController extends BaseController{
 								break;
 							}
 						}
-						
-						
-						
-						
-						
-//						String keyIndex_Off=wellName+","+deviceType+",离线";
-//						boolean reset=false;
-//						for (String key : alarmInfoMap.keySet()) {
-//							 if(key.equals(keyIndex_Off)){
-//								 reset=true;
-//								 alarmInfoMap.remove(key);
-//								 break;
-//							 }
-//						 }
-//						 if(reset){
-//							 commAlarm="update tbl_alarminfo t set t.recoverytime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss') "
-//										+ " where t.alarmtime=( select max(t2.alarmtime) from tbl_alarminfo t2 where t2.alarmtype=0 and t2.wellid=t.wellid ) "
-//										+ " and t.wellid= "+wellId
-//										+ " and t.alarmtype=0"
-//										+ " and t.recoverytime is null";
-//								result=commonDataService.getBaseDao().updateOrDeleteBySql(commAlarm);
-//						 }
-						
 					}else{
 						key=wellName+","+deviceType+",离线";
 						alarmInfo="离线";
@@ -370,8 +489,7 @@ public class DriverAPIController extends BaseController{
 							}
 						}
 					}
-					
-					commAlarm="insert into tbl_alarminfo (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
+					commAlarm="insert into "+alarmTableName+" (wellid,alarmtime,itemname,alarmtype,alarmvalue,alarminfo,alarmlevel)"
 							+ "values("+wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),'通信状态',0,"+(acqOnline.getStatus()?1:0)+",'"+alarmInfo+"',"+commAlarmLevel+")";
 					String alarmSMSContent="设备"+wellName+"于"+currentTime+"离线";
 					
@@ -422,7 +540,7 @@ public class DriverAPIController extends BaseController{
 		String json = "{success:true,flag:true}";
 		if(acqGroup!=null){
 			String sql="select t.wellname,t.devicetype ,t3.protocol"
-					+ " from TBL_WELLINFORMATION t,tbl_protocolinstance t2,tbl_acq_unit_conf t3  "
+					+ " from tbl_pumpdevice t,tbl_protocolinstance t2,tbl_acq_unit_conf t3  "
 					+ " where t.instancecode=t2.code and t2.unitid=t3.id"
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave();
 			List list = this.commonDataService.findCallSql(sql);
@@ -432,13 +550,26 @@ public class DriverAPIController extends BaseController{
 				String deviceType=obj[1]+"";
 				String protocolName=obj[2]+"";
 				if("A11-Modbus".equalsIgnoreCase(protocolName)){
-//					this.DataProcessing_A11(acqGroup, protocolName);
 				}
-//				else if("private-lq1000".equalsIgnoreCase(protocolName) || "private-kd93".equalsIgnoreCase(protocolName)){
-//					this.DataProcessing_Pump(acqGroup, protocolName);
-//				}
 				else{
 					this.DataProcessing_Pump(acqGroup, wellName,deviceType,protocolName);
+				}
+			}else{////如果泵设备表中未找到对应设备，查找管设备表
+				sql="select t.wellname,t.devicetype ,t3.protocol"
+						+ " from tbl_pipelinedevice t,tbl_protocolinstance t2,tbl_acq_unit_conf t3  "
+						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
+						+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave();
+				list = this.commonDataService.findCallSql(sql);
+				if(list.size()>0){
+					Object[] obj=(Object[]) list.get(0);
+					String wellName=obj[0]+"";
+					String deviceType=obj[1]+"";
+					String protocolName=obj[2]+"";
+					if("A11-Modbus".equalsIgnoreCase(protocolName)){
+					}
+					else{
+						this.DataProcessing_Pump(acqGroup, wellName,deviceType,protocolName);
+					}
 				}
 			}
 		}else{
@@ -477,14 +608,16 @@ public class DriverAPIController extends BaseController{
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
+		String deviceTableName="tbl_pumpdevice";
 		String realtimeTable="tbl_pumpacqdata_latest";
 		String historyTable="tbl_pumpacqdata_hist";
 		String functionCode="pumpDeviceRealTimeMonitoringData";
-		if("0".equalsIgnoreCase(deviceType)){
+		if(StringManagerUtils.stringToInteger(deviceType)>=100 && StringManagerUtils.stringToInteger(deviceType)<200){
 			realtimeTable="tbl_pumpacqdata_latest";
 			historyTable="tbl_pumpacqdata_hist";
 			functionCode="pumpDeviceRealTimeMonitoringData";
-		}else{
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){
+			deviceTableName="tbl_pipelinedevice";
 			realtimeTable="tbl_pipelineacqdata_latest";
 			historyTable="tbl_pipelineacqdata_hist";
 			functionCode="pipelineDeviceRealTimeMonitoringData";
@@ -495,14 +628,14 @@ public class DriverAPIController extends BaseController{
 					+ " t2.commstatus,t2.commtime,t2.commtimeefficiency,t2.commrange,"
 					+ " t6.save_cycle,"
 					+ " t.id"
-					+ " from TBL_WELLINFORMATION t,"+realtimeTable+"  t2,tbl_protocolinstance t3,tbl_acq_unit_conf t4,tbl_acq_group2unit_conf t5,tbl_acq_group_conf t6    "
+					+ " from "+deviceTableName+" t,"+realtimeTable+"  t2,tbl_protocolinstance t3,tbl_acq_unit_conf t4,tbl_acq_group2unit_conf t5,tbl_acq_group_conf t6    "
 					+ " where t.id=t2.wellid and t.instancecode=t3.code and t3.unitid=t4.id and t4.id=t5.unitid and t5.groupid=t6.id"
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t6.id";
 			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
 					+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel,"
 					+ " t2.issendmessage,t2.issendmail "
-					+ " from tbl_wellinformation t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
+					+ " from "+deviceTableName+" t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
 					+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t2.id";
@@ -510,7 +643,7 @@ public class DriverAPIController extends BaseController{
 					+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
 					+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort, "
 					+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
-					+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+					+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " group by t.wellname,t3.protocol";
@@ -791,6 +924,7 @@ public class DriverAPIController extends BaseController{
 							break;
 						}
 					}
+					dataModelMap.put("DeviceCommStatus", commStatusList);
 					
 					if(save || alarm){//如果满足保存周期或者有报警，保存数据
 						commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
@@ -831,7 +965,7 @@ public class DriverAPIController extends BaseController{
 						
 						String userItemsSql="select "
 								+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key"
-								+ " from tbl_wellinformation t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+								+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 								+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 								+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 								+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_id='"+websocketClientUser+"' )"
@@ -934,86 +1068,6 @@ public class DriverAPIController extends BaseController{
 				}
 			}
 		}
-		return null;
-	}
-	
-	public String DataProcessing_Unknown(AcqGroup acqGroup,String protocolName) throws Exception{
-		Gson gson=new Gson();
-		java.lang.reflect.Type type=null;
-		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
-		
-		
-		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		if(equipmentDriveMap.size()==0){
-			EquipmentDriverServerTask.loadProtocolConfig();
-			equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		}
-		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		
-		ModbusProtocolConfig.Protocol protocol=null;
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
-				protocol=modbusProtocolConfig.getProtocol().get(i);
-				break;
-			}
-		}
-
-		String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
-				+ " t2.commstatus,t2.commtime,t2.commtimeefficiency,t2.commrange"
-				+ " from TBL_WELLINFORMATION t,tbl_rpc_discrete_latest  t2 "
-				+ " where t.id=t2.wellid"
-				+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave();
-		List list = this.commonDataService.findCallSql(sql);
-		if(list.size()>0){
-			Object[] obj=(Object[]) list.get(0);
-			String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
-			CommResponseData commResponseData=null;
-			String commRequest="{"
-					+ "\"AKString\":\"\","
-					+ "\"WellName\":\""+obj[0]+"\",";
-			if(StringManagerUtils.isNotNull(obj[1]+"")&&StringManagerUtils.isNotNull(StringManagerUtils.CLOBObjectToString(obj[5]))){
-				commRequest+= "\"Last\":{"
-						+ "\"AcqTime\": \""+obj[1]+"\","
-						+ "\"CommStatus\": "+("1".equals(obj[2]+"")?true:false)+","
-						+ "\"CommEfficiency\": {"
-						+ "\"Efficiency\": "+obj[4]+","
-						+ "\"Time\": "+obj[3]+","
-						+ "\"Range\": "+StringManagerUtils.getWellRuningRangeJson(StringManagerUtils.CLOBObjectToString(obj[5]))+""
-						+ "}"
-						+ "},";
-			}	
-			commRequest+= "\"Current\": {"
-					+ "\"AcqTime\":\""+currentTime+"\","
-					+ "\"CommStatus\":true"
-					+ "}"
-					+ "}";
-			String commResponse="";
-			commResponse=StringManagerUtils.sendPostMethod(commUrl, commRequest,"utf-8");
-			type = new TypeToken<CommResponseData>() {}.getType();
-			commResponseData=gson.fromJson(commResponse, type);
-			String updateDiscreteData="update tbl_rpc_discrete_latest t set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(commResponseData.getCurrent().getCommStatus()?1:0);
-			String updateCommRangeClobSql="update tbl_rpc_discrete_latest t set t.commrange=?";
-			List<String> clobCont=new ArrayList<String>();
-			
-			if(commResponseData!=null&&commResponseData.getResultStatus()==1){
-				updateDiscreteData+=",t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
-						+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime();
-				clobCont.add(commResponseData.getCurrent().getCommEfficiency().getRangeString());
-				//跨天
-				if(commResponseData.getDaily()!=null&&StringManagerUtils.isNotNull(commResponseData.getDaily().getDate())){
-					updateDiscreteData+=",t.runTime=0,t.runTimeEfficiency=0";
-					updateCommRangeClobSql+=",t.runRange=?";
-					clobCont.add("");
-				}
-			}
-			updateDiscreteData+=" where t.wellId= (select t2.id from tbl_wellinformation t2 where t2.wellName='"+commResponseData.getWellName()+"') ";
-			updateCommRangeClobSql+=" where t.wellId= (select t2.id from tbl_wellinformation t2 where t2.wellName='"+commResponseData.getWellName()+"') ";
-			int result=commonDataService.getBaseDao().updateOrDeleteBySql(updateDiscreteData);
-			if(commResponseData!=null&&commResponseData.getResultStatus()==1){
-				result=commonDataService.getBaseDao().executeSqlUpdateClob(updateCommRangeClobSql,clobCont);
-			}
-		}
-	
 		return null;
 	}
 }

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cosog.controller.base.BaseController;
 import com.cosog.model.Org;
 import com.cosog.model.User;
-import com.cosog.model.WellInformation;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
@@ -353,7 +352,7 @@ public class RealTimeMonitoringController extends BaseController {
 //			String getOld = UnixPwdCrypt.crypt("dogVSgod", password);
 			String getOld = StringManagerUtils.stringToMD5(password);
 			if (getOld.equals(getUpwd)&&StringManagerUtils.isNumber(controlValue)) {
-				String sql="select t3.protocol, t.signinid,to_number(t.slave) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+				String sql="select t3.protocol, t.signinid,to_number(t.slave),t.deviceType from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
 						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
 						+ " and t.wellname='"+wellName+"' ";
 				List list = this.service.findCallSql(sql);
@@ -362,10 +361,11 @@ public class RealTimeMonitoringController extends BaseController {
 					String protocol=obj[0]+"";
 					String signinid=obj[1]+"";
 					String slave=obj[2]+"";
+					String realDeviceType=obj[3]+"";
 					if(StringManagerUtils.isNotNull(protocol) && StringManagerUtils.isNotNull(signinid)){
 						if(StringManagerUtils.isNotNull(slave)){
 //							jsonLogin=
-							if(DeviceControlOperation_Mdubus(protocol,wellName,deviceType,signinid,slave,controlType,controlValue)){
+							if(DeviceControlOperation_Mdubus(protocol,wellName,realDeviceType,signinid,slave,controlType,controlValue)){
 								jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
 							}else{
 								jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>命令发送失败。</font>'}";
@@ -413,7 +413,7 @@ public class RealTimeMonitoringController extends BaseController {
 		// 用户不存在
 		if (null != userInfo) {
 			if (StringManagerUtils.isNumber(controlValue)) {
-				String sql="select t3.protocol, t.signinid,to_number(t.slave) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+				String sql="select t3.protocol, t.signinid,to_number(t.slave),t.deviceType from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
 						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
 						+ " and t.wellname='"+wellName+"' ";
 				List list = this.service.findCallSql(sql);
@@ -422,10 +422,11 @@ public class RealTimeMonitoringController extends BaseController {
 					String protocol=obj[0]+"";
 					String signinid=obj[1]+"";
 					String slave=obj[2]+"";
+					String realDeviceType=obj[3]+"";
 					if(StringManagerUtils.isNotNull(protocol) && StringManagerUtils.isNotNull(signinid)){
 						if(StringManagerUtils.isNotNull(slave)){
 //							jsonLogin=
-							if(DeviceControlOperation_Mdubus(protocol,wellName,deviceType,signinid,slave,controlType,controlValue)){
+							if(DeviceControlOperation_Mdubus(protocol,wellName,realDeviceType,signinid,slave,controlType,controlValue)){
 								jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
 							}else{
 								jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>命令发送失败。</font>'}";

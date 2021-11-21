@@ -176,18 +176,7 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
             }],
             listeners: {
                 beforeclose: function (panel, eOpts) {
-                    if (electricSubmersiblePumpDeviceInfoHandsontableHelper != null) {
-                        if (electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.destroy();
-                        }
-                        electricSubmersiblePumpDeviceInfoHandsontableHelper = null;
-                    }
-                    if (electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper != null) {
-                        if (electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-                        	electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
-                        }
-                        electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = null;
-                    }
+                    
                 }
             }
         })
@@ -406,41 +395,36 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                 afterChange: function (changes, source) {
                     //params 参数 1.column num , 2,id, 3,oldvalue , 4.newvalue
                     if (changes != null) {
-                        var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-                        if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {
-                            for (var i = 0; i < changes.length; i++) {
-                                var params = [];
-                                var index = changes[i][0]; //行号码
-                                var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(index);
-                                params.push(rowdata[0]);
-                                params.push(changes[i][1]);
-                                params.push(changes[i][2]);
-                                params.push(changes[i][3]);
+                        for (var i = 0; i < changes.length; i++) {
+                            var params = [];
+                            var index = changes[i][0]; //行号码
+                            var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(index);
+                            params.push(rowdata[0]);
+                            params.push(changes[i][1]);
+                            params.push(changes[i][2]);
+                            params.push(changes[i][3]);
 
-                                if ("edit" == source && params[1] == "wellName") { //编辑井名单元格
-                                    var data = "{\"oldWellName\":\"" + params[2] + "\",\"newWellName\":\"" + params[3] + "\"}";
-                                    electricSubmersiblePumpDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
-                                }
-
-                                if (params[1] == "protocolName" && params[3] == "Kafka协议") {
-                                    electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
-                                }
-
-                                //仅当单元格发生改变的时候,id!=null,说明是更新
-                                if (params[2] != params[3] && params[0] != null && params[0] > 0) {
-                                    var data = "{";
-                                    for (var j = 0; j < electricSubmersiblePumpDeviceInfoHandsontableHelper.columns.length; j++) {
-                                        data += electricSubmersiblePumpDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
-                                        if (j < electricSubmersiblePumpDeviceInfoHandsontableHelper.columns.length - 1) {
-                                            data += ","
-                                        }
-                                    }
-                                    data += "}"
-                                    electricSubmersiblePumpDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
-                                }
+                            if ("edit" == source && params[1] == "wellName") { //编辑井名单元格
+                                var data = "{\"oldWellName\":\"" + params[2] + "\",\"newWellName\":\"" + params[3] + "\"}";
+                                electricSubmersiblePumpDeviceInfoHandsontableHelper.editWellNameList.push(Ext.JSON.decode(data));
                             }
-                        } else {
-                            Ext.MessageBox.alert("信息", "编辑前，请先在左侧选择对应组织节点");
+
+                            if (params[1] == "protocolName" && params[3] == "Kafka协议") {
+                                electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
+                            }
+
+                            //仅当单元格发生改变的时候,id!=null,说明是更新
+                            if (params[2] != params[3] && params[0] != null && params[0] > 0) {
+                                var data = "{";
+                                for (var j = 0; j < electricSubmersiblePumpDeviceInfoHandsontableHelper.columns.length; j++) {
+                                    data += electricSubmersiblePumpDeviceInfoHandsontableHelper.columns[j].data + ":'" + rowdata[j] + "'";
+                                    if (j < electricSubmersiblePumpDeviceInfoHandsontableHelper.columns.length - 1) {
+                                        data += ","
+                                    }
+                                }
+                                data += "}"
+                                electricSubmersiblePumpDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
+                            }
                         }
                     }
                 }
@@ -474,72 +458,114 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
         }
         //保存数据
         electricSubmersiblePumpDeviceInfoHandsontableHelper.saveData = function () {
-            var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-            if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {
-                //插入的数据的获取
-                electricSubmersiblePumpDeviceInfoHandsontableHelper.insertExpressCount();
-                var orgId = IframeViewSelection[0].data.orgId;
-                
-                //获取辅件配置数据
-                var deviceAuxiliaryData={};
-                var ElectricSubmersiblePumpDeviceSelectRow= Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").getValue();
-                
-                if(isNotVal(ElectricSubmersiblePumpDeviceSelectRow)){
-                	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(ElectricSubmersiblePumpDeviceSelectRow);
-                	deviceAuxiliaryData.orgId=orgId;
+        	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
+        	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+        	//插入的数据的获取
+            electricSubmersiblePumpDeviceInfoHandsontableHelper.insertExpressCount();
+            //获取辅件配置数据
+            var deviceAuxiliaryData={};
+            var ElectricSubmersiblePumpDeviceSelectRow= Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").getValue();
+            if(isNotVal(ElectricSubmersiblePumpDeviceSelectRow)){
+            	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(ElectricSubmersiblePumpDeviceSelectRow);
+            	deviceName=rowdata[2];
+            	if(isNotVal(deviceName)){
+//            		deviceAuxiliaryData.orgId=orgId;
                 	deviceAuxiliaryData.deviceType=104;
-                	deviceAuxiliaryData.deviceName=rowdata[2];
+                	deviceAuxiliaryData.deviceName=deviceName;
                 	deviceAuxiliaryData.auxiliaryDevice=[];
-                	
                 	var auxiliaryDeviceData=electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
-                	
                 	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
                         if (auxiliaryDeviceData[index][0]) {
                         	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
                         	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
                         }
                     });
-                	
-                }
-                
-                if (JSON.stringify(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData) != "{}" && electricSubmersiblePumpDeviceInfoHandsontableHelper.validresult) {
-                    Ext.Ajax.request({
-                        method: 'POST',
-                        url: context + '/wellInformationManagerController/saveWellHandsontableData',
-                        success: function (response) {
-                            rdata = Ext.JSON.decode(response.responseText);
-                            if (rdata.success) {
-                                Ext.MessageBox.alert("信息", "保存成功");
-                                //保存以后重置全局容器
-                                electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
-                                CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
-                            } else {
-                                Ext.MessageBox.alert("信息", "数据保存失败");
-
-                            }
-                        },
-                        failure: function () {
-                            Ext.MessageBox.alert("信息", "请求失败");
-                            electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
-                        },
-                        params: {
-                            data: JSON.stringify(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData),
-                            deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
-                            orgId: orgId,
-                            deviceType: 104
-                        }
-                    });
-                } else {
-                    if (!electricSubmersiblePumpDeviceInfoHandsontableHelper.validresult) {
-                        Ext.MessageBox.alert("信息", "数据类型错误");
-                    } else {
-                        Ext.MessageBox.alert("信息", "无数据变化");
-                    }
-                }
-            } else {
-                Ext.MessageBox.alert("信息", "请先选择组织节点");
+            	}
             }
+            
+            if (JSON.stringify(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData) != "{}" && electricSubmersiblePumpDeviceInfoHandsontableHelper.validresult) {
+            	var orgArr=leftOrg_Name.split(",");
+            	var saveData={};
+            	saveData.updatelist=[];
+            	saveData.insertlist=[];
+            	saveData.delidslist=electricSubmersiblePumpDeviceInfoHandsontableHelper.delidslist;
+            	
+            	var invalidData1=[];
+            	var invalidData2=[];
+            	var invalidDataInfo="";
+            	if(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
+                	for(var i=0;i<electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
+                		var orgName=electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
+                		var diveceName=electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
+                		if(isNotVal(diveceName)){
+                			var orgCount=isExist(orgArr,orgName);
+                    		if(orgCount>1){//所选组织下具有多个同名组织
+                    			invalidData1.push(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+                    		}else if(orgCount===1){//所选组织下无重复组织
+                    			saveData.updatelist.push(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+                    		}else{//不具备所填写组织权限
+                    			invalidData2.push(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+                    		}
+                		}
+                	}
+                }
+            	if(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
+                	for(var i=0;i<electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
+                		var orgName=electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
+                		var diveceName=electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
+                		if(isNotVal(diveceName)){
+                			var orgCount=isExist(orgArr,orgName);
+                    		if(orgCount>1){//所选组织下具有多个同名组织
+                    			invalidData1.push(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+                    		}else if(orgCount===1){//所选组织下无重复组织
+                    			saveData.insertlist.push(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+                    		}else{//不具备所填写组织权限
+                    			invalidData2.push(electricSubmersiblePumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+                    		}
+                		}
+                	}
+                }
+            	Ext.Ajax.request({
+                    method: 'POST',
+                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
+                    success: function (response) {
+                        rdata = Ext.JSON.decode(response.responseText);
+                        if (rdata.success) {
+                        	if(invalidData1.length>0 || invalidData2.length>0){
+                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
+                        	}else{
+                        		Ext.MessageBox.alert("信息", "保存成功");
+                        	}
+                            //保存以后重置全局容器
+                            electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
+                            CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
+                        } else {
+                            Ext.MessageBox.alert("信息", "数据保存失败");
 
+                        }
+                    },
+                    failure: function () {
+                        Ext.MessageBox.alert("信息", "请求失败");
+                        electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
+                    },
+                    params: {
+                    	data: JSON.stringify(saveData),
+                        deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
+                        orgId: leftOrg_Id,
+                        deviceType: 104
+                    }
+                });
+            } else {
+                if (!electricSubmersiblePumpDeviceInfoHandsontableHelper.validresult) {
+                    Ext.MessageBox.alert("信息", "数据类型错误");
+                } else {
+                    Ext.MessageBox.alert("信息", "无数据变化");
+                }
+            }
         }
 
         //修改井名
@@ -651,6 +677,9 @@ function CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(electricSu
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
+			if(!isNotVal(electricSubmersiblePumpDeviceName)){
+				electricSubmersiblePumpDeviceName='';
+			}
 			Ext.getCmp("ElectricSubmersiblePumpAuxiliaryDevicePanel_Id").setTitle(electricSubmersiblePumpDeviceName+"辅件设备列表");
 			if(electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper==null || electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = ElectricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.createNew("ElectricSubmersiblePumpAuxiliaryDeviceTableDiv_id");

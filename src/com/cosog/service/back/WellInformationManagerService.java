@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.cosog.model.AcquisitionUnitGroup;
 import com.cosog.model.MasterAndAuxiliaryDevice;
 import com.cosog.model.User;
-import com.cosog.model.WellInformation;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
@@ -56,7 +55,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		
 		String sql = " select  t.wellName as wellName,t.wellName as dm from  "+tableName+" t  ,tbl_org  g where 1=1 and  t.orgId=g.org_id  and g.org_id in ("
 				+ orgId + ")";
-		if(StringManagerUtils.isNotNull(deviceTypeStr) && deviceType>=100){
+		if(StringManagerUtils.isNotNull(deviceTypeStr) && deviceType>=100 && StringManagerUtils.isNotNull(deviceTypeStr) && deviceType<300){
 			sql += " and t.deviceType ="+deviceType;
 		}
 		if (StringManagerUtils.isNotNull(wellName)) {
@@ -159,9 +158,9 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public void saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
-		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData,orgId,deviceType,user);
-	}
+//	public void saveWellEditerGridData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
+//		getBaseDao().saveWellEditerGridData(wellHandsontableChangedData,orgId,deviceType,user);
+//	}
 	
 	public void savePumpDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
 		getBaseDao().savePumpDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
@@ -211,19 +210,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	public List<T> loadWellInformationID(Class<T> clazz) {
 		String queryString = "SELECT u.jlbh,u.jh FROM WellInformation u order by u.jlbh ";
 		return getBaseDao().find(queryString);
-	}
-
-	public boolean judgeWellExistsOrNot(String jh) {
-		boolean flag = false;
-		if (StringUtils.isNotBlank(jh)) {
-			String queryString = "SELECT u.jh FROM WellInformation u where u.jh='"
-					+ jh + "' order by u.jlbh ";
-			List<WellInformation> list = getBaseDao().find(queryString);
-			if (list.size() > 0) {
-				flag = true;
-			}
-		}
-		return flag;
 	}
 
 	public List<T> loadWellOrgInfo() {
@@ -295,118 +281,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 
 	}
 
-	public String queryWellInfoParams(Page pager,String orgid,String orgCode, String resCode,String type,String jc,String jhh,String jh,String jtype) throws Exception {
-		StringBuffer result_json = new StringBuffer();
-		StringBuffer sqlCuswhere = new StringBuffer();
-		String sql = "";
-		if (type.equalsIgnoreCase("res")) {
-			sql = " select  distinct p.yqcbh,r.res_name  from tbl_wellinformation p,sc_res r where p.yqcbh=r.res_code ";
-		} else if (type.equalsIgnoreCase("jh")) {
-			sql = " select  p.jh as jh ,p.jh as dm from tbl_wellinformation p,tbl_org org,t_wellorder t where 1=1 and p.jh=t.jh and p.dwbh=org.org_code and org.org_id in ("+orgid+") ";
-		}else if (type.equalsIgnoreCase("jhh")) {
-			sql = " select distinct p.jhh as jhh,p.jhh as dm,t.pxbh from  tbl_wellinformation p  ,tbl_org  g,t_018_wellringorder t where 1=1 and p.jhh=t.jhh and p.dwbh=g.org_code  and g.org_id in ("
-					+ orgid + ")";
-		}else if (type.equalsIgnoreCase("jc")) {
-			sql = " select distinct p.jc as jc,p.jc as dm,t.pxbh from  tbl_wellinformation p  ,tbl_org  g,t_017_wellsiteorder t where 1=1 and p.jc=t.jc and p.dwbh=g.org_code  and g.org_id in ("
-					+ orgid + ")";
-		}
-		if (jtype.equalsIgnoreCase("in")) {
-			sql += " and p.jlx like '2%' ";
-		} else {
-			sql += " and p.jlx like '1%' ";
-		}
-		if (StringUtils.isNotBlank(orgCode)) {
-			sql += " and p.dwbh like '%" + orgCode + "%'";
-		}
-		if (StringUtils.isNotBlank(resCode)) {
-			sql += " and p.yqcbh like '%" + resCode + "%'";
-		}
-		if (StringUtils.isNotBlank(jh)) {
-			sql += " and p.jh like '%" + jh + "%'";
-		}
-		if (StringUtils.isNotBlank(jhh)) {
-			sql += " and p.jhh like '%" + jhh + "%'";
-		}
-		if (StringUtils.isNotBlank(jc)) {
-			sql += " and p.jc like '%" + jc + "%'";
-		}
-		if (type.equalsIgnoreCase("res")) {
-			sql += " order by p.yqcbh ";
-		} else if (type.equalsIgnoreCase("jh")) {
-			sql += " order by t.pxbh, p.jh";
-		} else if (type.equalsIgnoreCase("jhh")) {
-			sql += " order by t.pxbh, p.jhh";
-		}else if (type.equalsIgnoreCase("jc")) {
-			sql += " order by t.pxbh, p.jc";
-		}
-		sqlCuswhere.append("select * from   ( select a.*,rownum as rn from (");
-		sqlCuswhere.append(""+sql);
-		int maxvalue=pager.getLimit()+pager.getStart();
-		sqlCuswhere.append(" ) a where  rownum <="+maxvalue+") b");
-		sqlCuswhere.append(" where rn >"+pager.getStart());
-		String finalsql=sqlCuswhere.toString();
-		try {
-			int totals=this.getTotalCountRows(sql);
-			List<?> list = this.findCallSql(finalsql);
-			result_json.append("{\"totals\":"+totals+",\"list\":[{boxkey:\"\",boxval:\"选择全部\"},");
-			String get_key = "";
-			String get_val = "";
-			if (null != list && list.size() > 0) {
-				for (Object o : list) {
-					Object[] obj = (Object[]) o;
-					get_key = obj[0] + "";
-					get_val = (String) obj[1];
-					result_json.append("{boxkey:\"" + get_key + "\",");
-					result_json.append("boxval:\"" + get_val + "\"},");
-				}
-				if (result_json.toString().endsWith(",")) {
-					result_json.deleteCharAt(result_json.length() - 1);
-				}
-			}
-			result_json.append("]}");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result_json.toString();
-	}
-	/**
-	 * <p>
-	 * 描述：加载所属井网的下拉菜单数据信息
-	 * </p>
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public String loadSsjwType(String type) throws Exception {
-		StringBuffer result_json = new StringBuffer();
-		String sql = "";
-		sql = " select t.itemvalue,t.itemname from tbl_code t where  itemcode='SSJW'";
-		try {
-			List<?> list = this.find(sql);
-			result_json.append("[");
-			String get_key = "";
-			String get_val = "";
-			if (null != list && list.size() > 0) {
-				for (Object o : list) {
-					Object[] obj = (Object[]) o;
-					get_key = obj[0] + "";
-					get_val = (String) obj[1];
-					result_json.append("{boxkey:\"" + get_key + "\",");
-					result_json.append("boxval:\"" + get_val + "\"},");
-				}
-				if (result_json.toString().endsWith(",")) {
-					result_json.deleteCharAt(result_json.length() - 1);
-				}
-			}
-			result_json.append("]");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result_json.toString();
-	}
-
 	/**
 	 * <p>
 	 * 描述：加载组织类型的下拉菜单数据信息
@@ -444,10 +318,10 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 
-	public List<T> fingWellByJhList() throws Exception {
-		String sql = " select  distinct (wellName) from tbl_wellinformation w  order by sortNum ";
-		return this.getBaseDao().find(sql);
-	}
+//	public List<T> fingWellByJhList() throws Exception {
+//		String sql = " select  distinct (wellName) from tbl_wellinformation w  order by sortNum ";
+//		return this.getBaseDao().find(sql);
+//	}
 
 	@SuppressWarnings("rawtypes")
 	public String getWellInformationProList(Map map,Page pager,int recordCount) {

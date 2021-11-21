@@ -3,16 +3,9 @@ package com.cosog.model.gridmodel;
 import java.util.List;
 
 public class AuxiliaryDeviceConfig {
-	private int orgId;
 	private int deviceType;
 	private String deviceName;
 	private List<Integer> auxiliaryDevice;
-	public int getOrgId() {
-		return orgId;
-	}
-	public void setOrgId(int orgId) {
-		this.orgId = orgId;
-	}
 	public int getDeviceType() {
 		return deviceType;
 	}

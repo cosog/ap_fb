@@ -22,7 +22,6 @@ import com.cosog.controller.base.BaseController;
 import com.cosog.model.MasterAndAuxiliaryDevice;
 import com.cosog.model.Org;
 import com.cosog.model.User;
-import com.cosog.model.WellInformation;
 import com.cosog.model.gridmodel.AuxiliaryDeviceConfig;
 import com.cosog.model.gridmodel.AuxiliaryDeviceHandsontableChangedData;
 import com.cosog.model.gridmodel.WellGridPanelData;
@@ -48,13 +47,11 @@ public class WellInformationManagerController extends BaseController {
 	private static final long serialVersionUID = 1L;
 	private static Log log = LogFactory.getLog(WellInformationManagerController.class);
 	@Autowired
-	private WellInformationManagerService<WellInformation> wellInformationManagerService;
+	private WellInformationManagerService<?> wellInformationManagerService;
 	@Autowired
 	private CommonDataService service;
-	private WellInformation wellInformation;
 	private String limit;
 	private String msg = "";
-	private List<WellInformation> list;
 	private String wellInformationName;
 	private String liftingType;
 	private String deviceType;
@@ -304,52 +301,6 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 
-	@RequestMapping("/judgeWellExistOrNot")
-	public String judgeWellExistOrNot() throws IOException {
-		String jh = ParamUtils.getParameter(request, "jh");
-		boolean flag = this.wellInformationManagerService.judgeWellExistsOrNot(jh);
-		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		String json = "";
-		if (flag) {
-			json = "{success:true,msg:'1'}";
-		} else {
-			json = "{success:true,msg:'0'}";
-		}
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-
-	@RequestMapping("/loadWellInformationID")
-	public String loadWellInformationID() throws Exception {
-		List<?> list = this.wellInformationManagerService.loadWellInformationID(WellInformation.class);
-		log.debug("loadWellInfoOrgs list==" + list.size());
-		WellInformation op = null;
-		List<WellInformation> olist = new ArrayList<WellInformation>();
-		for (int i = 0; i < list.size(); i++) {
-			// 使用对象数组
-			Object[] objArray = (Object[]) list.get(i);
-			// 最后使用forEach迭代obj对象
-			op = new WellInformation();
-			op.setJlbh((Integer) objArray[0]);
-			op.setJh(objArray[1].toString());
-			olist.add(op);
-		}
-		Gson g = new Gson();
-		String json = g.toJson(olist);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-
 	@RequestMapping("/loadWellOrgInfo")
 	public String loadWellOrgInfo() throws Exception {
 		List<?> list = this.wellInformationManagerService.loadWellOrgInfo();
@@ -377,57 +328,9 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 
-	@RequestMapping("/queryWellInfoParams")
-	public String queryWellInfoParams() throws Exception {
-		this.pager=new Page("pageForm",request);
-		HttpSession session=request.getSession();
-		User user = (User) session.getAttribute("userLogin");
-		String orgid=user.getUserorgids();
-		String orgCode = ParamUtils.getParameter(request, "orgCode");
-		String resCode = ParamUtils.getParameter(request, "resCode");
-		String type = ParamUtils.getParameter(request, "type");
-		String jh =ParamUtils.getParameter(request, "jh");
-		String jhh =ParamUtils.getParameter(request, "jhh");
-		String jc =ParamUtils.getParameter(request, "jc");
-		String jtype =ParamUtils.getParameter(request, "jtype");
-		String json = this.wellInformationManagerService.queryWellInfoParams(pager,orgid,orgCode, resCode, type,jc,jhh,jh,jtype);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-
 	@RequestMapping("/showWellTypeTree")
 	public String showWellTypeTree() throws Exception {
 		String json = this.wellInformationManagerService.showWellTypeTree();
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-
-	/**
-	 * <p>
-	 * 描述：加载所属井网的下拉菜单数据信息A
-	 * </p>
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/loadSsjwType")
-	public String loadSsjwType() throws Exception {
-		String type = ParamUtils.getParameter(request, "type");
-		String json = this.wellInformationManagerService.loadSsjwType(type);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -453,7 +356,6 @@ public class WellInformationManagerController extends BaseController {
 	public String saveWellHandsontableData() throws Exception {
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
-		String orgids=user.getUserorgids();
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String deviceAuxiliaryData = ParamUtils.getParameter(request, "deviceAuxiliaryData").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String orgId = ParamUtils.getParameter(request, "orgId");
@@ -462,9 +364,6 @@ public class WellInformationManagerController extends BaseController {
 		String deviceTableName="tbl_pumpdevice";
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
-		
-		type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
-		AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
 		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
 			deviceTableName="tbl_pumpdevice";
 			this.wellInformationManagerService.savePumpDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
@@ -476,9 +375,12 @@ public class WellInformationManagerController extends BaseController {
 		}
 		
 		
+		//处理辅助设备
+		type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
+		AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
 		if(auxiliaryDeviceConfig!=null){
 			String sql="select t.id from "+deviceTableName+" t "
-					+ " where t.orgid ="+auxiliaryDeviceConfig.getOrgId()+" and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
+					+ " where t.orgid in("+orgId+") and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
 			List list = this.service.findCallSql(sql);
 			if(list.size()>0&&StringManagerUtils.isInteger(list.get(0)+"")){
 				int masterId=StringManagerUtils.stringToInteger(list.get(0)+"");
@@ -493,7 +395,7 @@ public class WellInformationManagerController extends BaseController {
 				
 			}
 		}
-		
+		EquipmentDriverServerTask.LoadDeviceCommStatus();
 		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -558,6 +460,7 @@ public class WellInformationManagerController extends BaseController {
 			
 			
 		}
+		EquipmentDriverServerTask.LoadDeviceCommStatus();
 		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -619,13 +522,7 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 
-	public WellInformation getWellInformation() {
-		return wellInformation;
-	}
-
-	public void setWellInformation(WellInformation wellInformation) {
-		this.wellInformation = wellInformation;
-	}
+	
 
 	public String getLimit() {
 		return limit;
@@ -641,14 +538,6 @@ public class WellInformationManagerController extends BaseController {
 
 	public void setMsg(String msg) {
 		this.msg = msg;
-	}
-
-	public List<WellInformation> getList() {
-		return list;
-	}
-
-	public void setList(List<WellInformation> list) {
-		this.list = list;
 	}
 
 	public String getWellInformationName() {
