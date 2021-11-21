@@ -39,17 +39,12 @@ import oracle.sql.CLOB;
 @SuppressWarnings("deprecation")
 @Service("calculateDataService")
 public class CalculateDataService<T> extends BaseService<T> {
-	public String getDefaultWellname(String orgId){
-		String sql="select v.* from "
-				+ " (select t007.jh from tbl_wellinformation t007,tbl_org org where t007.dwbh=org.org_code and org.org_id in ("+orgId+") order by t007.jh) v "
-				+ " where rownum<=1";
-		List<?> list = this.findCallSql(sql);
-		
-		return list.get(0).toString();
-	}
-	
 	public void saveAlarmInfo(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException{
-		getBaseDao().saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
+		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+			getBaseDao().savePumpAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+			getBaseDao().savePipelineAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);
+		}
 	}
 	
 	public void saveAndSendAlarmInfo(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException{
@@ -57,7 +52,7 @@ public class CalculateDataService<T> extends BaseService<T> {
 		boolean isSendMail=false;
 		StringBuffer SMSContent = new StringBuffer();
 		StringBuffer EMailContent = new StringBuffer();
-		SMSContent.append(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"于"+acqTime+"发生报警:");
+		SMSContent.append(((StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200)?"泵":"管")+"设备"+wellName+"于"+acqTime+"发生报警:");
 		Map<String, String> alarmInfoMap=AlarmInfoMap.getMapObject();
 		List<AcquisitionItemInfo> saveAcquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
 		for(int i=0;i<acquisitionItemInfoList.size();i++){
@@ -113,7 +108,13 @@ public class CalculateDataService<T> extends BaseService<T> {
 			}
 		}
 		if(saveAcquisitionItemInfoList.size()>0){
-			getBaseDao().saveAlarmInfo(wellName,deviceType,acqTime,saveAcquisitionItemInfoList);
+			if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+				getBaseDao().savePumpAlarmInfo(wellName,deviceType,acqTime,saveAcquisitionItemInfoList);
+			}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+				getBaseDao().savePipelineAlarmInfo(wellName,deviceType,acqTime,saveAcquisitionItemInfoList);
+			}
+			
+			
 		}
 		if(isSendSMS || isSendMail){
 			sendAlarmSMS(wellName,deviceType,isSendSMS,isSendMail,SMSContent.toString(),EMailContent.toString());
@@ -122,9 +123,16 @@ public class CalculateDataService<T> extends BaseService<T> {
 	
 	public void sendAlarmSMS(String wellName,String deviceType,boolean isSendSMS,boolean isSendMail,String SMSContent,String EMailContent) throws SQLException{
 		String SMSUrl=Config.getInstance().configFile.getDriverConfig().getWriteSMS();
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)>=100 && StringManagerUtils.stringToInteger(deviceType)<200){//如果是泵设备
+			deviceTableName="tbl_pumpdevice";
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){//否则管设备
+			deviceTableName="tbl_pipelinedevice";
+		}
+		
 		String userSql="select u.user_id,u.user_phone,r.receivesms,u.user_in_email,r.receivemail "
 				+ " from tbl_user u,tbl_role r "
-				+ " where u.user_type=r.role_id and (u.user_orgid in (select org_id from tbl_org t start with org_id=( select t2.orgid from tbl_wellinformation t2 where t2.wellname='"+wellName+"' and t2.devicetype="+deviceType+" ) connect by prior  org_parent=org_id) or u.user_orgid=0)";
+				+ " where u.user_type=r.role_id and (u.user_orgid in (select org_id from tbl_org t start with org_id=( select t2.orgid from "+deviceTableName+" t2 where t2.wellname='"+wellName+"' and t2.devicetype="+deviceType+" ) connect by prior  org_parent=org_id) or u.user_orgid=0)";
 		List<?> list = this.findCallSql(userSql);
 		List<String> receivingEMailAccount=new ArrayList<String>();
 		for(int i=0;i<list.size();i++){

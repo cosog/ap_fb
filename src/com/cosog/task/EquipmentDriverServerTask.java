@@ -52,7 +52,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -61,74 +61,76 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 		
-		String path="";
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		path=stringManagerUtils.getFilePath("test1.json","test/");
-		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test2.json","test/");
-		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test3.json","test/");
-		String onLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test4.json","test/");
-		String offLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
-		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
-		
-		int i=0;
-		while(true){
-			if(i%2==0){
-				StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
-			}else{
-				StringManagerUtils.sendPostMethod(onlineUrl, offLineData,"utf-8");
-			}
-			i++;
-			
-//			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
-			
-			Thread.sleep(1000*1);
-		}
+//		String path="";
+//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+//		path=stringManagerUtils.getFilePath("test1.json","test/");
+//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test2.json","test/");
+//		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test3.json","test/");
+//		String onLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test4.json","test/");
+//		String offLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+//		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
+//		
+//		int i=0;
+//		while(true){
+//			if(i%2==0){
+//				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
+//			}else{
+//				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
+//			}
+//			i++;
+//			
+////			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+//			
+//			Thread.sleep(1000*1);
+//		}
 		
 		
 
-//		loadProtocolConfig();
-//		initServerConfig();
-//		initProtocolConfig("","");
-//		initInstanceConfig(null,"");
-//		initSMSInstanceConfig(null,"");
-//		initDriverAcquisitionInfoConfig(null,"");
-//		initSMSDevice(null,"");
-//		do{
-//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-//			type = new TypeToken<DriverProbeResponse>() {}.getType();
-//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-//			String Ver="";
-//			if(driverProbeResponse!=null){
-//				if(!driverProbeResponse.getHttpServerInitStatus()){
-//					initServerConfig();
-//				}
-//				if(!driverProbeResponse.getProtocolInitStatus()){
-//					initProtocolConfig("","");
-//				}
-//				if(!driverProbeResponse.getInstanceInitStatus()){
-//					initInstanceConfig(null,"");
-//					initSMSInstanceConfig(null,"");
-//				}
-//				if(!driverProbeResponse.getSMSInitStatus()){
-//					initSMSDevice(null,"");
-//				}
-//				if(!driverProbeResponse.getIDInitStatus()){
-//					initDriverAcquisitionInfoConfig(null,"");
-//				}
-//				Ver=driverProbeResponse.getVer();
-//			}else{
-//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-//			}
-//			Thread.sleep(1000*1);
-//		}while(true);
+		loadProtocolConfig();
+		initServerConfig();
+		initProtocolConfig("","");
+		initInstanceConfig(null,"");
+		initSMSInstanceConfig(null,"");
+		initPumpDriverAcquisitionInfoConfig(null,"");
+		initPipelineDriverAcquisitionInfoConfig(null,"");
+		initSMSDevice(null,"");
+		do{
+			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+			type = new TypeToken<DriverProbeResponse>() {}.getType();
+			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+			String Ver="";
+			if(driverProbeResponse!=null){
+				if(!driverProbeResponse.getHttpServerInitStatus()){
+					initServerConfig();
+				}
+				if(!driverProbeResponse.getProtocolInitStatus()){
+					initProtocolConfig("","");
+				}
+				if(!driverProbeResponse.getInstanceInitStatus()){
+					initInstanceConfig(null,"");
+					initSMSInstanceConfig(null,"");
+				}
+				if(!driverProbeResponse.getSMSInitStatus()){
+					initSMSDevice(null,"");
+				}
+				if(!driverProbeResponse.getIDInitStatus()){
+					initPumpDriverAcquisitionInfoConfig(null,"");
+					initPipelineDriverAcquisitionInfoConfig(null,"");
+				}
+				Ver=driverProbeResponse.getVer();
+			}else{
+				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+			}
+			Thread.sleep(1000*1);
+		}while(true);
 	}
 	
 	public static class DriverProbeResponse{
@@ -784,7 +786,7 @@ public class EquipmentDriverServerTask {
 		return result;
 	}
 	
-	public static int initDriverAcquisitionInfoConfig(List<String> wellList,String method){
+	public static int initPumpDriverAcquisitionInfoConfig(List<String> wellList,String method){
 		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
 		Gson gson = new Gson();
 		int result=0;
@@ -793,8 +795,8 @@ public class EquipmentDriverServerTask {
 			method="update";
 		}
 		String sql="select t.wellname,t.signinid,t.slave,t2.name "
-				+ " from tbl_wellinformation t,tbl_protocolinstance t2 "
-				+ " where t.deviceType<>2 and t.instancecode=t2.code ";
+				+ " from tbl_pumpdevice t,tbl_protocolinstance t2 "
+				+ " where t.instancecode=t2.code ";
 		if("update".equalsIgnoreCase(method)){
 			sql+= " and t.signinid is not null and t.slave is not null";
 		}	
@@ -815,7 +817,50 @@ public class EquipmentDriverServerTask {
 				initId.setID(rs.getString(2));
 				initId.setSlave((byte) rs.getInt(3));
 				initId.setInstanceName(rs.getString(4));
-				System.out.println("ID初始化："+gson.toJson(initId));
+				System.out.println("泵设备ID初始化："+gson.toJson(initId));
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+			}
+		} catch (SQLException e) {
+			System.out.println("ID初始化sql："+sql);
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return result;
+	}
+	
+	public static int initPipelineDriverAcquisitionInfoConfig(List<String> wellList,String method){
+		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
+		Gson gson = new Gson();
+		int result=0;
+		String wellName=StringManagerUtils.joinStringArr2(wellList, ",");
+		if(!StringManagerUtils.isNotNull(method)){
+			method="update";
+		}
+		String sql="select t.wellname,t.signinid,t.slave,t2.name "
+				+ " from tbl_pipelinedevice t,tbl_protocolinstance t2 "
+				+ " where t.instancecode=t2.code ";
+		if("update".equalsIgnoreCase(method)){
+			sql+= " and t.signinid is not null and t.slave is not null";
+		}	
+		if(StringManagerUtils.isNotNull(wellName)){
+			sql+=" and t.wellname in("+wellName+")";
+		}
+		
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null ){
+        	return -1;
+        }
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				InitId initId=new InitId();
+				initId.setMethod(method);
+				initId.setID(rs.getString(2));
+				initId.setSlave((byte) rs.getInt(3));
+				initId.setInstanceName(rs.getString(4));
+				System.out.println("管设备ID初始化："+gson.toJson(initId));
 				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
 			}
 		} catch (SQLException e) {
@@ -828,20 +873,32 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initDriverAcquisitionInfoConfigByProtocolInstance(String instanceCode,String method){
-		String sql="select t.wellname from tbl_wellinformation t where t.deviceType<>2 and t.instancecode='"+instanceCode+"'";
+		
 		List<String> wellList=new ArrayList<String>();
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
         }
 		try {
+			String sql="select t.wellname from tbl_pumpdevice t where t.instancecode='"+instanceCode+"'";
 			pstmt = conn.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()){
 				wellList.add(rs.getString(1));
 			}
 			if(wellList.size()>0){
-				initDriverAcquisitionInfoConfig(wellList,method);
+				initPumpDriverAcquisitionInfoConfig(wellList,method);
+			}
+			
+			wellList=new ArrayList<String>();
+			sql="select t.wellname from tbl_pipelinedevice t where t.instancecode='"+instanceCode+"'";
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				wellList.add(rs.getString(1));
+			}
+			if(wellList.size()>0){
+				initPipelineDriverAcquisitionInfoConfig(wellList,method);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -852,20 +909,32 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initDriverAcquisitionInfoConfigByProtocolInstanceId(String instanceId,String method){
-		String sql="select t.wellname from tbl_wellinformation t,tbl_protocolinstance t2 where t.deviceType<>2 and t.instancecode=t2.code and t2.id="+instanceId;
+		
 		List<String> wellList=new ArrayList<String>();
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
         }
 		try {
+			String sql="select t.wellname from tbl_pumpdevice t,tbl_protocolinstance t2 where t.deviceType<>2 and t.instancecode=t2.code and t2.id="+instanceId;
 			pstmt = conn.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()){
 				wellList.add(rs.getString(1));
 			}
 			if(wellList.size()>0){
-				initDriverAcquisitionInfoConfig(wellList,method);
+				initPumpDriverAcquisitionInfoConfig(wellList,method);
+			}
+			
+			wellList=new ArrayList<String>();
+			sql="select t.wellname from tbl_pipelinedevice t,tbl_protocolinstance t2 where t.deviceType<>2 and t.instancecode=t2.code and t2.id="+instanceId;
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				wellList.add(rs.getString(1));
+			}
+			if(wellList.size()>0){
+				initPipelineDriverAcquisitionInfoConfig(wellList,method);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -884,8 +953,8 @@ public class EquipmentDriverServerTask {
 			method="update";
 		}
 		String sql="select t.wellname,t.signinid,t2.name "
-				+ " from tbl_wellinformation t,tbl_protocolsmsinstance t2 "
-				+ " where t.deviceType=2 and t.instancecode=t2.code ";
+				+ " from tbl_smsdevice t,tbl_protocolsmsinstance t2 "
+				+ " where t.instancecode=t2.code ";
 		if("update".equalsIgnoreCase(method)){
 			sql+= " and t.signinid is not null";
 		}	
@@ -918,7 +987,7 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initSMSDeviceByInstanceCode(String instanceCode,String method){
-		String sql="select t.wellname from tbl_wellinformation t where t.deviceType=2 and t.instancecode='"+instanceCode+"'";
+		String sql="select t.wellname from tbl_smsdevice t where t.instancecode='"+instanceCode+"'";
 		List<String> wellList=new ArrayList<String>();
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
@@ -931,7 +1000,7 @@ public class EquipmentDriverServerTask {
 				wellList.add(rs.getString(1));
 			}
 			if(wellList.size()>0){
-				initDriverAcquisitionInfoConfig(wellList,method);
+				initSMSDevice(wellList,method);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -942,7 +1011,7 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initSMSDeviceByInstanceId(String instanceId,String method){
-		String sql="select t.wellname from tbl_wellinformation t,tbl_protocolsmsinstance t2 where t.instancecode=t2.code and t2.id="+instanceId;
+		String sql="select t.wellname from tbl_smsdevice t,tbl_protocolsmsinstance t2 where t.instancecode=t2.code and t2.id="+instanceId;
 		List<String> wellList=new ArrayList<String>();
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
@@ -955,7 +1024,7 @@ public class EquipmentDriverServerTask {
 				wellList.add(rs.getString(1));
 			}
 			if(wellList.size()>0){
-				initDriverAcquisitionInfoConfig(wellList,method);
+				initSMSDevice(wellList,method);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1104,19 +1173,18 @@ public class EquipmentDriverServerTask {
 	public static void LoadDeviceCommStatus() throws IOException, SQLException{
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
-		if(commStatusList==null){
-			commStatusList=new ArrayList<CommStatus>();
+		if(commStatusList!=null){
+			dataModelMap.remove("DeviceCommStatus");
 		}
-		String sql="select t.wellname,t.devicetype,t.orgid,decode(t.devicetype,0,t2.commstatus,1,t3.commstatus) as commstatus "
-				+ " from tbl_wellinformation t "
-				+ " left outer join tbl_pumpacqdata_latest t2 on t2.wellid=t.id "
-				+ " left outer join tbl_pipelineacqdata_latest t3 on t3.wellid=t.id "
-				+ " where t.devicetype <>2 "
-				+ " order by t.devicetype,t.sortnum";
+		commStatusList=new ArrayList<CommStatus>();
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
 			return ;
 		}
+		String sql="select t.wellname,t.devicetype,t.orgid,t2.commstatus "
+				+ " from tbl_pumpdevice t "
+				+ " left outer join tbl_pumpacqdata_latest t2 on t2.wellid=t.id "
+				+ " order by t.sortnum";
 		pstmt = conn.prepareStatement(sql); 
 		rs=pstmt.executeQuery();
 		while(rs.next()){
@@ -1127,9 +1195,25 @@ public class EquipmentDriverServerTask {
 			commStatus.setCommStatus(rs.getInt(4));
 			commStatusList.add(commStatus);
 		}
-		if(!dataModelMap.containsKey("DeviceCommStatus")){
-			dataModelMap.put("DeviceCommStatus", commStatusList);
+		
+		sql="select t.wellname,t.devicetype,t.orgid,t2.commstatus "
+				+ " from tbl_pipelinedevice t "
+				+ " left outer join tbl_pipelineacqdata_latest t2 on t2.wellid=t.id "
+				+ " order by t.sortnum";
+		pstmt = conn.prepareStatement(sql); 
+		rs=pstmt.executeQuery();
+		while(rs.next()){
+			CommStatus commStatus=new CommStatus();
+			commStatus.setDeviceName(rs.getString(1));
+			commStatus.setDeviceType(rs.getInt(2));
+			commStatus.setOrgId(rs.getInt(3));
+			commStatus.setCommStatus(rs.getInt(4));
+			commStatusList.add(commStatus);
 		}
+		dataModelMap.put("DeviceCommStatus", commStatusList);
+//		if(!dataModelMap.containsKey("DeviceCommStatus")){
+//			dataModelMap.put("DeviceCommStatus", commStatusList);
+//		}
 		OracleJdbcUtis.closeDBConnection(conn, stmt, pstmt, rs);
 	}
 	

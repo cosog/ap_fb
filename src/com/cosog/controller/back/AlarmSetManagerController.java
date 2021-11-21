@@ -118,73 +118,6 @@ public class AlarmSetManagerController extends BaseController {
 		return null;
 	}
 	
-	/**<p>描述：显示平衡状态报警信息列表</p>
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/getBalanceAlarmStatusData")
-	public String getBalanceAlarmStatusData() throws Exception {
-		String json = "";
-		this.pager = new Page("pagerForm", request);
-		json = this.alarmSetManagerService.getBalanceAlarmStatusData(pager);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-//		log.warn("doAlarmsSetShow json*********=" + json);
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	/**<p>描述：统计配置</p>
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/doStatItemsSetShow")
-	public String doStatItemsSetShow() throws IOException {
-		String json = "";
-		this.pager = new Page("pagerForm", request);
-		String type = ParamUtils.getParameter(request, "type");
-		int recordCount =StringManagerUtils.stringToInteger(ParamUtils.getParameter(request, "recordCount"));
-		json = this.alarmSetManagerService.doStatItemsSetShow(pager,type,recordCount);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	@RequestMapping("/doStatItemsSetSave")
-	public String doStatItemsSetSave() throws Exception {
-
-		HttpSession session=request.getSession();
-		User user = (User) session.getAttribute("userLogin");
-		String orgid=user.getUserorgids();
-		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "");
-		String type = ParamUtils.getParameter(request, "type");
-		this.alarmSetManagerService.doStatItemsSetSave(type,data);
-		String json ="{success:true}";
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-//		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		
-		return null;
-	}
-	
 	/**<p>描述：显示报警设置下拉菜单数据信息</p>
 	 * @return
 	 * @throws Exception
@@ -200,40 +133,6 @@ public class AlarmSetManagerController extends BaseController {
 		PrintWriter pw = response.getWriter();
 		pw.print(json);
 //		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	/**<p>描述：显示报警设置信息列表</p>
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/getAlarmSetSingleWellList")
-	public String getAlarmSetSingleWellList() throws Exception {
-		String json = "";
-		this.pager = new Page("pagerForm", request);
-		orgId=ParamUtils.getParameter(request, "orgId");
-		User user=null;
-		if (!StringManagerUtils.isNotNull(orgId)) {
-			HttpSession session=request.getSession();
-			user = (User) session.getAttribute("userLogin");
-			if (user != null) {
-				orgId = "" + user.getUserorgids();
-			}
-		}
-		if(!StringManagerUtils.isNotNull(jh)){
-			jh = ParamUtils.getParameter(request, "jh");
-		}
-		json = alarmSetManagerService.getAlarmSetSingleWellList(jh,orgId,pager);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-//		log.warn("doAlarmsSetShow json*********=" + json);
-		pw.print(json);
 		pw.flush();
 		pw.close();
 		return null;

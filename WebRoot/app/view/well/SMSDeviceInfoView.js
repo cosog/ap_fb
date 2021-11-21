@@ -335,8 +335,6 @@ var SMSDeviceInfoHandsontableHelper = {
 	                afterChange: function (changes, source) {
 	                    //params 参数 1.column num , 2,id, 3,oldvalue , 4.newvalue
 	    	        	if (changes != null) {
-	    	        		var IframeViewSelection  = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-
 	    	        		for(var i=0;i<changes.length;i++){
 	                    		var params = [];
 	                    		var index = changes[i][0]; //行号码
@@ -400,24 +398,72 @@ var SMSDeviceInfoHandsontableHelper = {
 	        }
 	        //保存数据
 	        smsDeviceInfoHandsontableHelper.saveData = function () {
-	        	var IframeViewSelection  = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+	        	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
 	        	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
         		//插入的数据的获取
 	        	smsDeviceInfoHandsontableHelper.insertExpressCount();
 	            if (JSON.stringify(smsDeviceInfoHandsontableHelper.AllData) != "{}" && smsDeviceInfoHandsontableHelper.validresult) {
+	            	var orgArr=leftOrg_Name.split(",");
+	            	var saveData={};
+	            	saveData.updatelist=[];
+	            	saveData.insertlist=[];
+	            	saveData.delidslist=smsDeviceInfoHandsontableHelper.delidslist;
+	            	
+	            	var invalidData1=[];
+	            	var invalidData2=[];
+	            	var invalidDataInfo="";
+	            	if(smsDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && smsDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
+	                	for(var i=0;i<smsDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
+	                		var orgName=smsDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
+	                		var diveceName=smsDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
+	                		if(isNotVal(diveceName)){
+	                			var orgCount=isExist(orgArr,orgName);
+	                    		if(orgCount>1){//所选组织下具有多个同名组织
+	                    			invalidData1.push(smsDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+	                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+	                    		}else if(orgCount===1){//所选组织下无重复组织
+	                    			saveData.updatelist.push(smsDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+	                    		}else{//不具备所填写组织权限
+	                    			invalidData2.push(smsDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+	                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+	                    		}
+	                		}
+	                	}
+	                }
+	            	if(smsDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && smsDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
+	                	for(var i=0;i<smsDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
+	                		var orgName=smsDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
+	                		var diveceName=smsDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
+	                		if(isNotVal(diveceName)){
+	                			var orgCount=isExist(orgArr,orgName);
+	                    		if(orgCount>1){//所选组织下具有多个同名组织
+	                    			invalidData1.push(smsDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+	                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+	                    		}else if(orgCount===1){//所选组织下无重复组织
+	                    			saveData.insertlist.push(smsDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+	                    		}else{//不具备所填写组织权限
+	                    			invalidData2.push(smsDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+	                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+	                    		}
+	                		}
+	                	}
+	                }
 	            	Ext.Ajax.request({
 	            		method:'POST',
 	            		url:context + '/wellInformationManagerController/saveWellHandsontableData',
 	            		success:function(response) {
 	            			rdata=Ext.JSON.decode(response.responseText);
 	            			if (rdata.success) {
-	                        	Ext.MessageBox.alert("信息","保存成功");
+	            				if(invalidData1.length>0 || invalidData2.length>0){
+	                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
+	                        	}else{
+	                        		Ext.MessageBox.alert("信息", "保存成功");
+	                        	}
 	                            //保存以后重置全局容器
 	                            smsDeviceInfoHandsontableHelper.clearContainer();
 	                            CreateAndLoadSMSDeviceInfoTable();
 	                        } else {
 	                        	Ext.MessageBox.alert("信息","数据保存失败");
-
 	                        }
 	            		},
 	            		failure:function(){
@@ -425,8 +471,8 @@ var SMSDeviceInfoHandsontableHelper = {
 	                        smsDeviceInfoHandsontableHelper.clearContainer();
 	            		},
 	            		params: {
-	                    	data: JSON.stringify(smsDeviceInfoHandsontableHelper.AllData),
-	                    	orgId:leftOrg_Id,
+	            			data: JSON.stringify(saveData),
+	                        orgId: leftOrg_Id,
 	                    	deviceType:300
 	                    }
 	            	}); 

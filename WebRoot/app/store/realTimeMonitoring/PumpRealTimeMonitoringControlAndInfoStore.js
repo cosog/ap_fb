@@ -157,7 +157,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		var total=deviceAuxiliaryInfoGridPanel.getStore().getCount();
     		if(total>0){
 //    			deviceAuxiliaryInfoGridPanel.getSelectionModel().select(0, true);
-    			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0);
+    			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0,0);
     		}
     		
     		

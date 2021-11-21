@@ -2,7 +2,6 @@ eclipse.preferences.version=1
 encoding//WebRoot/protocolConfig/IntelligentPumpingUnitDriverConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/KafkaDriverConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/ModbusProtocolConfig.json=UTF-8
-encoding//WebRoot/protocolConfig/ModbusProtocolConfig2.json=UTF-8
 encoding//WebRoot/protocolConfig/ModbusProtocolInstanceConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/MqttDriverConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/TcpServerConfig.json=UTF-8
