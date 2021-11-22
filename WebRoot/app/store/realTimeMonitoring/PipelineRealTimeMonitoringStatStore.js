@@ -65,16 +65,20 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore', {
                     }],
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		
+                    		if(selected.length>0){
+                    			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setValue('');
+                    			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setRawValue('');
+                        		var PipelineRealTimeMonitoringListGridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+                    			if (isNotVal(PipelineRealTimeMonitoringListGridPanel)) {
+                    				PipelineRealTimeMonitoringListGridPanel.getSelectionModel().deselectAll(true);
+                    				PipelineRealTimeMonitoringListGridPanel.getStore().load();
+                    			}else{
+                    				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+                    			}
+                    		}
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		var PipelineRealTimeMonitoringListGridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-                			if (isNotVal(PipelineRealTimeMonitoringListGridPanel)) {
-                				PipelineRealTimeMonitoringListGridPanel.getSelectionModel().deselectAll(true);
-                				PipelineRealTimeMonitoringListGridPanel.getStore().load();
-                			}else{
-                				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
-                			}
+                    		
                     	}
                     }
                 });

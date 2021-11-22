@@ -335,7 +335,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		var tabPanel = Ext.getCmp("HistoryQueryTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
 		if(activeId=="PumpHistoryQueryInfoPanel_Id"){
-			var gridPanel = Ext.getCmp("PumpHistoryQueryListGridPanel_Id");
+			var gridPanel = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id");
 			if (isNotVal(gridPanel)) {
 				gridPanel.getStore().load();
 			}else{

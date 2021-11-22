@@ -31,6 +31,71 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
+	public String getHistoryQueryDeviceList(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String deviceTableName="tbl_pumpdevice";
+		String tableName="tbl_pumpacqdata_latest";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="tbl_pipelineacqdata_latest";
+			deviceTableName="tbl_pipelinedevice";
+		}
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
+				+ "{ \"header\":\"井名\",\"dataIndex\":\"wellName\",flex:6,children:[] },"
+				+ "{ \"header\":\"通信状态\",\"dataIndex\":\"commStatusName\",flex:4,children:[] },"
+				+ "{ \"header\":\"采集时间\",\"dataIndex\":\"acqTime\",flex:9,children:[] }"
+				+ "]";
+		
+		String sql="select t2.id,t.wellname,t2.commstatus,"
+				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
+				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		
+		
+		sql+= " from "+deviceTableName+" t "
+				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " where  t.orgid in ("+orgId+") ";
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		sql+=" order by t.sortnum,t.wellname";
+		
+		int maxvalue=pager.getLimit()+pager.getStart();
+		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		
+		int totals=this.getTotalCountRows(sql);
+		List<?> list = this.findCallSql(finalSql);
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"start_date\":\""+pager.getStart_date()+"\",");
+		result_json.append("\"end_date\":\""+pager.getEnd_date()+"\",");
+		result_json.append("\"totalCount\":"+totals+",");
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"wellName\":\""+obj[1]+"\",");
+			result_json.append("\"commStatus\":"+obj[2]+",");
+			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
+			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
+			result_json.append("\"acqTime\":\""+obj[5]+"\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
 	public String getDeviceHistoryData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -39,22 +104,15 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
-		String tableName="tbl_pumpacqdata_latest";
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
-		String table="";
 		String ddicName="pumpHistoryQuery";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
-			tableName="tbl_pipelineacqdata_latest";
 			hisTableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineHistoryQuery";
-		}
-		table=tableName;
-		if(StringManagerUtils.isNotNull(deviceName)){
-			table=hisTableName;
 		}
 		
 		
@@ -78,18 +136,13 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		
 		
 		sql+= " from "+deviceTableName+" t "
-				+ " left outer join "+table+" t2 on t2.wellid=t.id"
+				+ " left outer join "+hisTableName+" t2 on t2.wellid=t.id"
 				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
-				+ " where  t.orgid in ("+orgId+") ";
-		if(StringManagerUtils.isNotNull(deviceName)){
-			sql+=" and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'";
-		}
-		sql+=" order by t.sortnum,t.wellname";
-		if(StringManagerUtils.isNotNull(deviceName)){
-			sql+=",t2.acqtime desc";
-		}
+				+ " where  t.orgid in ("+orgId+") "
+				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'"
+				+ "  order by t2.acqtime desc";
 		
 		int maxvalue=pager.getLimit()+pager.getStart();
 		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
@@ -109,6 +162,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			result_json.append("\"details\":\"\",");
 			for(int j=0;j<ddicColumnsList.size();j++){
 				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
 			}
@@ -196,7 +250,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getDeviceHistoryDetailsData(String deviceName,String deviceType,String recordId,String isHis,String userAccount) throws IOException, SQLException{
+	public String getDeviceHistoryDetailsData(String deviceName,String deviceType,String recordId,String userAccount) throws IOException, SQLException{
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
@@ -206,20 +260,12 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
-		String tableName="tbl_pumpacqdata_latest";
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
-		String table="";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
-			tableName="tbl_pipelineacqdata_latest";
 			hisTableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 		}
-		table=tableName;
-		if(StringManagerUtils.stringToInteger(isHis)!=0){
-			table=hisTableName;
-		}
-		
 		String itemsSql="select t.wellname,t3.protocol, "
 				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
 				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort, "
@@ -294,13 +340,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 					sql+=",t2.ADDR"+protocolItems.get(j).getAddr();
 				}
 				sql+= " from "+deviceTableName+" t "
-						+ " left outer join "+table+" t2 on t2.wellid=t.id"
-						+ " where 1=1 ";
-				if(StringManagerUtils.stringToInteger(isHis)==0){
-					sql+=" and t.wellName='"+deviceName+"' ";
-				}else{
-					sql+=" and t2.id="+recordId;
-				}
+						+ " left outer join "+hisTableName+" t2 on t2.wellid=t.id"
+						+ " where 1=1 and t2.id="+recordId;
 				List<?> list = this.findCallSql(sql);
 				if(list.size()>0){
 					int row=1;

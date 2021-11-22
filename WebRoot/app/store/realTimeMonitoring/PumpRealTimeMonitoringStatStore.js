@@ -67,6 +67,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore', {
                     listeners: {
                     	selectionchange: function (view, selected, o) {
                     		if(selected.length>0){
+                    			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setValue('');
+                    			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setRawValue('');
                     			var PumpRealTimeMonitoringListGridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
                     			if (isNotVal(PumpRealTimeMonitoringListGridPanel)) {
                     				PumpRealTimeMonitoringListGridPanel.getSelectionModel().deselectAll(true);

@@ -593,15 +593,38 @@ function ShowRealTimeMonitoringStatPieOrColChat(title,divid, name, data,colors) 
 				},
 				events: {
 					click: function(e) {
-//						if(!e.point.selected){//如果没被选中
-//							Ext.getCmp("FSDiagramAnalysisSingleDetailsSelectedStatValue_Id").setValue(e.point.name);
-//						}else{
-//							Ext.getCmp("FSDiagramAnalysisSingleDetailsSelectedStatValue_Id").setValue('');
-//						}
-//						Ext.getCmp("FSDiagramAnalysisSingleDetailsWellCom_Id").setValue("");
-//	            		Ext.getCmp("FSDiagramAnalysisSingleDetailsWellCom_Id").setRawValue("");
-//						Ext.getCmp('FSDiagramAnalysisSingleDetails_Id').getSelectionModel().clearSelections();
-//                        Ext.getCmp('FSDiagramAnalysisSingleDetails_Id').getStore().loadPage(1);
+						var commStatus='all';
+						if(!e.point.selected){//如果没被选中,则本次是选中
+							if(e.point.name=='在线' || e.point.name=='上线'){
+								commStatus='online';
+							}else{
+								commStatus='offline';
+							}
+						}else{//取消选中
+							commStatus='all';
+						}
+						
+						var gridPanel_Id="PumpRealTimeMonitoringStatGridPanel_Id";
+						var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+						var activeId = tabPanel.getActiveTab().id;
+						if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+							gridPanel_Id="PumpRealTimeMonitoringStatGridPanel_Id";
+						}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+							gridPanel_Id="PipelineRealTimeMonitoringStatGridPanel_Id";
+						}
+						
+						var gridPanel = Ext.getCmp(gridPanel_Id);
+						if(isNotVal(gridPanel)){
+							var store = gridPanel.getStore();
+							for(var i=0;i<store.getCount();i++){
+								var record=store.getAt(i);
+								if(record.data.itemCode==commStatus){
+									gridPanel.getSelectionModel().deselectAll(true);
+					            	gridPanel.getSelectionModel().select(i, true);
+									break;
+								}
+							}
+						}
 					}
 				},
 				showInLegend : true
