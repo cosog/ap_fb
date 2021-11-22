@@ -44,6 +44,33 @@ public class HistoryQueryController extends BaseController  {
 	private String endDate;
 	private int totals;
 	
+	@RequestMapping("/getHistoryQueryDeviceList")
+	public String getHistoryQueryDeviceList() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = historyQueryService.getHistoryQueryDeviceList(orgId,deviceName,deviceType,pager);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/getDeviceHistoryData")
 	public String getDeviceHistoryData() throws Exception {
 		String json = "";
@@ -160,13 +187,12 @@ public class HistoryQueryController extends BaseController  {
 		HttpSession session=request.getSession();
 		orgId = ParamUtils.getParameter(request, "orgId");
 		String recordId = ParamUtils.getParameter(request, "recordId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
-		String isHis = ParamUtils.getParameter(request, "isHis");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
 		this.pager = new Page("pagerForm", request);
 		User user = (User) session.getAttribute("userLogin");
 		if(user!=null){
-			json = historyQueryService.getDeviceHistoryDetailsData(deviceName,deviceType,recordId,isHis,user.getUserId());
+			json = historyQueryService.getDeviceHistoryDetailsData(deviceName,deviceType,recordId,user.getUserId());
 		}
 		
 		//HttpServletResponse response = ServletActionContext.getResponse();

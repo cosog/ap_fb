@@ -542,19 +542,16 @@ iconGtsj = function(value, e, o) {
 }
 
 iconDiagnoseAnalysisCurve = function(value, e, o) {
-	var itemCode = o.data.itemCode;
-	var item=o.data.item;
+//	var itemCode = o.data.itemCode;
+//	var item=o.data.item;
 	var index=o.internalId%2;
-	var resultstring='';
-	if(itemCode.toUpperCase() == 'acqTime_d'.toUpperCase()||itemCode.toUpperCase() == 'deviceVer'.toUpperCase()){
-//		resultstring=o.data.value;
-		resultstring='';
-	}else{
-		resultstring = "<img src='"
-			+ context
-			+ "/images/icon/curvetest"+index+".png' style='cursor:pointer;display: inline-block; vertical-align: middle;' onclick=callBackHistoryData(\""+item+"\",\""+itemCode+"\") />";
-	}
-	
+//	var resultstring='';
+	var recordId=o.data.id;
+	var wellName=o.data.wellName;
+//	resultstring = "<img src='"
+//		+ context
+//		+ "/images/icon/curvetest"+index+".png' style='cursor:pointer;display: inline-block; vertical-align: middle;' onclick=callBackHistoryData(\""+recordId+"\",\""+wellName+"\") />";
+	resultstring="<a href=\"javascript:void(0)\" onclick=callBackHistoryData(\""+recordId+"\",\""+wellName+"\")>详情</a>";
 	return resultstring;
 }
 
@@ -642,13 +639,11 @@ var callBackGraphical = function(type,id) {
     GraphicalOnclickWindow.show();
 }
 
-var callBackHistoryData = function(item,itemCode) {
-    Ext.getCmp('DiagnosisAnalysisCurveItem_Id').setValue(item);
-    Ext.getCmp('DiagnosisAnalysisCurveItemCode_Id').setValue(itemCode);
-    var HistoryCurveOnclickWindow=Ext.create("AP.view.diagnosis.HistoryCurveOnclickWindow", {
-				    html:'<div id="HistoryCurve_'+itemCode+'_DivId" style="width:100%;height:100%;"></div>' // 图形类型+数据id作为div的id
-			   });
-    HistoryCurveOnclickWindow.show();
+var callBackHistoryData = function(recordId,wellName) {
+	var HistoryQueryDataDetailsWindow = Ext.create("AP.view.historyQuery.HistoryQueryDataDetailsWindow");
+	Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").setValue(recordId);
+	Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").setValue(wellName);
+	HistoryQueryDataDetailsWindow.show();
 }
 
 var callBackTotalHistoryData = function(item,itemCode) {
@@ -7594,16 +7589,10 @@ function initPSDiagramOverlayChart(series, title,ytext, wellName, acqTime, divid
 	});
 };
 function handsontableDataCheck_Org(val, callback,row,col,handsontableHelper){
-	var IframeViewSelection  = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-	var orgNum=Ext.getCmp("IframeView_Id").getStore().data.length;
-	var selectOrgName='';
-	if(IframeViewSelection.length>0){
-		selectOrgName=IframeViewSelection[0].data.text;
-	}else if(orgNum===1){
-		selectOrgName=Ext.getCmp("IframeView_Id").getStore().data.items[0].data.text;
-	}
-	
-	if(val!=selectOrgName){
+	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
+	var orgArr=leftOrg_Name.split(",");
+	var orgCount=isExist(orgArr,val);
+	if(orgCount!=1){
 		var cell = handsontableHelper.hot.getCell(row, col);  
         cell.style.background = "#f09614";
 		return callback(false);
