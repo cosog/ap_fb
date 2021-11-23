@@ -511,7 +511,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 						acquisitionGroupItem.setSort(StringManagerUtils.isNumber(module_[3])?StringManagerUtils.stringTransferInteger(module_[3]):null);
 						acquisitionGroupItem.setBitIndex(bitIndex>=0?bitIndex:null);
 						acquisitionGroupItem.setShowLevel(StringManagerUtils.isNumber(module_[4])?StringManagerUtils.stringTransferInteger(module_[4]):null);
-						acquisitionGroupItem.setMatrix(module_[5]);
+						acquisitionGroupItem.setRealtimeCurve((StringManagerUtils.isNumber(module_[5]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[5]):null);
+						acquisitionGroupItem.setHistoryCurve((StringManagerUtils.isNumber(module_[6]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[6]):null);
+						acquisitionGroupItem.setMatrix(module_[7]);
 						this.acquisitionUnitItemManagerService.grantAcquisitionItemsPermission(acquisitionGroupItem);
 					}
 				}

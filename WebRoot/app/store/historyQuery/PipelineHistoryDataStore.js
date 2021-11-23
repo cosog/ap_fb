@@ -1,6 +1,6 @@
-Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
+Ext.define('AP.store.historyQuery.PipelineHistoryDataStore', {
     extend: 'Ext.data.Store',
-    alias: 'widget.pumpHistoryDataStore',
+    alias: 'widget.pipelineHistoryDataStore',
     fields: ['id','commStatus','commStatusName','wellName'],
     autoLoad: true,
     pageSize: 50,
@@ -23,9 +23,9 @@ Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
             var get_rawData = store.proxy.reader.rawData;
             var arrColumns = get_rawData.columns;
             var column = createHistoryQueryColumn(arrColumns);
-            Ext.getCmp("PumpHistoryQueryDataColumnStr_Id").setValue(column);
+            Ext.getCmp("PipelineHistoryQueryDataColumnStr_Id").setValue(column);
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
-            var gridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
+            var gridPanel = Ext.getCmp("PipelineHistoryQueryDataGridPanel_Id");
             if (!isNotVal(gridPanel)) {
                 var newColumns = Ext.JSON.decode(column);
                 var clickColumn={
@@ -48,7 +48,7 @@ Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
     	        });
                 
                 gridPanel = Ext.create('Ext.grid.Panel', {
-                    id: "PumpHistoryQueryDataGridPanel_Id",
+                    id: "PipelineHistoryQueryDataGridPanel_Id",
                     border: false,
                     autoLoad: true,
                     bbar: bbar,
@@ -66,38 +66,38 @@ Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
                     		Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").setValue(record.data.id);
                     		Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").setValue(record.data.wellName);
                     		HistoryQueryDataDetailsWindow.show();
-//                    		CreatePumpDeviceHistoryQueryDataTable(record.data.id,record.data.wellName);
+//                    		CreatePipelineDeviceHistoryQueryDataTable(record.data.id,record.data.wellName);
                     	},
                     	select: function(grid, record, index, eOpts) {}
                     }
                 });
-                var panel = Ext.getCmp("PumpHistoryQueryDataInfoPanel_Id");
+                var panel = Ext.getCmp("PipelineHistoryQueryDataInfoPanel_Id");
                 panel.add(gridPanel);
             }
             
-            var startDate=Ext.getCmp('PumpHistoryQueryStartDate_Id');
+            var startDate=Ext.getCmp('PipelineHistoryQueryStartDate_Id');
             if(startDate.rawValue==''||null==startDate.rawValue){
             	startDate.setValue(get_rawData.start_date);
             }
-            var endDate=Ext.getCmp('PumpHistoryQueryEndDate_Id');
+            var endDate=Ext.getCmp('PipelineHistoryQueryEndDate_Id');
             if(endDate.rawValue==''||null==endDate.rawValue){
             	endDate.setValue(get_rawData.end_date);
             }
             
-            deviceHistoryQueryCurve(0);
+            deviceHistoryQueryCurve(1);
         },
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceName='';
-        	var selectRow= Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").getValue();
+        	var selectRow= Ext.getCmp("PipelineHistoryQueryInfoDeviceListSelectRow_Id").getValue();
         	if(selectRow>=0){
-        		deviceName = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		deviceName = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	}
-        	var startDate=Ext.getCmp('PumpHistoryQueryStartDate_Id').rawValue;
-            var endDate=Ext.getCmp('PumpHistoryQueryEndDate_Id').rawValue;
+        	var startDate=Ext.getCmp('PipelineHistoryQueryStartDate_Id').rawValue;
+            var endDate=Ext.getCmp('PipelineHistoryQueryEndDate_Id').rawValue;
             var new_params = {
             		orgId: orgId,
-            		deviceType:0,
+            		deviceType:1,
                     deviceName:deviceName,
                     startDate:startDate,
                     endDate:endDate

@@ -21,8 +21,8 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	private Integer showLevel;
 	private Integer sort;
 	private Integer bitIndex;
-
-	
+	private Integer realtimeCurve;
+	private Integer historyCurve;
 
 	public AcquisitionGroupItem() {
 		super();
@@ -31,7 +31,7 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	/** full constructor */
 	public AcquisitionGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
-			String matrix, Integer sort, Integer bitIndex, Integer showLevel) {
+			String matrix, Integer sort, Integer bitIndex, Integer showLevel, Integer realtimeCurve, Integer historyCurve) {
 		super();
 		this.id = id;
 		this.groupId = groupId;
@@ -42,6 +42,8 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 		this.sort = sort;
 		this.bitIndex = bitIndex;
 		this.showLevel=showLevel;
+		this.realtimeCurve=realtimeCurve;
+		this.historyCurve=historyCurve;
 	}
 
 	@Id
@@ -123,6 +125,24 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	public void setShowLevel(Integer showLevel) {
 		this.showLevel = showLevel;
+	}
+
+	@Column(name = "realtimeCurve")
+	public Integer getRealtimeCurve() {
+		return realtimeCurve;
+	}
+
+	public void setRealtimeCurve(Integer realtimeCurve) {
+		this.realtimeCurve = realtimeCurve;
+	}
+
+	@Column(name = "historyCurve")
+	public Integer getHistoryCurve() {
+		return historyCurve;
+	}
+
+	public void setHistoryCurve(Integer historyCurve) {
+		this.historyCurve = historyCurve;
 	}
 
 	
