@@ -462,9 +462,17 @@ var grantAcquisitionItemsPermission = function () {
             if (driverConfigItemsData[index][0]) {
             	var itemName = driverConfigItemsData[index][2];
             	var itemAddr = driverConfigItemsData[index][3];
-            	var resolutionMode = driverConfigItemsData[index][10];
-            	var itemShowLevel = driverConfigItemsData[index][12];
-            	var itemSort = driverConfigItemsData[index][13];
+            	var resolutionMode = driverConfigItemsData[index][6];
+            	var itemShowLevel = driverConfigItemsData[index][7];
+            	var itemSort = driverConfigItemsData[index][8];
+            	var isRealtimeCurve=0;
+            	var isHistoryCurve=0;
+            	if(driverConfigItemsData[index][9]){
+            		isRealtimeCurve=1;
+            	}
+            	if(driverConfigItemsData[index][10]){
+            		isHistoryCurve=1;
+            	}
                 
                 addjson.push(itemName);
                 addItemSort.push(itemSort);
@@ -473,7 +481,7 @@ var grantAcquisitionItemsPermission = function () {
                 if (matrix_value != "" || matrix_value != null) {
                     matrix_value = matrix_value.substring(0, matrix_value.length - 1);
                 }
-                matrixData += itemName + ":"+itemAddr+ ":"+resolutionMode+ ":"+itemSort+ ":"+itemShowLevel + ":" + matrix_value + "|";
+                matrixData += itemName + ":"+itemAddr+ ":"+resolutionMode+ ":"+itemSort+ ":"+itemShowLevel  + ":" + isRealtimeCurve + ":" + isHistoryCurve + ":" + matrix_value+ "|";
             }
         });
         if (addjson.length > 0) {

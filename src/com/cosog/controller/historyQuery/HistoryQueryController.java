@@ -71,6 +71,39 @@ public class HistoryQueryController extends BaseController  {
 		return null;
 	}
 	
+	@RequestMapping("/exportHistoryQueryDeviceListExcel")
+	public String exportHistoryQueryDeviceListExcel() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		
+		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
+		String fields = ParamUtils.getParameter(request, "fields");
+		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
+		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		
+		json = historyQueryService.getHistoryQueryDeviceListExportData(orgId,deviceName,deviceType,pager);
+		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/getDeviceHistoryData")
 	public String getDeviceHistoryData() throws Exception {
 		String json = "";
@@ -110,9 +143,6 @@ public class HistoryQueryController extends BaseController  {
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
-		
-		
-		
 		json = historyQueryService.getDeviceHistoryData(orgId,deviceName,deviceType,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
@@ -149,14 +179,14 @@ public class HistoryQueryController extends BaseController  {
 			}
 		}
 		
-		String deviceTableName="tbl_pumpdevice";
 		String tableName="tbl_pumpacqdata_hist";
+		String deviceTableName="tbl_pumpdevice";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
-			deviceTableName="tbl_pipelinedevice";
 			tableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
 		}
 		if(StringManagerUtils.isNotNull(deviceName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' ) ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' "+" ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -164,6 +194,7 @@ public class HistoryQueryController extends BaseController  {
 				endDate = StringManagerUtils.getCurrentTime();
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
+//				startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
 				startDate=endDate;
 			}
 		}
@@ -212,7 +243,6 @@ public class HistoryQueryController extends BaseController  {
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
 		String deviceName = ParamUtils.getParameter(request, "deviceName");
-		String item = ParamUtils.getParameter(request, "item");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
@@ -238,7 +268,7 @@ public class HistoryQueryController extends BaseController  {
 		
 		
 		this.pager = new Page("pagerForm", request);
-		json = historyQueryService.getHistoryQueryCurveData(deviceName,item,deviceType,startDate,endDate);
+		json = historyQueryService.getHistoryQueryCurveData(deviceName,deviceType,startDate,endDate);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);

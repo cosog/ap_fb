@@ -96,6 +96,60 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
+	public String getHistoryQueryDeviceListExportData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String deviceTableName="tbl_pumpdevice";
+		String tableName="tbl_pumpacqdata_latest";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="tbl_pipelineacqdata_latest";
+			deviceTableName="tbl_pipelinedevice";
+		}
+		
+		String sql="select t2.id,t.wellname,t2.commstatus,"
+				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
+				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		
+		
+		sql+= " from "+deviceTableName+" t "
+				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " where  t.orgid in ("+orgId+") ";
+		if(StringManagerUtils.isNotNull(deviceName)){
+			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		sql+=" order by t.sortnum,t.wellname";
+		
+		int maxvalue=pager.getLimit()+pager.getStart();
+		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
+		
+		int totals=this.getTotalCountRows(sql);
+		List<?> list = this.findCallSql(finalSql);
+		result_json.append("[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"wellName\":\""+obj[1]+"\",");
+			result_json.append("\"commStatus\":"+obj[2]+",");
+			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
+			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
+			result_json.append("\"acqTime\":\""+obj[5]+"\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
 	public String getDeviceHistoryData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -181,28 +235,22 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	
 	public String getDeviceHistoryExportData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
-		
-		String tableName="tbl_pumpacqdata_latest";
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
-		String table="";
 		String ddicName="pumpHistoryQuery";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
-		if(StringManagerUtils.stringToInteger(deviceType)!=0){
-			tableName="tbl_pipelineacqdata_latest";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			hisTableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineHistoryQuery";
 		}
-		table=tableName;
-		if(StringManagerUtils.isNotNull(deviceName)){
-			table=hisTableName;
-		}
-		
-		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
-		String sql="select t2.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		
+		String sql="select t2.id,t.wellname,t2.commstatus,"
+				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
+				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
 			if(ddicColumns[i].toUpperCase().contains("ADDR")){
@@ -212,20 +260,16 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		for(int i=0;i<ddicColumnsList.size();i++){
 			sql+=",t2."+ddicColumnsList.get(i);
 		}
-		
-		
 		sql+= " from "+deviceTableName+" t "
-				+ "left outer join "+table+" t2 on t2.wellid=t.id"
-				+ " where  t.orgid in ("+orgId+") ";
-		
-		if(StringManagerUtils.isNotNull(deviceName)){
-			sql+=" and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'";
-		}
-		sql+=" order by t.sortnum,t.wellname";
-		if(StringManagerUtils.isNotNull(deviceName)){
-			sql+=",t2.acqtime desc";
-		}
-		List<?> list = this.findCallSql(sql);
+				+ " left outer join "+hisTableName+" t2 on t2.wellid=t.id"
+				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " where  t.orgid in ("+orgId+") "
+				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'"
+				+ "  order by t2.acqtime desc";
+		String finalSql=sql;
+		List<?> list = this.findCallSql(finalSql);
 		result_json.append("[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
@@ -235,6 +279,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			result_json.append("\"details\":\"\",");
 			for(int j=0;j<ddicColumnsList.size();j++){
 				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
 			}
@@ -565,8 +610,9 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
-	public String getHistoryQueryCurveData(String deviceName,String item,String deviceType,String startDate,String endDate)throws Exception {
+	public String getHistoryQueryCurveData(String deviceName,String deviceType,String startDate,String endDate)throws Exception {
 		StringBuffer result_json = new StringBuffer();
+		StringBuffer itemsBuff = new StringBuffer();
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
@@ -575,13 +621,20 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
 				+ " and  t.wellname='"+deviceName+"' ";
+		
+		String curveItemsSql="select t6.itemname,t6.bitindex "
+				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+				+ " and t.wellname='"+deviceName+"' and t6.historycurve=1 "
+				+ " order by t6.sort,t6.id";
 		List<?> protocolList = this.findCallSql(protocolSql);
+		List<?> curveItemList = this.findCallSql(curveItemsSql);
 		String protocolName="";
-		String column="";
 		String unit="";
 		String dataType="";
 		int resolutionMode=0;
-		
+		List<String> itemNameList=new ArrayList<String>();
+		List<String> itemColumnList=new ArrayList<String>();
 		if(protocolList.size()>0){
 			protocolName=protocolList.get(0)+"";
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -593,13 +646,18 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
 				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 					if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
-						for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
-							if(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle().equalsIgnoreCase(item)){
-								column="ADDR"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr();
-								unit=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getUnit();
-								dataType=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType();
-								resolutionMode=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getResolutionMode();
-								break;
+						for(int j=0;j<curveItemList.size();j++){
+							Object[] itemObj=(Object[]) curveItemList.get(j);
+							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
+								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
+									itemColumnList.add("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
+									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
+										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");
+									}else{
+										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle());
+									}
+									break;
+								}
 							}
 						}
 						break;
@@ -608,9 +666,21 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			}
 		}
 		
-		result_json.append("{\"deviceName\":\""+deviceName+"\",\"item\":\""+item+"\",\"column\":\""+column+"\",\"unit\":\""+unit+"\",\"dataType\":\""+dataType+"\",\"resolutionMode\":"+resolutionMode+",\"list\":[");
-		if(resolutionMode==2){//只查询数据量的曲线
-			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss') as acqtime, t."+column+" "
+		itemsBuff.append("[");
+		for(int i=0;i<itemNameList.size();i++){
+			itemsBuff.append("\""+itemNameList.get(i)+"\",");
+		}
+		if (itemsBuff.toString().endsWith(",")) {
+			itemsBuff.deleteCharAt(itemsBuff.length() - 1);
+		}
+		itemsBuff.append("]");
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"startDate\":\""+startDate+"\",\"endDate\":\""+endDate+"\",\"curveItems\":"+itemsBuff+",\"list\":[");
+		if(itemColumnList.size()>0){
+			String columns="";
+			for(int i=0;i<itemColumnList.size();i++){
+				columns+=","+itemColumnList.get(i);
+			}
+			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss') as acqtime"+columns
 					+ " from "+tableName +" t,"+deviceTableName+" t2 "
 					+ " where t.wellid=t2.id "
 					+ " and t.acqtime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1"
@@ -621,13 +691,19 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			
 			String finalSql=sql;
 			if(rarefy>1){
-				finalSql="select acqtime,"+column+" from  (select v.*, rownum as rn from ("+sql+") v ) v2 where mod(rn-1,"+rarefy+")=0";
+				finalSql="select acqtime"+columns+" from  (select v.*, rownum as rn from ("+sql+") v ) v2 where mod(rn-1,"+rarefy+")=0";
 			}
 			List<?> list = this.findCallSql(finalSql);
 			for(int i=0;i<list.size();i++){
 				Object[] obj=(Object[]) list.get(i);
-				result_json.append("{acqTime:\"" + obj[0] + "\",");
-				result_json.append("value:\"" + obj[1] + "\"},");
+				result_json.append("{\"acqTime\":\"" + obj[0] + "\",\"data\":[");
+				for(int j=1;j<obj.length;j++){
+					result_json.append(obj[j]+",");
+				}
+				if (result_json.toString().endsWith(",")) {
+					result_json.deleteCharAt(result_json.length() - 1);
+				}
+				result_json.append("]},");
 			}
 			if (result_json.toString().endsWith(",")) {
 				result_json.deleteCharAt(result_json.length() - 1);

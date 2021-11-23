@@ -121,20 +121,27 @@ function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code){
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAcqUnitConfigItemsHandsontableHelper==null || protocolAcqUnitConfigItemsHandsontableHelper.hot==undefined){
 				protocolAcqUnitConfigItemsHandsontableHelper = ProtocolAcqUnitConfigItemsHandsontableHelper.createNew("ModbusProtocolAcqGroupItemsConfigTableInfoDiv_id");
-				var colHeaders="['','序号','名称','地址','数量','存储数据类型','接口数据类型','读写类型','单位','换算比例','解析模式','采集模式','显示级别','显示顺序']";
-				var columns="[{data:'checked',type:'checkbox'},{data:'id'},{data:'title'},"
+//				var colHeaders="['','序号','名称','地址','数量','存储数据类型','接口数据类型','读写类型','单位','换算比例','解析模式','采集模式','显示级别','显示顺序','实时曲线','历史曲线']";
+				var colHeaders="['','序号','名称','地址','读写类型','单位','解析模式','显示级别','显示顺序','实时曲线','历史曲线']";
+				var columns="[" 
+						+"{data:'checked',type:'checkbox'}," 
+						+"{data:'id'}," 
+						+"{data:'title'},"
 					 	+"{data:'addr',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}},"
-						+"{data:'quantity',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
-						+"{data:'storeDataType',type:'dropdown',strict:true,allowInvalid:false,source:['byte','int16','uint16','float32','bcd']}," 
-						+"{data:'IFDataType',type:'dropdown',strict:true,allowInvalid:false,source:['bool','int','float32','float64','string']}," 
+//						+"{data:'quantity',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
+//						+"{data:'storeDataType',type:'dropdown',strict:true,allowInvalid:false,source:['byte','int16','uint16','float32','bcd']}," 
+//						+"{data:'IFDataType',type:'dropdown',strict:true,allowInvalid:false,source:['bool','int','float32','float64','string']}," 
 						+"{data:'RWType',type:'dropdown',strict:true,allowInvalid:false,source:['只读', '读写']}," 
 						+"{data:'unit'}," 
-						+"{data:'ratio',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
+//						+"{data:'ratio',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
 						+"{data:'resolutionMode',type:'dropdown',strict:true,allowInvalid:false,source:['开关量', '枚举量','数据量']}," 
-						+"{data:'acqMode',type:'dropdown',strict:true,allowInvalid:false,source:['主动上传', '被动响应']}," 
+//						+"{data:'acqMode',type:'dropdown',strict:true,allowInvalid:false,source:['主动上传', '被动响应']}," 
 						+"{data:'showLevel',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
-						+"{data:'sort',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}" 
+						+"{data:'sort',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
+						+"{data:'isRealtimeCurve',type:'checkbox'}," 
+						+"{data:'isHistoryCurve',type:'checkbox'}" 
 						+"]";
+				
 				protocolAcqUnitConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				protocolAcqUnitConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
 				if(result.totalRoot.length==0){
@@ -186,7 +193,8 @@ var ProtocolAcqUnitConfigItemsHandsontableHelper = {
 	        	var hotElement = document.querySelector('#'+protocolAcqUnitConfigItemsHandsontableHelper.divid);
 	        	protocolAcqUnitConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
 	        		data: data,
-	        		colWidths: [25,50,140,60,60,80,80,80,80,80,80,80,60,60],
+	        		colWidths: [25,50,140,60,80,80,80,60,60,60,60],
+//	        		colWidths: [25,50,140,60,60,80,80,80,80,80,80,80,60,60,60,60],
 //	                hiddenColumns: {
 //	                    columns: [0],
 //	                    indicators: true
@@ -207,7 +215,7 @@ var ProtocolAcqUnitConfigItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >0 && visualColIndex<11) {
+	                    if (visualColIndex >=1 && visualColIndex<=6) {
 							cellProperties.readOnly = true;
 //							cellProperties.renderer = protocolAcqUnitConfigItemsHandsontableHelper.addBoldBg;
 		                }

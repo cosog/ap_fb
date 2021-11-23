@@ -101,6 +101,13 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         pressed: true,
                         hidden:false,
                         handler: function (v, o) {
+                        	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                        	var deviceName=Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').getValue();
+                       	 	var deviceType=0;
+                       	 	var fileName='泵设备历史数据设备列表';
+                       	 	var title='泵设备历史数据设备列表';
+                       	 	var columnStr=Ext.getCmp("PumpHistoryQueryWellListColumnStr_Id").getValue();
+                       	 	exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,fileName,title,columnStr);
                         }
                     }]
                 }, {
@@ -146,6 +153,19 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         pressed: true,
                         hidden:false,
                         handler: function (v, o) {
+                        	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                        	var deviceName='';
+                        	var selectRow= Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").getValue();
+                        	if(selectRow>=0){
+                        		deviceName = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                        	}
+                        	var startDate=Ext.getCmp('PumpHistoryQueryStartDate_Id').rawValue;
+                            var endDate=Ext.getCmp('PumpHistoryQueryEndDate_Id').rawValue;
+                       	 	var deviceType=0;
+                       	 	var fileName='泵设备'+deviceName+'历史数据';
+                       	 	var title='泵设备'+deviceName+'历史数据';
+                       	 	var columnStr=Ext.getCmp("PumpHistoryQueryDataColumnStr_Id").getValue();
+                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDate,fileName,title,columnStr);
                         }
                     }],
                     items: [{
@@ -180,78 +200,3 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
         me.callParent(arguments);
     }
 });
-function pumpHistoryQueryCurve(item){
-	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-	var deviceName='';
-	var selectRow= Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").getValue();
-	if(selectRow>=0){
-		deviceName = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-	}
-	var startDate=Ext.getCmp('PumpHistoryQueryStartDate_Id').rawValue;
-    var endDate=Ext.getCmp('PumpHistoryQueryEndDate_Id').rawValue;
-	Ext.Ajax.request({
-		method:'POST',
-		url:context + '/historyQueryController/getHistoryQueryCurveData',
-		success:function(response) {
-			var result =  Ext.JSON.decode(response.responseText);
-		    var data = result.list;
-		    var tickInterval = 1;
-		    tickInterval = Math.floor(data.length / 10) + 1;
-		    if(tickInterval<100){
-		    	tickInterval=100;
-		    }
-//		    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
-//		    if(tickInterval<10){
-//		    	tickInterval=10;
-//		    }
-//		    tickInterval=1000;
-		    var title = result.deviceName  + result.item + "曲线";
-		    var xTitle='采集时间';
-		    var yTitle=result.item;
-		    if(isNotVal(result.unit)){
-		    	yTitle+='('+result.unit+')';
-		    }
-		    var legendName = [result.item];
-		    var series = "[";
-		    for (var i = 0; i < legendName.length; i++) {
-		        series += "{\"name\":\"" + legendName[i] + "\",";
-		        series += "\"data\":[";
-		        for (var j = 0; j < data.length; j++) {
-		            if (i == 0) {
-		            	series += "[" + Date.parse(data[j].acqTime.replace(/-/g, '/')) + "," + data[j].value + "]";
-		            }else if(i == 1){
-		            	series += "[" + Date.parse(data[j].acqTime.replace(/-/g, '/')) + "," + data[j].value2 + "]";
-		            }
-		            if (j != data.length - 1) {
-		                series += ",";
-		            }
-		        }
-		        series += "]}";
-		        if (i != legendName.length - 1) {
-		            series += ",";
-		        }
-		    }
-		    series += "]";
-		    
-		    var ser = Ext.JSON.decode(series);
-		    var color = ['#800000', // 红
-		       '#008C00', // 绿
-		       '#000000', // 黑
-		       '#0000FF', // 蓝
-		       '#F4BD82', // 黄
-		       '#FF00FF' // 紫
-		     ];
-		    initTimeAndDataCurveChartFn(ser, tickInterval, "pumpHistoryQueryCurveDiv_Id", title, '', xTitle, yTitle, color,false,'%Y-%m-%d');
-		},
-		failure:function(){
-			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
-		},
-		params: {
-			deviceName:deviceName,
-			item:item,
-			startDate:startDate,
-            endDate:endDate,
-			deviceType:0
-        }
-	});
-}

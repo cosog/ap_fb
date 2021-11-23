@@ -239,7 +239,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ "{ \"header\":\"解析模式\",\"dataIndex\":\"resolutionMode\",width:80 ,children:[] },"
 				+ "{ \"header\":\"采集模式\",\"dataIndex\":\"acqMode\",width:80 ,children:[] },"
 				+ "{ \"header\":\"显示级别\",\"dataIndex\":\"showLevel\",width:80 ,children:[] },"
-				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] }"
+				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] },"
+				+ "{ \"header\":\"实时曲线\",\"dataIndex\":\"realtimeCurve\",width:80 ,children:[] },"
+				+ "{ \"header\":\"历史曲线\",\"dataIndex\":\"historyCurve\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
@@ -248,8 +250,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<String> itemsSortList=new ArrayList<String>();
 		List<String> itemsBitIndexList=new ArrayList<String>();
 		List<String> itemsShowLevelList=new ArrayList<String>();
+		List<String> realtimeCurveList=new ArrayList<String>();
+		List<String> historyCurveList=new ArrayList<String>();
 		if("3".equalsIgnoreCase(classes)){
-			String sql="select t.itemname,t.sort,t.bitindex,t.showlevel from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
+			String sql="select t.itemname,t.sort,t.bitindex,t.showlevel,t.realtimeCurve,historyCurve from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
 			List<?> list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
 				Object[] obj=(Object[])list.get(i);
@@ -257,6 +261,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				itemsSortList.add(obj[1]+"");
 				itemsBitIndexList.add(obj[2]+"");
 				itemsShowLevelList.add(obj[3]+"");
+				realtimeCurveList.add(obj[4]+"");
+				historyCurveList.add(obj[5]+"");
 			}
 		}
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
@@ -267,6 +273,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					boolean checked=false;
 					String sort="";
 					String showLevel="";
+					boolean isRealtimeCurve=false;
+					boolean isHistoryCurve=false;
 					if(protocolConfig.getItems().get(j).getResolutionMode()==0){//开关量
 						
 					}else{
@@ -296,6 +304,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							checked=false;
 							sort="";
 							showLevel="";
+							isRealtimeCurve=false;
+							isHistoryCurve=false;
 							for(int m=0;m<itemsList.size();m++){
 								if(itemsList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())
 										&&itemsBitIndexList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"")
@@ -303,11 +313,18 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									checked=true;
 									sort=itemsSortList.get(m);
 									showLevel=itemsShowLevelList.get(m);
+									if(StringManagerUtils.stringToInteger(realtimeCurveList.get(m))==1){
+										isRealtimeCurve=true;
+									}
+									if(StringManagerUtils.stringToInteger(historyCurveList.get(m))==1){
+										isHistoryCurve=true;
+									}
 									break;
 								}
 							}
 							
-							result_json.append("{\"checked\":"+checked+","
+							result_json.append("{"
+									+ "\"checked\":"+checked+","
 									+ "\"id\":"+(index)+","
 									+ "\"title\":\""+protocolConfig.getItems().get(j).getMeaning().get(k).getMeaning()+"\","
 									+ "\"addr\":"+protocolConfig.getItems().get(j).getAddr()+","
@@ -320,7 +337,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"resolutionMode\":\""+resolutionMode+"\","
 									+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
 									+ "\"showLevel\":\""+showLevel+"\","
-									+ "\"sort\":\""+sort+"\"},");
+									+ "\"sort\":\""+sort+"\","
+									+ "\"isRealtimeCurve\":"+isRealtimeCurve+","
+									+ "\"isHistoryCurve\":"+isHistoryCurve+""
+									+ "},");
 							index++;
 						}
 					}else{
@@ -330,6 +350,12 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								if(itemsList.get(k).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())){
 									sort=itemsSortList.get(k);
 									showLevel=itemsShowLevelList.get(k);
+									if(StringManagerUtils.stringToInteger(realtimeCurveList.get(k))==1){
+										isRealtimeCurve=true;
+									}
+									if(StringManagerUtils.stringToInteger(historyCurveList.get(k))==1){
+										isHistoryCurve=true;
+									}
 									break;
 								}
 							}
@@ -347,7 +373,10 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								+ "\"resolutionMode\":\""+resolutionMode+"\","
 								+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
 								+ "\"showLevel\":\""+showLevel+"\","
-								+ "\"sort\":\""+sort+"\"},");
+								+ "\"sort\":\""+sort+"\","
+								+ "\"isRealtimeCurve\":"+isRealtimeCurve+","
+								+ "\"isHistoryCurve\":"+isHistoryCurve+""
+								+ "},");
 						index++;
 					}
 					

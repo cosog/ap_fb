@@ -541,17 +541,10 @@ iconGtsj = function(value, e, o) {
 	return resultstring;
 }
 
-iconDiagnoseAnalysisCurve = function(value, e, o) {
-//	var itemCode = o.data.itemCode;
-//	var item=o.data.item;
-	var index=o.internalId%2;
-//	var resultstring='';
+iconHistoryQueryDetailsData = function(value, e, o) {
 	var recordId=o.data.id;
 	var wellName=o.data.wellName;
-//	resultstring = "<img src='"
-//		+ context
-//		+ "/images/icon/curvetest"+index+".png' style='cursor:pointer;display: inline-block; vertical-align: middle;' onclick=callBackHistoryData(\""+recordId+"\",\""+wellName+"\") />";
-	resultstring="<a href=\"javascript:void(0)\" onclick=callBackHistoryData(\""+recordId+"\",\""+wellName+"\")>详情</a>";
+	var resultstring="<a href=\"javascript:void(0)\" style=\"text-decoration:none;\" onclick=callBackHistoryData(\""+recordId+"\",\""+wellName+"\")>详细...</a>";
 	return resultstring;
 }
 
