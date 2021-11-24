@@ -89,7 +89,7 @@ public class EquipmentDriverServerTask {
 //			
 ////			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
 //			
-//			Thread.sleep(1000*1);
+//			Thread.sleep(1000*20);
 //		}
 		
 		
@@ -455,7 +455,7 @@ public class EquipmentDriverServerTask {
 				initProtocol.setProtocolName(protocolName);
 				initProtocol.setMethod(method);
 				System.out.println("删除协议："+gson.toJson(initProtocol));
-//				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 			}else{
 				if(StringManagerUtils.isNotNull(protocolName)){
 					for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
@@ -463,7 +463,7 @@ public class EquipmentDriverServerTask {
 							initProtocol=new InitProtocol(modbusProtocolConfig.getProtocol().get(i));
 							initProtocol.setMethod(method);
 							System.out.println("协议初始化："+gson.toJson(initProtocol));
-//							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
+							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 							loadAcquisitionItemColumns(modbusProtocolConfig.getProtocol().get(i).getDeviceType());
 							if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==0){
 								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist",0);
@@ -484,7 +484,7 @@ public class EquipmentDriverServerTask {
 						initProtocol=new InitProtocol(modbusProtocolConfig.getProtocol().get(i));
 						initProtocol.setMethod(method);
 						System.out.println("协议初始化："+gson.toJson(initProtocol));
-//						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
+						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 					}
 					loadAcquisitionItemColumns();
 					//同步数据库字段
@@ -637,7 +637,7 @@ public class EquipmentDriverServerTask {
 				initInstance.setInstanceName(instanceList.get(i));
 				initInstance.setMethod(method);
 				System.out.println("删除实例："+gson.toJson(initInstance));
-//				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
 			}
 		}else{
 			String sql="select t.name,t.acqprotocoltype,t.ctrlprotocoltype,"
@@ -720,7 +720,7 @@ public class EquipmentDriverServerTask {
 				for(Entry<String, InitInstance> entry:InstanceListMap.entrySet()){
 					try {
 						System.out.println("实例初始化："+gson.toJson(entry.getValue()));
-//						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(entry.getValue()),"utf-8");
+						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(entry.getValue()),"utf-8");
 					}catch (Exception e) {
 						continue;
 					}
@@ -751,7 +751,7 @@ public class EquipmentDriverServerTask {
 				initInstance.setInstanceName(instanceList.get(i));
 				initInstance.setMethod(method);
 				System.out.println("删除短信实例："+gson.toJson(initInstance));
-//				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
 			}
 		}else{
 			String sql="select t.id,t.name,t.code,t.acqprotocoltype,t.ctrlprotocoltype,t.sort from tbl_protocolsmsinstance t where 1=1 ";
@@ -773,7 +773,7 @@ public class EquipmentDriverServerTask {
 					initInstance.setAcqProtocolType(rs.getString(4));
 					initInstance.setCtrlProtocolType(rs.getString(5));
 					System.out.println("短信实例初始化："+gson.toJson(initInstance));
-//					StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
+					StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initInstance),"utf-8");
 				}
 				
 			} catch (SQLException e) {
@@ -818,7 +818,7 @@ public class EquipmentDriverServerTask {
 				initId.setSlave((byte) rs.getInt(3));
 				initId.setInstanceName(rs.getString(4));
 				System.out.println("泵设备ID初始化："+gson.toJson(initId));
-//				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
 			}
 		} catch (SQLException e) {
 			System.out.println("ID初始化sql："+sql);
@@ -861,7 +861,7 @@ public class EquipmentDriverServerTask {
 				initId.setSlave((byte) rs.getInt(3));
 				initId.setInstanceName(rs.getString(4));
 				System.out.println("管设备ID初始化："+gson.toJson(initId));
-//				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
 			}
 		} catch (SQLException e) {
 			System.out.println("ID初始化sql："+sql);
@@ -975,7 +975,7 @@ public class EquipmentDriverServerTask {
 				initId.setID(rs.getString(2));
 				initId.setInstanceName(rs.getString(3));
 				System.out.println("短信设备初始化："+gson.toJson(initId));
-//				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
 			}
 		} catch (SQLException e) {
 			System.out.println("ID初始化sql："+sql);
@@ -1053,7 +1053,7 @@ public class EquipmentDriverServerTask {
 		json_buff.append("\"ProjectName\":\""+projectName+"\"");
 		json_buff.append("}");
 		System.out.println("服务始化："+json_buff.toString());
-//		StringManagerUtils.sendPostMethod(initUrl,json_buff.toString(),"utf-8");
+		StringManagerUtils.sendPostMethod(initUrl,json_buff.toString(),"utf-8");
 	}
 	
 	public static void initAlarmStyle() throws IOException, SQLException{

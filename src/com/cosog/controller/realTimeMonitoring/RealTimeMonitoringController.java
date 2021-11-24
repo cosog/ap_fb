@@ -264,6 +264,26 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getRealTimeMonitoringCurveData")
+	public String getRealTimeMonitoringCurveData() throws Exception {
+		String json = "";
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		json = realTimeMonitoringService.getRealTimeMonitoringCurveData(deviceName,deviceType);
+		//HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset="
+				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	public boolean DeviceControlOperation_Mdubus(String protocolName,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
 		boolean result=true;
 		try {
