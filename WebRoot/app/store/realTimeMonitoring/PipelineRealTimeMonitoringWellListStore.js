@@ -27,21 +27,21 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(get_rawData.AlarmShowStyle));
             var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
             if (!isNotVal(gridPanel)) {
-                
                 var newColumns = Ext.JSON.decode(column);
                 var bbar = new Ext.PagingToolbar({
                 	store: store,
                 	displayInfo: true,
                 	displayMsg: '共 {2}条'
     	        });
+                
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PipelineRealTimeMonitoringListGridPanel_Id",
                     border: false,
                     autoLoad: true,
+                    bbar: bbar,
                     columnLines: true,
                     forceFit: false,
-                    stripeRows: true,
-                    bbar: bbar,
+//                    stripeRows: true,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
@@ -49,14 +49,20 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
+//                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
+//                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		var deviceName=record.data.wellName;
                     		var deviceType=1;
-                    		CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
+                    		var tabPanel = Ext.getCmp("PipelineRealTimeMonitoringCurveAndTableTabPanel");
+                    		var activeId = tabPanel.getActiveTab().id;
+                    		if(activeId=="PipelineRealTimeMonitoringCurveTabPanel_Id"){
+                    			deviceRealtimeMonitoringCurve(1);
+                    		}else if(activeId=="PipelineRealTimeMonitoringTableTabPanel_Id"){
+                        		CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
+                    		}
                     		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
                     	},
                     	itemdblclick: function (view,record,item,index,e,eOpts) {
@@ -68,7 +74,9 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                 PipelineRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
-//            	gridPanel.getSelectionModel().deselectAll(true);
+//            	if(gridPanel.getSelectionModel().getSelection().length>0){
+//            		gridPanel.getSelectionModel().deselectAll(true);
+//            	}
             	gridPanel.getSelectionModel().select(0, true);
             }else{
             	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null){
@@ -77,7 +85,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
 					}
 					pipelineDeviceRealTimeMonitoringDataHandsontableHelper=null;
 				}
-            	Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
+            	Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(-1);
+//            	Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
             	
             	$("#pipelineRealTimeMonitoringCurveDiv_Id").html('');
             	

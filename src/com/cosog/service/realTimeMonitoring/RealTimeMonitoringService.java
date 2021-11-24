@@ -864,6 +864,110 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
+	public String getRealTimeMonitoringCurveData(String deviceName,String deviceType)throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer itemsBuff = new StringBuffer();
+		String tableName="tbl_pumpacqdata_hist";
+		String deviceTableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="tbl_pipelineacqdata_hist";
+			deviceTableName="tbl_pipelinedevice";
+		}
+		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
+				+ " and  t.wellname='"+deviceName+"' ";
+		
+		String curveItemsSql="select t6.itemname,t6.bitindex "
+				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+				+ " and t.wellname='"+deviceName+"' and t6.historycurve=1 "
+				+ " order by t6.sort,t6.id";
+		List<?> protocolList = this.findCallSql(protocolSql);
+		List<?> curveItemList = this.findCallSql(curveItemsSql);
+		String protocolName="";
+		String unit="";
+		String dataType="";
+		int resolutionMode=0;
+		List<String> itemNameList=new ArrayList<String>();
+		List<String> itemColumnList=new ArrayList<String>();
+		if(protocolList.size()>0){
+			protocolName=protocolList.get(0)+"";
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
+				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+					if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
+						for(int j=0;j<curveItemList.size();j++){
+							Object[] itemObj=(Object[]) curveItemList.get(j);
+							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
+								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
+									itemColumnList.add("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
+									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
+										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");
+									}else{
+										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle());
+									}
+									break;
+								}
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		itemsBuff.append("[");
+		for(int i=0;i<itemNameList.size();i++){
+			itemsBuff.append("\""+itemNameList.get(i)+"\",");
+		}
+		if (itemsBuff.toString().endsWith(",")) {
+			itemsBuff.deleteCharAt(itemsBuff.length() - 1);
+		}
+		itemsBuff.append("]");
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"curveItems\":"+itemsBuff+",\"list\":[");
+		if(itemColumnList.size()>0){
+			String columns="";
+			for(int i=0;i<itemColumnList.size();i++){
+				columns+=","+itemColumnList.get(i);
+			}
+			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss') as acqtime"+columns
+					+ " from "+tableName +" t,"+deviceTableName+" t2 "
+					+ " where t.wellid=t2.id "
+					+ " and t.acqtime >to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd")+"','yyyy-mm-dd') "
+					+ " and t2.wellname='"+deviceName+"' ";
+			int total=this.getTotalCountRows(sql);
+			int rarefy=total/500+1;
+			sql+= " order by t.acqtime";
+			
+			String finalSql=sql;
+			if(rarefy>1){
+				finalSql="select acqtime"+columns+" from  (select v.*, rownum as rn from ("+sql+") v ) v2 where mod(rn-1,"+rarefy+")=0";
+			}
+			List<?> list = this.findCallSql(finalSql);
+			for(int i=0;i<list.size();i++){
+				Object[] obj=(Object[]) list.get(i);
+				result_json.append("{\"acqTime\":\"" + obj[0] + "\",\"data\":[");
+				for(int j=1;j<obj.length;j++){
+					result_json.append(obj[j]+",");
+				}
+				if (result_json.toString().endsWith(",")) {
+					result_json.deleteCharAt(result_json.length() - 1);
+				}
+				result_json.append("]},");
+			}
+			if (result_json.toString().endsWith(",")) {
+				result_json.deleteCharAt(result_json.length() - 1);
+			}
+		}
+		result_json.append("]}");
+//		System.out.println(result_json.toString());
+		return result_json.toString();
+	}
+	
 	public void saveDeviceControlLog(String wellName,String deviceType,String title,String value,User user) throws SQLException{
 		getBaseDao().saveDeviceControlLog(wellName,deviceType,title,value,user);
 	}

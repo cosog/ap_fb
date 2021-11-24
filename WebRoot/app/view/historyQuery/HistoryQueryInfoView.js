@@ -335,7 +335,9 @@ function deviceHistoryQueryCurve(deviceType){
 		       '#F4BD82', // 黄
 		       '#FF00FF' // 紫
 		     ];
-		    initDeviceHistoryCurveChartFn(ser, tickInterval, divId, title, '', xTitle, yAxis, color,true,'%Y-%m-%d');
+		    var timeFormat='%Y-%m-%d';
+//		    timeFormat='%H:%M';
+		    initDeviceHistoryCurveChartFn(ser, tickInterval, divId, title, '', xTitle, yAxis, color,true,timeFormat);
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
@@ -379,13 +381,15 @@ function initDeviceHistoryCurveChartFn(series, tickInterval, divId, title, subti
             title: {
                 text: xtitle
             },
-            tickPixelInterval: tickInterval,
+//            tickInterval: tickInterval,
+            tickPixelInterval:tickInterval,
             labels: {
                 formatter: function () {
                     return Highcharts.dateFormat(timeFormat, this.value);
                 },
-                rotation: 0, //倾斜度，防止数量过多显示不全  
-                step: 2
+                autoRotation:true,//自动旋转
+                rotation: 0 //倾斜度，防止数量过多显示不全  
+//                step: 2
             }
         },
         yAxis: yAxis,

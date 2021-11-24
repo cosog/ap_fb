@@ -186,31 +186,36 @@ function websocketOnMessage(evt) {
 					}
 				}
 				//更新实时表和实时曲线
-				if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+				if(Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection().length>0){
 					var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName && data.CellInfo.length>0){
-						pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
-						pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
-						
-						//更新实时曲线
-						var selectedItem= Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").getValue();
-						var acqTime=data.acqTime;
-						var value='';
-						if(isNotVal(selectedItem)){
-							for(var i=0;i<data.CellInfo.length;i++){
-								if(selectedItem==data.CellInfo[i].columnName){
-									value=data.CellInfo[i].rawValue;
-									break;
+						var tabPanel = Ext.getCmp("PumpRealTimeMonitoringCurveAndTableTabPanel");
+		        		var activeId = tabPanel.getActiveTab().id;
+		        		if(activeId=="PumpRealTimeMonitoringCurveTabPanel_Id"){
+		        			//更新实时曲线
+		        			var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
+							if(isNotVal(chart)){
+								for(var i=0;i<chart.series.length;i++){
+									var series=chart.series[i];
+									for(var j=0;j<data.CellInfo.length;j++){
+										if(series.name.split("(")[0]==data.CellInfo[j].columnName){
+											var translation=false;//添加点动作  是否平移
+											if(series.data.length>100){
+												translation=true;
+											}
+											series.addPoint([Date.parse(data.acqTime.replace(/-/g, '/')), parseFloat(data.CellInfo[j].rawValue)], true, translation);
+											break;
+										}
+									} 
 								}
 							}
-						}
-						if(isNotVal(value)){
-							var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
-							if(isNotVal(chart)){
-								var series=chart.series[0];
-								series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
-							}
-						}
+		        		}else if(activeId=="PumpRealTimeMonitoringTableTabPanel_Id"){
+		        			//更新实时数据表
+		        			if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+		        				pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
+								pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
+		        			}
+		        		}
 					}
 				}
 			}
@@ -242,13 +247,17 @@ function websocketOnMessage(evt) {
 //						  store.commitChanges();
 					}
 					//更新实时表
-					if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
-						var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-						if(wellName==data.wellName){
-							var value=data.wellName+":"+data.acqTime+" "+(data.commStatus==1?"在线":"离线");
-							pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
-						}
-					}
+					var tabPanel = Ext.getCmp("PumpRealTimeMonitoringCurveAndTableTabPanel");
+            		var activeId = tabPanel.getActiveTab().id;
+            		if(activeId=="PumpRealTimeMonitoringTableTabPanel_Id"){
+            			if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+    						var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+    						if(wellName==data.wellName){
+    							var value=data.wellName+":"+data.acqTime+" "+(data.commStatus==1?"在线":"离线");
+    							pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
+    						}
+    					}
+            		}
 				}
 			}
 		}
@@ -286,32 +295,65 @@ function websocketOnMessage(evt) {
 					}
 				}
 				//更新实时表和实时曲线
-				if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+				if(Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection().length>0){
 					var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
 					if(wellName==data.wellName && data.CellInfo.length>0){
-						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
-						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
-						//更新实时曲线
-						var selectedItem= Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
-						var acqTime=data.acqTime;
-						var value='';
-						if(isNotVal(selectedItem)){
-							for(var i=0;i<data.CellInfo.length;i++){
-								if(selectedItem==data.CellInfo[i].columnName){
-									value=data.CellInfo[i].rawValue;
-									break;
+						var tabPanel = Ext.getCmp("PipelineRealTimeMonitoringCurveAndTableTabPanel");
+		        		var activeId = tabPanel.getActiveTab().id;
+		        		if(activeId=="PipelineRealTimeMonitoringCurveTabPanel_Id"){
+		        			//更新实时曲线
+		        			var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
+							if(isNotVal(chart)){
+								for(var i=0;i<chart.series.length;i++){
+									var series=chart.series[i];
+									for(var j=0;j<data.CellInfo.length;j++){
+										if(series.name.split("(")[0]==data.CellInfo[j].columnName){
+											var translation=false;//添加点动作  是否平移
+											if(series.data.length>100){
+												translation=true;
+											}
+											series.addPoint([Date.parse(data.acqTime.replace(/-/g, '/')), parseFloat(data.CellInfo[j].rawValue)], true, translation);
+											break;
+										}
+									} 
 								}
 							}
-						}
-						if(isNotVal(value)){
-							var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
-							if(isNotVal(chart)){
-								var series=chart.series[0];
-								series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
-							}
-						}
+		        		}else if(activeId=="PipelineRealTimeMonitoringTableTabPanel_Id"){
+		        			//更新实时数据表
+		        			if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+		        				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
+		        				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
+		        			}
+		        		}
 					}
 				}
+				
+//				if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+//					var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+//					if(wellName==data.wellName && data.CellInfo.length>0){
+//						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
+//						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
+//						//更新实时曲线
+//						var selectedItem= Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
+//						var acqTime=data.acqTime;
+//						var value='';
+//						if(isNotVal(selectedItem)){
+//							for(var i=0;i<data.CellInfo.length;i++){
+//								if(selectedItem==data.CellInfo[i].columnName){
+//									value=data.CellInfo[i].rawValue;
+//									break;
+//								}
+//							}
+//						}
+//						if(isNotVal(value)){
+//							var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
+//							if(isNotVal(chart)){
+//								var series=chart.series[0];
+//								series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
+//							}
+//						}
+//					}
+//				}
 			}
 		}
 	}else if(data.functionCode.toUpperCase()=="pipelineDeviceRealTimeMonitoringStatusData".toUpperCase()){//接收到推送的管设备通信数据
@@ -338,13 +380,17 @@ function websocketOnMessage(evt) {
 						}
 					}
 					//更新实时表
-					if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
-						var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-						if(wellName==data.wellName){
-							var value=data.wellName+":"+data.acqTime+" "+(data.commStatus==1?"在线":"离线");
-							pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
-						}
-					}
+					var tabPanel = Ext.getCmp("PipelineRealTimeMonitoringCurveAndTableTabPanel");
+            		var activeId = tabPanel.getActiveTab().id;
+            		if(activeId=="PipelineRealTimeMonitoringTableTabPanel_Id"){
+            			if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
+    						var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+    						if(wellName==data.wellName){
+    							var value=data.wellName+":"+data.acqTime+" "+(data.commStatus==1?"在线":"离线");
+    							pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.setDataAtCell(0, 0, value);
+    						}
+    					}
+            		}
 				}
 			}
 		}

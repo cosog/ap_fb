@@ -70,6 +70,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         }
                     }
                 });
+        
         Ext.applyIf(me, {
             items: [{
                 border: false,
@@ -80,35 +81,35 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                     items:[{
                     	region: 'center',
                     	title:'设备概览',
-                        id:'PipelineRealTimeMonitoringInfoDeviceListPanel_Id',
+                    	id:'PipelineRealTimeMonitoringInfoDeviceListPanel_Id',
                         border: false,
                         layout: 'fit',
                         tbar:[{
-                            id: 'PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id',
-                            xtype: 'textfield',
-                            value: 0,
+                        	id: 'PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id',
+                        	xtype: 'textfield',
+                            value: -1,
                             hidden: true
-                        },{
-                            id: 'PipelineRealTimeMonitoringColumnStr_Id',
-                            xtype: 'textfield',
-                            value: '',
-                            hidden: true
-                        },pipelineDeviceCombo,'-', {
-                            xtype: 'button',
-                            text: cosog.string.exportExcel,
-                            pressed: true,
-                            hidden:false,
-                            handler: function (v, o) {
-                           	 var orgId = Ext.getCmp('leftOrg_Id').getValue();
-                           	 var deviceName=Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
-                           	 var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
-                           	 var deviceType=1;
-                           	 var fileName='管设备实时监控数据';
-                           	 var title='管设备实时监控数据';
-                           	 var columnStr=Ext.getCmp("PipelineRealTimeMonitoringColumnStr_Id").getValue();
-                           	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
-                            }
-                        }, '->', {
+                         },{
+                             id: 'PipelineRealTimeMonitoringColumnStr_Id',
+                             xtype: 'textfield',
+                             value: '',
+                             hidden: true
+                         },pipelineDeviceCombo,'-', {
+                             xtype: 'button',
+                             text: cosog.string.exportExcel,
+                             pressed: true,
+                             hidden:false,
+                             handler: function (v, o) {
+                            	 var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                            	 var deviceName=Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
+                            	 var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+                            	 var deviceType=1;
+                            	 var fileName='泵设备实时监控数据';
+                            	 var title='泵设备实时监控数据';
+                            	 var columnStr=Ext.getCmp("PipelineRealTimeMonitoringColumnStr_Id").getValue();
+                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
+                             }
+                         }, '->', {
                          	xtype: 'button',
                             text:'查看历史',
                             tooltip:'点击按钮或者双击表格，查看历史数据',
@@ -166,41 +167,16 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                     header: false,
                     items:[{
                         region: 'center',
-                        layout: 'border',
-                        border: false,
-                        items: [{
-                        	region: 'center',
-                        	title: '实时数据',
-                        	id: "PipelineRealTimeMonitoringInfoDataPanel_Id",
-                        	layout: 'fit',
-                        	html:'<div class="PipelineRealTimeMonitoringInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PipelineRealTimeMonitoringInfoDataTableInfoDiv_id"></div></div>',
-                            listeners: {
-                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null && pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
-                                		var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
-                                		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-                                		if(isNotVal(gridPanel)){
-                                			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
-                                		}
-                                	}
-                                }
-                            }
-                        },{
-                        	region: 'south',
-                        	height: '40%',
-                        	title: '实时曲线',
-                        	layout: 'fit',
-                        	border: true,
-                        	split: true,
-                            collapsible: true,
-                            tbar:[{
-                                id: 'PipelineRealTimeMonitoringSelectedCurve_Id',//选择的统计项的值
-                                xtype: 'textfield',
-                                value: '',
-                                hidden: true
-                            }],
-                            html: '<div id="pipelineRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
+                        xtype: 'tabpanel',
+                		id:"PipelineRealTimeMonitoringCurveAndTableTabPanel",
+                		activeTab: 0,
+                		border: false,
+                		tabPosition: 'top',
+                		items: [{
+                			title:'实时曲线',
+                			id:"PipelineRealTimeMonitoringCurveTabPanel_Id",
+                			layout: 'fit',
+                			html: '<div id="pipelineRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
                             listeners: {
                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                                     if ($("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
@@ -208,7 +184,72 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                     }
                                 }
                             }
-                        }]
+                		},{
+                			title:'实时数据',
+                			id:"PipelineRealTimeMonitoringTableTabPanel_Id",
+                			layout: 'border',
+                            border: false,
+                            items: [{
+                            	region: 'center',
+//                            	title: '实时数据',
+                            	header: false,
+                            	id: "PipelineRealTimeMonitoringInfoDataPanel_Id",
+                            	layout: 'fit',
+                            	html:'<div class="PipelineRealTimeMonitoringInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PipelineRealTimeMonitoringInfoDataTableInfoDiv_id"></div></div>',
+                                listeners: {
+                                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                    	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null && pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
+                                    		var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
+                                    		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+                                    		if(isNotVal(gridPanel)){
+                                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                                    			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
+                                    		}
+                                    	}
+                                    }
+                                }
+                            }
+//                            ,{
+//                            	region: 'south',
+//                            	height: '40%',
+//                            	title: '实时曲线',
+//                            	layout: 'fit',
+//                            	border: true,
+//                            	split: true,
+//                                collapsible: true,
+//                                tbar:[{
+//                                    id: 'PipelineRealTimeMonitoringSelectedCurve_Id',//选择的统计项的值
+//                                    xtype: 'textfield',
+//                                    value: '',
+//                                    hidden: true
+//                                }],
+//                                html: '<div id="pipelineRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
+//                                listeners: {
+//                                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+//                                        if ($("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
+//                                            $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pipelineRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pipelineRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
+//                                        }
+//                                    }
+//                                }
+//                            }
+                            ]
+                		}],
+                		listeners: {
+            				tabchange: function (tabPanel, newCard,oldCard, obj) {
+            					var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
+            					var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+            					if(newCard.id=="PipelineRealTimeMonitoringCurveTabPanel_Id"){
+            						if(isNotVal(gridPanel)&&selectRow>=0){
+            							deviceRealtimeMonitoringCurve(1);
+            						}
+            					}else if(newCard.id=="PipelineRealTimeMonitoringTableTabPanel_Id"){
+                            		if(isNotVal(gridPanel)&&selectRow>=0){
+                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+                            			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
+                            		}
+            					}
+            				}
+                		}
                     },{
                     	region: 'east',
                     	width: '20%',
@@ -242,7 +283,6 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 autoScroll: true,
                                 scrollable: true
                 			}]
-                			
                 		},{
                 			title:'设备控制',
                 			id: 'PipelineRealTimeMonitoringRightControlPanel',
@@ -265,7 +305,6 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 		url:context + '/realTimeMonitoringController/getDeviceRealTimeMonitoringData',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			
 			if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper==null || pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot==undefined){
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper = PipelineDeviceRealTimeMonitoringDataHandsontableHelper.createNew("PipelineRealTimeMonitoringInfoDataTableInfoDiv_id");
 				var colHeaders="['名称','变量','名称','变量','名称','变量']";
@@ -275,7 +314,7 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 						+"{data:'name2'},"
 						+"{data:'value2'}," 
 						+"{data:'name3'}," 
-						+"{data:'value3'}"
+						+"{data:'value3'}" 
 						+"]";
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns=Ext.JSON.decode(columns);
@@ -290,20 +329,20 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 			
-			//绘制第一个数据型变量曲线
-			var item=Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
-			if(!isNotVal(item)){
-				for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
-						Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
-	                	item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
-	                	break;
-					}
-				}
-			}
-			if(isNotVal(item)){
-				pipelineRealTimeMonitoringCurve(item);
-			}
+			//绘制第一个float型变量曲线columnDataType resolutionMode
+//			var item=Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
+//			if(!isNotVal(item)){
+//				for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+//					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
+//						Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
+//	                	item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
+//	                	break;
+//					}
+//				}
+//			}
+//			if(isNotVal(item)){
+//				pipelineRealTimeMonitoringCurve(item);
+//			}
 			
 			
 			
@@ -336,48 +375,66 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns=[];
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=[];
 	        
-	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
-	             Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = '#DC2828';   
-	             td.style.color='#FFFFFF';
-	        }
-	        
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addFirstAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
+//	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
+//	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
+	        	var Color='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
 	        	var Opacity=AlarmShowStyle.FirstLevel.Opacity;
 	     		
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
+//	             td.style.backgroundColor = BackgroundColor;   
 	             td.style.color=Color;
+	             td.style.fontWeight = 'bold';
+	             td.style.fontFamily = 'SimHei';
+	             if(row%2==1){
+	            	 td.style.backgroundColor = '#E6E6E6';
+	             }
 	        }
 	        
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addSecondAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
+//	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
+//	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
+	        	var Color='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
 	        	var Opacity=AlarmShowStyle.SecondLevel.Opacity;
 	     		
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
+//	             td.style.backgroundColor = BackgroundColor;   
 	             td.style.color=Color;
+	             td.style.fontWeight = 'bold';
+	             td.style.fontFamily = 'SimHei';
+	             if(row%2==1){
+	            	 td.style.backgroundColor = '#E6E6E6';
+	             }
+	             
 	        }
 	        
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addThirdAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
+//	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
+//	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
+	        	var Color='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
 	        	var Opacity=AlarmShowStyle.ThirdLevel.Opacity;
 	     		
 	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
+//	             td.style.backgroundColor = BackgroundColor;   
 	             td.style.color=Color;
+	             td.style.fontWeight = 'bold';
+	             td.style.fontFamily = 'SimHei';
+	             if(row%2==1){
+	            	 td.style.backgroundColor = '#E6E6E6';
+	             }
 	        }
 	        
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addBoldBg = function (instance, td, row, col, prop, value, cellProperties) {
 	            Handsontable.renderers.TextRenderer.apply(this, arguments);
-	            td.style.backgroundColor = 'rgb(184, 184, 184)';
+	            td.style.backgroundColor = '#E6E6E6';
+	        }
+	        
+	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addItenmNameColStyle = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.fontWeight = 'bold';
 	        }
 	        
 	        pipelineDeviceRealTimeMonitoringDataHandsontableHelper.addSizeBg = function (instance, td, row, col, prop, value, cellProperties) {
@@ -462,33 +519,33 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-	                	if(row>0||column>0){
-	                		var relRow=row;
-	                		var relColumn=column;
-	                		if(column%2==1){
-	                			relColumn=column-1;
-	                		}else if(column%2==0){
-	                			
-	                		}
-		                	
-		                	var item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
-		                	var selectecCell=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getCell(relRow,relColumn);
-		                	var columnDataType='';
-		                	var resolutionMode=0;
-		                	for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-		        				if(relRow==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
-		        					item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
-		        					columnDataType=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
-		        					resolutionMode=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode;
-		        					break;
-		        				}
-		        			}
-		                	
-		                	if(isNotVal(item)&&resolutionMode==2){ //columnDataType.includes('float')
-		                		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(item);
-			                	pipelineRealTimeMonitoringCurve(item);
-		                	}
-	                	}
+//	                	if(row>0||column>0){
+//	                		var relRow=row;
+//	                		var relColumn=column;
+//	                		if(column%2==1){
+//	                			relColumn=column-1;
+//	                		}else if(column%2==0){
+//	                			
+//	                		}
+//		                	
+//		                	var item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
+//		                	var selectecCell=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.getCell(relRow,relColumn);
+//		                	var columnDataType='';
+//		                	var resolutionMode=0;
+//		                	for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
+//		        				if(relRow==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
+//		        					item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
+//		        					columnDataType=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
+//		        					resolutionMode=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode;
+//		        					break;
+//		        				}
+//		        			}
+//		                	
+//		                	if(isNotVal(item)&&resolutionMode==2){
+//		                		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(item);
+//			                	pipelineRealTimeMonitoringCurve(item);
+//		                	}
+//	                	}
 	                }
 	        	});
 	        }
@@ -508,11 +565,11 @@ function pipelineRealTimeMonitoringCurve(item){
 				var result =  Ext.JSON.decode(response.responseText);
 			    var data = result.list;
 			    var tickInterval = 1;
-			    tickInterval = data.length;//Math.floor(data.length / 2) + 1;
-			    if(tickInterval<10){
-			    	tickInterval=10;
+			    tickInterval = Math.floor(data.length / 2) + 1;
+			    if(tickInterval<100){
+			    	tickInterval=100;
 			    }
-			    tickInterval=1000;
+//			    tickInterval=1000;
 //			    if(){
 //			    	
 //			    }

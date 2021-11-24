@@ -49,14 +49,20 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-                    		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
+//                    		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
                     	},
                     	select: function(grid, record, index, eOpts) {
-                    		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
+//                    		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		var deviceName=record.data.wellName;
                     		var deviceType=0;
-                    		CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
+                    		var tabPanel = Ext.getCmp("PumpRealTimeMonitoringCurveAndTableTabPanel");
+                    		var activeId = tabPanel.getActiveTab().id;
+                    		if(activeId=="PumpRealTimeMonitoringCurveTabPanel_Id"){
+                    			deviceRealtimeMonitoringCurve(0);
+                    		}else if(activeId=="PumpRealTimeMonitoringTableTabPanel_Id"){
+                        		CreatePumpDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
+                    		}
                     		Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStore');
                     	},
                     	itemdblclick: function (view,record,item,index,e,eOpts) {
@@ -79,7 +85,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
 					}
 					pumpDeviceRealTimeMonitoringDataHandsontableHelper=null;
 				}
-            	Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
+            	Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(-1);
+//            	Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
             	
             	$("#pumpRealTimeMonitoringCurveDiv_Id").html('');
             	
