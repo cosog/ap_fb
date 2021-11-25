@@ -116,11 +116,12 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             pressed: true,
                             handler: function (v, o) {
                             	var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
-                        		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-                        		if(isNotVal(gridPanel)){
-                        			var record=gridPanel.getStore().getAt(selectRow);
-                        			gotoDeviceHistory(record.data.wellName,0);
-                        		}
+                            	Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getStore().remove(selectRow);
+//                        		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+//                        		if(isNotVal(gridPanel)){
+//                        			var record=gridPanel.getStore().getAt(selectRow);
+//                        			gotoDeviceHistory(record.data.wellName,0);
+//                        		}
                             }
                         }]
                     },{
@@ -450,7 +451,7 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	            var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
 	            if (row ==0) {
 	            	Handsontable.renderers.TextRenderer.apply(this, arguments);
-		        	td.style.fontWeight = 'bold';
+//		        	td.style.fontWeight = 'bold';
 			        td.style.fontSize = '20px';
 			        td.style.fontFamily = 'SimSun';
 			        td.style.height = '40px';
@@ -459,7 +460,7 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	            	td.style.backgroundColor = '#f5f5f5';
                 }
 	            if (col%2==0) {
-	            	td.style.fontWeight = 'bold';
+//	            	td.style.fontWeight = 'bold';
                 }else{
                 	td.style.fontFamily = 'SimHei';
                 }

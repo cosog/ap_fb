@@ -104,8 +104,8 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                             	 var deviceName=Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
                             	 var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
                             	 var deviceType=1;
-                            	 var fileName='泵设备实时监控数据';
-                            	 var title='泵设备实时监控数据';
+                            	 var fileName='管设备实时监控数据';
+                            	 var title='管设备实时监控数据';
                             	 var columnStr=Ext.getCmp("PipelineRealTimeMonitoringColumnStr_Id").getValue();
                             	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
                              }
@@ -450,7 +450,7 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	            var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
 	            if (row ==0) {
 	            	Handsontable.renderers.TextRenderer.apply(this, arguments);
-		        	td.style.fontWeight = 'bold';
+//		        	td.style.fontWeight = 'bold';
 			        td.style.fontSize = '20px';
 			        td.style.fontFamily = 'SimSun';
 			        td.style.height = '40px';
@@ -459,7 +459,7 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	            	td.style.backgroundColor = '#f5f5f5';
                 }
 	            if (col%2==0) {
-	            	td.style.fontWeight = 'bold';
+//	            	td.style.fontWeight = 'bold';
                 }else{
                 	td.style.fontFamily = 'SimHei';
                 }

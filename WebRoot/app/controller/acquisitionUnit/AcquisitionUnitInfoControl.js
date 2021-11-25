@@ -465,14 +465,8 @@ var grantAcquisitionItemsPermission = function () {
             	var resolutionMode = driverConfigItemsData[index][6];
             	var itemShowLevel = driverConfigItemsData[index][7];
             	var itemSort = driverConfigItemsData[index][8];
-            	var isRealtimeCurve=0;
-            	var isHistoryCurve=0;
-            	if(driverConfigItemsData[index][9]){
-            		isRealtimeCurve=1;
-            	}
-            	if(driverConfigItemsData[index][10]){
-            		isHistoryCurve=1;
-            	}
+            	var isRealtimeCurve=driverConfigItemsData[index][9];
+            	var isHistoryCurve=driverConfigItemsData[index][10];
                 
                 addjson.push(itemName);
                 addItemSort.push(itemSort);
