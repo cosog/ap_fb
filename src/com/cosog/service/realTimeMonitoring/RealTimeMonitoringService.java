@@ -147,6 +147,23 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
+		
+		ModbusProtocolConfig.Protocol protocol=null;
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+			
+			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
+				protocol=modbusProtocolConfig.getProtocol().get(i);
+				break;
+			}
+			
+		}
+		
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpRealTimeOverview";
@@ -172,7 +189,30 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
-			sql+=",t2."+ddicColumnsList.get(i);
+			boolean isMatch=false;
+			String itemStr="";
+			if(protocol!=null){
+				for(int j=0;j<protocol.getItems().size();j++){
+					if(ddicColumnsList.get(i).equalsIgnoreCase("addr"+protocol.getItems().get(j).getAddr())){
+						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
+							isMatch=true;
+							itemStr=",decode(t2."+ddicColumnsList.get(i);
+							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
+								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
+							}
+							
+							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
+						}
+						break;
+					}
+				}
+			}
+			if(isMatch){
+				sql+=itemStr;
+			}else{
+				sql+=",t2."+ddicColumnsList.get(i);
+			}
+			
 		}
 		sql+= " from "+deviceTableName+" t "
 				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
@@ -225,6 +265,22 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	public String getDeviceRealTimeOverviewExportData(String orgId,String deviceName,String deviceType,String commStatus) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		
+		ModbusProtocolConfig.Protocol protocol=null;
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+			equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		}
+		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+			
+			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
+				protocol=modbusProtocolConfig.getProtocol().get(i);
+				break;
+			}
+			
+		}
+		
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpRealTimeOverview";
@@ -245,7 +301,29 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
-			sql+=",t2."+ddicColumnsList.get(i);
+			boolean isMatch=false;
+			String itemStr="";
+			if(protocol!=null){
+				for(int j=0;j<protocol.getItems().size();j++){
+					if(ddicColumnsList.get(i).equalsIgnoreCase("addr"+protocol.getItems().get(j).getAddr())){
+						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
+							isMatch=true;
+							itemStr=",decode(t2."+ddicColumnsList.get(i);
+							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
+								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
+							}
+							
+							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
+						}
+						break;
+					}
+				}
+			}
+			if(isMatch){
+				sql+=itemStr;
+			}else{
+				sql+=",t2."+ddicColumnsList.get(i);
+			}
 		}
 		sql+= " from "+deviceTableName+" t "
 				+ "left outer join "+tableName+" t2 on t2.wellid=t.id"
@@ -879,8 +957,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String curveItemsSql="select t6.itemname,t6.bitindex "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+deviceName+"' and t6.historycurve=1 "
-				+ " order by t6.sort,t6.id";
+				+ " and t.wellname='"+deviceName+"' and t6.realtimecurve>=0 "
+				+ " order by t6.realtimecurve,t6.sort,t6.id";
 		List<?> protocolList = this.findCallSql(protocolSql);
 		List<?> curveItemList = this.findCallSql(curveItemsSql);
 		String protocolName="";

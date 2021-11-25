@@ -273,8 +273,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					boolean checked=false;
 					String sort="";
 					String showLevel="";
-					boolean isRealtimeCurve=false;
-					boolean isHistoryCurve=false;
+					String isRealtimeCurve="";
+					String isHistoryCurve="";
 					if(protocolConfig.getItems().get(j).getResolutionMode()==0){//开关量
 						
 					}else{
@@ -304,8 +304,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							checked=false;
 							sort="";
 							showLevel="";
-							isRealtimeCurve=false;
-							isHistoryCurve=false;
+							isRealtimeCurve="";
+							isHistoryCurve="";
 							for(int m=0;m<itemsList.size();m++){
 								if(itemsList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())
 										&&itemsBitIndexList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"")
@@ -313,12 +313,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									checked=true;
 									sort=itemsSortList.get(m);
 									showLevel=itemsShowLevelList.get(m);
-									if(StringManagerUtils.stringToInteger(realtimeCurveList.get(m))==1){
-										isRealtimeCurve=true;
-									}
-									if(StringManagerUtils.stringToInteger(historyCurveList.get(m))==1){
-										isHistoryCurve=true;
-									}
+									isRealtimeCurve=realtimeCurveList.get(m);
+									isHistoryCurve=historyCurveList.get(m);
 									break;
 								}
 							}
@@ -338,8 +334,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
 									+ "\"showLevel\":\""+showLevel+"\","
 									+ "\"sort\":\""+sort+"\","
-									+ "\"isRealtimeCurve\":"+isRealtimeCurve+","
-									+ "\"isHistoryCurve\":"+isHistoryCurve+""
+									+ "\"isRealtimeCurve\":\""+isRealtimeCurve+"\","
+									+ "\"isHistoryCurve\":\""+isHistoryCurve+"\""
 									+ "},");
 							index++;
 						}
@@ -350,12 +346,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								if(itemsList.get(k).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())){
 									sort=itemsSortList.get(k);
 									showLevel=itemsShowLevelList.get(k);
-									if(StringManagerUtils.stringToInteger(realtimeCurveList.get(k))==1){
-										isRealtimeCurve=true;
-									}
-									if(StringManagerUtils.stringToInteger(historyCurveList.get(k))==1){
-										isHistoryCurve=true;
-									}
+									isRealtimeCurve=realtimeCurveList.get(k);
+									isHistoryCurve=historyCurveList.get(k);
 									break;
 								}
 							}
@@ -374,8 +366,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								+ "\"acqMode\":\""+("active".equalsIgnoreCase(protocolConfig.getItems().get(j).getAcqMode())?"主动上传":"被动响应")+"\","
 								+ "\"showLevel\":\""+showLevel+"\","
 								+ "\"sort\":\""+sort+"\","
-								+ "\"isRealtimeCurve\":"+isRealtimeCurve+","
-								+ "\"isHistoryCurve\":"+isHistoryCurve+""
+								+ "\"isRealtimeCurve\":\""+isRealtimeCurve+"\","
+								+ "\"isHistoryCurve\":\""+isHistoryCurve+"\""
 								+ "},");
 						index++;
 					}

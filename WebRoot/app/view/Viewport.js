@@ -234,12 +234,20 @@ function websocketOnMessage(evt) {
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
-							record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
-							record.set("commStatus",data.commStatus);
-//							record.set("commAlarmLevel",(data.commStatus==1?0:100));
-							record.set("commAlarmLevel",data.commAlarmLevel);
-							record.set("acqTime",data.acqTime);
-							record.commit();
+							var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+							if((data.commStatus==1&&commStatus.toUpperCase()=='offline'.toUpperCase()) || (data.commStatus==0&&commStatus.toUpperCase()=='online'.toUpperCase()) ){
+								store.loadPage(1);
+//								store.remove(i+"");
+//								store.commit();
+							}else{
+								record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
+								record.set("commStatus",data.commStatus);
+//								record.set("commAlarmLevel",(data.commStatus==1?0:100));
+								record.set("commAlarmLevel",data.commAlarmLevel);
+								record.set("acqTime",data.acqTime);
+								record.commit();
+							}
+							
 							break;
 						}
 //						var newValue = store.getAt(i).get("name");
@@ -370,12 +378,19 @@ function websocketOnMessage(evt) {
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
-							record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
-							record.set("commStatus",data.commStatus);
-//							record.set("commAlarmLevel",(data.commStatus==1?0:100));
-							record.set("commAlarmLevel",data.commAlarmLevel);
-							record.set("acqTime",data.acqTime);
-							record.commit();
+							var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+							if(data.commStatus==1&&commStatus.toUpperCase()=='offline'.toUpperCase()){
+								store.loadPage(1);
+							}else if(data.commStatus==0&&commStatus.toUpperCase()=='online'.toUpperCase()){
+								store.loadPage(1);
+							}else{
+								record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
+								record.set("commStatus",data.commStatus);
+//								record.set("commAlarmLevel",(data.commStatus==1?0:100));
+								record.set("commAlarmLevel",data.commAlarmLevel);
+								record.set("acqTime",data.acqTime);
+								record.commit();
+							}
 							break;
 						}
 					}

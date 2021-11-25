@@ -332,10 +332,10 @@ function deviceHistoryQueryCurve(deviceType){
 		       '#008C00', // 绿
 		       '#000000', // 黑
 		       '#0000FF', // 蓝
-		       '#F4BD82', // 黄
+		       '#F09614', // 黄
 		       '#FF00FF' // 紫
 		     ];
-		    var timeFormat='%Y-%m-%d';
+		    var timeFormat='%m-%d';
 //		    timeFormat='%H:%M';
 		    initDeviceHistoryCurveChartFn(ser, tickInterval, divId, title, '', xTitle, yAxis, color,true,timeFormat);
 		},
@@ -388,7 +388,7 @@ function initDeviceHistoryCurveChartFn(series, tickInterval, divId, title, subti
                     return Highcharts.dateFormat(timeFormat, this.value);
                 },
                 autoRotation:true,//自动旋转
-                rotation: 0 //倾斜度，防止数量过多显示不全  
+                rotation: -45 //倾斜度，防止数量过多显示不全  
 //                step: 2
             }
         },

@@ -179,7 +179,7 @@ var DeviceHistoryQueryDataHandsontableHelper = {
 	            var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
 	            if (row ==0) {
 	            	Handsontable.renderers.TextRenderer.apply(this, arguments);
-		        	td.style.fontWeight = 'bold';
+//		        	td.style.fontWeight = 'bold';
 			        td.style.fontSize = '20px';
 			        td.style.fontFamily = 'SimSun';
 			        td.style.height = '40px';
@@ -188,7 +188,7 @@ var DeviceHistoryQueryDataHandsontableHelper = {
 	            	td.style.backgroundColor = '#f5f5f5';
                 }
 	            if (col%2==0) {
-	            	td.style.fontWeight = 'bold';
+//	            	td.style.fontWeight = 'bold';
                 }else{
                 	td.style.fontFamily = 'SimHei';
                 }

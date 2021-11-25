@@ -65,7 +65,7 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
                         text: '驱动:',
 //                        width: 100,
                         handler: function (v, o) {
-                        	Ext.getCmp('ResourceMonitoringCurveItem_Id').setValue("ad运行状态");
+                        	Ext.getCmp('ResourceMonitoringCurveItem_Id').setValue("驱动运行状态");
                             Ext.getCmp('ResourceMonitoringCurveItemCode_Id').setValue("adRunStatus");
                             var itemCode= Ext.getCmp('ResourceMonitoringCurveItemCode_Id').getValue();
                         	var ResourceProbeHistoryCurveWindow=Ext.create("AP.view.realTimeMonitoring.ResourceProbeHistoryCurveWindow", {
@@ -707,7 +707,7 @@ function deviceRealtimeMonitoringCurve(deviceType){
 		       '#008C00', // 绿
 		       '#000000', // 黑
 		       '#0000FF', // 蓝
-		       '#F4BD82', // 黄
+		       '#F09614', // 黄
 		       '#FF00FF' // 紫
 		     ];
 		    var timeFormat='%H:%M';
@@ -760,7 +760,7 @@ function initDeviceRealtimeMonitoringChartFn(series, tickInterval, divId, title,
                     return Highcharts.dateFormat(timeFormat, this.value);
                 },
                 autoRotation:true,//自动旋转
-                rotation: 0 //倾斜度，防止数量过多显示不全  
+                rotation: -45 //倾斜度，防止数量过多显示不全  
 //                step: 2
             }
         },

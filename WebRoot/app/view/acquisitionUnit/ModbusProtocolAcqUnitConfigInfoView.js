@@ -138,8 +138,8 @@ function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code){
 //						+"{data:'acqMode',type:'dropdown',strict:true,allowInvalid:false,source:['主动上传', '被动响应']}," 
 						+"{data:'showLevel',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
 						+"{data:'sort',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
-						+"{data:'isRealtimeCurve',type:'checkbox'}," 
-						+"{data:'isHistoryCurve',type:'checkbox'}" 
+						+"{data:'isRealtimeCurve',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}," 
+						+"{data:'isHistoryCurve',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,protocolAcqUnitConfigItemsHandsontableHelper);}}" 
 						+"]";
 				
 				protocolAcqUnitConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
