@@ -376,6 +376,7 @@ public class DriverAPIController extends BaseController{
 				
 				String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
 						+ " t2.commstatus,t2.commtime,t2.commtimeefficiency,t2.commrange,"
+						+ " t.orgid,"
 						+ " t.id"
 						+ " from "+deviceTableName+" t,"+realtimeTable+"  t2 "
 						+ " where t.id=t2.wellid"
@@ -395,7 +396,7 @@ public class DriverAPIController extends BaseController{
 					CommResponseData commResponseData=null;
 					String wellName=obj[0]+"";
 					String wellId=obj[obj.length-1]+"";
-					
+					String orgId=obj[obj.length-2]+"";
 					String commRequest="{"
 							+ "\"AKString\":\"\","
 							+ "\"WellName\":\""+wellName+"\",";
@@ -508,6 +509,7 @@ public class DriverAPIController extends BaseController{
 					
 					webSocketSendData.append("{\"functionCode\":\""+functionCode+"\",");
 					webSocketSendData.append("\"wellName\":\""+wellName+"\",");
+					webSocketSendData.append("\"orgId\":"+orgId+",");
 					webSocketSendData.append("\"acqTime\":\""+currentTime+"\",");
 					webSocketSendData.append("\"commStatus\":"+(acqOnline.getStatus()?1:0)+",");
 					webSocketSendData.append("\"commAlarmLevel\":"+commAlarmLevel);
