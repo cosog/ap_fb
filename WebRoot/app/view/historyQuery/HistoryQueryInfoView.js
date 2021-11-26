@@ -337,7 +337,7 @@ function deviceHistoryQueryCurve(deviceType){
 		     ];
 		    var timeFormat='%m-%d';
 //		    timeFormat='%H:%M';
-		    initDeviceHistoryCurveChartFn(ser, tickInterval, divId, title, '', xTitle, yAxis, color,true,timeFormat);
+		    initDeviceHistoryCurveChartFn(ser, tickInterval, divId, title, '', '', yAxis, color,true,timeFormat);
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");

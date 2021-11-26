@@ -711,7 +711,7 @@ function deviceRealtimeMonitoringCurve(deviceType){
 		       '#FF00FF' // 紫
 		     ];
 		    var timeFormat='%H:%M';
-		    initDeviceRealtimeMonitoringChartFn(ser, tickInterval, divId, title, '', xTitle, yAxis, color,true,timeFormat);
+		    initDeviceRealtimeMonitoringStockChartFn(ser, tickInterval, divId, title, '', '', yAxis, color,true,timeFormat);
 		},
 		failure:function(){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
@@ -741,6 +741,121 @@ function initDeviceRealtimeMonitoringChartFn(series, tickInterval, divId, title,
         credits: {
             enabled: false
         },
+        title: {
+            text: title
+        },
+        subtitle: {
+            text: subtitle
+        },
+        colors: color,
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: xtitle
+            },
+//            tickInterval: tickInterval,
+            tickPixelInterval:tickInterval,
+            labels: {
+                formatter: function () {
+                    return Highcharts.dateFormat(timeFormat, this.value);
+                },
+                autoRotation:true,//自动旋转
+                rotation: -45 //倾斜度，防止数量过多显示不全  
+//                step: 2
+            }
+        },
+        yAxis: yAxis,
+        tooltip: {
+            crosshairs: true, //十字准线
+            shared: true,
+            style: {
+                color: '#333333',
+                fontSize: '12px',
+                padding: '8px'
+            },
+            dateTimeLabelFormats: {
+                millisecond: '%Y-%m-%d %H:%M:%S.%L',
+                second: '%Y-%m-%d %H:%M:%S',
+                minute: '%Y-%m-%d %H:%M',
+                hour: '%Y-%m-%d %H',
+                day: '%Y-%m-%d',
+                week: '%m-%d',
+                month: '%Y-%m',
+                year: '%Y'
+            }
+        },
+        exporting: {
+            enabled: true,
+            filename: 'class-booking-chart',
+            url: context + '/exportHighcharsPicController/export'
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 1,
+                fillOpacity: 0.3,
+                marker: {
+                    enabled: true,
+                    radius: 3, //曲线点半径，默认是4
+                    //                            symbol: 'triangle' ,//曲线点类型："circle", "square", "diamond", "triangle","triangle-down"，默认是"circle"
+                    states: {
+                        hover: {
+                            enabled: true,
+                            radius: 6
+                        }
+                    }
+                },
+                shadow: true
+            }
+        },
+        legend: {
+            layout: 'horizontal',//horizontal水平 vertical 垂直
+            align: 'center',  //left，center 和 right
+            verticalAlign: 'bottom',//top，middle 和 bottom
+            enabled: legend,
+            borderWidth: 0
+        },
+        series: series
+    });
+};
+
+function initDeviceRealtimeMonitoringStockChartFn(series, tickInterval, divId, title, subtitle, xtitle, yAxis, color,legend,timeFormat) {
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+    var mychart = new Highcharts.stockChart({
+        chart: {
+            renderTo: divId,
+            type: 'spline',
+            shadow: true,
+            borderWidth: 0,
+            zoomType: 'xy'
+        },
+        credits: {
+            enabled: false
+        },
+        rangeSelector: {
+    		buttons: [{
+    			count: 1,
+    			type: 'hour',//minute hour week month all
+    			text: '1小时'
+    		}, {
+    			count: 6,
+    			type: 'hour',
+    			text: '6小时'
+    		}, {
+    			count: 12,
+    			type: 'hour',
+    			text: '12小时'
+    		}, {
+    			type: 'all',
+    			text: '全部'
+    		}],
+    		inputEnabled: false,
+    		selected: 0
+    	},
         title: {
             text: title
         },

@@ -116,12 +116,11 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             pressed: true,
                             handler: function (v, o) {
                             	var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
-                            	Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getStore().remove(selectRow);
-//                        		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-//                        		if(isNotVal(gridPanel)){
-//                        			var record=gridPanel.getStore().getAt(selectRow);
-//                        			gotoDeviceHistory(record.data.wellName,0);
-//                        		}
+                        		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+                        		if(isNotVal(gridPanel)){
+                        			var record=gridPanel.getStore().getAt(selectRow);
+                        			gotoDeviceHistory(record.data.wellName,0);
+                        		}
                             }
                         }]
                     },{

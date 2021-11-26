@@ -74,6 +74,9 @@ create table TBL_ACQ_ITEM2GROUP_CONF
   groupid  NUMBER(10) not null,
   sort     NUMBER(10),
   bitindex NUMBER(3),
+  showlevel NUMBER(10),
+  realtimecurve NUMBER(10),
+  historycurve NUMBER(10),
   matrix   VARCHAR2(8)
 )
 tablespace AP_FB_DATA
@@ -94,6 +97,8 @@ create index IDX_ACQ_GROUP_ITEM_INDEX on TBL_ACQ_ITEM2GROUP_CONF (BITINDEX)
 create index IDX_ACQ_GROUP_ITEM_ITEMID on TBL_ACQ_ITEM2GROUP_CONF (ITEMID)
 /
 create index IDX_ACQ_GROUP_ITEM_ITEMNAME on TBL_ACQ_ITEM2GROUP_CONF (ITEMNAME)
+/
+create index IDX_ACQ_GROUP_ITEM_SHOWLEVEL on TBL_ACQ_ITEM2GROUP_CONF (SHOWLEVEL)
 /
 create index IDX_ACQ_GROUP_ITEM_SORT on TBL_ACQ_ITEM2GROUP_CONF (SORT)
 /
@@ -122,92 +127,6 @@ create index IDX_ACQ_UNIT_GROUP_GROUPID on TBL_ACQ_GROUP2UNIT_CONF (GROUPID)
 /
 create index IDX_ACQ_UNIT_GROUP_UNITID on TBL_ACQ_GROUP2UNIT_CONF (UNITID)
 /
-
-
-
-/*==============================================================*/
-/* Table: TBL_ALARMINFO                               */
-/*==============================================================*/
-create table TBL_ALARMINFO
-(
-  id            NUMBER(10) not null,
-  wellid        NUMBER(10),
-  alarmtime     DATE,
-  itemname      VARCHAR2(100),
-  alarmtype     NUMBER(1),
-  alarmvalue    NUMBER(10,3),
-  alarminfo     VARCHAR2(100),
-  alarmlimit    NUMBER(10,3),
-  hystersis     NUMBER(10,3),
-  alarmlevel    NUMBER(3),
-  issendmessage NUMBER(1) default 0,
-  issendmail    NUMBER(1) default 0,
-  recoverytime  DATE
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_ALARMINFO
-  add constraint PK_ALARMINFO primary key (ID)
-/
-create index IDX_ALARMINFO_ITEM on TBL_ALARMINFO (ITEMNAME)
-/
-create index IDX_ALARMINFO_LEVEL on TBL_ALARMINFO (ALARMLEVEL)
-/
-create index IDX_ALARMINFO_TIME on TBL_ALARMINFO (ALARMTIME)
-/
-create index IDX_ALARMINFO_TYPE on TBL_ALARMINFO (ALARMTYPE)
-/
-create index IDX_ALARMINFO_WELLID on TBL_ALARMINFO (WELLID)
-/
-
-
-/*==============================================================*/
-/* Table: TBL_ALARMINFO_LATEST                                  */
-/*==============================================================*/
-create table TBL_ALARMINFO_LATEST
-(
-  id            NUMBER(10) not null,
-  wellid        NUMBER(10),
-  alarmtime     DATE,
-  itemname      VARCHAR2(100),
-  alarmtype     NUMBER(1),
-  alarmvalue    NUMBER(10,3),
-  alarminfo     VARCHAR2(100),
-  alarmlimit    NUMBER(10,3),
-  hystersis     NUMBER(10,3),
-  alarmlevel    NUMBER(3),
-  issendmessage NUMBER(1) default 0,
-  issendmail    NUMBER(1) default 0,
-  recoverytime  DATE
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_ALARMINFO_LATEST
-  add constraint PK_ALARMINFO_LATEST primary key (ID)
-/
-create index IDX_ALARMINFO_L_ITEM on TBL_ALARMINFO_LATEST (ITEMNAME)
-/
-create index IDX_ALARMINFO_L_LEVEL on TBL_ALARMINFO_LATEST (ALARMLEVEL)
-/
-create index IDX_ALARMINFO_L_TIME on TBL_ALARMINFO_LATEST (ALARMTIME)
-/
-create index IDX_ALARMINFO_L_TYPE on TBL_ALARMINFO_LATEST (ALARMTYPE)
-/
-create index IDX_ALARMINFO_L_WELLID on TBL_ALARMINFO_LATEST (WELLID)
-/
-
 
 /*==============================================================*/
 /* Table: TBL_ALARM_UNIT_CONF                                    */
@@ -491,6 +410,7 @@ create table TBL_ROLE
   role_flag   NUMBER(10),
   receivesms  NUMBER(10) default 0,
   receivemail NUMBER(10) default 0,
+  showlevel   NUMBER(10) default 0
   remark      VARCHAR2(2000)
 )
 tablespace AP_FB_DATA
@@ -574,220 +494,6 @@ create unique index IDX_ORG_CODE on TBL_ORG (ORG_CODE)
 create index IDX_ORG_CODE_PARENT on TBL_ORG (ORG_CODE, ORG_PARENT)
 /
 create index IDX_ORG_PARENT on TBL_ORG (ORG_PARENT)
-/
-
-/*==============================================================*/
-/* Table: TBL_PIPELINEACQDATA_HIST                                    */
-/*==============================================================*/
-create table TBL_PIPELINEACQDATA_HIST
-(
-  id                 NUMBER(10) not null,
-  wellid             NUMBER(10),
-  acqtime            DATE,
-  commstatus         NUMBER(2) default 0,
-  commtime           NUMBER(8,2) default 0,
-  commtimeefficiency NUMBER(10,4) default 0,
-  commrange          CLOB,
-  runstatus          NUMBER(2) default 0,
-  runtimeefficiency  NUMBER(10,4) default 0,
-  runtime            NUMBER(8,2) default 0,
-  runrange           CLOB,
-  addr0              VARCHAR2(50),
-  addr2              VARCHAR2(50),
-  addr4              VARCHAR2(50),
-  addr6              VARCHAR2(50),
-  addr8              VARCHAR2(50),
-  addr10             VARCHAR2(50),
-  addr12             VARCHAR2(50),
-  addr14             VARCHAR2(50),
-  addr16             VARCHAR2(50),
-  addr18             VARCHAR2(50),
-  addr20             VARCHAR2(50),
-  addr22             VARCHAR2(50),
-  addr24             VARCHAR2(50),
-  addr26             VARCHAR2(50),
-  addr28             VARCHAR2(50),
-  addr30             VARCHAR2(50),
-  addr32             VARCHAR2(50),
-  addr34             VARCHAR2(50),
-  addr36             VARCHAR2(50),
-  addr38             VARCHAR2(50),
-  addr40             VARCHAR2(50),
-  addr42             VARCHAR2(50),
-  addr48             VARCHAR2(50),
-  addr50             VARCHAR2(50),
-  addr52             VARCHAR2(50),
-  addr54             VARCHAR2(50),
-  addr56             VARCHAR2(50),
-  addr58             VARCHAR2(50),
-  addr60             VARCHAR2(50),
-  addr62             VARCHAR2(50),
-  addr64             VARCHAR2(50),
-  addr66             VARCHAR2(50),
-  addr68             VARCHAR2(50),
-  addr70             VARCHAR2(50),
-  addr72             VARCHAR2(50),
-  addr74             VARCHAR2(50),
-  addr76             VARCHAR2(50),
-  addr78             VARCHAR2(50),
-  addr80             VARCHAR2(50),
-  addr82             VARCHAR2(50),
-  addr84             VARCHAR2(50),
-  addr86             VARCHAR2(50),
-  addr88             VARCHAR2(50),
-  addr90             VARCHAR2(50),
-  addr92             VARCHAR2(50),
-  addr94             VARCHAR2(50),
-  addr96             VARCHAR2(50),
-  addr98             VARCHAR2(50),
-  addr100            VARCHAR2(50),
-  addr102            VARCHAR2(50),
-  addr104            VARCHAR2(50),
-  addr106            VARCHAR2(50),
-  addr108            VARCHAR2(50),
-  addr110            VARCHAR2(50),
-  addr112            VARCHAR2(50),
-  addr114            VARCHAR2(50),
-  addr116            VARCHAR2(50),
-  addr118            VARCHAR2(50),
-  addr120            VARCHAR2(50),
-  addr122            VARCHAR2(50),
-  addr124            VARCHAR2(50),
-  addr126            VARCHAR2(50),
-  addr128            VARCHAR2(50),
-  addr130            VARCHAR2(50),
-  addr132            VARCHAR2(50),
-  addr134            VARCHAR2(50),
-  addr138            VARCHAR2(50),
-  addr40201          VARCHAR2(50),
-  addr40202          VARCHAR2(50),
-  addr40203          VARCHAR2(50),
-  addr40243          VARCHAR2(50),
-  addr40251          VARCHAR2(50)
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_PIPELINEACQDATA_HIST
-  add constraint PK_TBL_PIPELINEACQDATA_HIST primary key (ID)
-/
-create index IDX_PIPELINEACQDATA_H_COMM on TBL_PIPELINEACQDATA_HIST (COMMSTATUS)
-/
-create index IDX_PIPELINEACQDATA_H_TIME on TBL_PIPELINEACQDATA_HIST (ACQTIME)
-/
-create index IDX_PIPELINEACQDATA_H_WELLID on TBL_PIPELINEACQDATA_HIST (WELLID)
-/
-
-/*==============================================================*/
-/* Table: TBL_PIPELINEACQDATA_LATEST                                    */
-/*==============================================================*/
-create table TBL_PIPELINEACQDATA_LATEST
-(
-  id                 NUMBER(10) not null,
-  wellid             NUMBER(10),
-  acqtime            DATE,
-  commstatus         NUMBER(2) default 0,
-  commtime           NUMBER(8,2) default 0,
-  commtimeefficiency NUMBER(10,4) default 0,
-  commrange          CLOB,
-  runstatus          NUMBER(2) default 0,
-  runtimeefficiency  NUMBER(10,4) default 0,
-  runtime            NUMBER(8,2) default 0,
-  runrange           CLOB,
-  addr0              VARCHAR2(50),
-  addr2              VARCHAR2(50),
-  addr4              VARCHAR2(50),
-  addr6              VARCHAR2(50),
-  addr8              VARCHAR2(50),
-  addr10             VARCHAR2(50),
-  addr12             VARCHAR2(50),
-  addr14             VARCHAR2(50),
-  addr16             VARCHAR2(50),
-  addr18             VARCHAR2(50),
-  addr20             VARCHAR2(50),
-  addr22             VARCHAR2(50),
-  addr24             VARCHAR2(50),
-  addr26             VARCHAR2(50),
-  addr28             VARCHAR2(50),
-  addr30             VARCHAR2(50),
-  addr32             VARCHAR2(50),
-  addr34             VARCHAR2(50),
-  addr36             VARCHAR2(50),
-  addr38             VARCHAR2(50),
-  addr40             VARCHAR2(50),
-  addr42             VARCHAR2(50),
-  addr48             VARCHAR2(50),
-  addr50             VARCHAR2(50),
-  addr52             VARCHAR2(50),
-  addr54             VARCHAR2(50),
-  addr56             VARCHAR2(50),
-  addr58             VARCHAR2(50),
-  addr60             VARCHAR2(50),
-  addr62             VARCHAR2(50),
-  addr64             VARCHAR2(50),
-  addr66             VARCHAR2(50),
-  addr68             VARCHAR2(50),
-  addr70             VARCHAR2(50),
-  addr72             VARCHAR2(50),
-  addr74             VARCHAR2(50),
-  addr76             VARCHAR2(50),
-  addr78             VARCHAR2(50),
-  addr80             VARCHAR2(50),
-  addr82             VARCHAR2(50),
-  addr84             VARCHAR2(50),
-  addr86             VARCHAR2(50),
-  addr88             VARCHAR2(50),
-  addr90             VARCHAR2(50),
-  addr92             VARCHAR2(50),
-  addr94             VARCHAR2(50),
-  addr96             VARCHAR2(50),
-  addr98             VARCHAR2(50),
-  addr100            VARCHAR2(50),
-  addr102            VARCHAR2(50),
-  addr104            VARCHAR2(50),
-  addr106            VARCHAR2(50),
-  addr108            VARCHAR2(50),
-  addr110            VARCHAR2(50),
-  addr112            VARCHAR2(50),
-  addr114            VARCHAR2(50),
-  addr116            VARCHAR2(50),
-  addr118            VARCHAR2(50),
-  addr120            VARCHAR2(50),
-  addr122            VARCHAR2(50),
-  addr124            VARCHAR2(50),
-  addr126            VARCHAR2(50),
-  addr128            VARCHAR2(50),
-  addr130            VARCHAR2(50),
-  addr132            VARCHAR2(50),
-  addr134            VARCHAR2(50),
-  addr138            VARCHAR2(50),
-  addr40201          VARCHAR2(50),
-  addr40202          VARCHAR2(50),
-  addr40203          VARCHAR2(50),
-  addr40243          VARCHAR2(50),
-  addr40251          VARCHAR2(50)
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_PIPELINEACQDATA_LATEST
-  add constraint PK_TBL_PIPELINEACQDATA_LATEST primary key (ID)
-/
-create index IDX_PIPELINEACQDATA_L_COMM on TBL_PIPELINEACQDATA_LATEST (COMMSTATUS)
-/
-create index IDX_PIPELINEACQDATA_L_TIME on TBL_PIPELINEACQDATA_LATEST (ACQTIME)
-/
-create index IDX_PIPELINEACQDATA_L_WELLID on TBL_PIPELINEACQDATA_LATEST (WELLID)
 /
 
 /*==============================================================*/
@@ -886,220 +592,6 @@ create index IDX_PROTOCOLSMSINSTANCE_SORT on TBL_PROTOCOLSMSINSTANCE (SORT)
 /
 
 /*==============================================================*/
-/* Table: TBL_PUMPACQDATA_HIST                                    */
-/*==============================================================*/
-create table TBL_PUMPACQDATA_HIST
-(
-  id                 NUMBER(10) not null,
-  wellid             NUMBER(10),
-  acqtime            DATE,
-  commstatus         NUMBER(2) default 0,
-  commtime           NUMBER(8,2) default 0,
-  commtimeefficiency NUMBER(10,4) default 0,
-  commrange          CLOB,
-  runstatus          NUMBER(2) default 0,
-  runtimeefficiency  NUMBER(10,4) default 0,
-  runtime            NUMBER(8,2) default 0,
-  runrange           CLOB,
-  addr0              VARCHAR2(50),
-  addr2              VARCHAR2(50),
-  addr4              VARCHAR2(50),
-  addr6              VARCHAR2(50),
-  addr8              VARCHAR2(50),
-  addr10             VARCHAR2(50),
-  addr12             VARCHAR2(50),
-  addr14             VARCHAR2(50),
-  addr16             VARCHAR2(50),
-  addr18             VARCHAR2(50),
-  addr20             VARCHAR2(50),
-  addr22             VARCHAR2(50),
-  addr24             VARCHAR2(50),
-  addr26             VARCHAR2(50),
-  addr28             VARCHAR2(50),
-  addr30             VARCHAR2(50),
-  addr32             VARCHAR2(50),
-  addr34             VARCHAR2(50),
-  addr36             VARCHAR2(50),
-  addr38             VARCHAR2(50),
-  addr40             VARCHAR2(50),
-  addr42             VARCHAR2(50),
-  addr48             VARCHAR2(50),
-  addr50             VARCHAR2(50),
-  addr52             VARCHAR2(50),
-  addr54             VARCHAR2(50),
-  addr56             VARCHAR2(50),
-  addr58             VARCHAR2(50),
-  addr60             VARCHAR2(50),
-  addr62             VARCHAR2(50),
-  addr64             VARCHAR2(50),
-  addr66             VARCHAR2(50),
-  addr68             VARCHAR2(50),
-  addr70             VARCHAR2(50),
-  addr72             VARCHAR2(50),
-  addr74             VARCHAR2(50),
-  addr76             VARCHAR2(50),
-  addr78             VARCHAR2(50),
-  addr80             VARCHAR2(50),
-  addr82             VARCHAR2(50),
-  addr84             VARCHAR2(50),
-  addr86             VARCHAR2(50),
-  addr88             VARCHAR2(50),
-  addr90             VARCHAR2(50),
-  addr92             VARCHAR2(50),
-  addr94             VARCHAR2(50),
-  addr96             VARCHAR2(50),
-  addr98             VARCHAR2(50),
-  addr100            VARCHAR2(50),
-  addr102            VARCHAR2(50),
-  addr104            VARCHAR2(50),
-  addr106            VARCHAR2(50),
-  addr108            VARCHAR2(50),
-  addr110            VARCHAR2(50),
-  addr112            VARCHAR2(50),
-  addr114            VARCHAR2(50),
-  addr116            VARCHAR2(50),
-  addr118            VARCHAR2(50),
-  addr120            VARCHAR2(50),
-  addr122            VARCHAR2(50),
-  addr124            VARCHAR2(50),
-  addr126            VARCHAR2(50),
-  addr128            VARCHAR2(50),
-  addr130            VARCHAR2(50),
-  addr132            VARCHAR2(50),
-  addr134            VARCHAR2(50),
-  addr138            VARCHAR2(50),
-  addr40201          VARCHAR2(50),
-  addr40202          VARCHAR2(50),
-  addr40203          VARCHAR2(50),
-  addr40243          VARCHAR2(50),
-  addr40251          VARCHAR2(50)
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_PUMPACQDATA_HIST
-  add constraint PK_TBL_PUMPACQDATA_HIST primary key (ID)
-/
-create index IDX_PUMPACQDATA_HIST_COMM on TBL_PUMPACQDATA_HIST (COMMSTATUS)
-/
-create index IDX_PUMPACQDATA_HIST_TIME on TBL_PUMPACQDATA_HIST (ACQTIME)
-/
-create index IDX_PUMPACQDATA_HIST_WELLID on TBL_PUMPACQDATA_HIST (WELLID)
-/
-
-/*==============================================================*/
-/* Table: TBL_PUMPACQDATA_LATEST                                    */
-/*==============================================================*/
-create table TBL_PUMPACQDATA_LATEST
-(
-  id                 NUMBER(10) not null,
-  wellid             NUMBER(10),
-  acqtime            DATE,
-  commstatus         NUMBER(2) default 0,
-  commtime           NUMBER(8,2) default 0,
-  commtimeefficiency NUMBER(10,4) default 0,
-  commrange          CLOB,
-  runstatus          NUMBER(2) default 0,
-  runtimeefficiency  NUMBER(10,4) default 0,
-  runtime            NUMBER(8,2) default 0,
-  runrange           CLOB,
-  addr0              VARCHAR2(50),
-  addr2              VARCHAR2(50),
-  addr4              VARCHAR2(50),
-  addr6              VARCHAR2(50),
-  addr8              VARCHAR2(50),
-  addr10             VARCHAR2(50),
-  addr12             VARCHAR2(50),
-  addr14             VARCHAR2(50),
-  addr16             VARCHAR2(50),
-  addr18             VARCHAR2(50),
-  addr20             VARCHAR2(50),
-  addr22             VARCHAR2(50),
-  addr24             VARCHAR2(50),
-  addr26             VARCHAR2(50),
-  addr28             VARCHAR2(50),
-  addr30             VARCHAR2(50),
-  addr32             VARCHAR2(50),
-  addr34             VARCHAR2(50),
-  addr36             VARCHAR2(50),
-  addr38             VARCHAR2(50),
-  addr40             VARCHAR2(50),
-  addr42             VARCHAR2(50),
-  addr48             VARCHAR2(50),
-  addr50             VARCHAR2(50),
-  addr52             VARCHAR2(50),
-  addr54             VARCHAR2(50),
-  addr56             VARCHAR2(50),
-  addr58             VARCHAR2(50),
-  addr60             VARCHAR2(50),
-  addr62             VARCHAR2(50),
-  addr64             VARCHAR2(50),
-  addr66             VARCHAR2(50),
-  addr68             VARCHAR2(50),
-  addr70             VARCHAR2(50),
-  addr72             VARCHAR2(50),
-  addr74             VARCHAR2(50),
-  addr76             VARCHAR2(50),
-  addr78             VARCHAR2(50),
-  addr80             VARCHAR2(50),
-  addr82             VARCHAR2(50),
-  addr84             VARCHAR2(50),
-  addr86             VARCHAR2(50),
-  addr88             VARCHAR2(50),
-  addr90             VARCHAR2(50),
-  addr92             VARCHAR2(50),
-  addr94             VARCHAR2(50),
-  addr96             VARCHAR2(50),
-  addr98             VARCHAR2(50),
-  addr100            VARCHAR2(50),
-  addr102            VARCHAR2(50),
-  addr104            VARCHAR2(50),
-  addr106            VARCHAR2(50),
-  addr108            VARCHAR2(50),
-  addr110            VARCHAR2(50),
-  addr112            VARCHAR2(50),
-  addr114            VARCHAR2(50),
-  addr116            VARCHAR2(50),
-  addr118            VARCHAR2(50),
-  addr120            VARCHAR2(50),
-  addr122            VARCHAR2(50),
-  addr124            VARCHAR2(50),
-  addr126            VARCHAR2(50),
-  addr128            VARCHAR2(50),
-  addr130            VARCHAR2(50),
-  addr132            VARCHAR2(50),
-  addr134            VARCHAR2(50),
-  addr138            VARCHAR2(50),
-  addr40201          VARCHAR2(50),
-  addr40202          VARCHAR2(50),
-  addr40203          VARCHAR2(50),
-  addr40243          VARCHAR2(50),
-  addr40251          VARCHAR2(50)
-)
-tablespace AP_FB_DATA
-  storage
-  (
-    initial 64K
-    minextents 1
-    maxextents unlimited
-  )
-/
-alter table TBL_PUMPACQDATA_LATEST
-  add constraint PK_TBL_PUMPACQDATA_LATEST primary key (ID)
-/
-create index IDX_PUMPACQDATA_LATEST_COMM on TBL_PUMPACQDATA_LATEST (COMMSTATUS)
-/
-create index IDX_PUMPACQDATA_LATEST_TIME on TBL_PUMPACQDATA_LATEST (ACQTIME)
-/
-create index IDX_PUMPACQDATA_LATEST_WELLID on TBL_PUMPACQDATA_LATEST (WELLID)
-/
-
-/*==============================================================*/
 /* Table: TBL_RESOURCEMONITORING                                    */
 /*==============================================================*/
 create table TBL_RESOURCEMONITORING
@@ -1172,27 +664,27 @@ create unique index UNI_USER_ID on TBL_USER (USER_ID)
 /
 
 /*==============================================================*/
-/* Table: TBL_WELLINFORMATION                                    */
+/* Table: TBL_PUMPDEVICE                                    */
 /*==============================================================*/
-create table TBL_WELLINFORMATION
+create table TBL_PUMPDEVICE
 (
-  id                  NUMBER(10) not null,
-  orgid               NUMBER(10),
-  wellname            VARCHAR2(200) not null,
-  signinid            VARCHAR2(200),
-  slave               VARCHAR2(200),
-  instancecode        VARCHAR2(50),
-  videourl            VARCHAR2(400),
-  sortnum             NUMBER(10) default 9999,
-  devicetype          NUMBER(2) default 0,
-  factorynumber       VARCHAR2(200),
-  model               VARCHAR2(200),
-  productiondate      VARCHAR2(200),
-  deliverydate        VARCHAR2(200),
-  commissioningdate   VARCHAR2(200),
-  controlcabinetmodel VARCHAR2(200),
-  pipelinelength      NUMBER(10,2),
-  alarminstancecode   VARCHAR2(50)
+  id                   NUMBER(10) not null,
+  orgid                NUMBER(10) not null,
+  wellname             VARCHAR2(200) not null,
+  devicetype           NUMBER(3) default 101,
+  applicationscenarios NUMBER(2) default 0,
+  signinid             VARCHAR2(200),
+  slave                VARCHAR2(200),
+  instancecode         VARCHAR2(50),
+  alarminstancecode    VARCHAR2(50),
+  factorynumber        VARCHAR2(200),
+  model                VARCHAR2(200),
+  productiondate       VARCHAR2(200),
+  deliverydate         VARCHAR2(200),
+  commissioningdate    VARCHAR2(200),
+  controlcabinetmodel  VARCHAR2(200),
+  videourl             VARCHAR2(400),
+  sortnum              NUMBER(10) default 9999
 )
 tablespace AP_FB_DATA
   storage
@@ -1202,24 +694,471 @@ tablespace AP_FB_DATA
     maxextents unlimited
   )
 /
-alter table TBL_WELLINFORMATION
-  add constraint PK_WELLINFORMATION primary key (ID)
+alter table TBL_PUMPDEVICE
+  add constraint PK_PUMPDEVICE primary key (ID)
 /
-create index IDX_WELLINFORMATION_ALARMINS on TBL_WELLINFORMATION (ALARMINSTANCECODE)
+create index IDX_PUMPDEVICE_ALARMINS on TBL_PUMPDEVICE (ALARMINSTANCECODE)
 /
-create index IDX_WELLINFORMATION_INS on TBL_WELLINFORMATION (INSTANCECODE)
+create index IDX_PUMPDEVICE_INS on TBL_PUMPDEVICE (INSTANCECODE)
 /
-create index IDX_WELLINFORMATION_NAME on TBL_WELLINFORMATION (WELLNAME)
+create index IDX_PUMPDEVICE_NAME on TBL_PUMPDEVICE (WELLNAME)
 /
-create index IDX_WELLINFORMATION_ORG on TBL_WELLINFORMATION (ORGID)
+create index IDX_PUMPDEVICE_ORG on TBL_PUMPDEVICE (ORGID)
 /
-create index IDX_WELLINFORMATION_SIGNINID on TBL_WELLINFORMATION (SIGNINID)
+create index IDX_PUMPDEVICE_SIGNINID on TBL_PUMPDEVICE (SIGNINID)
 /
-create index IDX_WELLINFORMATION_SLAVE on TBL_WELLINFORMATION (SLAVE)
+create index IDX_PUMPDEVICE_SLAVE on TBL_PUMPDEVICE (SLAVE)
 /
-create index IDX_WELLINFORMATION_SORT on TBL_WELLINFORMATION (SORTNUM)
+create index IDX_PUMPDEVICE_SORT on TBL_PUMPDEVICE (SORTNUM)
 /
-create index IDX_WELLINFORMATION_TYPE on TBL_WELLINFORMATION (DEVICETYPE)
+create index IDX_PUMPDEVICE_TYPE on TBL_PUMPDEVICE (DEVICETYPE)
+/
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEDEVICE                                    */
+/*==============================================================*/
+create table TBL_PIPELINEDEVICE
+(
+  id                   NUMBER(10) not null,
+  orgid                NUMBER(10) not null,
+  wellname             VARCHAR2(200) not null,
+  devicetype           NUMBER(3) default 201,
+  applicationscenarios NUMBER(2),
+  signinid             VARCHAR2(200),
+  slave                VARCHAR2(200),
+  instancecode         VARCHAR2(50),
+  alarminstancecode    VARCHAR2(50),
+  factorynumber        VARCHAR2(200),
+  model                VARCHAR2(200),
+  productiondate       VARCHAR2(200),
+  deliverydate         VARCHAR2(200),
+  commissioningdate    VARCHAR2(200),
+  controlcabinetmodel  VARCHAR2(200),
+  pipelinelength       NUMBER(10,2),
+  videourl             VARCHAR2(400),
+  sortnum              NUMBER(10) default 9999
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEDEVICE
+  add constraint PK_PIPELINEDEVICE primary key (ID)
+/
+create index IDX_PIPELINEDEVICE_ALARMINS on TBL_PIPELINEDEVICE (ALARMINSTANCECODE)
+/
+create index IDX_PIPELINEDEVICE_INS on TBL_PIPELINEDEVICE (INSTANCECODE)
+/
+create index IDX_PIPELINEDEVICE_NAME on TBL_PIPELINEDEVICE (WELLNAME)
+/
+create index IDX_PIPELINEDEVICE_ORG on TBL_PIPELINEDEVICE (ORGID)
+/
+create index IDX_PIPELINEDEVICE_SIGNINID on TBL_PIPELINEDEVICE (SIGNINID)
+/
+create index IDX_PIPELINEDEVICE_SLAVE on TBL_PIPELINEDEVICE (SLAVE)
+/
+create index IDX_PIPELINEDEVICE_SORT on TBL_PIPELINEDEVICE (SORTNUM)
+/
+create index IDX_PIPELINEDEVICE_TYPE on TBL_PIPELINEDEVICE (DEVICETYPE)
+/
+
+/*==============================================================*/
+/* Table: TBL_SMSDEVICE                                    */
+/*==============================================================*/
+create table TBL_SMSDEVICE
+(
+  id           NUMBER(10) not null,
+  orgid        NUMBER(10),
+  wellname     VARCHAR2(200) not null,
+  signinid     VARCHAR2(200),
+  instancecode VARCHAR2(50),
+  sortnum      NUMBER(10) default 9999
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_SMSDEVICE
+  add constraint PK_SMSDEVICE primary key (ID)
+/
+create index IDX_SMSDEVICE_INS on TBL_SMSDEVICE (INSTANCECODE)
+/
+create index IDX_SMSDEVICE_ORG on TBL_SMSDEVICE (ORGID)
+/
+create index IDX_SMSDEVICE_SIGNINID on TBL_SMSDEVICE (SIGNINID)
+/
+create index IDX_SMSDEVICE_SORT on TBL_SMSDEVICE (SORTNUM)
+/
+
+/*==============================================================*/
+/* Table: TBL_AUXILIARYDEVICE                                    */
+/*==============================================================*/
+create table TBL_AUXILIARYDEVICE
+(
+  id     NUMBER(10) not null,
+  name   VARCHAR2(200),
+  type   NUMBER(2) default 0,
+  model  VARCHAR2(200),
+  sort   NUMBER(10) not null,
+  remark VARCHAR2(2000)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_AUXILIARYDEVICE
+  add constraint PK_AUXILIARYDEVICE primary key (ID)
+/
+create index IDX_AUXILIARYDEVICE_NAME on TBL_AUXILIARYDEVICE (NAME)
+/
+create index IDX_AUXILIARYDEVICE_SORT on TBL_AUXILIARYDEVICE (SORT)
+/
+create index IDX_AUXILIARYDEVICE_TYPE on TBL_AUXILIARYDEVICE (TYPE)
+/
+
+/*==============================================================*/
+/* Table: TBL_AUXILIARY2MASTER                                    */
+/*==============================================================*/
+create table TBL_AUXILIARY2MASTER
+(
+  id          NUMBER(10) not null,
+  masterid    NUMBER(10) not null,
+  auxiliaryid NUMBER(10) not null,
+  matrix      VARCHAR2(8) not null
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_AUXILIARY2MASTER
+  add constraint PK_AUXILIARY2MASTER primary key (ID)
+/
+create index IDX_AUXILIARY2MASTER_AUXILIARY on TBL_AUXILIARY2MASTER (AUXILIARYID)
+/
+create index IDX_AUXILIARY2MASTER_MASTER on TBL_AUXILIARY2MASTER (MASTERID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PUMPACQDATA_HIST                                    */
+/*==============================================================*/
+create table TBL_PUMPACQDATA_HIST
+(
+  id                 NUMBER(10) not null,
+  wellid             NUMBER(10),
+  acqtime            DATE,
+  commstatus         NUMBER(2) default 0,
+  commtime           NUMBER(8,2) default 0,
+  commtimeefficiency NUMBER(10,4) default 0,
+  commrange          CLOB,
+  runstatus          NUMBER(2) default 0,
+  runtimeefficiency  NUMBER(10,4) default 0,
+  runtime            NUMBER(8,2) default 0,
+  runrange           CLOB
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPACQDATA_HIST
+  add constraint PK_TBL_PUMPACQDATA_HIST primary key (ID)
+/
+create index IDX_PUMPACQDATA_HIST_COMM on TBL_PUMPACQDATA_HIST (COMMSTATUS)
+/
+create index IDX_PUMPACQDATA_HIST_TIME on TBL_PUMPACQDATA_HIST (ACQTIME)
+/
+create index IDX_PUMPACQDATA_HIST_WELLID on TBL_PUMPACQDATA_HIST (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PUMPACQDATA_LATEST                                    */
+/*==============================================================*/
+create table TBL_PUMPACQDATA_LATEST
+(
+  id                 NUMBER(10) not null,
+  wellid             NUMBER(10),
+  acqtime            DATE,
+  commstatus         NUMBER(2) default 0,
+  commtime           NUMBER(8,2) default 0,
+  commtimeefficiency NUMBER(10,4) default 0,
+  commrange          CLOB,
+  runstatus          NUMBER(2) default 0,
+  runtimeefficiency  NUMBER(10,4) default 0,
+  runtime            NUMBER(8,2) default 0,
+  runrange           CLOB
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPACQDATA_LATEST
+  add constraint PK_TBL_PUMPACQDATA_LATEST primary key (ID)
+/
+create index IDX_PUMPACQDATA_LATEST_COMM on TBL_PUMPACQDATA_LATEST (COMMSTATUS)
+/
+create index IDX_PUMPACQDATA_LATEST_TIME on TBL_PUMPACQDATA_LATEST (ACQTIME)
+/
+create index IDX_PUMPACQDATA_LATEST_WELLID on TBL_PUMPACQDATA_LATEST (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PUMPALARMINFO_HIST                               */
+/*==============================================================*/
+create table TBL_PUMPALARMINFO_HIST
+(
+  id            NUMBER(10) not null,
+  wellid        NUMBER(10),
+  alarmtime     DATE,
+  itemname      VARCHAR2(100),
+  alarmtype     NUMBER(1),
+  alarmvalue    NUMBER(10,3),
+  alarminfo     VARCHAR2(100),
+  alarmlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  alarmlevel    NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0,
+  recoverytime  DATE
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPALARMINFO_HIST
+  add constraint PK_PUMPALARMINFO_HIST primary key (ID)
+/
+create index IDX_PUMPALARMINFO_HIST_ITEM on TBL_PUMPALARMINFO_HIST (ITEMNAME)
+/
+create index IDX_PUMPALARMINFO_HIST_LEVEL on TBL_PUMPALARMINFO_HIST (ALARMLEVEL)
+/
+create index IDX_PUMPALARMINFO_HIST_TIME on TBL_PUMPALARMINFO_HIST (ALARMTIME)
+/
+create index IDX_PUMPALARMINFO_HIST_TYPE on TBL_PUMPALARMINFO_HIST (ALARMTYPE)
+/
+create index IDX_PUMPALARMINFO_HIST_WELLID on TBL_PUMPALARMINFO_HIST (WELLID)
+/
+
+
+/*==============================================================*/
+/* Table: TBL_PUMPALARMINFO_LATEST                                  */
+/*==============================================================*/
+create table TBL_PUMPALARMINFO_LATEST
+(
+  id            NUMBER(10) not null,
+  wellid        NUMBER(10),
+  alarmtime     DATE,
+  itemname      VARCHAR2(100),
+  alarmtype     NUMBER(1),
+  alarmvalue    NUMBER(10,3),
+  alarminfo     VARCHAR2(100),
+  alarmlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  alarmlevel    NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0,
+  recoverytime  DATE
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPALARMINFO_LATEST
+  add constraint PK_PUMPALARMINFO_LATEST primary key (ID)
+/
+create index IDX_PUMPALARMINFO_L_ITEM on TBL_PUMPALARMINFO_LATEST (ITEMNAME)
+/
+create index IDX_PUMPALARMINFO_L_LEVEL on TBL_PUMPALARMINFO_LATEST (ALARMLEVEL)
+/
+create index IDX_PUMPALARMINFO_L_TIME on TBL_PUMPALARMINFO_LATEST (ALARMTIME)
+/
+create index IDX_PUMPALARMINFO_L_TYPE on TBL_PUMPALARMINFO_LATEST (ALARMTYPE)
+/
+create index IDX_PUMPALARMINFO_L_WELLID on TBL_PUMPALARMINFO_LATEST (WELLID)
+/
+
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEACQDATA_HIST                                    */
+/*==============================================================*/
+create table TBL_PIPELINEACQDATA_HIST
+(
+  id                 NUMBER(10) not null,
+  wellid             NUMBER(10),
+  acqtime            DATE,
+  commstatus         NUMBER(2) default 0,
+  commtime           NUMBER(8,2) default 0,
+  commtimeefficiency NUMBER(10,4) default 0,
+  commrange          CLOB,
+  runstatus          NUMBER(2) default 0,
+  runtimeefficiency  NUMBER(10,4) default 0,
+  runtime            NUMBER(8,2) default 0,
+  runrange           CLOB
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEACQDATA_HIST
+  add constraint PK_TBL_PIPELINEACQDATA_HIST primary key (ID)
+/
+create index IDX_PIPELINEACQDATA_H_COMM on TBL_PIPELINEACQDATA_HIST (COMMSTATUS)
+/
+create index IDX_PIPELINEACQDATA_H_TIME on TBL_PIPELINEACQDATA_HIST (ACQTIME)
+/
+create index IDX_PIPELINEACQDATA_H_WELLID on TBL_PIPELINEACQDATA_HIST (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEACQDATA_LATEST                                    */
+/*==============================================================*/
+create table TBL_PIPELINEACQDATA_LATEST
+(
+  id                 NUMBER(10) not null,
+  wellid             NUMBER(10),
+  acqtime            DATE,
+  commstatus         NUMBER(2) default 0,
+  commtime           NUMBER(8,2) default 0,
+  commtimeefficiency NUMBER(10,4) default 0,
+  commrange          CLOB,
+  runstatus          NUMBER(2) default 0,
+  runtimeefficiency  NUMBER(10,4) default 0,
+  runtime            NUMBER(8,2) default 0,
+  runrange           CLOB
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEACQDATA_LATEST
+  add constraint PK_TBL_PIPELINEACQDATA_LATEST primary key (ID)
+/
+create index IDX_PIPELINEACQDATA_L_COMM on TBL_PIPELINEACQDATA_LATEST (COMMSTATUS)
+/
+create index IDX_PIPELINEACQDATA_L_TIME on TBL_PIPELINEACQDATA_LATEST (ACQTIME)
+/
+create index IDX_PIPELINEACQDATA_L_WELLID on TBL_PIPELINEACQDATA_LATEST (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEALARMINFO_HIST                               */
+/*==============================================================*/
+create table TBL_PIPELINEALARMINFO_HIST
+(
+  id            NUMBER(10) not null,
+  wellid        NUMBER(10),
+  alarmtime     DATE,
+  itemname      VARCHAR2(100),
+  alarmtype     NUMBER(1),
+  alarmvalue    NUMBER(10,3),
+  alarminfo     VARCHAR2(100),
+  alarmlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  alarmlevel    NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0,
+  recoverytime  DATE
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEALARMINFO_HIST
+  add constraint PK_PIPELINEALARMINFO_HIST primary key (ID)
+/
+create index IDX_PIPELINEALARMINFO_H_ITEM on TBL_PIPELINEALARMINFO_HIST (ITEMNAME)
+/
+create index IDX_PIPELINEALARMINFO_H_LEVEL on TBL_PIPELINEALARMINFO_HIST (ALARMLEVEL)
+/
+create index IDX_PIPELINEALARMINFO_H_TIME on TBL_PIPELINEALARMINFO_HIST (ALARMTIME)
+/
+create index IDX_PIPELINEALARMINFO_H_TYPE on TBL_PIPELINEALARMINFO_HIST (ALARMTYPE)
+/
+create index IDX_PIPELINEALARMINFO_H_WELLID on TBL_PIPELINEALARMINFO_HIST (WELLID)
+/
+
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEALARMINFO_LATEST                                  */
+/*==============================================================*/
+create table TBL_PIPELINEALARMINFO_LATEST
+(
+  id            NUMBER(10) not null,
+  wellid        NUMBER(10),
+  alarmtime     DATE,
+  itemname      VARCHAR2(100),
+  alarmtype     NUMBER(1),
+  alarmvalue    NUMBER(10,3),
+  alarminfo     VARCHAR2(100),
+  alarmlimit    NUMBER(10,3),
+  hystersis     NUMBER(10,3),
+  alarmlevel    NUMBER(3),
+  issendmessage NUMBER(1) default 0,
+  issendmail    NUMBER(1) default 0,
+  recoverytime  DATE
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEALARMINFO_LATEST
+  add constraint PK_PIPELINEALARMINFO_LATEST primary key (ID)
+/
+create index IDX_PIPELINEALARMINFO_L_ITEM on TBL_PIPELINEALARMINFO_LATEST (ITEMNAME)
+/
+create index IDX_PIPELINEALARMINFO_L_LEVEL on TBL_PIPELINEALARMINFO_LATEST (ALARMLEVEL)
+/
+create index IDX_PIPELINEALARMINFO_L_TIME on TBL_PIPELINEALARMINFO_LATEST (ALARMTIME)
+/
+create index IDX_PIPELINEALARMINFO_L_TYPE on TBL_PIPELINEALARMINFO_LATEST (ALARMTYPE)
+/
+create index IDX_PIPELINEALARMINFO_L_WELLID on TBL_PIPELINEALARMINFO_LATEST (WELLID)
 /
 
 /*==============================================================*/

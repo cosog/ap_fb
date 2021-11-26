@@ -2,16 +2,16 @@
 /* 初始化tbl_dist_name数据                                          */
 /*==============================================================*/
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('7f13446d19b4497986980fa16a750f95', null, '泵设备实时概览', 'pumpRealTimeOverview', 11101, 0, '系统管理员', '系统管理员', to_date('01-09-2021 11:46:03', 'dd-mm-yyyy hh24:mi:ss'), to_date('01-09-2021 11:46:03', 'dd-mm-yyyy hh24:mi:ss'));
+values ('7f13446d19b4497986980fa16a750f95', null, '泵设备实时概览', 'pumpRealTimeOverview', 11101, 0, '系统管理员', '系统管理员', to_date('25-11-2021 19:40:18', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-11-2021 19:40:18', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('e0f5f3ff8a1f46678c284fba9cc113e8', null, '管设备实时概览', 'pipelineRealTimeOverview', 11102, 0, '系统管理员', '系统管理员', to_date('02-09-2021 15:46:01', 'dd-mm-yyyy hh24:mi:ss'), to_date('02-09-2021 15:46:01', 'dd-mm-yyyy hh24:mi:ss'));
+values ('e0f5f3ff8a1f46678c284fba9cc113e8', null, '管设备实时概览', 'pipelineRealTimeOverview', 11102, 0, '系统管理员', '系统管理员', to_date('25-11-2021 19:45:26', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-11-2021 19:45:26', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('cd7b24562b924d19b556de31256e22a1', 'system', '泵设备历史查询', 'pumpHistoryQuery', 12101, 0, '系统管理员', '系统管理员', to_date('03-09-2021 14:14:49', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2021 14:14:49', 'dd-mm-yyyy hh24:mi:ss'));
+values ('cd7b24562b924d19b556de31256e22a1', null, '泵设备历史查询', 'pumpHistoryQuery', 12101, 0, '系统管理员', '系统管理员', to_date('25-11-2021 19:45:32', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-11-2021 19:45:32', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('fb7d070a349c403b8a26d71c12af7a05', 'system', '管设备历史查询', 'pipelineHistoryQuery', 12102, 0, '系统管理员', '系统管理员', to_date('03-09-2021 14:15:28', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2021 14:15:28', 'dd-mm-yyyy hh24:mi:ss'));
+values ('fb7d070a349c403b8a26d71c12af7a05', null, '管设备历史查询', 'pipelineHistoryQuery', 12102, 0, '系统管理员', '系统管理员', to_date('25-11-2021 19:45:38', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-11-2021 19:45:38', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('ad646d19fcaa4fbd9077dbf7a826b107', 'system', '设备操作日志', 'deviceOperationLog', 13101, 0, '系统管理员', '系统管理员', to_date('07-09-2021 17:05:31', 'dd-mm-yyyy hh24:mi:ss'), to_date('07-09-2021 17:05:31', 'dd-mm-yyyy hh24:mi:ss'));
@@ -50,6 +50,9 @@ insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CRE
 values ('2b4cd8cb8c6844769c66b038246c27bf', 'system', '短信设备管理', 'SMSDeviceManager', 22104, 0, '系统管理员', '系统管理员', to_date('17-09-2021 18:25:50', 'dd-mm-yyyy hh24:mi:ss'), to_date('17-09-2021 18:25:50', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('1404100741bc42799be5b7cbebf4b649', 'system', '辅件设备管理', 'auxiliaryDeviceManager', 22105, 0, '系统管理员', '系统管理员', to_date('10-11-2021 14:12:00', 'dd-mm-yyyy hh24:mi:ss'), to_date('10-11-2021 14:12:00', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('b6ef8f3a49094768b3231d5678fc9cbc', null, '模块配置', 'moduleManage', 23101, 0, '系统管理员', '系统管理员', to_date('03-09-2018 13:47:38', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2018 13:47:38', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_NAME (SYSDATAID, TENANTID, CNAME, ENAME, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
@@ -64,6 +67,24 @@ values ('9439b5be24c04491aa8c353e7c65a0ea', null, '报警配置', 'alarmSet', 23104,
 /*==============================================================*/
 /* 初始化tbl_dist_item数据                                          */
 /*==============================================================*/
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('122454', null, '1404100741bc42799be5b7cbebf4b649', '序号', 'id', 'width:50', 1, 1, null, null, to_date('10-11-2021 14:21:46', 'dd-mm-yyyy hh24:mi:ss'), to_date('10-11-2021 14:21:46', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('122455', null, '1404100741bc42799be5b7cbebf4b649', '设备名称', 'name', null, 2, 1, 'sys', null, to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'), to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('122456', null, '1404100741bc42799be5b7cbebf4b649', '类型', 'type', null, 3, 1, 'sys', null, to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'), to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('122457', null, '1404100741bc42799be5b7cbebf4b649', '规格型号', 'model', null, 4, 1, null, null, to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('122458', null, '1404100741bc42799be5b7cbebf4b649', '备注', 'remark', null, 5, 1, null, null, to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('122459', null, '1404100741bc42799be5b7cbebf4b649', '排序编号', 'sort', null, 6, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
+
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('119379', null, '167aeb3aca384afda8655d63aedee484', '序号', 'id', 'width:50', 1, 1, null, null, to_date('25-08-2021 18:20:01', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-08-2021 18:20:01', 'dd-mm-yyyy hh24:mi:ss'));
 
@@ -101,7 +122,10 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('119975', null, '220c349e246e47a39a818023f1c97a63', '接收报警邮件', 'receiveMailName', null, 6, 1, null, null, to_date('23-09-2021 09:44:04', 'dd-mm-yyyy hh24:mi:ss'), to_date('23-09-2021 09:44:04', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('114856', null, '220c349e246e47a39a818023f1c97a63', '角色描述', 'remark', 'width:200', 7, 1, null, '系统管理员', to_date('17-09-2021 14:17:05', 'dd-mm-yyyy hh24:mi:ss'), to_date('17-09-2021 14:17:05', 'dd-mm-yyyy hh24:mi:ss'));
+values ('122399', null, '220c349e246e47a39a818023f1c97a63', '数据显示级别', 'showLevel', null, 7, 1, null, null, to_date('08-11-2021 16:09:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('08-11-2021 16:09:29', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('114856', null, '220c349e246e47a39a818023f1c97a63', '角色描述', 'remark', 'width:200', 8, 1, null, '系统管理员', to_date('17-09-2021 14:17:05', 'dd-mm-yyyy hh24:mi:ss'), to_date('17-09-2021 14:17:05', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('116088', null, '2afd86cc6dae4b87abe4aa5c49cb3a88', '序号', 'id', 'width:50', 1, 1, null, null, to_date('28-08-2018 15:42:51', 'dd-mm-yyyy hh24:mi:ss'), to_date('28-08-2018 15:42:51', 'dd-mm-yyyy hh24:mi:ss'));
@@ -182,7 +206,7 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('118839', null, '7f13446d19b4497986980fa16a750f95', '设备型号标识位', 'addr0', null, 5, 0, null, null, to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118840', null, '7f13446d19b4497986980fa16a750f95', '变频器运行状态', 'addr2', null, 6, 0, null, null, to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118840', null, '7f13446d19b4497986980fa16a750f95', '变频器运行状态', 'addr2', null, 6, 1, null, null, to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('118841', null, '7f13446d19b4497986980fa16a750f95', '变频器故障代码', 'addr4', null, 7, 0, null, null, to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'), to_date('25-08-2021 18:29:42', 'dd-mm-yyyy hh24:mi:ss'));
@@ -389,34 +413,37 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('114867', 'sys', '87808f225d7240f68c2ab879347d818a', '井名', 'wellName', null, 3, 1, 'sys', '系统管理员', to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'), to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('116688', null, '87808f225d7240f68c2ab879347d818a', '采控实例', 'instanceName', 'width:120', 4, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
+values ('122495', null, '87808f225d7240f68c2ab879347d818a', '应用场景', 'applicationScenariosName', null, 4, 1, null, null, to_date('15-11-2021 17:39:28', 'dd-mm-yyyy hh24:mi:ss'), to_date('15-11-2021 17:39:28', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('119811', null, '87808f225d7240f68c2ab879347d818a', '报警实例', 'alarmInstanceName', 'width:120', 5, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
+values ('116688', null, '87808f225d7240f68c2ab879347d818a', '采控实例', 'instanceName', 'width:120', 5, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('114915', null, '87808f225d7240f68c2ab879347d818a', '注册包ID', 'signInId', null, 6, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
+values ('119811', null, '87808f225d7240f68c2ab879347d818a', '报警实例', 'alarmInstanceName', 'width:120', 6, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('114916', null, '87808f225d7240f68c2ab879347d818a', '设备从地址', 'slave', null, 7, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
+values ('114915', null, '87808f225d7240f68c2ab879347d818a', '注册包ID', 'signInId', null, 7, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118795', null, '87808f225d7240f68c2ab879347d818a', '出厂编号', 'factoryNumber', null, 8, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('114916', null, '87808f225d7240f68c2ab879347d818a', '设备从地址', 'slave', null, 8, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118796', null, '87808f225d7240f68c2ab879347d818a', '规格型号', 'model', null, 9, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118795', null, '87808f225d7240f68c2ab879347d818a', '出厂编号', 'factoryNumber', null, 9, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118797', null, '87808f225d7240f68c2ab879347d818a', '生产日期', 'productionDate', null, 10, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118796', null, '87808f225d7240f68c2ab879347d818a', '规格型号', 'model', null, 10, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118798', null, '87808f225d7240f68c2ab879347d818a', '发货日期', 'deliveryDate', null, 11, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118797', null, '87808f225d7240f68c2ab879347d818a', '生产日期', 'productionDate', null, 11, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118799', null, '87808f225d7240f68c2ab879347d818a', '投产日期', 'commissioningDate', null, 12, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118798', null, '87808f225d7240f68c2ab879347d818a', '发货日期', 'deliveryDate', null, 12, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118800', null, '87808f225d7240f68c2ab879347d818a', '控制柜型号', 'controlcabinetDodel', null, 13, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118799', null, '87808f225d7240f68c2ab879347d818a', '投产日期', 'commissioningDate', null, 13, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('118800', null, '87808f225d7240f68c2ab879347d818a', '控制柜型号', 'controlcabinetDodel', null, 14, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('116923', null, '87808f225d7240f68c2ab879347d818a', '排序编号', 'sortNum', null, 15, 1, null, null, to_date('31-12-2019 13:05:41', 'dd-mm-yyyy hh24:mi:ss'), to_date('31-12-2019 13:05:41', 'dd-mm-yyyy hh24:mi:ss'));
@@ -518,40 +545,43 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('118803', 'sys', 'b14377621d74442eb1127de094dfc903', '井名', 'wellName', null, 3, 1, 'sys', '系统管理员', to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'), to_date('18-06-2014 13:34:03', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118804', null, 'b14377621d74442eb1127de094dfc903', '采控实例', 'instanceName', 'width:120', 4, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
+values ('122496', null, 'b14377621d74442eb1127de094dfc903', '应用场景', 'applicationScenariosName', null, 4, 1, null, null, to_date('15-11-2021 17:54:38', 'dd-mm-yyyy hh24:mi:ss'), to_date('15-11-2021 17:54:38', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('119812', null, 'b14377621d74442eb1127de094dfc903', '报警实例', 'alarmInstanceName', 'width:120', 5, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118804', null, 'b14377621d74442eb1127de094dfc903', '采控实例', 'instanceName', 'width:120', 5, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118806', null, 'b14377621d74442eb1127de094dfc903', '注册包ID', 'signInId', null, 6, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
+values ('119812', null, 'b14377621d74442eb1127de094dfc903', '报警实例', 'alarmInstanceName', 'width:120', 6, 1, null, '系统管理员', to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-06-2020 11:32:24', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118807', null, 'b14377621d74442eb1127de094dfc903', '设备从地址', 'slave', null, 7, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118806', null, 'b14377621d74442eb1127de094dfc903', '注册包ID', 'signInId', null, 7, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118808', null, 'b14377621d74442eb1127de094dfc903', '出厂编号', 'factoryNumber', null, 8, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118807', null, 'b14377621d74442eb1127de094dfc903', '设备从地址', 'slave', null, 8, 1, null, null, to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'), to_date('27-06-2018 14:07:37', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118809', null, 'b14377621d74442eb1127de094dfc903', '规格型号', 'model', null, 9, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118808', null, 'b14377621d74442eb1127de094dfc903', '出厂编号', 'factoryNumber', null, 9, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118810', null, 'b14377621d74442eb1127de094dfc903', '生产日期', 'productionDate', null, 10, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118809', null, 'b14377621d74442eb1127de094dfc903', '规格型号', 'model', null, 10, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118811', null, 'b14377621d74442eb1127de094dfc903', '发货日期', 'deliveryDate', null, 11, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118810', null, 'b14377621d74442eb1127de094dfc903', '生产日期', 'productionDate', null, 11, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118812', null, 'b14377621d74442eb1127de094dfc903', '投产日期', 'commissioningDate', null, 12, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118811', null, 'b14377621d74442eb1127de094dfc903', '发货日期', 'deliveryDate', null, 12, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118813', null, 'b14377621d74442eb1127de094dfc903', '控制柜型号', 'controlcabinetDodel', null, 13, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118812', null, 'b14377621d74442eb1127de094dfc903', '投产日期', 'commissioningDate', null, 13, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118814', null, 'b14377621d74442eb1127de094dfc903', '管体长度', 'pipelineLength', null, 14, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118813', null, 'b14377621d74442eb1127de094dfc903', '控制柜型号', 'controlcabinetDodel', null, 14, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('118816', null, 'b14377621d74442eb1127de094dfc903', '排序编号', 'sortNum', null, 16, 1, null, null, to_date('31-12-2019 13:05:41', 'dd-mm-yyyy hh24:mi:ss'), to_date('31-12-2019 13:05:41', 'dd-mm-yyyy hh24:mi:ss'));
+values ('118814', null, 'b14377621d74442eb1127de094dfc903', '管体长度', 'pipelineLength', null, 15, 1, null, null, to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'), to_date('19-08-2021 09:35:08', 'dd-mm-yyyy hh24:mi:ss'));
+
+insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
+values ('118816', null, 'b14377621d74442eb1127de094dfc903', '排序编号', 'sortNum', null, 17, 1, null, null, to_date('31-12-2019 13:05:41', 'dd-mm-yyyy hh24:mi:ss'), to_date('31-12-2019 13:05:41', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('114837', 'sys', 'b6ef8f3a49094768b3231d5678fc9cbc', '模块名称', 'text', null, 1, 1, 'sys', '系统管理员', to_date('16-06-2014 16:27:02', 'dd-mm-yyyy hh24:mi:ss'), to_date('16-06-2014 16:27:02', 'dd-mm-yyyy hh24:mi:ss'));
@@ -632,7 +662,7 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('119198', null, 'cd7b24562b924d19b556de31256e22a1', '设备型号标识位', 'addr0', null, 5, 0, null, null, to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('119199', null, 'cd7b24562b924d19b556de31256e22a1', '变频器运行状态', 'addr2', null, 6, 0, null, null, to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'));
+values ('119199', null, 'cd7b24562b924d19b556de31256e22a1', '变频器运行状态', 'addr2', null, 6, 1, null, null, to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('119200', null, 'cd7b24562b924d19b556de31256e22a1', '变频器故障代码', 'addr4', null, 7, 0, null, null, to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'), to_date('03-09-2021 16:37:17', 'dd-mm-yyyy hh24:mi:ss'));
@@ -866,7 +896,7 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('119040', null, 'e0f5f3ff8a1f46678c284fba9cc113e8', '设备型号标识位', 'addr0', null, 4, 0, null, null, to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'), to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('119043', null, 'e0f5f3ff8a1f46678c284fba9cc113e8', '变频器运行状态', 'addr2', null, 5, 0, null, null, to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'), to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'));
+values ('119043', null, 'e0f5f3ff8a1f46678c284fba9cc113e8', '变频器运行状态', 'addr2', null, 5, 1, null, null, to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'), to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('119045', null, 'e0f5f3ff8a1f46678c284fba9cc113e8', '变频器故障代码', 'addr4', null, 6, 0, null, null, to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'), to_date('02-09-2021 14:08:11', 'dd-mm-yyyy hh24:mi:ss'));
@@ -1109,7 +1139,7 @@ insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVA
 values ('119275', null, 'fb7d070a349c403b8a26d71c12af7a05', '设备型号标识位', 'addr0', null, 4, 0, null, null, to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
-values ('119276', null, 'fb7d070a349c403b8a26d71c12af7a05', '变频器运行状态', 'addr2', null, 5, 0, null, null, to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'));
+values ('119276', null, 'fb7d070a349c403b8a26d71c12af7a05', '变频器运行状态', 'addr2', null, 5, 1, null, null, to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'));
 
 insert into TBL_DIST_ITEM (DATAITEMID, TENANTID, SYSDATAID, CNAME, ENAME, DATAVALUE, SORTS, STATUS, CREATOR, UPDATEUSER, UPDATETIME, CREATEDATE)
 values ('119277', null, 'fb7d070a349c403b8a26d71c12af7a05', '变频器故障代码', 'addr4', null, 6, 0, null, null, to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'), to_date('04-09-2021 19:42:29', 'dd-mm-yyyy hh24:mi:ss'));

@@ -1,7 +1,7 @@
 create sequence HIBERNATE_SEQUENCE
 minvalue 1
 maxvalue 999999999999999999999999999
-start with 121915
+start with 123475
 increment by 1
 cache 20;
 /
@@ -38,22 +38,6 @@ increment by 1
 cache 20;
 /
 
-create sequence SEQ_ALARMINFO
-minvalue 1
-maxvalue 9999999999999999999999999
-start with 1
-increment by 1
-cache 20;
-/
-
-create sequence SEQ_ALARMINFO_LATEST
-minvalue 1
-maxvalue 9999999999999999999999999
-start with 1
-increment by 1
-cache 20;
-/
-
 create sequence SEQ_ALARM_UNIT_CONF
 minvalue 1
 maxvalue 9999999999999999999999999
@@ -70,10 +54,26 @@ increment by 1
 cache 20;
 /
 
+create sequence SEQ_AUXILIARYDEVICE
+minvalue 1
+maxvalue 9999999999999999999999999
+start with 22
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_AUXILIARY2MASTER
+minvalue 1
+maxvalue 9999999999999999999999999
+start with 22
+increment by 1
+cache 20;
+/
+
 create sequence SEQ_CODE
 minvalue 1
 maxvalue 9999999999999999999999999
-start with 1022
+start with 1062
 increment by 1
 cache 20;
 /
@@ -89,7 +89,7 @@ cache 20;
 create sequence SEQ_MODULE
 minvalue 1
 maxvalue 999999999999999999999999
-start with 2118
+start with 2138
 increment by 1
 cache 20;
 /
@@ -111,6 +111,30 @@ cache 20;
 /
 
 create sequence SEQ_PIPELINEACQDATA_LATEST
+minvalue 0
+maxvalue 9999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PIPELINEALARMINFO_HIST
+minvalue 0
+maxvalue 9999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PIPELINEALARMINFO_LATEST
+minvalue 0
+maxvalue 9999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PIPELINEDEVICE
 minvalue 0
 maxvalue 9999999999999999999999999
 start with 1
@@ -158,6 +182,30 @@ increment by 1
 cache 20;
 /
 
+create sequence SEQ_PUMPALARMINFO_HIST
+minvalue 0
+maxvalue 999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PUMPALARMINFO_LATEST
+minvalue 0
+maxvalue 999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PUMPDEVICE
+minvalue 1
+maxvalue 999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
 create sequence SEQ_RESOURCEMONITORING
 minvalue 0
 maxvalue 999999999999999999999999
@@ -175,6 +223,14 @@ cache 20;
 /
 
 create sequence SEQ_ROLE_MODULE
+minvalue 1
+maxvalue 9999999999999999999999999
+start with 43
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_SMSDEVICE
 minvalue 1
 maxvalue 9999999999999999999999999
 start with 41
@@ -202,14 +258,6 @@ create sequence SEQ_USER
 minvalue 1
 maxvalue 9999999999999999999999999
 start with 3
-increment by 1
-cache 20;
-/
-
-create sequence SEQ_WELLINFORMATION
-minvalue 0
-maxvalue 9999999999999999999999999
-start with 1
 increment by 1
 cache 20;
 /

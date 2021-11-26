@@ -152,6 +152,8 @@ function websocketOnOpen(openEvt) {
 function websocketOnMessage(evt) {
 	var activeId = Ext.getCmp("frame_center_ids").getActiveTab().id;
 	var data=Ext.JSON.decode(evt.data);
+	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+	var orgIdArr=leftOrg_Id.split(",");
 	if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringData".toUpperCase()){//接收到推送的泵设备实时监控数据
 		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
@@ -224,21 +226,21 @@ function websocketOnMessage(evt) {
 		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
-			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id" && isExist(orgIdArr,data.orgId+"")>0){
 				//更新通信状态统计
 				getDeviceCommStatusTotal();
 				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(PumpRealTimeMonitoringListGrid)){
 					var store = PumpRealTimeMonitoringListGrid.getStore();
 					//更新概览表
+					var haveDevice=false;
+					var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
-							var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+							haveDevice=true;
 							if((data.commStatus==1&&commStatus.toUpperCase()=='offline'.toUpperCase()) || (data.commStatus==0&&commStatus.toUpperCase()=='online'.toUpperCase()) ){
 								store.loadPage(1);
-//								store.remove(i+"");
-//								store.commit();
 							}else{
 								record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
 								record.set("commStatus",data.commStatus);
@@ -250,9 +252,14 @@ function websocketOnMessage(evt) {
 							
 							break;
 						}
-//						var newValue = store.getAt(i).get("name");
-//						  store.getAt(i).set("name",newValue);
-//						  store.commitChanges();
+					}
+					if((!haveDevice)
+							&&(commStatus.toUpperCase()=='all'.toUpperCase() 
+									|| (data.commStatus==1&&commStatus.toUpperCase()=='online'.toUpperCase()) 
+									|| (data.commStatus==0&&commStatus.toUpperCase()=='offline'.toUpperCase()) 
+								)
+						){
+						store.loadPage(1);
 					}
 					//更新实时表
 					var tabPanel = Ext.getCmp("PumpRealTimeMonitoringCurveAndTableTabPanel");
@@ -368,17 +375,19 @@ function websocketOnMessage(evt) {
 		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;
-			if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+			if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"  && isExist(orgIdArr,data.orgId+"")>0 ){
 				//更新通信状态统计
 				getDeviceCommStatusTotal();
 				var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
 				if(isNotVal(gridPanel)){
 					var store = gridPanel.getStore();
 					//更新概览表
+					var haveDevice=false;
+					var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
-							var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+							haveDevice=true;
 							if(data.commStatus==1&&commStatus.toUpperCase()=='offline'.toUpperCase()){
 								store.loadPage(1);
 							}else if(data.commStatus==0&&commStatus.toUpperCase()=='online'.toUpperCase()){
@@ -393,6 +402,14 @@ function websocketOnMessage(evt) {
 							}
 							break;
 						}
+					}
+					if((!haveDevice)
+							&&(commStatus.toUpperCase()=='all'.toUpperCase() 
+									|| (data.commStatus==1&&commStatus.toUpperCase()=='online'.toUpperCase()) 
+									|| (data.commStatus==0&&commStatus.toUpperCase()=='offline'.toUpperCase()) 
+								)
+						){
+						store.loadPage(1);
 					}
 					//更新实时表
 					var tabPanel = Ext.getCmp("PipelineRealTimeMonitoringCurveAndTableTabPanel");
