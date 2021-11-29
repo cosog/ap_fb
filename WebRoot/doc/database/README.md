@@ -6,85 +6,105 @@
 
 **目 录**
 
-[一、表	1](#_Toc86938399)
+[一、表	1](#_Toc88987933)
 
->   [1.1 概览	1](#_Toc86938400)
+>   [1.1 概览	1](#_Toc88987934)
 
->   [1.2 详述	2](#_Toc86938401)
+>   [1.2 详述	2](#_Toc88987935)
 
->   [1.2.1 tbl_org	2](#_Toc86938402)
+>   [1.2.1 tbl_org	2](#_Toc88987936)
 
->   [1.2.2 tbl_user	3](#_Toc86938403)
+>   [1.2.2 tbl_user	3](#_Toc88987937)
 
->   [1.2.3 tbl_role	4](#_Toc86938404)
+>   [1.2.3 tbl_role	4](#_Toc88987938)
 
->   [1.2.4 tbl_module	4](#_Toc86938405)
+>   [1.2.4 tbl_module	4](#_Toc88987939)
 
->   [1.2.5 tbl_module2role	5](#_Toc86938406)
+>   [1.2.5 tbl_module2role	5](#_Toc88987940)
 
->   [1.2.6 tbl_dist_name	5](#_Toc86938407)
+>   [1.2.6 tbl_dist_name	5](#_Toc88987941)
 
->   [1.2.7 tbl_dist_item	6](#_Toc86938408)
+>   [1.2.7 tbl_dist_item	6](#_Toc88987942)
 
->   [1.2.8 tbl_code	7](#_Toc86938409)
+>   [1.2.8 tbl_code	7](#_Toc88987943)
 
->   [1.2.9 tbl_acq_unit_conf	7](#_Toc86938410)
+>   [1.2.9 tbl_acq_unit_conf	7](#_Toc88987944)
 
->   [1.2.10 tbl_acq_group_conf	8](#_Toc86938411)
+>   [1.2.10 tbl_acq_group_conf	8](#_Toc88987945)
 
->   [1.2.11 tbl_acq_item2group_conf	8](#_Toc86938412)
+>   [1.2.11 tbl_acq_item2group_conf	8](#_Toc88987946)
 
->   [1.2.12 tbl_acq_group2unit_conf	9](#_Toc86938413)
+>   [1.2.12 tbl_acq_group2unit_conf	9](#_Toc88987947)
 
->   [1.2.13 tbl_alarm_unit_conf	9](#_Toc86938414)
+>   [1.2.13 tbl_alarm_unit_conf	9](#_Toc88987948)
 
->   [1.2.14 tbl_alarm_item2unit_conf	10](#_Toc86938415)
+>   [1.2.14 tbl_alarm_item2unit_conf	10](#_Toc88987949)
 
->   [1.2.15 tbl_protocolinstance	11](#_Toc86938416)
+>   [1.2.15 tbl_protocolinstance	11](#_Toc88987950)
 
->   [1.2.16 tbl_protocolalarminstance	11](#_Toc86938417)
+>   [1.2.16 tbl_protocolalarminstance	11](#_Toc88987951)
 
->   [1.2.17 tbl_protocolsmsinstance	12](#_Toc86938418)
+>   [1.2.17 tbl_protocolsmsinstance	12](#_Toc88987952)
 
->   [1.2.18 tbl_wellinformation	13](#_Toc86938419)
+>   [1.2.18 tbl_pumpdevice	13](#_Toc88987953)
 
->   [1.2.19 tbl_pumpacqdata_latest	14](#_Toc86938420)
+>   [1.2.19 tbl_pipelinedevice	13](#_Toc88987954)
 
->   [1.2.20 tbl_pumpacqdata_hist	14](#_Toc86938421)
+>   [1.2.20 tbl_smsdevice	14](#_Toc88987955)
 
->   [1.2.21 tbl_pipelineacqdata_latest	15](#_Toc86938422)
+>   [1.2.21 tbl_auxiliarydevice	15](#_Toc88987956)
 
->   [1.2.22 tbl_pipelineacqdata_hist	15](#_Toc86938423)
+>   [1.2.22 tbl_auxiliary2master	15](#_Toc88987957)
 
->   [1.2.23 tbl_alarminfo_latest	16](#_Toc86938424)
+>   [1.2.23 tbl_pumpacqdata_latest	16](#_Toc88987958)
 
->   [1.2.24 tbl_alarminfo_hist	16](#_Toc86938425)
+>   [1.2.24 tbl_pumpacqdata_hist	16](#_Toc88987959)
 
->   [1.2.25 tbl_deviceoperationlog	17](#_Toc86938426)
+>   [1.2.25 tbl_pumpalarminfo_latest	17](#_Toc88987960)
 
->   [1.2.26 tbl_systemlog	17](#_Toc86938427)
+>   [1.2.26 tbl_pumpalarminfo_hist	17](#_Toc88987961)
 
->   [1.2.27 tbl_resourcemonitoring	18](#_Toc86938428)
+>   [1.2.27 tbl_pipelineacqdata_latest	18](#_Toc88987962)
 
-[二、视图	19](#_Toc86938429)
+>   [1.2.28 tbl_pipelineacqdata_hist	18](#_Toc88987963)
 
->   [2.1 概览	19](#_Toc86938430)
+>   [1.2.29 tbl_pipelinealarminfo_latest	19](#_Toc88987964)
 
->   [2.2 详述	20](#_Toc86938431)
+>   [1.2.30 tbl_pipelinealarminfo_hist	19](#_Toc88987965)
 
->   [2.2.1 viw_alarminfo_latest	20](#_Toc86938432)
+>   [1.2.31 tbl_deviceoperationlog	20](#_Toc88987966)
 
->   [2.2.2 viw_alarminfo_hist	20](#_Toc86938433)
+>   [1.2.32 tbl_systemlog	20](#_Toc88987967)
 
->   [2.2.3 viw_deviceoperationlog	20](#_Toc86938434)
+>   [1.2.33 tbl_resourcemonitoring	21](#_Toc88987968)
 
->   [2.2.4 viw_systemlog	21](#_Toc86938435)
+[二、视图	22](#_Toc88987969)
 
->   [2.2.5 viw_wellinformation	21](#_Toc86938436)
+>   [2.1 概览	22](#_Toc88987970)
 
-[三、存储过程	21](#_Toc86938437)
+>   [2.2 详述	23](#_Toc88987971)
 
-[四、触发器	23](#_Toc86938438)
+>   [2.2.1 viw_pumpdevice	23](#_Toc88987972)
+
+>   [2.2.2 viw_pipelinedevice	23](#_Toc88987973)
+
+>   [2.2.3 viw_sysdevice	24](#_Toc88987974)
+
+>   [2.2.4 viw_pumpalarminfo_latest	24](#_Toc88987975)
+
+>   [2.2.5 viw_pumpalarminfo_hist	25](#_Toc88987976)
+
+>   [2.2.6 viw_pipelinealarminfo_latest	25](#_Toc88987977)
+
+>   [2.2.7 viw_pipelinealarminfo_hist	25](#_Toc88987978)
+
+>   [2.2.8 viw_deviceoperationlog	25](#_Toc88987979)
+
+>   [2.2.9 viw_systemlog	26](#_Toc88987980)
+
+[三、存储过程	26](#_Toc88987981)
+
+[四、触发器	27](#_Toc88987982)
 
 # 一、表
 
@@ -92,35 +112,41 @@
 
 表1-1 表概览
 
-| **序号** | **名称**                   | **描述**               |
-|----------|----------------------------|------------------------|
-| 1        | tbl_org                    | 组织数据表             |
-| 2        | tbl_user                   | 用户数据表             |
-| 3        | tbl_role                   | 角色数据表             |
-| 4        | tbl_module                 | 模块数据表             |
-| 5        | tbl_module2role            | 模块角色关系表         |
-| 6        | tbl_dist_name              | 字典名称表             |
-| 7        | tbl_dist_item              | 字典数据项表           |
-| 8        | tbl_code                   | 代码表                 |
-| 9        | tbl_acq\_unit\_conf        | 采控单元表             |
-| 10       | tbl_acq_group_conf         | 采控组表               |
-| 11       | tbl_acq_item2group_conf    | 采控组和采控项关系表   |
-| 12       | tbl_acq_group2unit_conf    | 采控单元和采控组关系表 |
-| 13       | tbl_alarm_unit_conf        | 报警单元表             |
-| 14       | tbl_alarm_item2unit_conf   | 报警单元和报警项关系表 |
-| 15       | tbl_protocolinstance       | 采控实例表             |
-| 16       | tbl_protocolalarminstance  | 报警实例表             |
-| 17       | tbl_protocolsmsinstance    | 短信实例表             |
-| 18       | tbl_wellinformation        | 设备信息表             |
-| 19       | tbl_pumpacqdata_latest     | 泵设备实时数据表       |
-| 20       | tbl_pumpacqdata_hist       | 泵设备历史数据表       |
-| 21       | tbl_pipelineacqdata_latest | 管设备实时数据表       |
-| 22       | tbl_pipelineacqdata\_ hist | 管设备历史数据表       |
-| 23       | tbl_alarminfo_latest       | 报警实时数据表         |
-| 24       | tbl_alarminfo              | 报警历史数据表         |
-| 25       | tbl_deviceoperationlog     | 设备操作日志表         |
-| 26       | tbl_systemlog              | 系统日志表             |
-| 27       | tbl_resourcemonitoring     | 资源监测数据表         |
+| **序号** | **名称**                      | **描述**                |
+|----------|-------------------------------|-------------------------|
+| 1        | tbl_org                       | 组织数据表              |
+| 2        | tbl_user                      | 用户数据表              |
+| 3        | tbl_role                      | 角色数据表              |
+| 4        | tbl_module                    | 模块数据表              |
+| 5        | tbl_module2role               | 模块角色关系表          |
+| 6        | tbl_dist_name                 | 字典名称表              |
+| 7        | tbl_dist_item                 | 字典数据项表            |
+| 8        | tbl_code                      | 代码表                  |
+| 9        | tbl_acq\_unit\_conf           | 采控单元表              |
+| 10       | tbl_acq_group_conf            | 采控组表                |
+| 11       | tbl_acq_item2group_conf       | 采控组和采控项关系表    |
+| 12       | tbl_acq_group2unit_conf       | 采控单元和采控组关系表  |
+| 13       | tbl_alarm_unit_conf           | 报警单元表              |
+| 14       | tbl_alarm_item2unit_conf      | 报警单元和报警项关系表  |
+| 15       | tbl_protocolinstance          | 采控实例表              |
+| 16       | tbl_protocolalarminstance     | 报警实例表              |
+| 17       | tbl_protocolsmsinstance       | 短信实例表              |
+| 18       | tbl\_pumpdevice               | 泵设备信息表            |
+| 19       | tbl\_pipelinedevice           | 管设备信息表            |
+| 20       | tbl\_smsdevice                | 短信设备信息表          |
+| 21       | tbl_auxiliarydevice           | 辅件设备表              |
+| 22       | tbl_auxiliary2master          | 主设备和辅助设备对应 表 |
+| 23       | tbl_pumpacqdata_latest        | 泵设备实时数据表        |
+| 24       | tbl_pumpacqdata_hist          | 泵设备历史数据表        |
+| 25       | tbl_pipelineacqdata_latest    | 管设备实时数据表        |
+| 26       | tbl_pipelineacqdata\_ hist    | 管设备历史数据表        |
+| 27       | tbl_pumpalarminfo_latest      | 泵设备报警实时数据表    |
+| 28       | tbl_pumpalarminfo_hist        | 泵设备报警历史数据表    |
+| 29       | tbl\_pipelinealarminfo_latest | 管设备报警实时数据表    |
+| 30       | tbl\_pipelinealarminfo_hist   | 管设备报警历史数据表    |
+| 31       | tbl_deviceoperationlog        | 设备操作日志表          |
+| 32       | tbl_systemlog                 | 系统日志表              |
+| 33       | tbl_resourcemonitoring        | 资源监测数据表          |
 
 ## 1.2 详述
 
@@ -293,16 +319,19 @@
 
 表1-12 采控组和采集项关系表
 
-| **序号** | **代码** | **名称**   | **类型**      | **单位** | **为空** | **键** | **备注**         |
-|----------|----------|------------|---------------|----------|----------|--------|------------------|
-| 1        | ID       | 记录编号   | NUMBER(10)    |          | N        | 主键   |                  |
-| 2        | GROUPID  | 采控组编号 | NUMBER(10)    |          | N        |        |                  |
-| 3        | ITEMID   | 采控项编号 | NUMBER(10)    |          | Y        |        |                  |
-| 4        | ITEMCODE | 采控项代码 | VARCHAR2(100) |          | Y        |        |                  |
-| 5        | ITEMNAME | 采控项名称 | VARCHAR2(100) |          | Y        |        |                  |
-| 6        | SORT     | 排序序号   | NUMBER(10)    |          | Y        |        |                  |
-| 7        | BITINDEX | 位索引     | NUMBER(10)    |          | Y        |        | 位数组中的位索引 |
-| 8        | MATRIX   | 阵列       | VARCHAR2(8)   |          | Y        |        |                  |
+| **序号** | **代码**      | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**         |
+|----------|---------------|--------------|---------------|----------|----------|--------|------------------|
+| 1        | ID            | 记录编号     | NUMBER(10)    |          | N        | 主键   |                  |
+| 2        | GROUPID       | 采控组编号   | NUMBER(10)    |          | N        |        |                  |
+| 3        | ITEMID        | 采控项编号   | NUMBER(10)    |          | Y        |        |                  |
+| 4        | ITEMCODE      | 采控项代码   | VARCHAR2(100) |          | Y        |        |                  |
+| 5        | ITEMNAME      | 采控项名称   | VARCHAR2(100) |          | Y        |        |                  |
+| 6        | SORT          | 排序序号     | NUMBER(10)    |          | Y        |        |                  |
+| 7        | BITINDEX      | 位索引       | NUMBER(10)    |          | Y        |        | 位数组中的位索引 |
+| 8        | SHOWLEVEL     | 显示级别     | NUMBER(10)    |          | Y        |        |                  |
+| 9        | REALTIMECURVE | 实时曲线顺序 | NUMBER(10)    |          | Y        |        | 为空不显示曲线   |
+| 10       | HISTORYCURVE  | 历史曲线顺序 | NUMBER(10)    |          | Y        |        | 为空不显示曲线   |
+| 11       | MATRIX        | 阵列         | VARCHAR2(8)   |          | Y        |        |                  |
 
 ### 1.2.12 tbl_acq_group2unit_conf
 
@@ -396,33 +425,95 @@
 | 5        | CTRLPROTOCOLTYPE | 控制协议类型 | VARCHAR2(50) |          | Y        |        |          |
 | 6        | SORT             | 排序编号     | NUMBER(10)   |          | Y        |        |          |
 
-### 1.2.18 tbl_wellinformation
+### 1.2.18 tbl\_pumpdevice
 
-表1-19 设备信息表
+表1-19 泵设备信息表
 
-| **序号** | **代码**            | **名称**              | **类型**      | **单位** | **为空** | **键** | **备注**                     |
-|----------|---------------------|-----------------------|---------------|----------|----------|--------|------------------------------|
-| 1        | ID                  | 记录编号              | NUMBER(10)    |          | N        | 主键   |                              |
-| 2        | ORGID               | 单位编号              | NUMBER(10)    |          | Y        |        |                              |
-| 3        | WELLNAME            | 设备名称              | VARCHAR2(200) |          | Y        |        |                              |
-| 4        | SIGNINID            | 注册包ID              | VARCHAR2(200) |          | N        |        |                              |
-| 5        | SLAVE               | 设备从地址            | VARCHAR2(200) |          | Y        |        |                              |
-| 6        | INSTANCECODE        | 采控实例/短信实例编码 | VARCHAR2(50)  |          | Y        |        |                              |
-| 7        | VIDEOURL            | 视频地址              | VARCHAR2(400) |          | Y        |        |                              |
-| 8        | ALARMINSTANCECODE   | 报警实例代码          | VARCHAR2(50)  |          | Y        |        |                              |
-| 9        | DEVICETYPE          | 设备类型              | NUMBER(1)     |          | Y        |        | 0-泵设备 1-管设备 2-短信设备 |
-| 10       | FACTORYNUMBER       | 出厂编号              | VARCHAR2(200) |          | Y        |        |                              |
-| 11       | MODEL               | 规格型号              | VARCHAR2(200) |          | Y        |        |                              |
-| 12       | PRODUCTIONDATE      | 生产日期              | VARCHAR2(200) |          | Y        |        |                              |
-| 13       | DELIVERYDATE        | 发货日期              | VARCHAR2(200) |          | Y        |        |                              |
-| 14       | COMMISSIONINGDATE   | 投产日期              | VARCHAR2(200) |          | Y        |        |                              |
-| 15       | CONTROLCABINETMODEL | 控制柜型号            | VARCHAR2(200) |          | Y        |        |                              |
-| 16       | PIPELINELENGTH      | 管体长度              | NUMBER(10,2)  |          | Y        |        | 管设备填写                   |
-| 17       | SORTNUM             | 排序编号              | NUMBER(10)    |          | Y        |        |                              |
+| **序号** | **代码**             | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注** |
+|----------|----------------------|--------------|---------------|----------|----------|--------|----------|
+| 1        | ID                   | 记录编号     | NUMBER(10)    |          | N        | 主键   |          |
+| 2        | ORGID                | 单位编号     | NUMBER(10)    |          | Y        |        |          |
+| 3        | WELLNAME             | 设备名称     | VARCHAR2(200) |          | Y        |        |          |
+| 4        | DEVICETYPE           | 设备类型     | NUMBER(1)     |          | Y        |        |          |
+| 5        | APPLICATIONSCENARIOS | 应用场景     | NUMBER(2)     |          | Y        |        |          |
+| 6        | SIGNINID             | 注册包ID     | VARCHAR2(200) |          | N        |        |          |
+| 7        | SLAVE                | 设备从地址   | VARCHAR2(200) |          | Y        |        |          |
+| 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |          |
+| 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |          |
+| 10       | FACTORYNUMBER        | 出厂编号     | VARCHAR2(200) |          | Y        |        |          |
+| 11       | MODEL                | 规格型号     | VARCHAR2(200) |          | Y        |        |          |
+| 12       | PRODUCTIONDATE       | 生产日期     | VARCHAR2(200) |          | Y        |        |          |
+| 13       | DELIVERYDATE         | 发货日期     | VARCHAR2(200) |          | Y        |        |          |
+| 14       | COMMISSIONINGDATE    | 投产日期     | VARCHAR2(200) |          | Y        |        |          |
+| 15       | CONTROLCABINETMODEL  | 控制柜型号   | VARCHAR2(200) |          | Y        |        |          |
+| 16       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |          |
+| 17       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |          |
 
-### 1.2.19 tbl_pumpacqdata_latest
+### 1.2.19 tbl\_pipelinedevice
 
-表1-20 泵设备实时数据表
+表1-20 管设备信息表
+
+| **序号** | **代码**             | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注** |
+|----------|----------------------|--------------|---------------|----------|----------|--------|----------|
+| 1        | ID                   | 记录编号     | NUMBER(10)    |          | N        | 主键   |          |
+| 2        | ORGID                | 单位编号     | NUMBER(10)    |          | Y        |        |          |
+| 3        | WELLNAME             | 设备名称     | VARCHAR2(200) |          | Y        |        |          |
+| 4        | DEVICETYPE           | 设备类型     | NUMBER(1)     |          | Y        |        |          |
+| 5        | APPLICATIONSCENARIOS | 应用场景     | NUMBER(2)     |          | Y        |        |          |
+| 6        | SIGNINID             | 注册包ID     | VARCHAR2(200) |          | N        |        |          |
+| 7        | SLAVE                | 设备从地址   | VARCHAR2(200) |          | Y        |        |          |
+| 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |          |
+| 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |          |
+| 10       | FACTORYNUMBER        | 出厂编号     | VARCHAR2(200) |          | Y        |        |          |
+| 11       | MODEL                | 规格型号     | VARCHAR2(200) |          | Y        |        |          |
+| 12       | PRODUCTIONDATE       | 生产日期     | VARCHAR2(200) |          | Y        |        |          |
+| 13       | DELIVERYDATE         | 发货日期     | VARCHAR2(200) |          | Y        |        |          |
+| 14       | COMMISSIONINGDATE    | 投产日期     | VARCHAR2(200) |          | Y        |        |          |
+| 15       | CONTROLCABINETMODEL  | 控制柜型号   | VARCHAR2(200) |          | Y        |        |          |
+| 16       | PIPELINELENGTH       | 管体长度     | NUMBER(10,2)  |          | Y        |        |          |
+| 17       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |          |
+| 18       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |          |
+
+### 1.2.20 tbl\_smsdevice
+
+表1-21 短信设备信息表
+
+| **序号** | **代码**     | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注** |
+|----------|--------------|--------------|---------------|----------|----------|--------|----------|
+| 1        | ID           | 记录编号     | NUMBER(10)    |          | N        | 主键   |          |
+| 2        | ORGID        | 单位编号     | NUMBER(10)    |          | Y        |        |          |
+| 3        | WELLNAME     | 设备名称     | VARCHAR2(200) |          | Y        |        |          |
+| 4        | SIGNINID     | 注册包ID     | VARCHAR2(200) |          | N        |        |          |
+| 5        | INSTANCECODE | 短信实例代码 | VARCHAR2(50)  |          | Y        |        |          |
+| 6        | SORTNUM      | 排序编号     | NUMBER(10)    |          | Y        |        |          |
+
+### 1.2.21 tbl_auxiliarydevice
+
+表1-22 辅件设备信息表
+
+| **序号** | **代码** | **名称** | **类型**       | **单位** | **为空** | **键** | **备注**          |
+|----------|----------|----------|----------------|----------|----------|--------|-------------------|
+| 1        | ID       | 记录编号 | NUMBER(10)     |          | N        | 主键   |                   |
+| 2        | NAME     | 名称     | VARCHAR2(200)  |          | Y        |        |                   |
+| 3        | TYPE     | 类型     | NUMBER(2)      |          | Y        |        | 0-泵辅件 1-管辅件 |
+| 4        | MODEL    | 规格型号 | VARCHAR2(200)  |          | N        |        |                   |
+| 5        | REMARK   | 备注     | VARCHAR2(2000) |          | Y        |        |                   |
+| 6        | SORT     | 排序序号 | NUMBER(10)     |          | Y        |        |                   |
+
+### 1.2.22 tbl_auxiliary2master
+
+表1-23 主设备辅件设备关系表
+
+| **序号** | **代码**    | **名称**     | **类型**    | **单位** | **为空** | **键** | **备注** |
+|----------|-------------|--------------|-------------|----------|----------|--------|----------|
+| 1        | ID          | 记录编号     | NUMBER(10)  |          | N        | 主键   |          |
+| 2        | MASTERID    | 主设备编号   | NUMBER(10)  |          | Y        |        |          |
+| 3        | AUXILIARYID | 辅件设备编号 | NUMBER(10)  |          | Y        |        |          |
+| 4        | MATRIX      | 阵列         | VARCHAR2(8) |          | Y        |        |          |
+
+### 1.2.23 tbl_pumpacqdata_latest
+
+表1-24 泵设备实时数据表
 
 | **序号** | **代码**           | **名称** | **类型**     | **单位** | **为空** | **键** | **备注**               |
 |----------|--------------------|----------|--------------|----------|----------|--------|------------------------|
@@ -440,37 +531,13 @@
 | …        | …                  | …        |              |          | Y        |        | 根据驱动自动生成的字段 |
 | …        | …                  | …        |              |          | Y        |        |                        |
 
-### 1.2.20 tbl_pumpacqdata_hist
+### 1.2.24 tbl_pumpacqdata_hist
 
 同tbl\_pumpacqdata\_latest
 
-### 1.2.21 tbl\_pipelineacqdata_latest
+### 1.2.25 tbl\_pumpalarminfo_latest
 
-表1-21 管设备实时数据表
-
-| **序号** | **代码**           | **名称** | **类型**     | **单位** | **为空** | **键** | **备注**               |
-|----------|--------------------|----------|--------------|----------|----------|--------|------------------------|
-| 1        | ID                 | 记录编号 | NUMBER(10)   |          | N        | 主键   |                        |
-| 2        | WELLID             | 设备编号 | NUMBER(10)   |          | N        |        |                        |
-| 3        | ACQTIME            | 采集时间 | DATE         |          | Y        |        |                        |
-| 4        | COMMSTATUS         | 通信状态 | NUMBER(2)    |          | Y        |        | 0-离线 1-在线          |
-| 5        | COMMTIME           | 在线时间 | NUMBER(8,2)  |          | Y        |        |                        |
-| 6        | COMMTIMEEFFICIENCY | 在线时率 | NUMBER(10,4) |          | Y        |        |                        |
-| 7        | COMMRANGE          | 在线区间 | CLOB         |          | Y        |        |                        |
-| 8        | RUNSTATUS          | 运行状态 | NUMBER(2)    |          | Y        |        |                        |
-| 9        | RUNTIMEEFFICIENCY  | 运行时率 | NUMBER(8,2)  |          | Y        |        |                        |
-| 10       | RUNTIME            | 运行时间 | NUMBER(10,4) |          | Y        |        |                        |
-| 11       | RUNRANGE           | 运行区间 | CLOB         |          | Y        |        |                        |
-| …        | …                  | …        |              |          | Y        |        | 根据驱动自动生成的字段 |
-| …        | …                  | …        |              |          | Y        |        |                        |
-
-### 1.2.22 tbl_pipelineacqdata_hist
-
-同tbl\_pipelineacqdata\_latest
-
-### 1.2.23 tbl_alarminfo_latest
-
-表1-22 报警实时数据表
+表1-25 泵设备报警实时数据表
 
 | **序号** | **代码**      | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**                                        |
 |----------|---------------|--------------|---------------|----------|----------|--------|-------------------------------------------------|
@@ -488,13 +555,61 @@
 | 12       | ISSENDMESSAGE | 是否发送短信 | NUMBER(1)     |          | Y        |        | 0-否 1-是                                       |
 | 13       | ISSENDMAIL    | 是否发送邮件 | NUMBER(1)     |          | Y        |        | 0-否 1-是                                       |
 
-### 1.2.24 tbl_alarminfo_hist
+### 1.2.26 tbl_pumpalarminfo_hist
 
-同tbl_alarminfo_latest
+同tbl\_pumpalarminfo_latest
 
-### 1.2.25 tbl_deviceoperationlog
+### 1.2.27 tbl\_pipelineacqdata_latest
 
-表1-23 设备操作日志表
+表1-26 管设备实时数据表
+
+| **序号** | **代码**           | **名称** | **类型**     | **单位** | **为空** | **键** | **备注**               |
+|----------|--------------------|----------|--------------|----------|----------|--------|------------------------|
+| 1        | ID                 | 记录编号 | NUMBER(10)   |          | N        | 主键   |                        |
+| 2        | WELLID             | 设备编号 | NUMBER(10)   |          | N        |        |                        |
+| 3        | ACQTIME            | 采集时间 | DATE         |          | Y        |        |                        |
+| 4        | COMMSTATUS         | 通信状态 | NUMBER(2)    |          | Y        |        | 0-离线 1-在线          |
+| 5        | COMMTIME           | 在线时间 | NUMBER(8,2)  |          | Y        |        |                        |
+| 6        | COMMTIMEEFFICIENCY | 在线时率 | NUMBER(10,4) |          | Y        |        |                        |
+| 7        | COMMRANGE          | 在线区间 | CLOB         |          | Y        |        |                        |
+| 8        | RUNSTATUS          | 运行状态 | NUMBER(2)    |          | Y        |        |                        |
+| 9        | RUNTIMEEFFICIENCY  | 运行时率 | NUMBER(8,2)  |          | Y        |        |                        |
+| 10       | RUNTIME            | 运行时间 | NUMBER(10,4) |          | Y        |        |                        |
+| 11       | RUNRANGE           | 运行区间 | CLOB         |          | Y        |        |                        |
+| …        | …                  | …        |              |          | Y        |        | 根据驱动自动生成的字段 |
+| …        | …                  | …        |              |          | Y        |        |                        |
+
+### 1.2.28 tbl_pipelineacqdata_hist
+
+同tbl\_pipelineacqdata\_latest
+
+### 1.2.29 tbl\_pipelinealarminfo_latest
+
+表1-27 泵设备报警实时数据表
+
+| **序号** | **代码**      | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**                                        |
+|----------|---------------|--------------|---------------|----------|----------|--------|-------------------------------------------------|
+| 1        | ID            | 记录编号     | NUMBER(10)    |          | N        | 主键   |                                                 |
+| 2        | WELLID        | 设备编号     | NUMBER(10)    |          | N        |        |                                                 |
+| 3        | ALARMTIME     | 报警时间     | DATE          |          | Y        |        |                                                 |
+| 4        | ITEMNAME      | 报警项       | VARCHAR2(100) |          | Y        |        |                                                 |
+| 5        | ALARMTYPE     | 报警类型     | NUMBER(1)     |          | Y        |        | 0-通信报警 1-限值报警 2-枚举量报警 3-开关量报警 |
+| 6        | ALARMVALUE    | 报警值       | NUMBER(10,3)  |          | Y        |        |                                                 |
+| 7        | ALARMINFO     | 报警信息     | VARCHAR2(100) |          | Y        |        |                                                 |
+| 8        | ALARMLIMIT    | 报警限值     | NUMBER(10,3)  |          | Y        |        |                                                 |
+| 9        | HYSTERSIS     | 回差         | NUMBER(10,3)  |          | Y        |        |                                                 |
+| 10       | ALARMLEVEL    | 报警级别     | NUMBER(3)     |          | Y        |        | 100-一级报警 200-二级报警 300-三级报警          |
+| 11       | RECOVERYTIME  | 恢复时间     | DATE          |          | Y        |        |                                                 |
+| 12       | ISSENDMESSAGE | 是否发送短信 | NUMBER(1)     |          | Y        |        | 0-否 1-是                                       |
+| 13       | ISSENDMAIL    | 是否发送邮件 | NUMBER(1)     |          | Y        |        | 0-否 1-是                                       |
+
+### 1.2.30 tbl\_pipelinealarminfo_hist
+
+同tbl\_pipelinealarminfo_latest
+
+### 1.2.31 tbl_deviceoperationlog
+
+表1-28 设备操作日志表
 
 | **序号** | **代码**   | **名称**     | **类型** | **单位** | **为空** | **键** | **备注**                                    |
 |----------|------------|--------------|----------|----------|----------|--------|---------------------------------------------|
@@ -507,9 +622,9 @@
 | 7        | DEVICETYPE | 设备类型     | NUMBER   |          | Y        |        | 0-泵设备 1-管设备                           |
 | 8        | REMARK     | 备注         | VARCHAR2 |          | Y        |        |                                             |
 
-### 1.2.26 tbl_systemlog
+### 1.2.32 tbl_systemlog
 
-表1-24 系统日志表
+表1-29 系统日志表
 
 | **序号** | **代码**   | **名称** | **类型**      | **单位** | **为空** | **键** | **备注**              |
 |----------|------------|----------|---------------|----------|----------|--------|-----------------------|
@@ -520,9 +635,9 @@
 | 5        | ACTION     | 操作     | NUMBER(2)     | 次/min   | Y        |        | 0-用户登录 1-用户退出 |
 | 6        | REMARK     | 备注     | VARCHAR2(200) | kN       | Y        |        |                       |
 
-### 1.2.27 tbl_resourcemonitoring
+### 1.2.33 tbl_resourcemonitoring
 
-表1-33 资源监测数据表
+表1-30 资源监测数据表
 
 | **序号** | **代码**       | **名称**         | **类型**     | **单位** | **为空** | **键** | **备注** |
 |----------|----------------|------------------|--------------|----------|----------|--------|----------|
@@ -542,39 +657,95 @@
 
 表2-1 视图概览
 
-| **序号** | **名称**                      | **描述**                 |
-|----------|-------------------------------|--------------------------|
-| 1        | viw_wellinformation           | 井名信息视图             |
-| 2        | viw_wellboretrajectory        | 井身轨迹视图             |
-| 3        | viw_rpc_productiondata_latest | 抽油机生产数据实时视图   |
-| 4        | viw_rpc_productiondata_hist   | 抽油机生产数据历史视图   |
-| 5        | viw_commstatus                | 通信状态视图             |
-| 6        | viw_rpc_diagram_latest        | 抽油机曲线数据实时视图   |
-| 7        | viw_rpc_diagram_hist          | 抽油机曲线数据历史视图   |
-| 8        | viw_rpc_discrete_latest       | 抽油机离散数据实时视图   |
-| 9        | viw_rpc_discrete_hist         | 抽油机离散数据历史视图   |
-| 10       | viw_rpc_comprehensive_latest  | 抽油机综合数据实时视图   |
-| 11       | viw_rpc_comprehensive_hist    | 抽油机综合数据历史视图   |
-| 12       | viw_rpc_diagramquery_latest   | 抽油机图形查询实时视图   |
-| 13       | viw_rpc_diagramquery_hist     | 抽油机图形查询历史视图   |
-| 14       | viw_rpc_total_day             | 抽油机日累计数据视图     |
-| 15       | viw_rpc_calculatemain         | 抽油机计算结果管理视图   |
-| 16       | viw_rpc_calculatemain\_elec   | 电参反演计算结果管理视图 |
-| 17       | viw_pcp_productiondata_latest | 螺杆泵生产数据实时视图   |
-| 18       | viw_pcp_productiondata_hist   | 螺杆泵生产数据历史视图   |
-| 19       | viw_pcp_rpm_latest            | 螺杆泵曲线数据实时视图   |
-| 20       | viw_pcp_rpm_hist              | 螺杆泵曲线数据历史视图   |
-| 21       | viw_pcp_discrete_latest       | 螺杆泵离散数据实时视图   |
-| 22       | viw_pcp_discrete_hist         | 螺杆泵离散数据历史视图   |
-| 23       | viw_pcp_comprehensive_latest  | 螺杆泵综合数据实时视图   |
-| 24       | viw_pcp_comprehensive_hist    | 螺杆泵综合数据历史视图   |
-| 25       | viw_pcp_total_day             | 螺杆泵日累计数据视图     |
+| **序号** | **名称**                     | **描述**               |
+|----------|------------------------------|------------------------|
+| 1        | viw_pumpdevice               | 泵设备信息视图         |
+| 2        | viw_pipelinedevice           | 管设备信息视图         |
+| 3        | viw_smsdevice                | 短信设备信息视图       |
+| 4        | viw_pumpalarminfo_latest     | 泵设备实时报警信息视图 |
+| 5        | viw_pumpalarminfo_hist       | 泵设备历史报警信息视图 |
+| 6        | viw_pipelinealarminfo_latest | 管设备实时报警信息视图 |
+| 7        | viw_pipelinealarminfo_hist   | 管设备历史报警信息视图 |
+| 8        | viw_deviceoperationlog       | 设备操作日志视图       |
+| 9        | viw_systemlog                | 系统日志视图           |
 
 ## 2.2 详述
 
-### 2.2.1 viw_alarminfo_latest
+### 2.2.1 viw_pumpdevice
 
-表2-1 报警实时数据视图
+表2-1 泵设备信息视图
+
+| **序号** | **代码**                 | **名称**     | **类型** | **备注** |
+|----------|--------------------------|--------------|----------|----------|
+| 1        | ID                       | 记录编号     | NUMBER   |          |
+| 2        | ORGNAME                  | 组织名称     | VARCHAR2 |          |
+| 3        | ORGID                    | 组织编号     | NUMBER   |          |
+| 4        | WELLNAME                 | 设备名称     | VARCHAR2 |          |
+| 5        | APPLICATIONSCENARIOS     | 应用场景     | NUMBER   |          |
+| 6        | APPLICATIONSCENARIOSNAME | 应用场景名称 | VARCHAR2 |          |
+| 7        | DEVICETYPE               | 设备类型     | NUMBER   |          |
+| 8        | SIGNINID                 | 注册包ID     | VARCHAR2 |          |
+| 9        | SLAVE                    | 设备从地址   | VARCHAR2 |          |
+| 10       | VIDEOURL                 | 视频路径     | VARCHAR2 |          |
+| 11       | INSTANCECODE             | 采控实例编码 | VARCHAR2 |          |
+| 12       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |          |
+| 13       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |          |
+| 14       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |          |
+| 15       | FACTORYNUMBER            | 出厂编号     | VARCHAR2 |          |
+| 16       | MODEL                    | 规格型号     | VARCHAR2 |          |
+| 17       | PRODUCTIONDATE           | 生产日期     | VARCHAR2 |          |
+| 18       | DELIVERYDATE             | 发货日期     | VARCHAR2 |          |
+| 19       | COMMISSIONINGDATE        | 投产日期     | VARCHAR2 |          |
+| 20       | CONTROLCABINETMODEL      | 控制柜型号   | VARCHAR2 |          |
+| 21       | SORTNUM                  | 排序编号     | NUMBER   |          |
+
+### 2.2.2 viw\_pipelinedevice
+
+表2-2 管设备信息视图
+
+| **序号** | **代码**                 | **名称**     | **类型** | **备注** |
+|----------|--------------------------|--------------|----------|----------|
+| 1        | ID                       | 记录编号     | NUMBER   |          |
+| 2        | ORGNAME                  | 组织名称     | VARCHAR2 |          |
+| 3        | ORGID                    | 组织编号     | NUMBER   |          |
+| 4        | WELLNAME                 | 设备名称     | VARCHAR2 |          |
+| 5        | APPLICATIONSCENARIOS     | 应用场景     | NUMBER   |          |
+| 6        | APPLICATIONSCENARIOSNAME | 应用场景名称 | VARCHAR2 |          |
+| 7        | DEVICETYPE               | 设备类型     | NUMBER   |          |
+| 8        | SIGNINID                 | 注册包ID     | VARCHAR2 |          |
+| 9        | SLAVE                    | 设备从地址   | VARCHAR2 |          |
+| 10       | VIDEOURL                 | 视频路径     | VARCHAR2 |          |
+| 11       | INSTANCECODE             | 采控实例编码 | VARCHAR2 |          |
+| 12       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |          |
+| 13       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |          |
+| 14       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |          |
+| 15       | FACTORYNUMBER            | 出厂编号     | VARCHAR2 |          |
+| 16       | MODEL                    | 规格型号     | VARCHAR2 |          |
+| 17       | PRODUCTIONDATE           | 生产日期     | VARCHAR2 |          |
+| 18       | DELIVERYDATE             | 发货日期     | VARCHAR2 |          |
+| 19       | COMMISSIONINGDATE        | 投产日期     | VARCHAR2 |          |
+| 20       | CONTROLCABINETMODEL      | 控制柜型号   | VARCHAR2 |          |
+| 21       | PIPELINELENGTH           | 管体长度     | NUMBER   |          |
+| 22       | SORTNUM                  | 排序编号     | NUMBER   |          |
+
+### 2.2.3 viw\_sysdevice
+
+表2-3 短信设备信息视图
+
+| **序号** | **代码**     | **名称**     | **类型** | **备注** |
+|----------|--------------|--------------|----------|----------|
+| 1        | ID           | 记录编号     | NUMBER   |          |
+| 2        | ORGNAME      | 组织名称     | VARCHAR2 |          |
+| 3        | ORGID        | 组织编号     | NUMBER   |          |
+| 4        | WELLNAME     | 设备名称     | VARCHAR2 |          |
+| 5        | SIGNINID     | 注册包ID     | VARCHAR2 |          |
+| 6        | INSTANCECODE | 短信实例编码 | VARCHAR2 |          |
+| 7        | INSTANCENAME | 短信实例名称 | VARCHAR2 |          |
+| 8        | SORTNUM      | 排序编号     | NUMBER   |          |
+
+### 2.2.4 viw\_pumpalarminfo_latest
+
+表2-4 泵设备报警实时数据视图
 
 | **序号** | **代码**       | **名称**     | **类型** | **备注**                         |
 |----------|----------------|--------------|----------|----------------------------------|
@@ -598,13 +769,43 @@
 | 18       | RECOVERYTIME   | 恢复时间     | DATE     |                                  |
 | 19       | ORGID          | 组织编号     | NUMBER   |                                  |
 
-### 2.2.2 viw_alarminfo\_hist
+### 2.2.5 viw\_pumpalarminfo\_hist
 
-同viw_alarminfo_latest
+同viw\_pumpalarminfo_latest
 
-### 2.2.3 viw_deviceoperationlog
+### 2.2.6 viw\_pipelinealarminfo_latest
 
-表2-2 设备操作日志视图
+表2-5 管设备报警实时数据视图
+
+| **序号** | **代码**       | **名称**     | **类型** | **备注**                         |
+|----------|----------------|--------------|----------|----------------------------------|
+| 1        | ID             | 记录编号     | NUMBER   |                                  |
+| 2        | WELLID         | 设备编号     | NUMBER   |                                  |
+| 3        | WELLNAME       | 设备名称     | VARCHAR2 |                                  |
+| 4        | DEVICETYPE     | 设备类型     | NUMBER   | 0或1                             |
+| 5        | DEVICETYPENAME | 设备类型名称 | VARCHAR2 | 泵设备或管设备                   |
+| 6        | ALARMTIME      | 报警时间     | DATE     |                                  |
+| 7        | ITEMNAME       | 报警项       | VARCHAR2 |                                  |
+| 8        | ALARMTYPE      | 报警类型     | NUMBER   | 0、1、2、3                       |
+| 9        | ALARMTYPENAME  | 报警类型名称 | VARCHAR2 | 通信报警、数值量、枚举量、开关量 |
+| 10       | ALARMVALUE     | 报警值       | NUMBER   |                                  |
+| 11       | ALARMINFO      | 报警信息     | VARCHAR2 |                                  |
+| 12       | ALARMLIMIT     | 报警限值     | NUMBER   |                                  |
+| 13       | HYSTERSIS      | 回差         | NUMBER   |                                  |
+| 14       | ALARMLEVEL     | 报警级别     | NUMBER   | 100、200、300                    |
+| 15       | ALARMLEVELNAME | 报警级别名称 | VARCHAR2 | 一级报警、二级报警、三级报警     |
+| 16       | ISSENDMESSAGE  | 是否发送短信 | NUMBER   |                                  |
+| 17       | ISSENDMAIL     | 是否发送邮件 | NUMBER   |                                  |
+| 18       | RECOVERYTIME   | 恢复时间     | DATE     |                                  |
+| 19       | ORGID          | 组织编号     | NUMBER   |                                  |
+
+### 2.2.7 viw\_pipelinealarminfo\_hist
+
+同viw\_pipelinealarminfo_latest
+
+### 2.2.8 viw_deviceoperationlog
+
+表2-6 设备操作日志视图
 
 | **序号** | **代码**       | **名称**     | **类型** | **备注**                               |
 |----------|----------------|--------------|----------|----------------------------------------|
@@ -620,9 +821,9 @@
 | 10       | REMARK         | 备注         | VARCHAR2 |                                        |
 | 11       | ORGID          | 组织编号     | NUMBER   |                                        |
 
-### 2.2.4 viw_systemlog
+### 2.2.9 viw_systemlog
 
-表2-3 系统日志视图
+表2-7 系统日志视图
 
 | **序号** | **代码**   | **名称** | **类型** | **备注**           |
 |----------|------------|----------|----------|--------------------|
@@ -635,79 +836,65 @@
 | 7        | REMARK     | 备注     | VARCHAR2 |                    |
 | 8        | ORGID      | 组织编号 | NUMBER   |                    |
 
-### 2.2.5 viw_wellinformation
-
-表2-4 设备信息信息视图
-
-| **序号** | **代码**            | **名称**              | **类型** | **备注**          |
-|----------|---------------------|-----------------------|----------|-------------------|
-| 1        | ID                  | 记录编号              | NUMBER   |                   |
-| 2        | ORGNAME             | 组织名称              | VARCHAR2 |                   |
-| 3        | ORGID               | 组织编号              | NUMBER   |                   |
-| 4        | WELLNAME            | 设备名称              | VARCHAR2 |                   |
-| 5        | DEVICETYPE          | 设备类型              | NUMBER   | 0-泵设备 1-管设备 |
-| 6        | SIGNINID            | 注册包ID              | VARCHAR2 |                   |
-| 7        | SLAVE               | 设备从地址            | VARCHAR2 |                   |
-| 8        | VIDEOURL            | 视频路径              | VARCHAR2 |                   |
-| 9        | INSTANCECODE        | 采控实例/短信实例编码 | VARCHAR2 |                   |
-| 10       | INSTANCENAME        | 采控实例/短信实例名称 | VARCHAR2 |                   |
-| 11       | ALARMINSTANCECODE   | 短信实例编码          | VARCHAR2 |                   |
-| 12       | ALARMINSTANCENAME   | 短信实例名称          | VARCHAR2 |                   |
-|          | FACTORYNUMBER       | 出厂编号              | VARCHAR2 |                   |
-|          | MODEL               | 规格型号              | VARCHAR2 |                   |
-|          | PRODUCTIONDATE      | 生产日期              | VARCHAR2 |                   |
-|          | DELIVERYDATE        | 发货日期              | VARCHAR2 |                   |
-|          | COMMISSIONINGDATE   | 投产日期              | VARCHAR2 |                   |
-|          | CONTROLCABINETMODEL | 控制柜型号            | VARCHAR2 |                   |
-|          | PIPELINELENGTH      | 管体长度              | NUMBER   |                   |
-| 13       | SORTNUM             | 排序编号              | NUMBER   |                   |
-
 # 三、存储过程
 
 表3-1 存储过程概览
 
-| **序号** | **名称**                    | **描述**           | **备注** |
-|----------|-----------------------------|--------------------|----------|
-| 1        | PRD_CHANGE_WELLNAME         | 修改设备名称       |          |
-| 2        | PRD_CLEAR_DATA              | 清理数据并重置序列 |          |
-| 3        | PRD_RESET_SEQUENCE          | 重置序列           |          |
-| 4        | PRD_SAVE_ALARMCOLOR         | 保存报警等级颜色   |          |
-| 5        | PRD_SAVE_ALARMINFO          | 保存报警信息       |          |
-| 6        | PRD_SAVE_DEVICEOPERATIONLOG | 保存设备操作日志   |          |
-| 7        | PRD_SAVE_RESOURCEMONITORING | 保存资源监测数据   |          |
-| 8        | PRD_SAVE_SYSTEMLOG          | 保存系统日志数据   |          |
-| 9        | PRD_SAVE_WELLINFORMATION    | 保存设备信息       |          |
+| **序号** | **名称**                       | **描述**           | **备注** |
+|----------|--------------------------------|--------------------|----------|
+| 1        | PRD_RESET_SEQUENCE             | 重置序列           |          |
+| 2        | PRD_CLEAR_DATA                 | 清理数据并重置序列 |          |
+| 3        | PRD_SAVE_PUMPDEVIVE            | 保存泵设备数据     |          |
+| 4        | PRD_SAVE_PIPELINEDEVIVE        | 保存管设备数据     |          |
+| 5        | PRD_SAVE_SMSDEVICE             | 保存短信设备数据   |          |
+| 6        | PRD_SAVE_AUXILIARYDEVICE       | 保存辅件设备数据   |          |
+| 7        | PRD_CHANGE_PUMPDEVICENAME      | 修改泵设备名称     |          |
+| 8        | PRD_CHANGE_PIPELINEDEVICENAME  | 修改管设备名称     |          |
+| 9        | PRD_CHANGE_SMSDEVICENAME       | 修改短信设备名称   |          |
+| 10       | PRD_CHANGE_AUXILIARYDEVICENAME | 修改辅件设备名称   |          |
+| 11       | PRD_SAVE_PUMPALARMINFO         | 保存泵设备报警数据 |          |
+| 12       | PRD_SAVE_PIPELINEALARMINFO     | 保存管设备报警数据 |          |
+| 13       | PRD_SAVE_ALARMCOLOR            | 保存报警等级颜色   |          |
+| 14       | PRD_SAVE_DEVICEOPERATIONLOG    | 保存设备操作日志   |          |
+| 15       | PRD_SAVE_RESOURCEMONITORING    | 保存资源监测数据   |          |
+| 16       | PRD_SAVE_SYSTEMLOG             | 保存系统日志数据   |          |
 
 # 四、触发器
 
 表4-1 触发器概览
 
-| **序号** | **名称**                       | **描述**                             |
-|----------|--------------------------------|--------------------------------------|
-| 1        | TRG_B_ACQ_GROUP2UNIT_CONF_I    | 采控单元和采控组关系表插入数据前触发 |
-| 2        | TRG_B_ACQ_GROUP_CONF_I         | 采控组表插入数据前触发               |
-| 3        | TRG_B_ACQ_ITEM2GROUP_CONF_I    | 采控组和采控项项关系表插入数据前触发 |
-| 4        | TRG_B_ACQ_UNIT_CONF_I          | 采控单元表插入数据前触发             |
-| 5        | TRG_B_ALARMINFO_I              | 报警历史数据表插入数据前触发触发     |
-| 6        | TRG_B_ALARMINFO_LATEST_I       | 报警实时数据表插入数据前触发触发     |
-| 7        | TRG_B_ALARM_ITEM2UNIT_CONF_I   | 报警单元和报警项关系表插入数据前触发 |
-| 8        | TRG_B_ALARM_UNIT_CONF_I        | 报警单元表插入数据前触发             |
-| 9        | TRG_B_CODE_I                   | 代码表插入数据前触发                 |
-| 10       | TRG_B_DEVICEOPERATIONLOG_I     | 设备操作表插入数据前触发             |
-| 11       | BEF_HIBERNATE_SEQUENCE_INSERT  | 数据字典项数据表插入数据前触发       |
-| 12       | TRG_B_MODULE_I                 | 模块表插入数据前触发                 |
-| 13       | TRG_B_MODULE2ROLE_I            | 模块和角色关系表插入数据前触发       |
-| 14       | TRG_B_ORG_I_U                  | 组织表插入、修改数据前触发           |
-| 15       | TRG_B_PIPELINEACQDATA_HIST_I   | 管设备历史数据表插入数据前触发       |
-| 16       | TRG_B_PIPELINEACQDATA_LATEST_I | 管设备实时数据表插入数据前触发       |
-| 17       | TRG_B_PROTOCOLALARMINSTANCE_I  | 报警实例表插入数据前触发             |
-| 18       | TRG_B_PROTOCOLINSTANCE_I       | 采控实例表插入数据前触发             |
-| 19       | TRG_B_PROTOCOLSMSINSTANCE_I    | 短信实例表插入数据前触发             |
-| 20       | TRG_B_PUMPACQDATA_HIST_I       | 泵设备历史数据表插入数据前触发       |
-| 21       | TRG_B_PUMPACQDATA_LATEST_I     | 泵设备实时数据表插入数据前触发       |
-| 22       | TRG_B_RESOURCEMONITORING_I     | 资源监测表插入数据前触发             |
-| 23       | TRG_B_ROLE_I                   | 角色表插入数据前触发                 |
-| 24       | TRG_B_SYSTEMLOG_I              | 系统日志表插入数据前触发             |
-| 25       | TRG_B_USER_I                   | 用户表插入数据前触发                 |
-| 26       | TRG_A_WELLINFORMATION_I        | 设备信息表插入数据后触发             |
-| 27       | TRG_B_WELLINFORMATION_I        | 设备信息表插入数据前触发             |
+| **序号** | **名称**                       | **描述**                               |
+|----------|--------------------------------|----------------------------------------|
+| 1        | TRG_B_ACQ_GROUP2UNIT_CONF_I    | 采控单元和采控组关系表插入数据前触发   |
+| 2        | TRG_B_ACQ_GROUP_CONF_I         | 采控组表插入数据前触发                 |
+| 3        | TRG_B_ACQ_ITEM2GROUP_CONF_I    | 采控组和采控项项关系表插入数据前触发   |
+| 4        | TRG_B_ACQ_UNIT_CONF_I          | 采控单元表插入数据前触发               |
+| 5        | TRG_B_PUMPALARMINFO_HIST_I     | 泵设备报警历史数据表插入数据前触发触发 |
+| 6        | TRG_B_PUMPALARMINFO_LATEST_I   | 泵设备报警实时数据表插入数据前触发触发 |
+| 7        | TRG_B_PIPELINEALARMINFO_HIST_I | 管设备报警历史数据表插入数据前触发触发 |
+| 8        | TRG_B_PIPELINEALARMINFO_L_I    | 管设备报警实时数据表插入数据前触发触发 |
+| 9        | TRG_B_ALARM_ITEM2UNIT_CONF_I   | 报警单元和报警项关系表插入数据前触发   |
+| 10       | TRG_B_ALARM_UNIT_CONF_I        | 报警单元表插入数据前触发               |
+| 11       | TRG_B_CODE_I                   | 代码表插入数据前触发                   |
+| 12       | TRG_B_DEVICEOPERATIONLOG_I     | 设备操作表插入数据前触发               |
+| 13       | BEF_HIBERNATE_SEQUENCE_INSERT  | 数据字典项数据表插入数据前触发         |
+| 14       | TRG_B_MODULE_I                 | 模块表插入数据前触发                   |
+| 15       | TRG_B_MODULE2ROLE_I            | 模块和角色关系表插入数据前触发         |
+| 16       | TRG_B_ORG_I_U                  | 组织表插入、修改数据前触发             |
+| 17       | TRG_B_PIPELINEACQDATA_HIST_I   | 管设备历史数据表插入数据前触发         |
+| 18       | TRG_B_PIPELINEACQDATA_LATEST_I | 管设备实时数据表插入数据前触发         |
+| 19       | TRG_B_PROTOCOLALARMINSTANCE_I  | 报警实例表插入数据前触发               |
+| 20       | TRG_B_PROTOCOLINSTANCE_I       | 采控实例表插入数据前触发               |
+| 21       | TRG_B_PROTOCOLSMSINSTANCE_I    | 短信实例表插入数据前触发               |
+| 22       | TRG_B_PUMPACQDATA_HIST_I       | 泵设备历史数据表插入数据前触发         |
+| 23       | TRG_B_PUMPACQDATA_LATEST_I     | 泵设备实时数据表插入数据前触发         |
+| 24       | TRG_B_RESOURCEMONITORING_I     | 资源监测表插入数据前触发               |
+| 25       | TRG_B_ROLE_I                   | 角色表插入数据前触发                   |
+| 26       | TRG_B_SYSTEMLOG_I              | 系统日志表插入数据前触发               |
+| 27       | TRG_B_USER_I                   | 用户表插入数据前触发                   |
+| 28       | TRG_A_PUMPDEVICE_I             | 泵设备信息表插入数据后触发             |
+| 29       | TRG_B_PUMPDEVICE_I             | 泵设备信息表插入数据前触发             |
+| 30       | TRG_A_PIPELINEDEVICE_I         | 管设备信息表插入数据后触发             |
+| 31       | TRG_B_PIPELINEDEVICE_I         | 管设备信息表插入数据前触发             |
+| 32       | TRG_B_AUXILIARYDEVICE_I        | 辅件设备信息表插入数据前触发           |
+| 33       | TRG_B_AUXILIARY2MASTER_I       | 主设备和辅件设备关系表插入数据前触发   |
