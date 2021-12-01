@@ -5,5 +5,7 @@ encoding//WebRoot/protocolConfig/ModbusProtocolConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/ModbusProtocolInstanceConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/MqttDriverConfig.json=UTF-8
 encoding//WebRoot/protocolConfig/TcpServerConfig.json=UTF-8
+encoding//WebRoot/styles/banner.css=UTF-8
 encoding//WebRoot/styles/icon.css=UTF-8
+encoding//WebRoot/styles/style.css=UTF-8
 encoding/<project>=UTF-8

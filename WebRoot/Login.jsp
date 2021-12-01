@@ -62,7 +62,8 @@
     <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/bootstrap-select.min.css" type="text/css" />
     <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/site.css" type="text/css" />
-    <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/login2.css" type="text/css" />
+    <!--<link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/login2.css" type="text/css" /> -->
+    <link rel="stylesheet" href="<%=path%>/styles/login.css?timestamp=202111252128" type="text/css"/>
 
     <script type="text/javascript" src="<%=path%>/scripts/jquery/jquery-2.2.0.min.js"></script>
     <script type="text/javascript" src="<%=path%>/scripts/bootstrap/js/bootstrap.min.js"></script>
