@@ -36,6 +36,7 @@ boolean isConnection=false;
 
 
 %>
+<link rel="stylesheet" href="<%=path%>/styles/banner.css?timestamp=202111252128" type="text/css"/>
 <link rel="stylesheet" href="<%=path%>/styles/style.css?timestamp=202111252128" type="text/css"/>
 <link rel="stylesheet" href="<%=path%>/styles/icon.css?timestamp=202111252128" type="text/css"/>
 <link rel="stylesheet" type="text/css" href="<%=path%>/scripts/extjs/resources/classic/ext-theme-classic/theme-classic-all.css?timestamp=202111252128" />

@@ -52,7 +52,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -61,82 +61,82 @@ public class EquipmentDriverServerTask {
 		
 		initWellCommStatus();
 		
-		String path="";
-		StringManagerUtils stringManagerUtils=new StringManagerUtils();
-		path=stringManagerUtils.getFilePath("test1.json","test/");
-		String distreteData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test2.json","test/");
-		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test3.json","test/");
-		String onLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		path=stringManagerUtils.getFilePath("test4.json","test/");
-		String offLineData=stringManagerUtils.readFile(path,"utf-8");
-		
-		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
-		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
-		
-		int i=0;
-		while(true){
-			if(i%2==0){
-				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
-			}else{
-				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
-			}
-			
+//		String path="";
+//		StringManagerUtils stringManagerUtils=new StringManagerUtils();
+//		path=stringManagerUtils.getFilePath("test1.json","test/");
+//		String distreteData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test2.json","test/");
+//		String distreteData2=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test3.json","test/");
+//		String onLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		path=stringManagerUtils.getFilePath("test4.json","test/");
+//		String offLineData=stringManagerUtils.readFile(path,"utf-8");
+//		
+//		String url=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/group";
+//		String onlineUrl=Config.getInstance().configFile.getServer().getAccessPath()+"/api/acq/online";
+//		
+//		int i=0;
+//		while(true){
 //			if(i%2==0){
-//				StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+//				StringManagerUtils.sendPostMethod(url, distreteData,"utf-8");
 //			}else{
-//				StringManagerUtils.sendPostMethod(onlineUrl, offLineData,"utf-8");
+//				StringManagerUtils.sendPostMethod(url, distreteData2,"utf-8");
 //			}
-			i++;
-			
-//			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
-			
-			Thread.sleep(1000*20);
-		}
+//			
+////			if(i%2==0){
+////				StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+////			}else{
+////				StringManagerUtils.sendPostMethod(onlineUrl, offLineData,"utf-8");
+////			}
+//			i++;
+//			
+////			StringManagerUtils.sendPostMethod(onlineUrl, onLineData,"utf-8");
+//			
+//			Thread.sleep(1000*20);
+//		}
 		
 		
 
-//		loadProtocolConfig();
-//		initServerConfig();
-//		initProtocolConfig("","");
-//		initInstanceConfig(null,"");
-//		initSMSInstanceConfig(null,"");
-//		initPumpDriverAcquisitionInfoConfig(null,"");
-//		initPipelineDriverAcquisitionInfoConfig(null,"");
-//		initSMSDevice(null,"");
-//		do{
-//			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
-//			type = new TypeToken<DriverProbeResponse>() {}.getType();
-//			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
-//			String Ver="";
-//			if(driverProbeResponse!=null){
-//				if(!driverProbeResponse.getHttpServerInitStatus()){
-//					initServerConfig();
-//				}
-//				if(!driverProbeResponse.getProtocolInitStatus()){
-//					initProtocolConfig("","");
-//				}
-//				if(!driverProbeResponse.getInstanceInitStatus()){
-//					initInstanceConfig(null,"");
-//					initSMSInstanceConfig(null,"");
-//				}
-//				if(!driverProbeResponse.getSMSInitStatus()){
-//					initSMSDevice(null,"");
-//				}
-//				if(!driverProbeResponse.getIDInitStatus()){
-//					initPumpDriverAcquisitionInfoConfig(null,"");
-//					initPipelineDriverAcquisitionInfoConfig(null,"");
-//				}
-//				Ver=driverProbeResponse.getVer();
-//			}else{
-//				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
-//			}
-//			Thread.sleep(1000*1);
-//		}while(true);
+		loadProtocolConfig();
+		initServerConfig();
+		initProtocolConfig("","");
+		initInstanceConfig(null,"");
+		initSMSInstanceConfig(null,"");
+		initPumpDriverAcquisitionInfoConfig(null,"");
+		initPipelineDriverAcquisitionInfoConfig(null,"");
+		initSMSDevice(null,"");
+		do{
+			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
+			type = new TypeToken<DriverProbeResponse>() {}.getType();
+			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
+			String Ver="";
+			if(driverProbeResponse!=null){
+				if(!driverProbeResponse.getHttpServerInitStatus()){
+					initServerConfig();
+				}
+				if(!driverProbeResponse.getProtocolInitStatus()){
+					initProtocolConfig("","");
+				}
+				if(!driverProbeResponse.getInstanceInitStatus()){
+					initInstanceConfig(null,"");
+					initSMSInstanceConfig(null,"");
+				}
+				if(!driverProbeResponse.getSMSInitStatus()){
+					initSMSDevice(null,"");
+				}
+				if(!driverProbeResponse.getIDInitStatus()){
+					initPumpDriverAcquisitionInfoConfig(null,"");
+					initPipelineDriverAcquisitionInfoConfig(null,"");
+				}
+				Ver=driverProbeResponse.getVer();
+			}else{
+				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+			}
+			Thread.sleep(1000*1);
+		}while(true);
 	}
 	
 	public static class DriverProbeResponse{

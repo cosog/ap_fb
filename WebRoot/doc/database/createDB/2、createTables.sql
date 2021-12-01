@@ -410,7 +410,7 @@ create table TBL_ROLE
   role_flag   NUMBER(10),
   receivesms  NUMBER(10) default 0,
   receivemail NUMBER(10) default 0,
-  showlevel   NUMBER(10) default 0
+  showlevel   NUMBER(10) default 0,
   remark      VARCHAR2(2000)
 )
 tablespace AP_FB_DATA
@@ -626,7 +626,7 @@ create table TBL_USER
 (
   user_no         NUMBER(10) not null,
   user_id         VARCHAR2(20) not null,
-  user_pwd        VARCHAR2(20),
+  user_pwd        VARCHAR2(50),
   user_name       VARCHAR2(40) not null,
   user_in_email   VARCHAR2(40),
   user_out_email  VARCHAR2(100),
