@@ -66,6 +66,9 @@ public class ModbusDriverSaveData {
         			if(!StringManagerUtils.isNotNull(this.getDataConfig().get(i).getAcqMode())){
         				this.getDataConfig().get(i).setAcqMode("");
         	    	}
+        			if(!StringManagerUtils.isNotNull(this.getDataConfig().get(i).getResolutionMode())){
+        				this.getDataConfig().get(i).setResolutionMode("");
+        	    	}
     			}
     		}
     	}

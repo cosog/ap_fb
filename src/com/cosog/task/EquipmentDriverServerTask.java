@@ -39,10 +39,10 @@ import com.google.gson.reflect.TypeToken;
 
 @Component("EquipmentDriverServerTask")  
 public class EquipmentDriverServerTask {
-	public static Connection conn = null;   
-	public static PreparedStatement pstmt = null;  
-	public static Statement stmt = null;  
-	public static ResultSet rs = null;
+//	public static Connection conn = null;   
+//	public static PreparedStatement pstmt = null;  
+//	public static Statement stmt = null;  
+//	public static ResultSet rs = null;
 	public static ServerSocket serverSocket=null;
 	public static boolean adStatus=false;
 	
@@ -199,13 +199,13 @@ public class EquipmentDriverServerTask {
 		protocolConfigData=stringManagerUtils.readFile(path,"utf-8");
 		type = new TypeToken<ModbusProtocolConfig>() {}.getType();
 		ModbusProtocolConfig modbusProtocolConfig=gson.fromJson(protocolConfigData, type);
+		if(modbusProtocolConfig==null){
+			modbusProtocolConfig=new ModbusProtocolConfig();
+			modbusProtocolConfig.setProtocol(new ArrayList<ModbusProtocolConfig.Protocol>());
+		}else if(modbusProtocolConfig.getProtocol()==null){
+			modbusProtocolConfig.setProtocol(new ArrayList<ModbusProtocolConfig.Protocol>());
+		}
 		equipmentDriveMap.put("modbusProtocolConfig", modbusProtocolConfig);
-		//添加Kafka协议配置
-		path=stringManagerUtils.getFilePath("KafkaDriverConfig.json","protocolConfig/");
-		protocolConfigData=stringManagerUtils.readFile(path,"utf-8");
-		type = new TypeToken<KafkaConfig>() {}.getType();
-		KafkaConfig kafkaConfig=gson.fromJson(protocolConfigData, type);
-		equipmentDriveMap.put("KafkaDrive", kafkaConfig);
 		
 		System.out.println("驱动加载结束");
 	}
@@ -284,7 +284,9 @@ public class EquipmentDriverServerTask {
 	
 	public static int initAcquisitionItemDataBaseColumns(String tableName,int deviceType){
 		//pumpDeviceAcquisitionItemColumns  pipelineDeviceAcquisitionItemColumns
-		
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		int result=0;
 		String key="pumpDeviceAcquisitionItemColumns";
 		if(deviceType==1){
@@ -307,13 +309,16 @@ public class EquipmentDriverServerTask {
 			while(rs.next()){
 				acquisitionItemDataBaseColumns.add(rs.getString(1));
 			}
+			System.out.println("初始化表："+tableName);
+			System.out.println("协议字段"+StringManagerUtils.joinStringArr(acquisitionItemColumns, ","));
+			System.out.println("表已有字段"+StringManagerUtils.joinStringArr(acquisitionItemDataBaseColumns, ","));
 			//如数据库中不存在，添加字段
 			for(int i=0;i<acquisitionItemColumns.size();i++){
 				if(!StringManagerUtils.existOrNot(acquisitionItemDataBaseColumns,acquisitionItemColumns.get(i),false)){
 					String addColumsSql="alter table "+tableName+" add "+acquisitionItemColumns.get(i)+" VARCHAR2(50)";
 					pstmt = conn.prepareStatement(addColumsSql);
 					pstmt.executeUpdate();
-					System.out.println("表"+tableName+"添加字段:"+acquisitionItemColumns.get(i));
+					System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"添加字段:"+acquisitionItemColumns.get(i));
 					result++;
 				}
 			}
@@ -325,7 +330,7 @@ public class EquipmentDriverServerTask {
 					pstmt = conn.prepareStatement(deleteColumsSql);
 					pstmt.executeUpdate();
 					result++;
-					System.out.println("表"+tableName+"删除字段:"+acquisitionItemDataBaseColumns.get(i));
+					System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"删除字段:"+acquisitionItemDataBaseColumns.get(i));
 				}
 			}
 			System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-"+tableName+"同步数据库字段");
@@ -362,7 +367,7 @@ public class EquipmentDriverServerTask {
 						dataTypeList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getIFDataType());
 					}
 				}
-				break;
+//				break;
 			}
 		}
 		List<String> dataDictionaryItems=new ArrayList<String>();
@@ -372,7 +377,9 @@ public class EquipmentDriverServerTask {
 				+ " from tbl_dist_item t1 where t1.sysdataid=(select t2.sysdataid from tbl_dist_name t2 where t2.sysdataid='"+dataDictionaryId+"') "
 				+ " and UPPER(t1.ename) like 'ADDR%'"
 				+ " order by t1.sorts";
-		
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -410,7 +417,6 @@ public class EquipmentDriverServerTask {
 								pstmt = conn.prepareStatement(addDataDict);
 								pstmt.executeUpdate();
 							}
-							
 							break;
 						}
 					}
@@ -470,18 +476,18 @@ public class EquipmentDriverServerTask {
 							initProtocol.setMethod(method);
 							System.out.println("协议初始化："+gson.toJson(initProtocol));
 							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
-							loadAcquisitionItemColumns(modbusProtocolConfig.getProtocol().get(i).getDeviceType());
-							if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==0){
-								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist",0);
-								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest",0);
-								initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
-								initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
-							}else{
-								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist",1);
-								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest",1);
-								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
-								initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
-							}
+//							loadAcquisitionItemColumns(modbusProtocolConfig.getProtocol().get(i).getDeviceType());
+//							if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==0){
+//								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_hist",0);
+//								initAcquisitionItemDataBaseColumns("tbl_pumpacqdata_latest",0);
+//								initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
+//								initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
+//							}else{
+//								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_hist",1);
+//								initAcquisitionItemDataBaseColumns("tbl_pipelineacqdata_latest",1);
+//								initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
+//								initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
+//							}
 							break;
 						}
 					}
@@ -492,23 +498,25 @@ public class EquipmentDriverServerTask {
 						System.out.println("协议初始化："+gson.toJson(initProtocol));
 						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initProtocol),"utf-8");
 					}
-					loadAcquisitionItemColumns();
-					//同步数据库字段
-					initAcquisitionItemDataBaseColumns();
-					//同步数据字典
-					initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
-					initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
-					initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
-					initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
 				}
-				
 			}
+			loadAcquisitionItemColumns();
+			//同步数据库字段
+			initAcquisitionItemDataBaseColumns();
+			//同步数据字典
+			initDataDictionary("7f13446d19b4497986980fa16a750f95",0);//泵设备实时概览字典
+			initDataDictionary("cd7b24562b924d19b556de31256e22a1",0);//泵设备历史查询字典
+			initDataDictionary("e0f5f3ff8a1f46678c284fba9cc113e8",1);//管设备实时概览字典
+			initDataDictionary("fb7d070a349c403b8a26d71c12af7a05",1);//管设备历史查询字典
 		}
 	}
 	
 	public static int initInstanceConfigByProtocolName(String protocolName,String method){
 		String sql="select t.name from tbl_protocolinstance t,tbl_acq_unit_conf t2 where t.unitid=t2.id and t2.protocol='"+protocolName+"'";
 		List<String> instanceList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -533,6 +541,9 @@ public class EquipmentDriverServerTask {
 	public static int initInstanceConfigByAcqUnitName(String unitName,String method){
 		String sql="select t.name from tbl_protocolinstance t,tbl_acq_unit_conf t2 where t.unitid=t2.id and t2.unit_name='"+unitName+"'";
 		List<String> instanceList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -557,6 +568,9 @@ public class EquipmentDriverServerTask {
 	public static int initInstanceConfigByAcqUnitId(String unitId,String method){
 		String sql="select t.name from tbl_protocolinstance t where t.unitid="+unitId;
 		List<String> instanceList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -582,6 +596,9 @@ public class EquipmentDriverServerTask {
 		String sql="select distinct(t.name) from tbl_protocolinstance t,tbl_acq_unit_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_group_conf t4 "
 				+ " where t.unitid=t2.id and t2.id=t3.unitid and t3.groupid=t4.id and t4.group_name='"+groupName+"'";
 		List<String> instanceList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -606,6 +623,9 @@ public class EquipmentDriverServerTask {
 	public static int initInstanceConfigByAcqGroupId(String groupId,String method){
 		String sql="select distinct(t.name) from tbl_protocolinstance t,tbl_acq_unit_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_group_conf t4 where t.unitid=t2.id and t2.id=t3.unitid and t3.groupid=t4.id and t4.id="+groupId;
 		List<String> instanceList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -665,6 +685,9 @@ public class EquipmentDriverServerTask {
 				equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			}
 			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			Connection conn = null;   
+			PreparedStatement pstmt = null;   
+			ResultSet rs = null;
 			conn=OracleJdbcUtis.getConnection();
 			if(conn==null || modbusProtocolConfig==null){
 	        	return -1;
@@ -765,6 +788,9 @@ public class EquipmentDriverServerTask {
 				sql+=" and t.name in("+instances+")";
 			}
 			sql+= " order by t.sort";
+			Connection conn = null;   
+			PreparedStatement pstmt = null;   
+			ResultSet rs = null;
 			conn=OracleJdbcUtis.getConnection();
 			if(conn==null){
 	        	return -1;
@@ -809,7 +835,9 @@ public class EquipmentDriverServerTask {
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
 		}
-		
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null ){
         	return -1;
@@ -852,7 +880,9 @@ public class EquipmentDriverServerTask {
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
 		}
-		
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null ){
         	return -1;
@@ -879,8 +909,10 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initDriverAcquisitionInfoConfigByProtocolInstance(String instanceCode,String method){
-		
 		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -915,8 +947,10 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int initDriverAcquisitionInfoConfigByProtocolInstanceId(String instanceId,String method){
-		
 		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -967,7 +1001,9 @@ public class EquipmentDriverServerTask {
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
 		}
-		
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null ){
         	return -1;
@@ -995,6 +1031,9 @@ public class EquipmentDriverServerTask {
 	public static int initSMSDeviceByInstanceCode(String instanceCode,String method){
 		String sql="select t.wellname from tbl_smsdevice t where t.instancecode='"+instanceCode+"'";
 		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -1019,6 +1058,9 @@ public class EquipmentDriverServerTask {
 	public static int initSMSDeviceByInstanceId(String instanceId,String method){
 		String sql="select t.wellname from tbl_smsdevice t,tbl_protocolsmsinstance t2 where t.instancecode=t2.code and t2.id="+instanceId;
 		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
         	return -1;
@@ -1086,6 +1128,10 @@ public class EquipmentDriverServerTask {
 				+ " (select * from tbl_code t where t.itemcode='BJYSTMD3' ) v3 "
 				+ " where v1.itemvalue=v2.itemvalue and v1.itemvalue=v3.itemvalue "
 				+ " order by v1.itemvalue ";
+		Connection conn = null;   
+		PreparedStatement pstmt = null;  
+		Statement stmt = null;  
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
 			return ;
@@ -1183,6 +1229,10 @@ public class EquipmentDriverServerTask {
 			dataModelMap.remove("DeviceCommStatus");
 		}
 		commStatusList=new ArrayList<CommStatus>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;  
+		Statement stmt = null;  
+		ResultSet rs = null;
 		conn=OracleJdbcUtis.getConnection();
 		if(conn==null){
 			return ;

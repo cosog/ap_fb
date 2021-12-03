@@ -319,19 +319,21 @@
 
 表1-12 采控组和采集项关系表
 
-| **序号** | **代码**      | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**         |
-|----------|---------------|--------------|---------------|----------|----------|--------|------------------|
-| 1        | ID            | 记录编号     | NUMBER(10)    |          | N        | 主键   |                  |
-| 2        | GROUPID       | 采控组编号   | NUMBER(10)    |          | N        |        |                  |
-| 3        | ITEMID        | 采控项编号   | NUMBER(10)    |          | Y        |        |                  |
-| 4        | ITEMCODE      | 采控项代码   | VARCHAR2(100) |          | Y        |        |                  |
-| 5        | ITEMNAME      | 采控项名称   | VARCHAR2(100) |          | Y        |        |                  |
-| 6        | SORT          | 排序序号     | NUMBER(10)    |          | Y        |        |                  |
-| 7        | BITINDEX      | 位索引       | NUMBER(10)    |          | Y        |        | 位数组中的位索引 |
-| 8        | SHOWLEVEL     | 显示级别     | NUMBER(10)    |          | Y        |        |                  |
-| 9        | REALTIMECURVE | 实时曲线顺序 | NUMBER(10)    |          | Y        |        | 为空不显示曲线   |
-| 10       | HISTORYCURVE  | 历史曲线顺序 | NUMBER(10)    |          | Y        |        | 为空不显示曲线   |
-| 11       | MATRIX        | 阵列         | VARCHAR2(8)   |          | Y        |        |                  |
+| **序号** | **代码**           | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**         |
+|----------|--------------------|--------------|---------------|----------|----------|--------|------------------|
+| 1        | ID                 | 记录编号     | NUMBER(10)    |          | N        | 主键   |                  |
+| 2        | GROUPID            | 采控组编号   | NUMBER(10)    |          | N        |        |                  |
+| 3        | ITEMID             | 采控项编号   | NUMBER(10)    |          | Y        |        |                  |
+| 4        | ITEMCODE           | 采控项代码   | VARCHAR2(100) |          | Y        |        |                  |
+| 5        | ITEMNAME           | 采控项名称   | VARCHAR2(100) |          | Y        |        |                  |
+| 6        | SORT               | 排序序号     | NUMBER(10)    |          | Y        |        |                  |
+| 7        | BITINDEX           | 位索引       | NUMBER(10)    |          | Y        |        | 位数组中的位索引 |
+| 8        | SHOWLEVEL          | 显示级别     | NUMBER(10)    |          | Y        |        |                  |
+| 9        | REALTIMECURVE      | 实时曲线顺序 | NUMBER(10)    |          | Y        |        | 为空不显示曲线   |
+| 10       | HISTORYCURVE       | 历史曲线顺序 | NUMBER(10)    |          | Y        |        | 为空不显示曲线   |
+| 11       | REALTIMECURVECOLOR | 实时曲线颜色 | VARCHAR2(20)  |          | Y        |        |                  |
+| 12       | HISTORYCURVECOLOR  | 历史曲线颜色 | VARCHAR2(20)  |          | Y        |        |                  |
+| 13       | MATRIX             | 阵列         | VARCHAR2(8)   |          | Y        |        |                  |
 
 ### 1.2.12 tbl_acq_group2unit_conf
 

@@ -554,7 +554,7 @@ public class DriverAPIController extends BaseController{
 				if("A11-Modbus".equalsIgnoreCase(protocolName)){
 				}
 				else{
-					this.DataProcessing_Pump(acqGroup, wellName,deviceType,protocolName);
+					this.DataProcessing(acqGroup, wellName,deviceType,protocolName);
 				}
 			}else{////如果泵设备表中未找到对应设备，查找管设备表
 				sql="select t.wellname,t.devicetype ,t3.protocol"
@@ -567,11 +567,7 @@ public class DriverAPIController extends BaseController{
 					String wellName=obj[0]+"";
 					String deviceType=obj[1]+"";
 					String protocolName=obj[2]+"";
-					if("A11-Modbus".equalsIgnoreCase(protocolName)){
-					}
-					else{
-						this.DataProcessing_Pump(acqGroup, wellName,deviceType,protocolName);
-					}
+					this.DataProcessing(acqGroup, wellName,deviceType,protocolName);
 				}
 			}
 		}else{
@@ -587,7 +583,7 @@ public class DriverAPIController extends BaseController{
 	};
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public String DataProcessing_Pump(AcqGroup acqGroup,String wellName,String deviceType,String protocolName) throws Exception{
+	public String DataProcessing(AcqGroup acqGroup,String wellName,String deviceType,String protocolName) throws Exception{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];

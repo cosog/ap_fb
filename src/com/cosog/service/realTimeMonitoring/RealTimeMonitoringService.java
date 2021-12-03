@@ -945,6 +945,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	public String getRealTimeMonitoringCurveData(String deviceName,String deviceType)throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer itemsBuff = new StringBuffer();
+		StringBuffer curveColorBuff = new StringBuffer();
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
@@ -954,7 +955,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
 				+ " and  t.wellname='"+deviceName+"' ";
 		
-		String curveItemsSql="select t6.itemname,t6.bitindex "
+		String curveItemsSql="select t6.itemname,t6.bitindex,t6.realtimecurvecolor "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 				+ " and t.wellname='"+deviceName+"' and t6.realtimecurve>=0 "
@@ -967,6 +968,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		int resolutionMode=0;
 		List<String> itemNameList=new ArrayList<String>();
 		List<String> itemColumnList=new ArrayList<String>();
+		List<String> curveColorList=new ArrayList<String>();
 		if(protocolList.size()>0){
 			protocolName=protocolList.get(0)+"";
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -988,6 +990,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 									}else{
 										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle());
 									}
+									curveColorList.add((itemObj[2]+"").replaceAll("null", ""));
 									break;
 								}
 							}
@@ -1006,7 +1009,17 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			itemsBuff.deleteCharAt(itemsBuff.length() - 1);
 		}
 		itemsBuff.append("]");
-		result_json.append("{\"deviceName\":\""+deviceName+"\",\"curveItems\":"+itemsBuff+",\"list\":[");
+		
+		curveColorBuff.append("[");
+		for(int i=0;i<curveColorList.size();i++){
+			curveColorBuff.append("\""+curveColorList.get(i)+"\",");
+		}
+		if (curveColorBuff.toString().endsWith(",")) {
+			curveColorBuff.deleteCharAt(curveColorBuff.length() - 1);
+		}
+		curveColorBuff.append("]");
+		
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"curveItems\":"+itemsBuff+",\"curveColors\":"+curveColorBuff+",\"list\":[");
 		if(itemColumnList.size()>0){
 			String columns="";
 			for(int i=0;i<itemColumnList.size();i++){
