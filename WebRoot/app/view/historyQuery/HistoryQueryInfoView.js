@@ -271,6 +271,7 @@ function deviceHistoryQueryCurve(deviceType){
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
 		    var data = result.list;
+		    var defaultColors=["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
 		    var tickInterval = 1;
 		    tickInterval = Math.floor(data.length / 10) + 1;
 		    if(tickInterval<100){
@@ -280,7 +281,14 @@ function deviceHistoryQueryCurve(deviceType){
 		    var xTitle='采集时间';
 		    var legendName =result.curveItems;
 		    
-		    
+		    var color=result.curveColors;
+		    for(var i=0;i<color.length;i++){
+		    	if(color[i]==''){
+		    		color[i]=defaultColors[i%10];
+		    	}else{
+		    		color[i]='#'+color[i];
+		    	}
+		    }
 		    
 		    var yTitle=legendName[0];
 		    
@@ -328,13 +336,6 @@ function deviceHistoryQueryCurve(deviceType){
 		    series += "]";
 		    
 		    var ser = Ext.JSON.decode(series);
-		    var color = ['#800000', // 红
-		       '#008C00', // 绿
-		       '#000000', // 黑
-		       '#0000FF', // 蓝
-		       '#F09614', // 黄
-		       '#FF00FF' // 紫
-		     ];
 		    var timeFormat='%m-%d';
 //		    timeFormat='%H:%M';
 		    initDeviceHistoryCurveChartFn(ser, tickInterval, divId, title, '', '', yAxis, color,true,timeFormat);

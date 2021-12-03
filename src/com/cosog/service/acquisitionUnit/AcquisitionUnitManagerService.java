@@ -241,7 +241,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				+ "{ \"header\":\"显示级别\",\"dataIndex\":\"showLevel\",width:80 ,children:[] },"
 				+ "{ \"header\":\"显示顺序\",\"dataIndex\":\"sort\",width:80 ,children:[] },"
 				+ "{ \"header\":\"实时曲线\",\"dataIndex\":\"realtimeCurve\",width:80 ,children:[] },"
-				+ "{ \"header\":\"历史曲线\",\"dataIndex\":\"historyCurve\",width:80 ,children:[] }"
+				+ "{ \"header\":\"实时曲线颜色\",\"dataIndex\":\"realtimeCurveColor\",width:80 ,children:[] },"
+				+ "{ \"header\":\"历史曲线\",\"dataIndex\":\"historyCurve\",width:80 ,children:[] },"
+				+ "{ \"header\":\"历史曲线颜色\",\"dataIndex\":\"historyCurveColor\",width:80 ,children:[] }"
 				+ "]";
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"totalRoot\":[");
@@ -251,9 +253,11 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		List<String> itemsBitIndexList=new ArrayList<String>();
 		List<String> itemsShowLevelList=new ArrayList<String>();
 		List<String> realtimeCurveList=new ArrayList<String>();
+		List<String> realtimeCurveColorList=new ArrayList<String>();
 		List<String> historyCurveList=new ArrayList<String>();
+		List<String> historyCurveColorList=new ArrayList<String>();
 		if("3".equalsIgnoreCase(classes)){
-			String sql="select t.itemname,t.sort,t.bitindex,t.showlevel,t.realtimeCurve,historyCurve from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
+			String sql="select t.itemname,t.sort,t.bitindex,t.showlevel,t.realtimeCurve,t.realtimeCurveColor,historyCurve,historyCurveColor from TBL_ACQ_ITEM2GROUP_CONF t,tbl_acq_group_conf t2 where t.groupid=t2.id and t2.group_code='"+code+"' order by t.id";
 			List<?> list=this.findCallSql(sql);
 			for(int i=0;i<list.size();i++){
 				Object[] obj=(Object[])list.get(i);
@@ -262,7 +266,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				itemsBitIndexList.add(obj[2]+"");
 				itemsShowLevelList.add(obj[3]+"");
 				realtimeCurveList.add(obj[4]+"");
-				historyCurveList.add(obj[5]+"");
+				realtimeCurveColorList.add(obj[5]+"");
+				historyCurveList.add(obj[6]+"");
+				historyCurveColorList.add(obj[7]+"");
 			}
 		}
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
@@ -274,7 +280,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					String sort="";
 					String showLevel="";
 					String isRealtimeCurve="";
+					String realtimeCurveColor="";
 					String isHistoryCurve="";
+					String historyCurveColor="";
 					if(protocolConfig.getItems().get(j).getResolutionMode()==0){//开关量
 						
 					}else{
@@ -305,7 +313,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							sort="";
 							showLevel="";
 							isRealtimeCurve="";
+							realtimeCurveColor="";
 							isHistoryCurve="";
+							historyCurveColor="";
 							for(int m=0;m<itemsList.size();m++){
 								if(itemsList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getTitle())
 										&&itemsBitIndexList.get(m).equalsIgnoreCase(protocolConfig.getItems().get(j).getMeaning().get(k).getValue()+"")
@@ -314,7 +324,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									sort=itemsSortList.get(m);
 									showLevel=itemsShowLevelList.get(m);
 									isRealtimeCurve=realtimeCurveList.get(m);
+									realtimeCurveColor=realtimeCurveColorList.get(m);
 									isHistoryCurve=historyCurveList.get(m);
+									historyCurveColor=historyCurveColorList.get(m);
 									break;
 								}
 							}
@@ -335,7 +347,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									+ "\"showLevel\":\""+showLevel+"\","
 									+ "\"sort\":\""+sort+"\","
 									+ "\"isRealtimeCurve\":\""+isRealtimeCurve+"\","
-									+ "\"isHistoryCurve\":\""+isHistoryCurve+"\""
+									+ "\"realtimeCurveColor\":\""+realtimeCurveColor+"\","
+									+ "\"isHistoryCurve\":\""+isHistoryCurve+"\","
+									+ "\"historyCurveColor\":\""+historyCurveColor+"\""
 									+ "},");
 							index++;
 						}
@@ -347,7 +361,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									sort=itemsSortList.get(k);
 									showLevel=itemsShowLevelList.get(k);
 									isRealtimeCurve=realtimeCurveList.get(k);
+									realtimeCurveColor=realtimeCurveColorList.get(k);
 									isHistoryCurve=historyCurveList.get(k);
+									historyCurveColor=historyCurveColorList.get(k);
 									break;
 								}
 							}
@@ -367,7 +383,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 								+ "\"showLevel\":\""+showLevel+"\","
 								+ "\"sort\":\""+sort+"\","
 								+ "\"isRealtimeCurve\":\""+isRealtimeCurve+"\","
-								+ "\"isHistoryCurve\":\""+isHistoryCurve+"\""
+								+ "\"realtimeCurveColor\":\""+realtimeCurveColor+"\","
+								+ "\"isHistoryCurve\":\""+isHistoryCurve+"\","
+								+ "\"historyCurveColor\":\""+historyCurveColor+"\""
 								+ "},");
 						index++;
 					}

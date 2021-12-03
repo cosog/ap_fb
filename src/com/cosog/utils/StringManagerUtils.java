@@ -132,6 +132,7 @@ public class StringManagerUtils {
 	private static final Pattern HK_PATTERN = Pattern.compile("^(5|6|8|9)\\d{7}$");
     private static final Pattern CHINA_PATTERN = Pattern.compile("^((13[0-9])|(14[0,1,4-9])|(15[0-3,5-9])|(16[2,5,6,7])|(17[0-8])|(18[0-9])|(19[0-3,5-9]))\\d{8}$");
     private static final Pattern NUM_PATTERN = Pattern.compile("[0-9]+");
+    private static final Pattern COLOR_PATTERN = Pattern.compile("^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$");
     
 //    //邮件正则表达式
     private static final Pattern MAIL_PATTERN = Pattern.compile("^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$");
@@ -171,6 +172,14 @@ public class StringManagerUtils {
      */
     public static boolean isMailLegal(String str) throws PatternSyntaxException{
     	Matcher m = MAIL_PATTERN.matcher(str);
+    	return m.matches();
+    }
+    
+    /**
+     * 16进制颜色
+     */
+    public static boolean isColor16(String str) throws PatternSyntaxException{
+    	Matcher m = COLOR_PATTERN.matcher(str);
     	return m.matches();
     }
     

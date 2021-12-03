@@ -573,7 +573,7 @@ function ShowRealTimeMonitoringStatPieOrColChat(title,divid, name, data,colors) 
 					enabled : true,
 					color : '#000000',
 					connectorColor : '#000000',
-					format : '<b>{point.name}</b>: {point.y}口'
+					format : '<b>{point.name}</b>: {point.y}台'
 				},
 				events: {
 					click: function(e) {
@@ -650,6 +650,16 @@ function deviceRealtimeMonitoringCurve(deviceType){
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
 		    var data = result.list;
+//		    var color = ['#800000', // 红
+//			       '#008C00', // 绿
+//			       '#000000', // 黑
+//			       '#0000FF', // 蓝
+//			       '#F09614', // 黄
+//			       '#FF00FF' // 紫
+//			     ];
+		    
+		    var defaultColors=["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
+		   
 		    var tickInterval = 1;
 		    tickInterval = Math.floor(data.length / 2) + 1;
 		    if(tickInterval<100){
@@ -658,6 +668,16 @@ function deviceRealtimeMonitoringCurve(deviceType){
 		    var title = result.deviceName + "实时曲线";
 		    var xTitle='采集时间';
 		    var legendName =result.curveItems;
+		    
+		    var color=result.curveColors;
+		    for(var i=0;i<color.length;i++){
+		    	if(color[i]==''){
+		    		color[i]=defaultColors[i%10];
+		    	}else{
+		    		color[i]='#'+color[i];
+		    	}
+		    }
+		    
 		    var yTitle=legendName[0];
 		    var series = "[";
 		    var yAxis= [];
@@ -703,13 +723,7 @@ function deviceRealtimeMonitoringCurve(deviceType){
 		    series += "]";
 		    
 		    var ser = Ext.JSON.decode(series);
-		    var color = ['#800000', // 红
-		       '#008C00', // 绿
-		       '#000000', // 黑
-		       '#0000FF', // 蓝
-		       '#F09614', // 黄
-		       '#FF00FF' // 紫
-		     ];
+		    
 		    var timeFormat='%H:%M';
 		    initDeviceRealtimeMonitoringStockChartFn(ser, tickInterval, divId, title, '', '', yAxis, color,true,timeFormat);
 		},

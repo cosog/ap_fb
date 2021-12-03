@@ -77,6 +77,8 @@ create table TBL_ACQ_ITEM2GROUP_CONF
   showlevel NUMBER(10),
   realtimecurve NUMBER(10),
   historycurve NUMBER(10),
+  realtimecurvecolor VARCHAR2(20),
+  historycurvecolor  VARCHAR2(20),
   matrix   VARCHAR2(8)
 )
 tablespace AP_FB_DATA

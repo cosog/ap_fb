@@ -502,7 +502,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 								}
 							}
 						}
-						
+						if(StringManagerUtils.isNotNull(module_[6])){
+							System.out.println("#"+module_[6]+"isColor16:"+StringManagerUtils.isColor16("#"+module_[6]));
+						}
 						
 						acquisitionGroupItem = new AcquisitionGroupItem();
 						acquisitionGroupItem.setGroupId(Integer.parseInt(groupId));
@@ -512,8 +514,10 @@ public class AcquisitionUnitManagerController extends BaseController {
 						acquisitionGroupItem.setBitIndex(bitIndex>=0?bitIndex:null);
 						acquisitionGroupItem.setShowLevel(StringManagerUtils.isNumber(module_[4])?StringManagerUtils.stringTransferInteger(module_[4]):null);
 						acquisitionGroupItem.setRealtimeCurve((StringManagerUtils.isNumber(module_[5]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[5]):null);
-						acquisitionGroupItem.setHistoryCurve((StringManagerUtils.isNumber(module_[6]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[6]):null);
-						acquisitionGroupItem.setMatrix(module_[7]);
+						acquisitionGroupItem.setRealtimeCurveColor(StringManagerUtils.isNumber(module_[5]) && !"开关量".equalsIgnoreCase(resolutionMode)&&StringManagerUtils.isColor16("#"+module_[6])?module_[6]:"");
+						acquisitionGroupItem.setHistoryCurve((StringManagerUtils.isNumber(module_[7]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[7]):null);
+						acquisitionGroupItem.setHistoryCurveColor(StringManagerUtils.isNumber(module_[7]) && !"开关量".equalsIgnoreCase(resolutionMode)&&StringManagerUtils.isColor16("#"+module_[8])?module_[8]:"");
+						acquisitionGroupItem.setMatrix(module_[9]);
 						this.acquisitionUnitItemManagerService.grantAcquisitionItemsPermission(acquisitionGroupItem);
 					}
 				}
@@ -912,6 +916,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 				equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			}
 			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			if(modbusProtocolConfig==null){
+				modbusProtocolConfig=new ModbusProtocolConfig();
+				modbusProtocolConfig.setProtocol(new ArrayList<ModbusProtocolConfig.Protocol>());
+			}else if(modbusProtocolConfig.getProtocol()==null){
+				modbusProtocolConfig.setProtocol(new ArrayList<ModbusProtocolConfig.Protocol>());
+			}
 			boolean isAdd=true;
 			
 			for(int i=0;modbusDriverSaveData.getDelidslist()!=null&&i<modbusDriverSaveData.getDelidslist().size();i++){

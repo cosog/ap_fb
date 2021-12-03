@@ -23,6 +23,8 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 	private Integer bitIndex;
 	private Integer realtimeCurve;
 	private Integer historyCurve;
+	private String realtimeCurveColor;
+	private String historyCurveColor;
 
 	public AcquisitionGroupItem() {
 		super();
@@ -31,7 +33,8 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	/** full constructor */
 	public AcquisitionGroupItem(Integer id, Integer groupId, Integer itemId, String itemName, String itemCode,
-			String matrix, Integer sort, Integer bitIndex, Integer showLevel, Integer realtimeCurve, Integer historyCurve) {
+			String matrix, Integer showLevel, Integer sort, Integer bitIndex, Integer realtimeCurve,
+			Integer historyCurve, String realtimeCurveColor, String historyCurveColor) {
 		super();
 		this.id = id;
 		this.groupId = groupId;
@@ -39,11 +42,13 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 		this.itemName = itemName;
 		this.itemCode = itemCode;
 		this.matrix = matrix;
+		this.showLevel = showLevel;
 		this.sort = sort;
 		this.bitIndex = bitIndex;
-		this.showLevel=showLevel;
-		this.realtimeCurve=realtimeCurve;
-		this.historyCurve=historyCurve;
+		this.realtimeCurve = realtimeCurve;
+		this.historyCurve = historyCurve;
+		this.realtimeCurveColor = realtimeCurveColor;
+		this.historyCurveColor = historyCurveColor;
 	}
 
 	@Id
@@ -143,6 +148,24 @@ public class AcquisitionGroupItem implements java.io.Serializable {
 
 	public void setHistoryCurve(Integer historyCurve) {
 		this.historyCurve = historyCurve;
+	}
+
+	@Column(name = "realtimeCurveColor", nullable = true, length = 8)
+	public String getRealtimeCurveColor() {
+		return realtimeCurveColor;
+	}
+
+	public void setRealtimeCurveColor(String realtimeCurveColor) {
+		this.realtimeCurveColor = realtimeCurveColor;
+	}
+
+	@Column(name = "historyCurveColor", nullable = true, length = 8)
+	public String getHistoryCurveColor() {
+		return historyCurveColor;
+	}
+
+	public void setHistoryCurveColor(String historyCurveColor) {
+		this.historyCurveColor = historyCurveColor;
 	}
 
 	
