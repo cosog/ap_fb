@@ -195,22 +195,28 @@ function websocketOnMessage(evt) {
 		        		var activeId = tabPanel.getActiveTab().id;
 		        		if(activeId=="PumpRealTimeMonitoringCurveTabPanel_Id"){
 		        			//更新实时曲线
-		        			var chart = $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts(); 
-							if(isNotVal(chart)){
-								for(var i=0;i<chart.series.length;i++){
-									var series=chart.series[i];
-									for(var j=0;j<data.CellInfo.length;j++){
-										if(series.name.split("(")[0]==data.CellInfo[j].columnName){
-											var translation=false;//添加点动作  是否平移
-											if(series.data.length>100){
-												translation=true;
-											}
-											series.addPoint([Date.parse(data.acqTime.replace(/-/g, '/')), parseFloat(data.CellInfo[j].rawValue)], true, translation);
-											break;
-										}
-									} 
-								}
-							}
+		        			var container=$('#pumpRealTimeMonitoringCurveContainer');
+		        			if(container!=undefined && container.length>0){
+		        				var containerChildren=container[0].children;
+		        				if(containerChildren!=undefined && containerChildren.length>0){
+		        					for(var i=0;i<containerChildren.length;i++){
+		        						var chart = $("#"+containerChildren[i].id).highcharts(); 
+		    							if(isNotVal(chart)){
+	    									var series=chart.series[0];
+	    									for(var j=0;j<data.CellInfo.length;j++){
+	    										if(series.name.split("(")[0]==data.CellInfo[j].columnName){
+	    											var translation=false;//添加点动作  是否平移
+	    											if(series.data.length>100){
+	    												translation=true;
+	    											}
+	    											series.addPoint([Date.parse(data.acqTime.replace(/-/g, '/')), parseFloat(data.CellInfo[j].rawValue)], true, translation);
+	    											break;
+	    										}
+	    									}
+		    							}
+		        					}
+		        				}
+		        			}
 		        		}else if(activeId=="PumpRealTimeMonitoringTableTabPanel_Id"){
 		        			//更新实时数据表
 		        			if(isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
@@ -317,22 +323,28 @@ function websocketOnMessage(evt) {
 		        		var activeId = tabPanel.getActiveTab().id;
 		        		if(activeId=="PipelineRealTimeMonitoringCurveTabPanel_Id"){
 		        			//更新实时曲线
-		        			var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
-							if(isNotVal(chart)){
-								for(var i=0;i<chart.series.length;i++){
-									var series=chart.series[i];
-									for(var j=0;j<data.CellInfo.length;j++){
-										if(series.name.split("(")[0]==data.CellInfo[j].columnName){
-											var translation=false;//添加点动作  是否平移
-											if(series.data.length>100){
-												translation=true;
-											}
-											series.addPoint([Date.parse(data.acqTime.replace(/-/g, '/')), parseFloat(data.CellInfo[j].rawValue)], true, translation);
-											break;
-										}
-									} 
-								}
-							}
+		        			var container=$('#pipelineRealTimeMonitoringCurveContainer');
+		        			if(container!=undefined && container.length>0){
+		        				var containerChildren=container[0].children;
+		        				if(containerChildren!=undefined && containerChildren.length>0){
+		        					for(var i=0;i<containerChildren.length;i++){
+		        						var chart = $("#"+containerChildren[i].id).highcharts(); 
+		    							if(isNotVal(chart)){
+	    									var series=chart.series[0];
+	    									for(var j=0;j<data.CellInfo.length;j++){
+	    										if(series.name.split("(")[0]==data.CellInfo[j].columnName){
+	    											var translation=false;//添加点动作  是否平移
+	    											if(series.data.length>100){
+	    												translation=true;
+	    											}
+	    											series.addPoint([Date.parse(data.acqTime.replace(/-/g, '/')), parseFloat(data.CellInfo[j].rawValue)], true, translation);
+	    											break;
+	    										}
+	    									}
+		    							}
+		        					}
+		        				}
+		        			}
 		        		}else if(activeId=="PipelineRealTimeMonitoringTableTabPanel_Id"){
 		        			//更新实时数据表
 		        			if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){

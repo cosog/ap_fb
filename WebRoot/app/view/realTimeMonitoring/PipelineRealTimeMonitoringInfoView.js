@@ -175,15 +175,40 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                 		items: [{
                 			title:'实时曲线',
                 			id:"PipelineRealTimeMonitoringCurveTabPanel_Id",
-                			layout: 'fit',
-                			html: '<div id="pipelineRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
-                            listeners: {
-                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                    if ($("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
-                                        $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pipelineRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pipelineRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
+                			layout: 'border',
+                			items: [{
+                				region: 'center',
+                				layout: 'fit',
+                    			autoScroll: true,
+                    			border: false,
+                    			id:"pipelineRealTimeMonitoringCurveContent",
+                    			html: '<div id="pipelineRealTimeMonitoringCurveContainer" class="hbox" style="width:100%;height:100%;"></div>',
+                    			listeners: {
+                                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                    	var container=$('#pipelineRealTimeMonitoringCurveContainer');
+            		        			if(container!=undefined && container.length>0){
+            		        				var containerChildren=container[0].children;
+            		        				if(containerChildren!=undefined && containerChildren.length>0){
+            		        					for(var i=0;i<containerChildren.length;i++){
+            		        						var chart = $("#"+containerChildren[i].id).highcharts(); 
+            		        						if(isNotVal(chart)){
+            		        							chart.setSize($("#"+containerChildren[i].id).offsetWidth, $("#"+containerChildren[i].id).offsetHeight, true);
+            		        						}
+            		        					}
+            		        				}
+            		        			}
                                     }
                                 }
-                            }
+                			}]
+//                			layout: 'fit',
+//                			html: '<div id="pipelineRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
+//                            listeners: {
+//                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+//                                    if ($("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
+//                                        $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pipelineRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pipelineRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
+//                                    }
+//                                }
+//                            }
                 		},{
                 			title:'实时数据',
                 			id:"PipelineRealTimeMonitoringTableTabPanel_Id",

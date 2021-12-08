@@ -2,10 +2,11 @@ Ext.define("AP.view.acquisitionUnit.CurveColorSelectWindow", {
     extend: 'Ext.window.Window',
     alias: 'widget.CurveColorSelectWindow',
     layout: 'fit',
+    title:'曲线颜色选择',
     iframe: true,
     id: 'CurveColorSelectWindow_Id',
     closeAction: 'destroy',
-    width: 330,
+    width: 700,
     shadow: 'sides',
     resizable: false,
     collapsible: true,
@@ -28,25 +29,31 @@ Ext.define("AP.view.acquisitionUnit.CurveColorSelectWindow", {
 				xtype : "hidden",
 				id : 'curveColorSelectedCol_Id',
 				value:-1
-			},{
-                id: 'CurveColorSelectWindowColor_id',
-                fieldLabel: '曲线颜色',
-                labelWidth: 60,
-                anchor:'100%',
-                listeners : {
-                	collapse: function (field,eOpts) {
-                    	if(Ext.getCmp('CurveColorSelectWindowColor_id')!=undefined){
-                    		field.inputEl.applyStyles({
-          		              background: '#'+field.value,
-          		              opacity:field.color.a
-          		            });
-                    	}
-                    }
-                }
+			}
+//			,{
+//                id: 'CurveColorSelectWindowColor_id',
+//                fieldLabel: '曲线颜色',
+//                labelWidth: 60,
+//                anchor:'100%',
+//                listeners : {
+//                	collapse: function (field,eOpts) {
+//                    	if(Ext.getCmp('CurveColorSelectWindowColor_id')!=undefined){
+//                    		field.inputEl.applyStyles({
+//          		              background: '#'+field.value,
+//          		              opacity:field.color.a
+//          		            });
+//                    	}
+//                    }
+//                }
+//        	}
+			,{
+        		id: 'CurveColorSelectWindowColor_id',
+        		xtype: 'colorselector',
+        		anchor:'100%'
         	}],
             buttons: [{
             	xtype: 'button',
-            	text: cosog.string.save,
+            	text: '确认',
                 iconCls: 'save',
                 handler: function () {
                 	var curveColor=Ext.getCmp('CurveColorSelectWindowColor_id').getValue();

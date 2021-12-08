@@ -88,8 +88,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
             	Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(-1);
 //            	Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
             	
-            	$("#pipelineRealTimeMonitoringCurveDiv_Id").html('');
-            	
+            	$("#pipelineRealTimeMonitoringCurveContainer").html('');
+            	$("#PipelineRealTimeMonitoringInfoDataTableInfoContainer").html('');
             	Ext.getCmp("PipelineRealTimeMonitoringRightControlPanel").removeAll();
             	Ext.getCmp("PipelineRealTimeMonitoringRightDeviceInfoPanel").removeAll();
             	Ext.getCmp("PipelineRealTimeMonitoringRightAuxiliaryDeviceInfoPanel").removeAll();

@@ -80,6 +80,12 @@ Ext.define("AP.view.well.PumpDeviceInfoPanel", {
                             }
                             diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = null;
                         }
+                        if (diaphragmPumpAdditionalInfoHandsontableHelper != null) {
+                            if (diaphragmPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	diaphragmPumpAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            diaphragmPumpAdditionalInfoHandsontableHelper = null;
+                        }
                         //螺杆泵
                         if (screwPumpDeviceInfoHandsontableHelper != null) {
                             if (screwPumpDeviceInfoHandsontableHelper.hot != undefined) {

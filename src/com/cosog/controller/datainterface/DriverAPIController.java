@@ -609,15 +609,19 @@ public class DriverAPIController extends BaseController{
 		String deviceTableName="tbl_pumpdevice";
 		String realtimeTable="tbl_pumpacqdata_latest";
 		String historyTable="tbl_pumpacqdata_hist";
+		String rawDataTable="tbl_pumpacqrawdata";
 		String functionCode="pumpDeviceRealTimeMonitoringData";
 		if(StringManagerUtils.stringToInteger(deviceType)>=100 && StringManagerUtils.stringToInteger(deviceType)<200){
+			deviceTableName="tbl_pumpdevice";
 			realtimeTable="tbl_pumpacqdata_latest";
 			historyTable="tbl_pumpacqdata_hist";
+			rawDataTable="tbl_pumpacqrawdata";
 			functionCode="pumpDeviceRealTimeMonitoringData";
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){
 			deviceTableName="tbl_pipelinedevice";
 			realtimeTable="tbl_pipelineacqdata_latest";
 			historyTable="tbl_pipelineacqdata_hist";
+			rawDataTable="tbl_pipelineacqrawdata";
 			functionCode="pipelineDeviceRealTimeMonitoringData";
 		}
 		if(acqGroup!=null){
@@ -925,9 +929,11 @@ public class DriverAPIController extends BaseController{
 					dataModelMap.put("DeviceCommStatus", commStatusList);
 					
 					if(save || alarm){//如果满足保存周期或者有报警，保存数据
+						String saveRawDataSql="insert into "+rawDataTable+"(wellid,acqtime,rawdata)values("+wellId+",to_date('"+acqTime+"','yyyy-mm-dd hh24:mi:ss'),'"+acqGroup.getRawData()+"' )";
+						
 						commonDataService.getBaseDao().updateOrDeleteBySql(updateRealtimeData);
 						commonDataService.getBaseDao().updateOrDeleteBySql(insertHistSql);
-						
+						commonDataService.getBaseDao().updateOrDeleteBySql(saveRawDataSql);
 						//报警项
 						if(alarm){
 //							calculateDataService.saveAlarmInfo(wellName,deviceType,acqTime,acquisitionItemInfoList);

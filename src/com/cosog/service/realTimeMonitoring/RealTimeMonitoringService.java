@@ -682,8 +682,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	public String getDeviceControlandInfoData(String wellName,String deviceType,int userId)throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		String deviceTableName="tbl_pumpdevice";
+		String infoTableName="tbl_pumpdeviceaddinfo";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			deviceTableName="tbl_pipelinedevice";
+			infoTableName="tbl_pipelinedeviceaddinfo";
 		}
 		
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
@@ -699,11 +701,15 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " from "+deviceTableName+" t,tbl_auxiliary2master t2,tbl_auxiliarydevice t3 "
 				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t.wellname='"+wellName+"' "
 				+ " order by t3.sort,t3.name";
-		
+		String deviceAddInfoSql = "select t2.id,t2.itemname,t2.itemvalue||decode(t2.itemunit,null,'','','','('||t2.itemunit||')') as itemvalue "
+				+ " from "+deviceTableName+" t,"+infoTableName+" t2 "
+				+ " where t.id=t2.wellid and t.wellname='"+wellName+"'"
+				+ " order by t2.id";
 		
 		List<?> isControlList = this.findCallSql(isControlSql);
 		List<?> itemsList = this.findCallSql(protocolItemsSql);
 		List<?> auxiliaryDeviceQueryList = this.findCallSql(auxiliaryDeviceSql);
+		List<?> deviceAddInfoList = this.findCallSql(deviceAddInfoSql);
 		
 		String isControl=isControlList.size()>0?isControlList.get(0).toString():"0";
 		
@@ -771,6 +777,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		
+		//辅件设备
 		for(int i=0;i<auxiliaryDeviceQueryList.size();i++){
 			Object[] obj=(Object[]) auxiliaryDeviceQueryList.get(i);
 			auxiliaryDeviceList.append("{\"id\":"+obj[0]+","
@@ -783,17 +790,32 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			auxiliaryDeviceList.deleteCharAt(auxiliaryDeviceList.length() - 1);
 		}
 		
+		//设备附加信息
+		for(int i=0;i<deviceAddInfoList.size();i++){
+			Object[] obj=(Object[]) deviceAddInfoList.get(i);
+			deviceInfoDataList.append("{\"name\":\""+obj[1]+"\","
+					+ "\"value\":\""+obj[2]+"\"},");
+			
+//			
+//			deviceInfoDataList.append("{\"title\":\"出厂编号\",\"name\":\"factorynumber\",\"value\":\""+obj[1]+"\"},");
+//			deviceInfoDataList.append("{\"title\":\"规格型号\",\"name\":\"model\",\"value\":\""+obj[2]+"\"},");
+//			deviceInfoDataList.append("{\"title\":\"生产日期\",\"name\":\"productiondate\",\"value\":\""+obj[3]+"\"},");
+//			deviceInfoDataList.append("{\"title\":\"发货日期\",\"name\":\"deliverydate\",\"value\":\""+obj[4]+"\"},");
+//			deviceInfoDataList.append("{\"title\":\"投产日期\",\"name\":\"commissioningdate\",\"value\":\""+obj[5]+"\"},");
+//			deviceInfoDataList.append("{\"title\":\"控制柜型号\",\"name\":\"controlcabinetmodel\",\"value\":\""+obj[6]+"\"}");
+		}
+		
+		if(deviceInfoDataList.toString().endsWith(",")){
+			deviceInfoDataList.deleteCharAt(deviceInfoDataList.length() - 1);
+		}
+		
 		String tableName="tbl_pumpacqdata_latest";
-		String sql="select t2.commStatus,t.factorynumber,t.model,t.productiondate,t.deliverydate,t.commissioningdate,t.controlcabinetmodel ";
+		String sql="select t2.commStatus ";
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
 			tableName="tbl_pipelineacqdata_latest";
 		}
 		for(int i=0;i<controlColumns.size();i++){
 			sql+=",t2."+controlColumns.get(i);
-		}
-		
-		if(StringManagerUtils.stringToInteger(deviceType)>0){
-			sql+=",t.pipelinelength";
 		}
 		sql+= " from "+deviceTableName+" t,"+tableName+" t2 where t.id=t2.wellid and t.wellname='"+wellName+"'";
 		
@@ -802,17 +824,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		if(list.size()>0){
 			Object[] obj=(Object[]) list.get(0);
 			result_json.append("\"commStatus\":\""+obj[0]+"\",");
-			deviceInfoDataList.append("{\"title\":\"出厂编号\",\"name\":\"factorynumber\",\"value\":\""+obj[1]+"\"},");
-			deviceInfoDataList.append("{\"title\":\"规格型号\",\"name\":\"model\",\"value\":\""+obj[2]+"\"},");
-			deviceInfoDataList.append("{\"title\":\"生产日期\",\"name\":\"productiondate\",\"value\":\""+obj[3]+"\"},");
-			deviceInfoDataList.append("{\"title\":\"发货日期\",\"name\":\"deliverydate\",\"value\":\""+obj[4]+"\"},");
-			deviceInfoDataList.append("{\"title\":\"投产日期\",\"name\":\"commissioningdate\",\"value\":\""+obj[5]+"\"},");
-			deviceInfoDataList.append("{\"title\":\"控制柜型号\",\"name\":\"controlcabinetmodel\",\"value\":\""+obj[6]+"\"}");
-			if(StringManagerUtils.stringToInteger(deviceType)>0){
-				deviceInfoDataList.append(",{\"title\":\"管体长度(m)\",\"name\":\"pipelinelength\",\"value\":\""+obj[7+controlColumns.size()]+"\"}");
-			}
 			for(int i=0;i<controlColumns.size();i++){
-				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[7+i]+"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
+				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[1+i]+"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
 			}
 			if(deviceControlList.toString().endsWith(",")){
 				deviceControlList.deleteCharAt(deviceControlList.length() - 1);
@@ -1019,7 +1032,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		}
 		curveColorBuff.append("]");
 		
-		result_json.append("{\"deviceName\":\""+deviceName+"\",\"curveItems\":"+itemsBuff+",\"curveColors\":"+curveColorBuff+",\"list\":[");
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"curveCount\":"+itemNameList.size()+",\"curveItems\":"+itemsBuff+",\"curveColors\":"+curveColorBuff+",\"list\":[");
 		if(itemColumnList.size()>0){
 			String columns="";
 			for(int i=0;i<itemColumnList.size();i++){

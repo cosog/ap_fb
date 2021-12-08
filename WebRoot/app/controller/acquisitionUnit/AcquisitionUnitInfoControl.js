@@ -477,7 +477,7 @@ var grantAcquisitionItemsPermission = function () {
                 if (matrix_value != "" || matrix_value != null) {
                     matrix_value = matrix_value.substring(0, matrix_value.length - 1);
                 }
-                matrixData += itemName + ":"+itemAddr+ ":"+resolutionMode+ ":"+itemSort+ ":"+itemShowLevel  + ":" + isRealtimeCurve+ ":" + realtimeCurveColor+ ":" + isRealtimeCurve + ":" + historyCurveColor + ":" + matrix_value+ "|";
+                matrixData += itemName + ":"+itemAddr+ ":"+resolutionMode+ ":"+itemSort+ ":"+itemShowLevel  + ":" + isRealtimeCurve+ ":" + realtimeCurveColor+ ":" + isHistoryCurve + ":" + historyCurveColor + ":" + matrix_value+ "|";
             }
         });
         if (addjson.length > 0) {

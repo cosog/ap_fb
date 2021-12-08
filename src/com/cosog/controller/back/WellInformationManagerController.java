@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cosog.controller.base.BaseController;
 import com.cosog.model.MasterAndAuxiliaryDevice;
 import com.cosog.model.Org;
+import com.cosog.model.PipelineDeviceAddInfo;
+import com.cosog.model.PumpDeviceAddInfo;
 import com.cosog.model.User;
 import com.cosog.model.gridmodel.AuxiliaryDeviceConfig;
 import com.cosog.model.gridmodel.AuxiliaryDeviceHandsontableChangedData;
@@ -237,6 +239,22 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getDeviceAdditionalInfo")
+	public String getDeviceAdditionalInfo() throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String deviceName= ParamUtils.getParameter(request, "deviceName");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		String json = this.wellInformationManagerService.getDeviceAdditionalInfo(deviceName,deviceType);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/getAcquisitionUnitList")
 	public String getAcquisitionUnitList() throws Exception{
 		String protocol = ParamUtils.getParameter(request, "protocol");
@@ -374,27 +392,51 @@ public class WellInformationManagerController extends BaseController {
 			this.wellInformationManagerService.saveSMSDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		}
 		
-		
 		//处理辅助设备
-		type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
-		AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
-		if(auxiliaryDeviceConfig!=null){
-			String sql="select t.id from "+deviceTableName+" t "
-					+ " where t.orgid in("+orgId+") and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
-			List list = this.service.findCallSql(sql);
-			if(list.size()>0&&StringManagerUtils.isInteger(list.get(0)+"")){
-				int masterId=StringManagerUtils.stringToInteger(list.get(0)+"");
-				this.wellInformationManagerService.deleteMasterAndAuxiliary(masterId);
-				for(int i=0;i<auxiliaryDeviceConfig.getAuxiliaryDevice().size();i++){
-					MasterAndAuxiliaryDevice masterAndAuxiliaryDevice =new MasterAndAuxiliaryDevice();
-					masterAndAuxiliaryDevice.setMasterid(masterId);
-					masterAndAuxiliaryDevice.setAuxiliaryid(auxiliaryDeviceConfig.getAuxiliaryDevice().get(i));
-					masterAndAuxiliaryDevice.setMatrix("0,0,0");
-					this.wellInformationManagerService.grantMasterAuxiliaryDevice(masterAndAuxiliaryDevice);
+		if(StringManagerUtils.stringToInteger(deviceType)<300){
+			type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
+			AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
+			if(auxiliaryDeviceConfig!=null){
+				String sql="select t.id from "+deviceTableName+" t "
+						+ " where t.orgid in("+orgId+") and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
+				List list = this.service.findCallSql(sql);
+				if(list.size()>0&&StringManagerUtils.isInteger(list.get(0)+"")){
+					int deviceId=StringManagerUtils.stringToInteger(list.get(0)+"");
+					this.wellInformationManagerService.deleteMasterAndAuxiliary(deviceId);
+					if(auxiliaryDeviceConfig.getAuxiliaryDevice()!=null&&auxiliaryDeviceConfig.getAuxiliaryDevice().size()>0){
+						for(int i=0;i<auxiliaryDeviceConfig.getAuxiliaryDevice().size();i++){
+							MasterAndAuxiliaryDevice masterAndAuxiliaryDevice=new MasterAndAuxiliaryDevice();
+							masterAndAuxiliaryDevice.setMasterid(deviceId);
+							masterAndAuxiliaryDevice.setAuxiliaryid(auxiliaryDeviceConfig.getAuxiliaryDevice().get(i));
+							masterAndAuxiliaryDevice.setMatrix("0,0,0");
+							this.wellInformationManagerService.grantMasterAuxiliaryDevice(masterAndAuxiliaryDevice);
+						}
+					}
+					
+					this.wellInformationManagerService.deleteDeviceAdditionalInfo(deviceId,StringManagerUtils.stringToInteger(deviceType));
+					if(auxiliaryDeviceConfig.getAdditionalInfoList()!=null&&auxiliaryDeviceConfig.getAdditionalInfoList().size()>0){
+						for(int i=0;i<auxiliaryDeviceConfig.getAdditionalInfoList().size();i++){
+							if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+								PumpDeviceAddInfo pumpDeviceAddInfo=new PumpDeviceAddInfo();
+								pumpDeviceAddInfo.setWellId(deviceId);
+								pumpDeviceAddInfo.setItemName(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemName());
+								pumpDeviceAddInfo.setItemValue(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemValue());
+								pumpDeviceAddInfo.setItemUnit(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemUnit());
+								this.wellInformationManagerService.saveDeviceAdditionalInfo(pumpDeviceAddInfo);
+							}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+								PipelineDeviceAddInfo pipelineDeviceAddInfo=new PipelineDeviceAddInfo();
+								pipelineDeviceAddInfo.setWellId(deviceId);
+								pipelineDeviceAddInfo.setItemName(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemName());
+								pipelineDeviceAddInfo.setItemValue(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemValue());
+								pipelineDeviceAddInfo.setItemUnit(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemUnit());
+								this.wellInformationManagerService.saveDeviceAdditionalInfo(pipelineDeviceAddInfo);
+							}
+						}
+					}
 				}
-				
 			}
 		}
+		
 		EquipmentDriverServerTask.LoadDeviceCommStatus();
 		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");

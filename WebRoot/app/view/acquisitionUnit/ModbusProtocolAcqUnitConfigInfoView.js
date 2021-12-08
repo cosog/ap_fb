@@ -216,12 +216,19 @@ var ProtocolAcqUnitConfigItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >=1 && visualColIndex<=6) {
-							cellProperties.readOnly = true;
-//							cellProperties.renderer = protocolAcqUnitConfigItemsHandsontableHelper.addBoldBg;
-		                }else if(visualColIndex==10||visualColIndex==12){
-		                	cellProperties.renderer = protocolAcqUnitConfigItemsHandsontableHelper.addCurveBg;
-		                }
+	                    var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
+	                	if(ScadaDriverModbusConfigSelectRow!=''){
+	                		var selectedItem=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
+	                		if(selectedItem.data.classes!=3){
+	                			cellProperties.readOnly = true;
+	                		}else{
+	                			if (visualColIndex >=1 && visualColIndex<=6) {
+	    							cellProperties.readOnly = true;
+	    		                }else if(visualColIndex==10||visualColIndex==12){
+	    		                	cellProperties.renderer = protocolAcqUnitConfigItemsHandsontableHelper.addCurveBg;
+	    		                }
+	                		}
+	                	}
 	                    return cellProperties;
 	                },
 	                afterBeginEditing:function(row,column){
@@ -242,10 +249,10 @@ var ProtocolAcqUnitConfigItemsHandsontableHelper = {
 	                				Ext.getCmp('CurveColorSelectWindowColor_id').setValue(value);
                 		        	var BackgroundColor=Ext.getCmp('CurveColorSelectWindowColor_id').color;
                 		        	BackgroundColor.a=1;
-                	            	Ext.getCmp('CurveColorSelectWindowColor_id').inputEl.applyStyles({
-                	            		background: '#'+value,
-                	            		opacity:1
-                	            	});
+//                	            	Ext.getCmp('CurveColorSelectWindowColor_id').inputEl.applyStyles({
+//                	            		background: '#'+value,
+//                	            		opacity:1
+//                	            	});
                 		        	Ext.getCmp('CurveColorSelectWindowColor_id').setColor(BackgroundColor);
 	                			}
 	                		}

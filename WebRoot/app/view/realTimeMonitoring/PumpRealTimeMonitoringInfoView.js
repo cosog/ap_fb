@@ -175,15 +175,39 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                 		items: [{
                 			title:'实时曲线',
                 			id:"PumpRealTimeMonitoringCurveTabPanel_Id",
-                			layout: 'fit',
-                			html: '<div id="pumpRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
-                            listeners: {
-                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                                    if ($("#pumpRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
-                                        $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pumpRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pumpRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
+                			layout: 'border',
+                			items: [{
+                				region: 'center',
+                				layout: 'fit',
+                    			autoScroll: true,
+                    			border: false,
+                    			id:"pumpRealTimeMonitoringCurveContent",
+                    			html: '<div id="pumpRealTimeMonitoringCurveContainer" class="hbox" style="width:100%;height:100%;"></div>',
+                    			listeners: {
+                                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                    	var container=$('#pumpRealTimeMonitoringCurveContainer');
+            		        			if(container!=undefined && container.length>0){
+            		        				var containerChildren=container[0].children;
+            		        				if(containerChildren!=undefined && containerChildren.length>0){
+            		        					for(var i=0;i<containerChildren.length;i++){
+            		        						var chart = $("#"+containerChildren[i].id).highcharts(); 
+            		        						if(isNotVal(chart)){
+            		        							chart.setSize($("#"+containerChildren[i].id).offsetWidth, $("#"+containerChildren[i].id).offsetHeight, true);
+            		        						}
+            		        					}
+            		        				}
+            		        			}
                                     }
                                 }
-                            }
+                			}]
+//                			html: '<div id="pumpRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
+//                            listeners: {
+//                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+//                                    if ($("#pumpRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
+//                                        $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pumpRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pumpRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
+//                                    }
+//                                }
+//                            }
                 		},{
                 			title:'实时数据',
                 			id:"PumpRealTimeMonitoringTableTabPanel_Id",
@@ -196,7 +220,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             	id: "PumpRealTimeMonitoringInfoDataPanel_Id",
                             	layout: 'fit',
                             	html:'<div class="PumpRealTimeMonitoringInfoDataTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="PumpRealTimeMonitoringInfoDataTableInfoDiv_id"></div></div>',
-                                listeners: {
+                            	listeners: {
                                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                                     	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper!=null && pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
                                     		var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
