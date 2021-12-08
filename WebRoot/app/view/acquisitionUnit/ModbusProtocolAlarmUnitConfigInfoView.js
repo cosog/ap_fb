@@ -372,10 +372,18 @@ var ProtocolAlarmUnitConfigNumItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >=1 && visualColIndex <=3) {
-							cellProperties.readOnly = true;
-//							cellProperties.renderer = protocolAlarmUnitConfigNumItemsHandsontableHelper.addBoldBg;
-		                }
+	                    
+	                    var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
+	                	if(selectRow!=''){
+	                		var selectedItem=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+	                		if(selectedItem.data.classes!=3){
+	                			cellProperties.readOnly = true;
+	                		}else{
+	                			if (visualColIndex >=1 && visualColIndex <=3) {
+	    							cellProperties.readOnly = true;
+	    		                }
+	                		}
+	                	}
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
@@ -597,10 +605,18 @@ var ProtocolAlarmUnitConfigEnumItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >=1 && visualColIndex <=3) {
-							cellProperties.readOnly = true;
-//							cellProperties.renderer = protocolAlarmUnitConfigEnumItemsHandsontableHelper.addBoldBg;
-		                }
+	                    var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
+	                	if(selectRow!=''){
+	                		var selectedItem=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+	                		if(selectedItem.data.classes!=3){
+	                			cellProperties.readOnly = true;
+	                		}else{
+	                			if (visualColIndex >=1 && visualColIndex <=3) {
+	    							cellProperties.readOnly = true;
+	    		                }
+	                		}
+	                	}
+	                    
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
@@ -727,10 +743,19 @@ var ProtocolAlarmUnitConfigSwitchItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >=1 && visualColIndex <=3) {
-							cellProperties.readOnly = true;
-//							cellProperties.renderer = protocolAlarmUnitConfigSwitchItemsHandsontableHelper.addBoldBg;
-		                }
+	                    
+	                    var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
+	                	if(selectRow!=''){
+	                		var selectedItem=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+	                		if(selectedItem.data.classes!=3){
+	                			cellProperties.readOnly = true;
+	                		}else{
+	                			if (visualColIndex >=1 && visualColIndex <=3) {
+	    							cellProperties.readOnly = true;
+	    		                }
+	                		}
+	                	}
+	                    
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
@@ -849,9 +874,18 @@ var ProtocolAlarmUnitConfigCommStatusItemsHandsontableHelper = {
 	                	var cellProperties = {};
 	                    var visualRowIndex = this.instance.toVisualRow(row);
 	                    var visualColIndex = this.instance.toVisualColumn(col);
-	                    if (visualColIndex >=1 && visualColIndex <=2) {
-							cellProperties.readOnly = true;
-		                }
+	                    
+	                    var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
+	                	if(selectRow!=''){
+	                		var selectedItem=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().getAt(selectRow);
+	                		if(selectedItem.data.classes!=3){
+	                			cellProperties.readOnly = true;
+	                		}else{
+	                			if (visualColIndex >=1 && visualColIndex <=2) {
+	    							cellProperties.readOnly = true;
+	    		                }
+	                		}
+	                	}
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {

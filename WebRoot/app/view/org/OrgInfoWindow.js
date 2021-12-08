@@ -56,6 +56,7 @@ Ext.define("AP.view.org.OrgInfoWindow", {
             blankText: cosog.string.chooseOrg,
             displayField: 'text',
             autoScroll:true,
+            allowBlank: false,
             forceSelection : true,// 只能选择下拉框里面的内容
             rootVisible: false,
             store:OrgTreeStore,
@@ -123,7 +124,7 @@ Ext.define("AP.view.org.OrgInfoWindow", {
                 emptyText: cosog.string.all,
                 blankText: cosog.string.all,
                 typeAhead: true,
-                allowBlank: true,
+                allowBlank: false,
                 triggerAction: 'all',
                 displayField: "boxval",
                 valueField: "boxkey",
@@ -202,38 +203,40 @@ Ext.define("AP.view.org.OrgInfoWindow", {
                 id: 'orgOrg_Id',
                 value: '1',
                 name: "org.orgId"
-     }, {
+            }, {
                 xtype: "hidden",
                 fieldLabel: '单位父ID',
                 value: '0',
                 name: 'org.orgParent',
                 id: 'orgName_Parent_Id'
 
-     }, {
+            }, {
                 xtype: "hidden",
                 fieldLabel: 'orgcode',
                 id: 'orgCode_hidden_Id'
 
-     }, xltree, OrgTypeCombox, {
+            }, xltree, OrgTypeCombox, {
                 fieldLabel: cosog.string.orgName,
                 id: 'orgName_Id',
+                allowBlank: false,
                 anchor: '95%',
                 name: "org.orgName"
-     }, {
+            }, {
                 id: 'orgCode_Id',
                 fieldLabel: cosog.string.orgCode,
+                allowBlank: false,
                 value: '',
                 anchor: '95%',
                 name: "org.orgCode"
-     }, {
+            }, {
                 xtype: "textfield",
                 fieldLabel: cosog.string.orgLevel,
+                allowBlank: false,
                 id: 'orgLevel_Id',
                 anchor: '95%',
                 name: "org.orgLevel",
                 value: 1
-
-     }, {
+            }, {
          		xtype: "textfield",
          		fieldLabel: cosog.string.longitude,
          		hidden:true,
@@ -242,51 +245,51 @@ Ext.define("AP.view.org.OrgInfoWindow", {
          		name: "org.orgCoordX",
          		value:'0'
 
-     }, {
+            }, {
    	  			 fieldLabel:cosog.string.latitude,
    	  			 hidden:true,
    	  			 id: 'orgCoordY_Id',
    	  			 anchor: '95%',
    	  			 name: "org.orgCoordY",
    	  			 value: '0'
-     },{
-         fieldLabel: cosog.string.showLevel,
-         hidden:true,
-         id: 'orgShowLevel_Id',
-         value: '1',
-         anchor: '95%',
-         xtype: 'numberfield',
-         maxValue: 19,
-         minValue: 1,
-         name: "org.showlevel"
-     }, {
+            },{
+            	fieldLabel: cosog.string.showLevel,
+            	hidden:true,
+            	id: 'orgShowLevel_Id',
+            	value: '1',
+            	anchor: '95%',
+            	xtype: 'numberfield',
+            	maxValue: 19,
+            	minValue: 1,
+            	name: "org.showlevel"
+            }, {
                 fieldLabel: cosog.string.orgMemo,
                 id: 'orgMemo_Id',
                 anchor: '95%',
                 xtype: 'textareafield',
                 value: '',
                 name: "org.orgMemo"
-     }],
+            }],
             buttons: [{
                 id: 'addFormOrg_Id',
                 xtype: 'button',
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: SaveOrgDataInfoSubmitBtnForm
-     }, {
+            }, {
                 xtype: 'button',
                 id: 'updateFormOrg_Id',
                 text: cosog.string.update,
                 hidden: true,
                 iconCls: 'edit',
                 handler: UpdateOrgDataInfoSubmitBtnForm
-     }, {
+            }, {
                 text: cosog.string.cancel,
                 iconCls: 'cancel',
                 handler: function () {
                     Ext.getCmp("org_addwin_Id").close();
                 }
-     }]
+            }]
         });
         Ext.apply(me, {
             items: postOrgEditForm

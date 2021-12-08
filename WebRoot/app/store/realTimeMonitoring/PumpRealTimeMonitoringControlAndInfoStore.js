@@ -27,7 +27,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         	
         	var deviceInfoDataStr="{\"items\":[";
         	for(var i=0;i<deviceInfoDataList.length;i++){
-        		deviceInfoDataStr+="{\"item\":\""+deviceInfoDataList[i].title+"\",\"itemcode\":\""+deviceInfoDataList[i].name+"\",\"value\":\""+deviceInfoDataList[i].value+"\"},";
+        		deviceInfoDataStr+="{\"item\":\""+deviceInfoDataList[i].name+"\",\"value\":\""+deviceInfoDataList[i].value+"\"},";
         	}
         	if(stringEndWith(deviceInfoDataStr,",")){
         		deviceInfoDataStr = deviceInfoDataStr.substring(0, deviceInfoDataStr.length - 1);

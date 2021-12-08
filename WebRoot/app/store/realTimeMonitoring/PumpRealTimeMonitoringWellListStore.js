@@ -86,9 +86,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
 					pumpDeviceRealTimeMonitoringDataHandsontableHelper=null;
 				}
             	Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(-1);
-//            	Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
-            	
-            	$("#pumpRealTimeMonitoringCurveDiv_Id").html('');
+            	$("#pumpRealTimeMonitoringCurveContainer").html('');
+            	$("#PumpRealTimeMonitoringInfoDataTableInfoContainer").html('');
             	
             	Ext.getCmp("PumpRealTimeMonitoringRightControlPanel").removeAll();
             	Ext.getCmp("PumpRealTimeMonitoringRightDeviceInfoPanel").removeAll();

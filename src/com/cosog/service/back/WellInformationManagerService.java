@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import com.cosog.model.AcquisitionUnitGroup;
 import com.cosog.model.MasterAndAuxiliaryDevice;
+import com.cosog.model.PipelineDeviceAddInfo;
+import com.cosog.model.PumpDeviceAddInfo;
 import com.cosog.model.User;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
@@ -179,7 +181,24 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().bulkObjectDelete(hql);
 	}
 	
+	public void deleteDeviceAdditionalInfo(final int deviceId,int deviceType) throws Exception {
+		String model="PumpDeviceAddInfo";
+		if(deviceType>=200&&deviceType<300){
+			model="PipelineDeviceAddInfo";
+		}
+		final String hql = "DELETE "+model+" u where u.wellId ="+deviceId+"";
+		getBaseDao().bulkObjectDelete(hql);
+	}
+	
 	public void grantMasterAuxiliaryDevice(MasterAndAuxiliaryDevice r) throws Exception {
+		getBaseDao().saveOrUpdateObject(r);
+	}
+	
+	public void saveDeviceAdditionalInfo(PumpDeviceAddInfo r) throws Exception {
+		getBaseDao().saveOrUpdateObject(r);
+	}
+	
+	public void saveDeviceAdditionalInfo(PipelineDeviceAddInfo r) throws Exception {
 		getBaseDao().saveOrUpdateObject(r);
 	}
 	
@@ -980,7 +999,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		return json;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public String getAuxiliaryDevice(String deviceName,String deviceType) {
 		StringBuffer result_json = new StringBuffer();
 		List<Integer> auxiliaryIdList=new ArrayList<Integer>();
@@ -1033,6 +1051,45 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		result_json.append("]}");
 		json=result_json.toString().replaceAll("null", "");
 		return json;
+	}
+	
+	public String getDeviceAdditionalInfo(String deviceName,String deviceType) {
+		StringBuffer result_json = new StringBuffer();
+		List<Integer> auxiliaryIdList=new ArrayList<Integer>();
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"itemName\",width:120 ,children:[] },"
+				+ "{ \"header\":\"值\",\"dataIndex\":\"itemValue\",width:120 ,children:[] },"
+				+ "{ \"header\":\"单位\",\"dataIndex\":\"itemUnit\",width:80 ,children:[] }"
+				+ "]";
+		String deviceTableName="tbl_pumpdevice";
+		String infoTableName="tbl_pumpdeviceaddinfo";
+		if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){
+			deviceTableName="tbl_pipelinedevice";
+			infoTableName="tbl_pipelinedeviceaddinfo";
+		}
+		String sql = "select t2.id,t2.itemname,t2.itemvalue,t2.itemunit "
+				+ " from "+deviceTableName+" t,"+infoTableName+" t2 "
+				+ " where t.id=t2.wellid and t.wellname='"+deviceName+"' and t.devicetype= "+StringManagerUtils.stringToInteger(deviceType)
+				+ " order by t2.id";
+		
+		List<?> list = this.findCallSql(sql);
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"columns\":"+columns+",\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj = (Object[]) list.get(i);
+			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"itemName\":\""+obj[1]+"\",");
+			result_json.append("\"itemValue\":\""+obj[2]+"\",");
+			result_json.append("\"itemUnit\":\""+obj[3]+"\"},");
+		}
+		for(int i=list.size();i<20;i++){
+			result_json.append("{},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString().replaceAll("null", "");
 	}
 	
 	public String getAcquisitionUnitList(String protocol){

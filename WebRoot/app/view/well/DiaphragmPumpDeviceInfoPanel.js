@@ -1,6 +1,7 @@
 //隔膜泵
 var diaphragmPumpDeviceInfoHandsontableHelper = null;
 var diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+var diaphragmPumpAdditionalInfoHandsontableHelper = null;
 Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.diaphragmPumpDeviceInfoPanel',
@@ -148,31 +149,41 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'泵设备列表',
+            	title:'隔膜泵设备列表',
             	html: '<div class="DiaphragmPumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpDeviceTableDiv_id"></div></div>',
                 listeners: {
                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                         if (diaphragmPumpDeviceInfoHandsontableHelper != null && diaphragmPumpDeviceInfoHandsontableHelper.hot != null && diaphragmPumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            CreateAndLoadDiaphragmPumpDeviceInfoTable();
+                        	CreateAndLoadDiaphragmPumpDeviceInfoTable();
                         }
                     }
                 }
             },{
             	region: 'east',
-                width: '20%',
-                title:'辅件设备列表',
-                id:'DiaphragmPumpAuxiliaryDevicePanel_Id',
-                autoScroll: true,
+                width: '45%',
+                layout: 'border',
+                header: false,
                 split: true,
-                collapsible: true,
-                html: '<div class="DiaphragmPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpAuxiliaryDeviceTableDiv_id"></div></div>',
-                listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper != null && diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-//                            CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable();
-                        }
+                items: [{
+                	region: 'center',
+                	title:'设备附加信息',
+                	id:'DiaphragmPumpAdditionalInfoPanel_Id',
+                	html: '<div class="DiaphragmPumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpAdditionalInfoTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
                     }
-                }
+                },{
+                	region: 'east',
+                    width: '40%',
+                    title:'辅件设备列表',
+                    id:'DiaphragmPumpAuxiliaryDevicePanel_Id',
+                    split: false,
+                    collapsible: false,
+                    html: '<div class="DiaphragmPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpAuxiliaryDeviceTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    }
+                }]
             }],
             listeners: {
                 beforeclose: function (panel, eOpts) {
@@ -264,16 +275,16 @@ function CreateAndLoadDiaphragmPumpDeviceInfoTable(isNew) {
             if(result.totalRoot.length==0){
             	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue('');
             	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable();
+            	CreateAndLoadDiaphragmPumpAdditionalInfoTable();
             }else{
             	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue(0);
             	var rowdata = diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
             	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(rowdata[2]);
+            	CreateAndLoadDiaphragmPumpAdditionalInfoTable(rowdata[2]);
             }
-            
             Ext.getCmp("DiaphragmPumpDeviceTotalCount_Id").update({
                 count: result.totalCount
             });
-            
         },
         failure: function () {
             Ext.MessageBox.alert("错误", "与后台联系的时候出了问题");
@@ -377,6 +388,7 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                 	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue(row);
                 	var row1=diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
                 	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(row1[2]);
+                	CreateAndLoadDiaphragmPumpAdditionalInfoTable(row1[2]);
                 },
                 afterDestroy: function () {
                 },
@@ -475,17 +487,33 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
             	var rowdata = diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(DiaphragmPumpDeviceSelectRow);
             	deviceName=rowdata[2];
             	if(isNotVal(deviceName)){
-//            		deviceAuxiliaryData.orgId=orgId;
                 	deviceAuxiliaryData.deviceType=101;
                 	deviceAuxiliaryData.deviceName=deviceName;
+                	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
-                	var auxiliaryDeviceData=diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
-                	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
-                        if (auxiliaryDeviceData[index][0]) {
-                        	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
-                        	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
-                        }
-                    });
+                	if(diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper!=null && diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
+                		var auxiliaryDeviceData=diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
+                            if (auxiliaryDeviceData[index][0]) {
+                            	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
+                            	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
+                            }
+                        });
+                	}
+                	//附加信息
+                	deviceAuxiliaryData.additionalInfoList=[];
+                	if(diaphragmPumpAdditionalInfoHandsontableHelper!=null && diaphragmPumpAdditionalInfoHandsontableHelper.hot!=undefined){
+                		var additionalInfoData=diaphragmPumpAdditionalInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
+                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                            	var additionalInfo={};
+                            	additionalInfo.itemName=additionalInfoData[index][1];
+                            	additionalInfo.itemValue=additionalInfoData[index][2];
+                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
+                            }
+                        });
+                	}
             	}
             }
             
@@ -781,3 +809,131 @@ var DiaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        return diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper;
 	    }
 };
+
+function CreateAndLoadDiaphragmPumpAdditionalInfoTable(diaphragmPumpDeviceName,isNew){
+	if(isNew&&diaphragmPumpAdditionalInfoHandsontableHelper!=null){
+		if(diaphragmPumpAdditionalInfoHandsontableHelper.hot!=undefined){
+			diaphragmPumpAdditionalInfoHandsontableHelper.hot.destroy();
+		}
+		diaphragmPumpAdditionalInfoHandsontableHelper=null;
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			if(!isNotVal(diaphragmPumpDeviceName)){
+				diaphragmPumpDeviceName='';
+			}
+			Ext.getCmp("DiaphragmPumpAdditionalInfoPanel_Id").setTitle(diaphragmPumpDeviceName+"附加信息");
+			if(diaphragmPumpAdditionalInfoHandsontableHelper==null || diaphragmPumpAdditionalInfoHandsontableHelper.hot==undefined){
+				diaphragmPumpAdditionalInfoHandsontableHelper = DiaphragmPumpAdditionalInfoHandsontableHelper.createNew("DiaphragmPumpAdditionalInfoTableDiv_id");
+				var colHeaders="['序号','名称','值','单位']";
+				var columns="[{data:'id'},{data:'itemName'},{data:'itemValue'},{data:'itemUnit'}]";
+				
+				diaphragmPumpAdditionalInfoHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				diaphragmPumpAdditionalInfoHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					diaphragmPumpAdditionalInfoHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					diaphragmPumpAdditionalInfoHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					diaphragmPumpAdditionalInfoHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					diaphragmPumpAdditionalInfoHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			deviceName:diaphragmPumpDeviceName,
+			deviceType:101
+        }
+	});
+};
+
+var DiaphragmPumpAdditionalInfoHandsontableHelper = {
+	    createNew: function (divid) {
+	        var diaphragmPumpAdditionalInfoHandsontableHelper = {};
+	        diaphragmPumpAdditionalInfoHandsontableHelper.hot = '';
+	        diaphragmPumpAdditionalInfoHandsontableHelper.divid = divid;
+	        diaphragmPumpAdditionalInfoHandsontableHelper.colHeaders = [];
+	        diaphragmPumpAdditionalInfoHandsontableHelper.columns = [];
+	        diaphragmPumpAdditionalInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(242, 242, 242)';
+	        }
+
+	        diaphragmPumpAdditionalInfoHandsontableHelper.createTable = function (data) {
+	            $('#' + diaphragmPumpAdditionalInfoHandsontableHelper.divid).empty();
+	            var hotElement = document.querySelector('#' + diaphragmPumpAdditionalInfoHandsontableHelper.divid);
+	            diaphragmPumpAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	                data: data,
+	                hiddenColumns: {
+	                    columns: [0],
+	                    indicators: true
+	                },
+	                columns: diaphragmPumpAdditionalInfoHandsontableHelper.columns,
+	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: true, //显示行头
+	                colHeaders: diaphragmPumpAdditionalInfoHandsontableHelper.colHeaders, //显示列头
+	                columnSorting: true, //允许排序
+	                contextMenu: {
+	                    items: {
+	                        "row_above": {
+	                            name: '向上插入一行',
+	                        },
+	                        "row_below": {
+	                            name: '向下插入一行',
+	                        },
+	                        "col_left": {
+	                            name: '向左插入一列',
+	                        },
+	                        "col_right": {
+	                            name: '向右插入一列',
+	                        },
+	                        "remove_row": {
+	                            name: '删除行',
+	                        },
+	                        "remove_col": {
+	                            name: '删除列',
+	                        },
+	                        "merge_cell": {
+	                            name: '合并单元格',
+	                        },
+	                        "copy": {
+	                            name: '复制',
+	                        },
+	                        "cut": {
+	                            name: '剪切',
+	                        },
+	                        "paste": {
+	                            name: '粘贴',
+	                            disabled: function () {
+	                            },
+	                            callback: function () {
+	                            }
+	                        }
+	                    }
+	                }, 
+	                sortIndicator: true,
+	                manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                    var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+	                }
+	            });
+	        }
+	        return diaphragmPumpAdditionalInfoHandsontableHelper;
+	    }
+	};
