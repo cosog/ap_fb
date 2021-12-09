@@ -90,6 +90,16 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                             value: -1,
                             hidden: true
                          },{
+                        	id: 'PipelineRealTimeMonitoringStatSelectCommStatus_Id',
+                        	xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                         },{
+                        	id: 'PipelineRealTimeMonitoringStatSelectDeviceType_Id',
+                        	xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                         },{
                              id: 'PipelineRealTimeMonitoringColumnStr_Id',
                              xtype: 'textfield',
                              value: '',
@@ -124,17 +134,17 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                             }
                         }]
                     },{
-//                    	title:'状态统计',
                     	region: 'south',
                     	split: true,
                         collapsible: true,
                     	height: '40%',
                     	xtype: 'tabpanel',
+                    	id:'PipelineRealTimeMonitoringStatTabPanel',
                     	activeTab: 0,
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'状态统计图',
+                			title:'通信状态统计图',
                 			layout: 'fit',
                         	id:'PipelineRealTimeMonitoringStatGraphPanel_Id',
                         	html: '<div id="PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
@@ -151,15 +161,45 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 }
                             }
                 		},{
-                			title:'状态统计表',
-                			id:'PipelineRealTimeMonitoringStatInfoPanel_Id',
-                            border: false,
-                            layout: 'fit'
-                		}]
+                			title:'设备类型统计图',
+                			layout: 'fit',
+                        	id:'PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id',
+                        	html: '<div id="PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id" style="width:100%;height:100%;"></div>',
+                        	listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	if ($("#PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id").highcharts() != undefined) {
+                                        $("#PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id").highcharts().setSize($("#PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id").offsetWidth, $("#PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id").offsetHeight,true);
+                                    }else{
+                                    	Ext.create('Ext.tip.ToolTip', {
+                                            target: 'PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id',
+                                            html: '点击饼图不同区域或标签，查看相应统计数据'
+                                        });
+                                    }
+                                }
+                            }
+                		}],
+                		listeners: {
+            				tabchange: function (tabPanel, newCard,oldCard, obj) {
+            					if(newCard.id=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
+            						loadAndInitCommStatusStat(true);
+            					}else if(newCard.id=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+            						loadAndInitDeviceTypeStat(true);
+            					}
+            					Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setValue('');
+        						Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setRawValue('');
+        						var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getSelectionModel().deselectAll(true);
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+        						}
+            				}
+            			}
                     }]
                 }, {
                 	region: 'east',
-                    width: '80%',
+                    width: '78%',
                     autoScroll: true,
                     split: true,
                     collapsible: true,

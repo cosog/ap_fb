@@ -25,6 +25,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         	var auxiliaryDeviceList=get_rawData.auxiliaryDeviceList;
         	var deviceControlList=get_rawData.deviceControlList;
         	
+        	//设备附加信息
         	var deviceInfoDataStr="{\"items\":[";
         	for(var i=0;i<deviceInfoDataList.length;i++){
         		deviceInfoDataStr+="{\"item\":\""+deviceInfoDataList[i].name+"\",\"value\":\""+deviceInfoDataList[i].value+"\"},";
@@ -50,6 +51,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		if(!isNotVal(deviceInfoGridPanel)){
     			deviceInfoGridPanel=Ext.create('Ext.grid.Panel', {
     				id:'PumpRealTimeMonitoringDeviceInfoDataGridPanel_Id',
+    				title:'附加信息',
     				border: false,
     				columnLines: true,
     				forceFit: false,

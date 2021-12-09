@@ -47,20 +47,6 @@ public class WellHandsontableChangedData {
 
 	    private String slave="";
 	    
-	    private String factoryNumber="";
-	    
-	    private String model="";
-	    
-	    private String productionDate="";
-	    
-	    private String deliveryDate="";
-	    
-	    private String commissioningDate="";
-	    
-	    private String controlcabinetDodel="";
-	    
-	    private String pipelineLength="";
-	    
 	    private String videoUrl="";
 	    
 	    private String sortNum="";
@@ -119,62 +105,6 @@ public class WellHandsontableChangedData {
 
 		public void setSlave(String slave) {
 			this.slave = slave;
-		}
-
-		public String getFactoryNumber() {
-			return factoryNumber;
-		}
-
-		public void setFactoryNumber(String factoryNumber) {
-			this.factoryNumber = factoryNumber;
-		}
-
-		public String getModel() {
-			return model;
-		}
-
-		public void setModel(String model) {
-			this.model = model;
-		}
-
-		public String getProductionDate() {
-			return productionDate;
-		}
-
-		public void setProductionDate(String productionDate) {
-			this.productionDate = productionDate;
-		}
-
-		public String getDeliveryDate() {
-			return deliveryDate;
-		}
-
-		public void setDeliveryDate(String deliveryDate) {
-			this.deliveryDate = deliveryDate;
-		}
-
-		public String getCommissioningDate() {
-			return commissioningDate;
-		}
-
-		public void setCommissioningDate(String commissioningDate) {
-			this.commissioningDate = commissioningDate;
-		}
-
-		public String getControlcabinetDodel() {
-			return controlcabinetDodel;
-		}
-
-		public void setControlcabinetDodel(String controlcabinetDodel) {
-			this.controlcabinetDodel = controlcabinetDodel;
-		}
-
-		public String getPipelineLength() {
-			return pipelineLength;
-		}
-
-		public void setPipelineLength(String pipelineLength) {
-			this.pipelineLength = pipelineLength;
 		}
 
 		public String getInstanceName() {

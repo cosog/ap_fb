@@ -62,6 +62,12 @@ Ext.define("AP.view.well.PipelineDeviceInfoPanel", {
                             }
                             heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
                         }
+                        if (heatingPipelineAdditionalInfoHandsontableHelper != null) {
+                            if (heatingPipelineAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	heatingPipelineAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            heatingPipelineAdditionalInfoHandsontableHelper = null;
+                        }
                         //采水管
                         if (waterGatheringPipelineDeviceInfoHandsontableHelper != null) {
                             if (waterGatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
@@ -75,6 +81,12 @@ Ext.define("AP.view.well.PipelineDeviceInfoPanel", {
                             }
                             waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
                         }
+                        if (waterGatheringPipelineAdditionalInfoHandsontableHelper != null) {
+                            if (waterGatheringPipelineAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            waterGatheringPipelineAdditionalInfoHandsontableHelper = null;
+                        }
                         //集输管
                         if (gatheringPipelineDeviceInfoHandsontableHelper != null) {
                             if (gatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
@@ -87,6 +99,12 @@ Ext.define("AP.view.well.PipelineDeviceInfoPanel", {
                             	gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
                             }
                             gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        if (gatheringPipelineAdditionalInfoHandsontableHelper != null) {
+                            if (gatheringPipelineAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	gatheringPipelineAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            gatheringPipelineAdditionalInfoHandsontableHelper = null;
                         }
         			}
             	}

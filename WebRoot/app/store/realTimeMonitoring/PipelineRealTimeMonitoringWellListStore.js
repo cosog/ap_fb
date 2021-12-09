@@ -49,11 +49,9 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-//                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     	},
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
-//                    		Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		var deviceName=record.data.wellName;
                     		var deviceType=1;
                     		var tabPanel = Ext.getCmp("PipelineRealTimeMonitoringCurveAndTableTabPanel");
@@ -74,9 +72,6 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                 PipelineRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
-//            	if(gridPanel.getSelectionModel().getSelection().length>0){
-//            		gridPanel.getSelectionModel().deselectAll(true);
-//            	}
             	gridPanel.getSelectionModel().select(0, true);
             }else{
             	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null){
@@ -86,7 +81,6 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
 					pipelineDeviceRealTimeMonitoringDataHandsontableHelper=null;
 				}
             	Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(-1);
-//            	Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue('');
             	
             	$("#pipelineRealTimeMonitoringCurveContainer").html('');
             	$("#PipelineRealTimeMonitoringInfoDataTableInfoContainer").html('');
@@ -98,12 +92,14 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceName=Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
-        	var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+        	var commStatusStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+        	var deviceTypeStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectDeviceType_Id").getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:1,
                     deviceName:deviceName,
-                    commStatus:commStatus
+                    commStatusStatValue:commStatusStatValue,
+                    deviceTypeStatValue:deviceTypeStatValue
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

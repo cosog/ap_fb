@@ -1,6 +1,7 @@
 //采水管
 var waterGatheringPipelineDeviceInfoHandsontableHelper = null;
 var waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
+var waterGatheringPipelineAdditionalInfoHandsontableHelper = null;
 Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.waterGatheringPipelineDeviceInfoPanel',
@@ -33,7 +34,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
             listeners: {
                 beforeload: function (store, options) {
                     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('waterGatheringPipelineDeviceComb_Id').getValue();
+                    var wellName = Ext.getCmp('waterGatheringPipelineDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: 202,
@@ -44,10 +45,10 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
             }
         });
 
-        var waterGatheringPipelineCombo = Ext.create(
+        var waterGatheringPipelineDeviceCombo = Ext.create(
             'Ext.form.field.ComboBox', {
                 fieldLabel: cosog.string.wellName,
-                id: "waterGatheringPipelineDeviceComb_Id",
+                id: "waterGatheringPipelineDeviceListComb_Id",
                 labelWidth: 35,
                 width: 145,
                 labelAlign: 'left',
@@ -65,15 +66,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                 blankText: cosog.string.all,
                 listeners: {
                     expand: function (sm, selections) {
-                        waterGatheringPipelineCombo.getStore().loadPage(1); // 加载井下拉框的store
-                    },
-                    afterRender: function (combo, o) {
-                        if (waterGatheringPipelineCombStore.getTotalCount() > 0) {
-                            var boxkey = waterGatheringPipelineCombStore.data.items[0].data.boxkey;
-                            var boxval = waterGatheringPipelineCombStore.data.items[0].data.boxval;
-                            combo.setValue(boxkey);
-                            combo.setRawValue(boxval);
-                        }
+                        waterGatheringPipelineDeviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                     },
                     select: function (combo, record, index) {
                         try {
@@ -84,9 +77,8 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                     }
                 }
             });
-
         Ext.apply(this, {
-            tbar: [waterGatheringPipelineCombo, '-', {
+            tbar: [waterGatheringPipelineDeviceCombo, '-', {
                 id: 'WaterGatheringPipelineDeviceTotalCount_Id',
                 xtype: 'component',
                 hidden: false,
@@ -106,7 +98,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                     var fields = "";
                     var heads = "";
                     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellInformationName = Ext.getCmp('waterGatheringPipelineDeviceComb_Id').getValue();
+                    var wellInformationName = Ext.getCmp('waterGatheringPipelineDeviceListComb_Id').getValue();
                     var url = context + '/wellInformationManagerController/exportWellInformationData';
                     for (var i = 0; i < waterGatheringPipelineDeviceInfoHandsontableHelper.colHeaders.length; i++) {
                         fields += waterGatheringPipelineDeviceInfoHandsontableHelper.columns[i].data + ",";
@@ -129,7 +121,6 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                 handler: function (v, o) {
                     CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
                 }
-
             }, '-', {
                 xtype: 'button',
                 itemId: 'saveWaterGatheringPipelineDeviceDataBtnId',
@@ -158,30 +149,40 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'设备列表',
-            	html: '<div class="WaterGatheringPipelineDeviceContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineDeviceTableDiv_id"></div></div>',
-                listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                    	if (waterGatheringPipelineDeviceInfoHandsontableHelper != null && waterGatheringPipelineDeviceInfoHandsontableHelper.hot != null && waterGatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
-                            CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
+            	layout: 'border',
+            	items: [{
+            		region: 'center',
+            		title:'采水管设备列表',
+                	html: '<div class="WaterGatheringPipelineDeviceContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineDeviceTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            if (waterGatheringPipelineDeviceInfoHandsontableHelper != null && waterGatheringPipelineDeviceInfoHandsontableHelper.hot != null && waterGatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
+                            	CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
+                            }
                         }
                     }
-                }
+            	},{
+            		region: 'east',
+            		width: '33%',
+            		title:'设备附加信息',
+                	id:'WaterGatheringPipelineAdditionalInfoPanel_Id',
+                	split: true,
+                	collapsible: true,
+                	html: '<div class="WaterGatheringPipelineAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineAdditionalInfoTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    }
+            	}]
             },{
             	region: 'east',
-                width: '20%',
+                width: '18%',
                 title:'辅件设备列表',
                 id:'WaterGatheringPipelineAuxiliaryDevicePanel_Id',
-                autoScroll: true,
                 split: true,
                 collapsible: true,
                 html: '<div class="WaterGatheringPipelineAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper != null && waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != null && waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-//                            CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable();
-                        }
-                    }
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
                 }
             }],
             listeners: {
@@ -202,7 +203,7 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
 		waterGatheringPipelineDeviceInfoHandsontableHelper = null;
 	}
     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-    var wellInformationName_Id = Ext.getCmp('waterGatheringPipelineDeviceComb_Id').getValue();
+    var wellInformationName_Id = Ext.getCmp('waterGatheringPipelineDeviceListComb_Id').getValue();
     Ext.Ajax.request({
         method: 'POST',
         url: context + '/wellInformationManagerController/doWellInformationShow',
@@ -243,7 +244,7 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
                         }
                         source += "]";
                         columns += "{data:'" + result.columns[i].dataIndex + "',type:'dropdown',strict:true,allowInvalid:false,source:" + source + "}";
-                    } else if (result.columns[i].dataIndex.toUpperCase() === "applicationScenariosName".toUpperCase()) {
+                    }else if (result.columns[i].dataIndex.toUpperCase() === "applicationScenariosName".toUpperCase()) {
                         var source = "[";
                         for (var j = 0; j < result.applicationScenariosDropdownData.length; j++) {
                             source += "\'" + result.applicationScenariosDropdownData[j] + "\'";
@@ -271,18 +272,19 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
             } else {
                 waterGatheringPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
-            Ext.getCmp("WaterGatheringPipelineDeviceTotalCount_Id").update({
-                count: result.totalCount
-            });
-            
             if(result.totalRoot.length==0){
             	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue('');
             	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable();
+            	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable();
             }else{
             	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(0);
             	var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
             	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(rowdata[2]);
+            	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(rowdata[2]);
             }
+            Ext.getCmp("WaterGatheringPipelineDeviceTotalCount_Id").update({
+                count: result.totalCount
+            });
         },
         failure: function () {
             Ext.MessageBox.alert("错误", "与后台联系的时候出了问题");
@@ -386,11 +388,13 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(row);
                 	var row1=waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
                 	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(row1[2]);
+                	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(row1[2]);
                 },
                 afterDestroy: function () {
                 },
                 beforeRemoveRow: function (index, amount) {
                     var ids = [];
+                    //封装id成array传入后台
                     if (amount != 0) {
                         for (var i = index; i < amount + index; i++) {
                             var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
@@ -401,7 +405,13 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                     }
                 },
                 afterChange: function (changes, source) {
+                    //params 参数 1.column num , 2,id, 3,oldvalue , 4.newvalue
                     if (changes != null) {
+//                        var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+//                        if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {} else {
+//                            Ext.MessageBox.alert("信息", "编辑前，请先在左侧选择对应组织节点");
+//                        }
+
                         for (var i = 0; i < changes.length; i++) {
                             var params = [];
                             var index = changes[i][0]; //行号码
@@ -419,6 +429,8 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                             if (params[1] == "protocolName" && params[3] == "Kafka协议") {
                                 waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
                             }
+
+                            //仅当单元格发生改变的时候,id!=null,说明是更新
                             if (params[2] != params[3] && params[0] != null && params[0] > 0) {
                                 var data = "{";
                                 for (var j = 0; j < waterGatheringPipelineDeviceInfoHandsontableHelper.columns.length; j++) {
@@ -431,6 +443,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                                 waterGatheringPipelineDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
                             }
                         }
+                    
                     }
                 }
             });
@@ -439,8 +452,11 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
         waterGatheringPipelineDeviceInfoHandsontableHelper.insertExpressCount = function () {
             var idsdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtCol(0); //所有的id
             for (var i = 0; i < idsdata.length; i++) {
+                //id=null时,是插入数据,此时的i正好是行号
                 if (idsdata[i] == null || idsdata[i] < 0) {
+                    //获得id=null时的所有数据封装进data
                     var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+                    //var collength = hot.countCols();
                     if (rowdata != null) {
                         var data = "{";
                         for (var j = 0; j < waterGatheringPipelineDeviceInfoHandsontableHelper.columns.length; j++) {
@@ -462,7 +478,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
         waterGatheringPipelineDeviceInfoHandsontableHelper.saveData = function () {
         	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
         	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-        	//插入的数据的获取
+            //插入的数据的获取
             waterGatheringPipelineDeviceInfoHandsontableHelper.insertExpressCount();
             //获取辅件配置数据
             var deviceAuxiliaryData={};
@@ -473,16 +489,34 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
             	if(isNotVal(deviceName)){
                 	deviceAuxiliaryData.deviceType=202;
                 	deviceAuxiliaryData.deviceName=deviceName;
+                	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
-                	var auxiliaryDeviceData=waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
-                	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
-                        if (auxiliaryDeviceData[index][0]) {
-                        	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
-                        	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
-                        }
-                    });
+                	if(waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper!=null && waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
+                		var auxiliaryDeviceData=waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
+                            if (auxiliaryDeviceData[index][0]) {
+                            	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
+                            	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
+                            }
+                        });
+                	}
+                	//附加信息
+                	deviceAuxiliaryData.additionalInfoList=[];
+                	if(waterGatheringPipelineAdditionalInfoHandsontableHelper!=null && waterGatheringPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
+                		var additionalInfoData=waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
+                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                            	var additionalInfo={};
+                            	additionalInfo.itemName=additionalInfoData[index][1];
+                            	additionalInfo.itemValue=additionalInfoData[index][2];
+                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
+                            }
+                        });
+                	}
             	}
             }
+            
             if (JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData) != "{}" && waterGatheringPipelineDeviceInfoHandsontableHelper.validresult) {
             	var orgArr=leftOrg_Name.split(",");
             	var saveData={};
@@ -535,7 +569,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                     success: function (response) {
                         rdata = Ext.JSON.decode(response.responseText);
                         if (rdata.success) {
-                        	if(invalidData1.length>0 || invalidData2.length>0){
+                            if(invalidData1.length>0 || invalidData2.length>0){
                         		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
                         	}else{
                         		Ext.MessageBox.alert("信息", "保存成功");
@@ -553,7 +587,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                         waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                    	data: JSON.stringify(saveData),
+                        data: JSON.stringify(saveData),
                         deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                         orgId: leftOrg_Id,
                         deviceType: 202
@@ -566,12 +600,18 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                     Ext.MessageBox.alert("信息", "无数据变化");
                 }
             }
+        
+            
+            
+
         }
 
         //修改井名
         waterGatheringPipelineDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
+
             if (waterGatheringPipelineDeviceInfoHandsontableHelper.editWellNameList.length > 0 && waterGatheringPipelineDeviceInfoHandsontableHelper.validresult) {
+                //	            	alert(JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -583,6 +623,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                             CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
+
                         }
                     },
                     failure: function () {
@@ -602,6 +643,8 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 }
             }
         }
+
+
         //删除的优先级最高
         waterGatheringPipelineDeviceInfoHandsontableHelper.delExpressCount = function (ids) {
             //传入的ids.length不可能为0
@@ -612,6 +655,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
             });
             waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.delidslist = waterGatheringPipelineDeviceInfoHandsontableHelper.delidslist;
         }
+
         //updatelist数据更新
         waterGatheringPipelineDeviceInfoHandsontableHelper.screening = function () {
             if (waterGatheringPipelineDeviceInfoHandsontableHelper.updatelist.length != 0 && waterGatheringPipelineDeviceInfoHandsontableHelper.delidslist.lentgh != 0) {
@@ -627,6 +671,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist = waterGatheringPipelineDeviceInfoHandsontableHelper.updatelist;
             }
         }
+
         //更新数据
         waterGatheringPipelineDeviceInfoHandsontableHelper.updateExpressCount = function (data) {
             if (JSON.stringify(data) != "{}") {
@@ -764,3 +809,131 @@ var WaterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	        return waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper;
 	    }
 };
+
+function CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(waterGatheringPipelineDeviceName,isNew){
+	if(isNew&&waterGatheringPipelineAdditionalInfoHandsontableHelper!=null){
+		if(waterGatheringPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
+			waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.destroy();
+		}
+		waterGatheringPipelineAdditionalInfoHandsontableHelper=null;
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			if(!isNotVal(waterGatheringPipelineDeviceName)){
+				waterGatheringPipelineDeviceName='';
+			}
+			Ext.getCmp("WaterGatheringPipelineAdditionalInfoPanel_Id").setTitle(waterGatheringPipelineDeviceName+"附加信息");
+			if(waterGatheringPipelineAdditionalInfoHandsontableHelper==null || waterGatheringPipelineAdditionalInfoHandsontableHelper.hot==undefined){
+				waterGatheringPipelineAdditionalInfoHandsontableHelper = WaterGatheringPipelineAdditionalInfoHandsontableHelper.createNew("WaterGatheringPipelineAdditionalInfoTableDiv_id");
+				var colHeaders="['序号','名称','值','单位']";
+				var columns="[{data:'id'},{data:'itemName'},{data:'itemValue'},{data:'itemUnit'}]";
+				
+				waterGatheringPipelineAdditionalInfoHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				waterGatheringPipelineAdditionalInfoHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					waterGatheringPipelineAdditionalInfoHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					waterGatheringPipelineAdditionalInfoHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			deviceName:waterGatheringPipelineDeviceName,
+			deviceType:202
+        }
+	});
+};
+
+var WaterGatheringPipelineAdditionalInfoHandsontableHelper = {
+	    createNew: function (divid) {
+	        var waterGatheringPipelineAdditionalInfoHandsontableHelper = {};
+	        waterGatheringPipelineAdditionalInfoHandsontableHelper.hot = '';
+	        waterGatheringPipelineAdditionalInfoHandsontableHelper.divid = divid;
+	        waterGatheringPipelineAdditionalInfoHandsontableHelper.colHeaders = [];
+	        waterGatheringPipelineAdditionalInfoHandsontableHelper.columns = [];
+	        waterGatheringPipelineAdditionalInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(242, 242, 242)';
+	        }
+
+	        waterGatheringPipelineAdditionalInfoHandsontableHelper.createTable = function (data) {
+	            $('#' + waterGatheringPipelineAdditionalInfoHandsontableHelper.divid).empty();
+	            var hotElement = document.querySelector('#' + waterGatheringPipelineAdditionalInfoHandsontableHelper.divid);
+	            waterGatheringPipelineAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	                data: data,
+	                hiddenColumns: {
+	                    columns: [0],
+	                    indicators: true
+	                },
+	                columns: waterGatheringPipelineAdditionalInfoHandsontableHelper.columns,
+	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: true, //显示行头
+	                colHeaders: waterGatheringPipelineAdditionalInfoHandsontableHelper.colHeaders, //显示列头
+	                columnSorting: true, //允许排序
+	                contextMenu: {
+	                    items: {
+	                        "row_above": {
+	                            name: '向上插入一行',
+	                        },
+	                        "row_below": {
+	                            name: '向下插入一行',
+	                        },
+	                        "col_left": {
+	                            name: '向左插入一列',
+	                        },
+	                        "col_right": {
+	                            name: '向右插入一列',
+	                        },
+	                        "remove_row": {
+	                            name: '删除行',
+	                        },
+	                        "remove_col": {
+	                            name: '删除列',
+	                        },
+	                        "merge_cell": {
+	                            name: '合并单元格',
+	                        },
+	                        "copy": {
+	                            name: '复制',
+	                        },
+	                        "cut": {
+	                            name: '剪切',
+	                        },
+	                        "paste": {
+	                            name: '粘贴',
+	                            disabled: function () {
+	                            },
+	                            callback: function () {
+	                            }
+	                        }
+	                    }
+	                }, 
+	                sortIndicator: true,
+	                manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                    var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+	                }
+	            });
+	        }
+	        return waterGatheringPipelineAdditionalInfoHandsontableHelper;
+	    }
+	};

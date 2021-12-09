@@ -90,6 +90,16 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             value: -1,
                             hidden: true
                          },{
+                        	id: 'PumpRealTimeMonitoringStatSelectCommStatus_Id',
+                        	xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                         },{
+                        	id: 'PumpRealTimeMonitoringStatSelectDeviceType_Id',
+                        	xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                         },{
                              id: 'PumpRealTimeMonitoringColumnStr_Id',
                              xtype: 'textfield',
                              value: '',
@@ -124,17 +134,17 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             }
                         }]
                     },{
-//                    	title:'状态统计',
                     	region: 'south',
                     	split: true,
                         collapsible: true,
                     	height: '40%',
                     	xtype: 'tabpanel',
+                    	id:'PumpRealTimeMonitoringStatTabPanel',
                     	activeTab: 0,
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'状态统计图',
+                			title:'通信状态统计图',
                 			layout: 'fit',
                         	id:'PumpRealTimeMonitoringStatGraphPanel_Id',
                         	html: '<div id="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
@@ -151,15 +161,45 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                 }
                             }
                 		},{
-                			title:'状态统计表',
-                			id:'PumpRealTimeMonitoringStatInfoPanel_Id',
-                            border: false,
-                            layout: 'fit'
-                		}]
+                			title:'设备类型统计图',
+                			layout: 'fit',
+                        	id:'PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id',
+                        	html: '<div id="PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id" style="width:100%;height:100%;"></div>',
+                        	listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	if ($("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").highcharts() != undefined) {
+                                        $("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").highcharts().setSize($("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").offsetWidth, $("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").offsetHeight,true);
+                                    }else{
+                                    	Ext.create('Ext.tip.ToolTip', {
+                                            target: 'PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id',
+                                            html: '点击饼图不同区域或标签，查看相应统计数据'
+                                        });
+                                    }
+                                }
+                            }
+                		}],
+                		listeners: {
+            				tabchange: function (tabPanel, newCard,oldCard, obj) {
+            					if(newCard.id=="PumpRealTimeMonitoringStatGraphPanel_Id"){
+            						loadAndInitCommStatusStat(true);
+            					}else if(newCard.id=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+            						loadAndInitDeviceTypeStat(true);
+            					}
+            					Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setValue('');
+        						Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setRawValue('');
+        						var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getSelectionModel().deselectAll(true);
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+        						}
+            				}
+            			}
                     }]
                 }, {
                 	region: 'east',
-                    width: '80%',
+                    width: '78%',
                     autoScroll: true,
                     split: true,
                     collapsible: true,
@@ -200,14 +240,6 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                     }
                                 }
                 			}]
-//                			html: '<div id="pumpRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
-//                            listeners: {
-//                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-//                                    if ($("#pumpRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
-//                                        $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pumpRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pumpRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
-//                                    }
-//                                }
-//                            }
                 		},{
                 			title:'实时数据',
                 			id:"PumpRealTimeMonitoringTableTabPanel_Id",
@@ -215,7 +247,6 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             border: false,
                             items: [{
                             	region: 'center',
-//                            	title: '实时数据',
                             	header: false,
                             	id: "PumpRealTimeMonitoringInfoDataPanel_Id",
                             	layout: 'fit',
@@ -232,31 +263,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                     	}
                                     }
                                 }
-                            }
-//                            ,{
-//                            	region: 'south',
-//                            	height: '40%',
-//                            	title: '实时曲线',
-//                            	layout: 'fit',
-//                            	border: true,
-//                            	split: true,
-//                                collapsible: true,
-//                                tbar:[{
-//                                    id: 'PumpRealTimeMonitoringSelectedCurve_Id',//选择的统计项的值
-//                                    xtype: 'textfield',
-//                                    value: '',
-//                                    hidden: true
-//                                }],
-//                                html: '<div id="pumpRealTimeMonitoringCurveDiv_Id" style="width:100%;height:100%;"></div>',
-//                                listeners: {
-//                                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-//                                        if ($("#pumpRealTimeMonitoringCurveDiv_Id").highcharts() != undefined) {
-//                                            $("#pumpRealTimeMonitoringCurveDiv_Id").highcharts().setSize($("#pumpRealTimeMonitoringCurveDiv_Id").offsetWidth, $("#pumpRealTimeMonitoringCurveDiv_Id").offsetHeight, true);
-//                                        }
-//                                    }
-//                                }
-//                            }
-                            ]
+                            }]
                 		}],
                 		listeners: {
             				tabchange: function (tabPanel, newCard,oldCard, obj) {
@@ -543,33 +550,7 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	                    return cellProperties;
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-//	                	if(row>0||column>0){
-//	                		var relRow=row;
-//	                		var relColumn=column;
-//	                		if(column%2==1){
-//	                			relColumn=column-1;
-//	                		}else if(column%2==0){
-//	                			
-//	                		}
-//		                	
-//		                	var item=pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.getDataAtCell(relRow,relColumn);
-//		                	var selectecCell=pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.getCell(relRow,relColumn);
-//		                	var columnDataType='';
-//		                	var resolutionMode=0;
-//		                	for(var i=0;i<pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-//		        				if(relRow==pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row && relColumn==pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2){
-//		        					item=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
-//		        					columnDataType=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType;
-//		        					resolutionMode=pumpDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].resolutionMode;
-//		        					break;
-//		        				}
-//		        			}
-//		                	
-//		                	if(isNotVal(item)&&resolutionMode==2){
-//		                		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue(item);
-//			                	pumpRealTimeMonitoringCurve(item);
-//		                	}
-//	                	}
+	                	
 	                }
 	        	});
 	        }

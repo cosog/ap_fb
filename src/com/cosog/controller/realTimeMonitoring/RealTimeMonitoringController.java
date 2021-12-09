@@ -58,6 +58,8 @@ public class RealTimeMonitoringController extends BaseController {
 	private String wellName;
 	private String deviceName;
 	private String deviceType;
+	private String deviceTypeStatValue;
+	private String commStatusStatValue;
 	private String page;
 	private String orgId;
 	private int totals;
@@ -80,6 +82,56 @@ public class RealTimeMonitoringController extends BaseController {
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getRealTimeMonitoringCommStatusStatData")
+	public String getRealTimeMonitoringCommStatusStatData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceTypeStatValue = ParamUtils.getParameter(request, "deviceTypeStatValue");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = realTimeMonitoringService.getRealTimeMonitoringCommStatusStatData(orgId,deviceType,deviceTypeStatValue);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getRealTimeMonitoringDeviceTypeStatData")
+	public String getRealTimeMonitoringDeviceTypeStatData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		commStatusStatValue = ParamUtils.getParameter(request, "commStatusStatValue");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = realTimeMonitoringService.getRealTimeMonitoringDeviceTypeStatData(orgId,deviceType,commStatusStatValue);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
 		pw.print(json);
@@ -121,7 +173,8 @@ public class RealTimeMonitoringController extends BaseController {
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		String commStatus = ParamUtils.getParameter(request, "commStatus");
+		commStatusStatValue = ParamUtils.getParameter(request, "commStatusStatValue");
+		deviceTypeStatValue = ParamUtils.getParameter(request, "deviceTypeStatValue");
 		this.pager = new Page("pagerForm", request);
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {
@@ -131,7 +184,7 @@ public class RealTimeMonitoringController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,deviceName,deviceType,commStatus,pager);
+		json = realTimeMonitoringService.getDeviceRealTimeOverview(orgId,deviceName,deviceType,commStatusStatValue,deviceTypeStatValue,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -579,5 +632,13 @@ public class RealTimeMonitoringController extends BaseController {
 
 	public void setDeviceType(String deviceType) {
 		this.deviceType = deviceType;
+	}
+
+	public String getDeviceTypeStatValue() {
+		return deviceTypeStatValue;
+	}
+
+	public void setDeviceTypeStatValue(String deviceTypeStatValue) {
+		this.deviceTypeStatValue = deviceTypeStatValue;
 	}
 }

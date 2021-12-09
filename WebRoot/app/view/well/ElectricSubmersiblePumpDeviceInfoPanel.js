@@ -1,6 +1,7 @@
 //电潜泵
 var electricSubmersiblePumpDeviceInfoHandsontableHelper = null;
 var electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = null;
+var electricSubmersiblePumpAdditionalInfoHandsontableHelper = null;
 Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.electricSubmersiblePumpDeviceInfoPanel',
@@ -148,30 +149,40 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'泵设备列表',
-            	html: '<div class="ElectricSubmersiblePumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ElectricSubmersiblePumpDeviceTableDiv_id"></div></div>',
-                listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (electricSubmersiblePumpDeviceInfoHandsontableHelper != null && electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != null && electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
+            	layout: 'border',
+            	items: [{
+            		region: 'center',
+            		title:'电潜泵设备列表',
+                	html: '<div class="ElectricSubmersiblePumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ElectricSubmersiblePumpDeviceTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            if (electricSubmersiblePumpDeviceInfoHandsontableHelper != null && electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != null && electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != undefined) {
+                            	CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
+                            }
                         }
                     }
-                }
+            	},{
+            		region: 'east',
+            		width: '33%',
+            		title:'设备附加信息',
+                	id:'ElectricSubmersiblePumpAdditionalInfoPanel_Id',
+                	split: true,
+                	collapsible: true,
+                	html: '<div class="ElectricSubmersiblePumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="ElectricSubmersiblePumpAdditionalInfoTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    }
+            	}]
             },{
             	region: 'east',
-                width: '20%',
+                width: '18%',
                 title:'辅件设备列表',
                 id:'ElectricSubmersiblePumpAuxiliaryDevicePanel_Id',
-                autoScroll: true,
                 split: true,
                 collapsible: true,
                 html: '<div class="ElectricSubmersiblePumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ElectricSubmersiblePumpAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper != null && electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-//                            CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable();
-                        }
-                    }
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
                 }
             }],
             listeners: {
@@ -264,16 +275,16 @@ function CreateAndLoadElectricSubmersiblePumpDeviceInfoTable(isNew) {
             if(result.totalRoot.length==0){
             	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue('');
             	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable();
+            	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable();
             }else{
             	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(0);
             	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
             	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(rowdata[2]);
+            	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(rowdata[2]);
             }
-            
             Ext.getCmp("ElectricSubmersiblePumpDeviceTotalCount_Id").update({
                 count: result.totalCount
             });
-            
         },
         failure: function () {
             Ext.MessageBox.alert("错误", "与后台联系的时候出了问题");
@@ -377,6 +388,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                 	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(row);
                 	var row1=electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
                 	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(row1[2]);
+                	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(row1[2]);
                 },
                 afterDestroy: function () {
                 },
@@ -395,6 +407,11 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                 afterChange: function (changes, source) {
                     //params 参数 1.column num , 2,id, 3,oldvalue , 4.newvalue
                     if (changes != null) {
+//                        var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+//                        if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {} else {
+//                            Ext.MessageBox.alert("信息", "编辑前，请先在左侧选择对应组织节点");
+//                        }
+
                         for (var i = 0; i < changes.length; i++) {
                             var params = [];
                             var index = changes[i][0]; //行号码
@@ -426,6 +443,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                                 electricSubmersiblePumpDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
                             }
                         }
+                    
                     }
                 }
             });
@@ -460,7 +478,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
         electricSubmersiblePumpDeviceInfoHandsontableHelper.saveData = function () {
         	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
         	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-        	//插入的数据的获取
+            //插入的数据的获取
             electricSubmersiblePumpDeviceInfoHandsontableHelper.insertExpressCount();
             //获取辅件配置数据
             var deviceAuxiliaryData={};
@@ -469,17 +487,33 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
             	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(ElectricSubmersiblePumpDeviceSelectRow);
             	deviceName=rowdata[2];
             	if(isNotVal(deviceName)){
-//            		deviceAuxiliaryData.orgId=orgId;
                 	deviceAuxiliaryData.deviceType=104;
                 	deviceAuxiliaryData.deviceName=deviceName;
+                	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
-                	var auxiliaryDeviceData=electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
-                	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
-                        if (auxiliaryDeviceData[index][0]) {
-                        	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
-                        	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
-                        }
-                    });
+                	if(electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper!=null && electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
+                		var auxiliaryDeviceData=electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
+                            if (auxiliaryDeviceData[index][0]) {
+                            	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
+                            	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
+                            }
+                        });
+                	}
+                	//附加信息
+                	deviceAuxiliaryData.additionalInfoList=[];
+                	if(electricSubmersiblePumpAdditionalInfoHandsontableHelper!=null && electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot!=undefined){
+                		var additionalInfoData=electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
+                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                            	var additionalInfo={};
+                            	additionalInfo.itemName=additionalInfoData[index][1];
+                            	additionalInfo.itemValue=additionalInfoData[index][2];
+                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
+                            }
+                        });
+                	}
             	}
             }
             
@@ -535,7 +569,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                     success: function (response) {
                         rdata = Ext.JSON.decode(response.responseText);
                         if (rdata.success) {
-                        	if(invalidData1.length>0 || invalidData2.length>0){
+                            if(invalidData1.length>0 || invalidData2.length>0){
                         		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
                         	}else{
                         		Ext.MessageBox.alert("信息", "保存成功");
@@ -553,7 +587,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                         electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                    	data: JSON.stringify(saveData),
+                        data: JSON.stringify(saveData),
                         deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                         orgId: leftOrg_Id,
                         deviceType: 104
@@ -566,6 +600,10 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                     Ext.MessageBox.alert("信息", "无数据变化");
                 }
             }
+        
+            
+            
+
         }
 
         //修改井名
@@ -771,3 +809,131 @@ var ElectricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        return electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper;
 	    }
 };
+
+function CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(electricSubmersiblePumpDeviceName,isNew){
+	if(isNew&&electricSubmersiblePumpAdditionalInfoHandsontableHelper!=null){
+		if(electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot!=undefined){
+			electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.destroy();
+		}
+		electricSubmersiblePumpAdditionalInfoHandsontableHelper=null;
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			if(!isNotVal(electricSubmersiblePumpDeviceName)){
+				electricSubmersiblePumpDeviceName='';
+			}
+			Ext.getCmp("ElectricSubmersiblePumpAdditionalInfoPanel_Id").setTitle(electricSubmersiblePumpDeviceName+"附加信息");
+			if(electricSubmersiblePumpAdditionalInfoHandsontableHelper==null || electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot==undefined){
+				electricSubmersiblePumpAdditionalInfoHandsontableHelper = ElectricSubmersiblePumpAdditionalInfoHandsontableHelper.createNew("ElectricSubmersiblePumpAdditionalInfoTableDiv_id");
+				var colHeaders="['序号','名称','值','单位']";
+				var columns="[{data:'id'},{data:'itemName'},{data:'itemValue'},{data:'itemUnit'}]";
+				
+				electricSubmersiblePumpAdditionalInfoHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				electricSubmersiblePumpAdditionalInfoHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					electricSubmersiblePumpAdditionalInfoHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					electricSubmersiblePumpAdditionalInfoHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			deviceName:electricSubmersiblePumpDeviceName,
+			deviceType:104
+        }
+	});
+};
+
+var ElectricSubmersiblePumpAdditionalInfoHandsontableHelper = {
+	    createNew: function (divid) {
+	        var electricSubmersiblePumpAdditionalInfoHandsontableHelper = {};
+	        electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot = '';
+	        electricSubmersiblePumpAdditionalInfoHandsontableHelper.divid = divid;
+	        electricSubmersiblePumpAdditionalInfoHandsontableHelper.colHeaders = [];
+	        electricSubmersiblePumpAdditionalInfoHandsontableHelper.columns = [];
+	        electricSubmersiblePumpAdditionalInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(242, 242, 242)';
+	        }
+
+	        electricSubmersiblePumpAdditionalInfoHandsontableHelper.createTable = function (data) {
+	            $('#' + electricSubmersiblePumpAdditionalInfoHandsontableHelper.divid).empty();
+	            var hotElement = document.querySelector('#' + electricSubmersiblePumpAdditionalInfoHandsontableHelper.divid);
+	            electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	                data: data,
+	                hiddenColumns: {
+	                    columns: [0],
+	                    indicators: true
+	                },
+	                columns: electricSubmersiblePumpAdditionalInfoHandsontableHelper.columns,
+	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: true, //显示行头
+	                colHeaders: electricSubmersiblePumpAdditionalInfoHandsontableHelper.colHeaders, //显示列头
+	                columnSorting: true, //允许排序
+	                contextMenu: {
+	                    items: {
+	                        "row_above": {
+	                            name: '向上插入一行',
+	                        },
+	                        "row_below": {
+	                            name: '向下插入一行',
+	                        },
+	                        "col_left": {
+	                            name: '向左插入一列',
+	                        },
+	                        "col_right": {
+	                            name: '向右插入一列',
+	                        },
+	                        "remove_row": {
+	                            name: '删除行',
+	                        },
+	                        "remove_col": {
+	                            name: '删除列',
+	                        },
+	                        "merge_cell": {
+	                            name: '合并单元格',
+	                        },
+	                        "copy": {
+	                            name: '复制',
+	                        },
+	                        "cut": {
+	                            name: '剪切',
+	                        },
+	                        "paste": {
+	                            name: '粘贴',
+	                            disabled: function () {
+	                            },
+	                            callback: function () {
+	                            }
+	                        }
+	                    }
+	                }, 
+	                sortIndicator: true,
+	                manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                    var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+	                }
+	            });
+	        }
+	        return electricSubmersiblePumpAdditionalInfoHandsontableHelper;
+	    }
+	};

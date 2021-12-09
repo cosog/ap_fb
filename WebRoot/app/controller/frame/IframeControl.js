@@ -317,18 +317,36 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
 		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
-			var statGridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
-			if (isNotVal(statGridPanel)) {
-				statGridPanel.getStore().load();
+			var statTabActiveId = Ext.getCmp("PumpRealTimeMonitoringStatTabPanel").getActiveTab().id;
+			if(statTabActiveId=="PumpRealTimeMonitoringStatGraphPanel_Id"){
+				loadAndInitCommStatusStat(true);
+			}else if(newCard.id=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+				loadAndInitDeviceTypeStat(true);
+			}
+			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setValue('');
+			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setRawValue('');
+			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getSelectionModel().deselectAll(true);
+				gridPanel.getStore().load();
 			}else{
-				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore');
+				Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
 			}
 		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
-			var statGridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
-			if (isNotVal(statGridPanel)) {
-				statGridPanel.getStore().load();
+			var statTabActiveId = Ext.getCmp("PipelineRealTimeMonitoringStatTabPanel").getActiveTab().id;
+			if(statTabActiveId=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
+				loadAndInitCommStatusStat(true);
+			}else if(newCard.id=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+				loadAndInitDeviceTypeStat(true);
+			}
+			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setValue('');
+			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setRawValue('');
+			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getSelectionModel().deselectAll(true);
+				gridPanel.getStore().load();
 			}else{
-				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore');
+				Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
 			}
 		}
 	}else if(module_Code == "DeviceHistoryQuery"){

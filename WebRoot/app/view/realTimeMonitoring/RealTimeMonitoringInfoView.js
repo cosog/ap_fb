@@ -102,35 +102,37 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
         					if(newCard.id=="PumpRealTimeMonitoringInfoPanel_Id"){
-        						var statGridPanel = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id");
-        						if (isNotVal(statGridPanel)) {
-//        							statGridPanel.getSelectionModel().deselectAll(true);
-        							statGridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringStatStore');
+        						var statTabActiveId = Ext.getCmp("PumpRealTimeMonitoringStatTabPanel").getActiveTab().id;
+        						if(statTabActiveId=="PumpRealTimeMonitoringStatGraphPanel_Id"){
+        							loadAndInitCommStatusStat(true);
+        						}else if(newCard.id=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+        							loadAndInitDeviceTypeStat(true);
         						}
-        						
-//        						var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-//        						if (isNotVal(gridPanel)) {
-//        							gridPanel.getStore().load();
-//        						}else{
-//        							Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
-//        						}
+        						Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setValue('');
+        						Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setRawValue('');
+        						var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getSelectionModel().deselectAll(true);
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore');
+        						}
         					}else if(newCard.id=="PipelineRealTimeMonitoringInfoPanel_Id"){
-        						var statGridPanel = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id");
-        						if (isNotVal(statGridPanel)) {
-//        							statGridPanel.getSelectionModel().deselectAll(true);
-        							statGridPanel.getStore().load();
-        						}else{
-        							Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringStatStore');
+        						var statTabActiveId = Ext.getCmp("PipelineRealTimeMonitoringStatTabPanel").getActiveTab().id;
+        						if(statTabActiveId=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
+        							loadAndInitCommStatusStat(true);
+        						}else if(newCard.id=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+        							loadAndInitDeviceTypeStat(true);
         						}
-        						
-//        						var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-//        						if (isNotVal(gridPanel)) {
-//        							gridPanel.getStore().load();
-//        						}else{
-//        							Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
-//        						}
+        						Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setValue('');
+        						Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setRawValue('');
+        						var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+        						if (isNotVal(gridPanel)) {
+        							gridPanel.getSelectionModel().deselectAll(true);
+        							gridPanel.getStore().load();
+        						}else{
+        							Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore');
+        						}
         					}
         				}
         			}
@@ -509,6 +511,42 @@ function gotoDeviceHistory(deviceName,deviceType){
 }
 
 
+function loadAndInitCommStatusStat(all){
+	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+	var deviceType=0;
+	var deviceTypeStatValue='';
+	if(all){
+		Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+		Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
+	}
+	var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
+	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+		deviceType=0;
+		deviceTypeStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").getValue();
+	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+		deviceType=1;
+		deviceTypeStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectDeviceType_Id").getValue();
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/realTimeMonitoringController/getRealTimeMonitoringCommStatusStatData',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(result.AlarmShowStyle));
+			initRealTimeMonitoringStatPieOrColChat(result);
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			orgId:orgId,
+			deviceType:deviceType,
+			deviceTypeStatValue:deviceTypeStatValue
+        }
+	});
+}
+
+
 function initRealTimeMonitoringStatPieOrColChat(get_rawData) {
 	var divid="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id";
 	var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
@@ -518,7 +556,7 @@ function initRealTimeMonitoringStatPieOrColChat(get_rawData) {
 	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 		divid="PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id";
 	}
-	var title="状态统计图";
+	var title="通信状态统计图";
 	var datalist=get_rawData.totalRoot;
 	
 	var pieDataStr="[";
@@ -577,37 +615,181 @@ function ShowRealTimeMonitoringStatPieOrColChat(title,divid, name, data,colors) 
 				},
 				events: {
 					click: function(e) {
-						var commStatus='all';
-						if(!e.point.selected){//如果没被选中,则本次是选中
-							if(e.point.name=='在线' || e.point.name=='上线'){
-								commStatus='online';
-							}else{
-								commStatus='offline';
-							}
-						}else{//取消选中
-							commStatus='all';
-						}
-						
-						var gridPanel_Id="PumpRealTimeMonitoringStatGridPanel_Id";
-						var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
-						var activeId = tabPanel.getActiveTab().id;
+						var statSelectCommStatusId="PumpRealTimeMonitoringStatSelectCommStatus_Id";
+						var deviceListComb_Id="RealTimeMonitoringPumpDeviceListComb_Id";
+						var gridPanel_Id="PumpRealTimeMonitoringListGridPanel_Id";
+						var store="AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore";
+						var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
 						if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
-							gridPanel_Id="PumpRealTimeMonitoringStatGridPanel_Id";
+							statSelectCommStatusId="PumpRealTimeMonitoringStatSelectCommStatus_Id";
+							deviceListComb_Id="RealTimeMonitoringPumpDeviceListComb_Id";
+							gridPanel_Id="PumpRealTimeMonitoringListGridPanel_Id";
+							store="AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore";
 						}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
-							gridPanel_Id="PipelineRealTimeMonitoringStatGridPanel_Id";
+							statSelectCommStatusId="PipelineRealTimeMonitoringStatSelectCommStatus_Id";
+							deviceListComb_Id="RealTimeMonitoringPipelineDeviceListComb_Id";
+							gridPanel_Id="PipelineRealTimeMonitoringListGridPanel_Id";
+							store="AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore";
 						}
 						
+						if(!e.point.selected){//如果没被选中,则本次是选中
+							Ext.getCmp(statSelectCommStatusId).setValue(e.point.name);
+						}else{//取消选中
+							Ext.getCmp(statSelectCommStatusId).setValue('');
+						}
+						
+						Ext.getCmp(deviceListComb_Id).setValue('');
+						Ext.getCmp(deviceListComb_Id).setRawValue('');
 						var gridPanel = Ext.getCmp(gridPanel_Id);
-						if(isNotVal(gridPanel)){
-							var store = gridPanel.getStore();
-							for(var i=0;i<store.getCount();i++){
-								var record=store.getAt(i);
-								if(record.data.itemCode==commStatus){
-									gridPanel.getSelectionModel().deselectAll(true);
-					            	gridPanel.getSelectionModel().select(i, true);
-									break;
-								}
-							}
+						if (isNotVal(gridPanel)) {
+							gridPanel.getSelectionModel().deselectAll(true);
+							gridPanel.getStore().load();
+						}else{
+							Ext.create(store);
+						}
+					}
+				},
+				showInLegend : true
+			}
+		},
+		exporting:{ 
+            enabled:true,    
+            filename:'class-booking-chart',    
+            url:context + '/exportHighcharsPicController/export'
+		},
+		series : [{
+					type : 'pie',
+					name : name,
+					data : data
+				}]
+		});
+};
+
+function loadAndInitDeviceTypeStat(all){
+	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+	var deviceType=0;
+	var commStatusStatValue='';
+	if(all){
+		Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+		Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
+	}
+	var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
+	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+		deviceType=0;
+		commStatusStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+		deviceType=1;
+		commStatusStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/realTimeMonitoringController/getRealTimeMonitoringDeviceTypeStatData',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(result.AlarmShowStyle));
+			initRealTimeMonitoringDeviceTypeStatPieOrColChat(result);
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			orgId:orgId,
+			deviceType:deviceType,
+			commStatusStatValue:commStatusStatValue
+        }
+	});
+}
+
+function initRealTimeMonitoringDeviceTypeStatPieOrColChat(get_rawData) {
+	var divid="PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id";
+	var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
+	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+		divid="PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id";
+	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+		divid="PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id";
+	}
+	var title="设备类型统计图";
+	var datalist=get_rawData.totalRoot;
+	
+	var pieDataStr="[";
+	for(var i=0;i<datalist.length;i++){
+		pieDataStr+="['"+datalist[i].item+"',"+datalist[i].count+"],";
+	}
+	
+	if(stringEndWith(pieDataStr,",")){
+		pieDataStr = pieDataStr.substring(0, pieDataStr.length - 1);
+	}
+	pieDataStr+="]";
+	var pieData = Ext.JSON.decode(pieDataStr);
+	var colors=["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
+	ShowRealTimeMonitoringDeviceTypeStatPieChat(title,divid, "设备数占", pieData,colors);
+}
+
+function ShowRealTimeMonitoringDeviceTypeStatPieChat(title,divid, name, data,colors) {
+	Highcharts.chart(divid, {
+		chart : {
+			plotBackgroundColor : null,
+			plotBorderWidth : null,
+			plotShadow : false
+		},
+		credits : {
+			enabled : false
+		},
+		title : {
+			text : title
+		},
+		colors : colors,
+		tooltip : {
+			pointFormat : '设备数: <b>{point.y}</b> 占: <b>{point.percentage:.1f}%</b>'
+		},
+		legend : {
+			align : 'center',
+			verticalAlign : 'bottom',
+			layout : 'horizontal' //vertical 竖直 horizontal-水平
+		},
+		plotOptions : {
+			pie : {
+				allowPointSelect : true,
+				cursor : 'pointer',
+				dataLabels : {
+					enabled : true,
+					color : '#000000',
+					connectorColor : '#000000',
+					format : '<b>{point.name}</b>: {point.y}台'
+				},
+				events: {
+					click: function(e) {
+						var statSelectDeviceType_Id="PumpRealTimeMonitoringStatSelectDeviceType_Id";
+						var deviceListComb_Id="RealTimeMonitoringPumpDeviceListComb_Id";
+						var gridPanel_Id="PumpRealTimeMonitoringListGridPanel_Id";
+						var store="AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore";
+						var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
+						if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+							statSelectDeviceType_Id="PumpRealTimeMonitoringStatSelectDeviceType_Id";
+							deviceListComb_Id="RealTimeMonitoringPumpDeviceListComb_Id";
+							gridPanel_Id="PumpRealTimeMonitoringListGridPanel_Id";
+							store="AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore";
+						}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+							statSelectDeviceType_Id="PipelineRealTimeMonitoringStatSelectDeviceType_Id";
+							deviceListComb_Id="RealTimeMonitoringPipelineDeviceListComb_Id";
+							gridPanel_Id="PipelineRealTimeMonitoringListGridPanel_Id";
+							store="AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore";
+						}
+						
+						if(!e.point.selected){//如果没被选中,则本次是选中
+							Ext.getCmp(statSelectDeviceType_Id).setValue(e.point.name);
+						}else{//取消选中
+							Ext.getCmp(statSelectDeviceType_Id).setValue('');
+						}
+						
+						Ext.getCmp(deviceListComb_Id).setValue('');
+						Ext.getCmp(deviceListComb_Id).setRawValue('');
+						var gridPanel = Ext.getCmp(gridPanel_Id);
+						if (isNotVal(gridPanel)) {
+							gridPanel.getSelectionModel().deselectAll(true);
+							gridPanel.getStore().load();
+						}else{
+							Ext.create(store);
 						}
 					}
 				},
