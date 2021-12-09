@@ -149,41 +149,41 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'隔膜泵设备列表',
-            	html: '<div class="DiaphragmPumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpDeviceTableDiv_id"></div></div>',
-                listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (diaphragmPumpDeviceInfoHandsontableHelper != null && diaphragmPumpDeviceInfoHandsontableHelper.hot != null && diaphragmPumpDeviceInfoHandsontableHelper.hot != undefined) {
-                        	CreateAndLoadDiaphragmPumpDeviceInfoTable();
+            	layout: 'border',
+            	items: [{
+            		region: 'center',
+            		title:'隔膜泵设备列表',
+                	html: '<div class="DiaphragmPumpDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpDeviceTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            if (diaphragmPumpDeviceInfoHandsontableHelper != null && diaphragmPumpDeviceInfoHandsontableHelper.hot != null && diaphragmPumpDeviceInfoHandsontableHelper.hot != undefined) {
+                            	CreateAndLoadDiaphragmPumpDeviceInfoTable();
+                            }
                         }
                     }
-                }
-            },{
-            	region: 'east',
-                width: '45%',
-                layout: 'border',
-                header: false,
-                split: true,
-                items: [{
-                	region: 'center',
-                	title:'设备附加信息',
+            	},{
+            		region: 'east',
+            		width: '33%',
+            		title:'设备附加信息',
                 	id:'DiaphragmPumpAdditionalInfoPanel_Id',
+                	split: true,
+                	collapsible: true,
                 	html: '<div class="DiaphragmPumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
                     }
-                },{
-                	region: 'east',
-                    width: '40%',
-                    title:'辅件设备列表',
-                    id:'DiaphragmPumpAuxiliaryDevicePanel_Id',
-                    split: false,
-                    collapsible: false,
-                    html: '<div class="DiaphragmPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpAuxiliaryDeviceTableDiv_id"></div></div>',
-                    listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
-                    }
-                }]
+            	}]
+            },{
+            	region: 'east',
+                width: '18%',
+                title:'辅件设备列表',
+                id:'DiaphragmPumpAuxiliaryDevicePanel_Id',
+                split: true,
+                collapsible: true,
+                html: '<div class="DiaphragmPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="DiaphragmPumpAuxiliaryDeviceTableDiv_id"></div></div>',
+                listeners: {
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                }
             }],
             listeners: {
                 beforeclose: function (panel, eOpts) {

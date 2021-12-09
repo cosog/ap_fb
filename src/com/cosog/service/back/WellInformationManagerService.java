@@ -506,7 +506,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		
 		String columns=service.showTableHeadersColumns(ddicName);
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,"
 				+ " videoUrl,sortNum"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
@@ -566,15 +565,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"alarmInstanceName\":\""+obj[5]+"\",");
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
-			
-			result_json.append("\"factoryNumber\":\""+obj[8]+"\",");
-			result_json.append("\"model\":\""+obj[9]+"\",");
-			result_json.append("\"productionDate\":\""+obj[10]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[11]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[12]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[13]+"\",");
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
@@ -604,7 +596,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,"
 				+ " videoUrl,sortNum"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
@@ -627,15 +618,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"alarmInstanceName\":\""+obj[5]+"\",");
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
-			
-			result_json.append("\"factoryNumber\":\""+obj[8]+"\",");
-			result_json.append("\"model\":\""+obj[9]+"\",");
-			result_json.append("\"productionDate\":\""+obj[10]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[11]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[12]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[13]+"\",");
-			result_json.append("\"videoUrl\":\""+obj[14]+"\",");
-			result_json.append("\"sortNum\":\""+obj[15]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
@@ -672,7 +656,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		
 		String columns=service.showTableHeadersColumns(ddicName);
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
@@ -736,18 +719,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"alarmInstanceName\":\""+obj[5]+"\",");
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
-			
-			result_json.append("\"factoryNumber\":\""+obj[8]+"\",");
-			result_json.append("\"model\":\""+obj[9]+"\",");
-			result_json.append("\"productionDate\":\""+obj[10]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[11]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[12]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[13]+"\",");
-			
-			result_json.append("\"pipelineLength\":\""+obj[14]+"\",");
-			
-			result_json.append("\"videoUrl\":\""+obj[15]+"\",");
-			result_json.append("\"sortNum\":\""+obj[16]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");
@@ -772,7 +745,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,t.pipelinelength,"
 				+ " videoUrl,sortNum"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
@@ -797,18 +769,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"alarmInstanceName\":\""+obj[5]+"\",");
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
-			
-			result_json.append("\"factoryNumber\":\""+obj[8]+"\",");
-			result_json.append("\"model\":\""+obj[9]+"\",");
-			result_json.append("\"productionDate\":\""+obj[10]+"\",");
-			result_json.append("\"deliveryDate\":\""+obj[11]+"\",");
-			result_json.append("\"commissioningDate\":\""+obj[12]+"\",");
-			result_json.append("\"controlcabinetDodel\":\""+obj[13]+"\",");
-			
-			result_json.append("\"pipelineLength\":\""+obj[14]+"\",");
-			
-			result_json.append("\"videoUrl\":\""+obj[15]+"\",");
-			result_json.append("\"sortNum\":\""+obj[16]+"\"},");
+			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
 			result_json.append("{\"jlbh\":\"-99999\",\"id\":\"-99999\"},");

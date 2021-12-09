@@ -101,6 +101,120 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
+	public String getRealTimeMonitoringCommStatusStatData(String orgId,String deviceType,String deviceTypeStatValue) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String tableName="tbl_pumpacqdata_latest";
+		String deviceTableName="viw_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			tableName="tbl_pipelineacqdata_latest";
+			deviceTableName="viw_pipelinedevice";
+		}
+		
+		String sql="select t.commstatus,count(1) from "+tableName+" t,"+deviceTableName+" t2 where  t.wellid=t2.id and t2.orgid in("+orgId+") ";
+		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
+			sql+=" and t2.devicetypename='"+deviceTypeStatValue+"'";
+		}
+		sql+=" group by t.commstatus";
+		
+		List<?> list = this.findCallSql(sql);
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"item\",children:[] },"
+				+ "{ \"header\":\"变量\",\"dataIndex\":\"count\",children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalCount\":3,");
+		
+		int total=0,online=0,offline=0;
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			if(StringManagerUtils.stringToInteger(obj[0]+"")==1){
+				online=StringManagerUtils.stringToInteger(obj[1]+"");
+			}else{
+				offline=StringManagerUtils.stringToInteger(obj[1]+"");
+			}
+		}
+		total=online+offline;
+		result_json.append("{\"id\":1,");
+		result_json.append("\"item\":\"全部\",");
+		result_json.append("\"itemCode\":\"all\",");
+		result_json.append("\"count\":"+total+"},");
+		
+		result_json.append("{\"id\":2,");
+		result_json.append("\"item\":\"在线\",");
+		result_json.append("\"itemCode\":\"online\",");
+		result_json.append("\"count\":"+online+"},");
+		
+		result_json.append("{\"id\":3,");
+		result_json.append("\"item\":\"离线\",");
+		result_json.append("\"itemCode\":\"offline\",");
+		result_json.append("\"count\":"+offline+"}");
+		result_json.append("]");
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getRealTimeMonitoringDeviceTypeStatData(String orgId,String deviceType,String commStatusStatValue) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String tableName="tbl_pumpacqdata_latest";
+		String deviceTableName="viw_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			tableName="tbl_pipelineacqdata_latest";
+			deviceTableName="viw_pipelinedevice";
+		}
+		
+		String sql="select t.devicetypename,t.devicetype,count(1) from "+deviceTableName+" t "
+				+ " left outer join "+tableName+" t2 on t.id=t2.wellid "
+				+ " where t.orgid in("+orgId+") ";
+		
+		
+		
+		if(StringManagerUtils.isNotNull(commStatusStatValue)){
+			sql+=" and decode(t2.commstatus,1,'在线','离线')='"+commStatusStatValue+"'";
+		}
+		sql+=" group by t.devicetypename,t.devicetype";
+		sql+=" order by t.devicetype";
+		
+		List<?> list = this.findCallSql(sql);
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"item\",children:[] },"
+				+ "{ \"header\":\"变量\",\"dataIndex\":\"count\",children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalCount\":"+list.size()+",");
+		
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			result_json.append("{\"id\":"+(i+1)+",");
+			result_json.append("\"item\":\""+obj[0]+"\",");
+			result_json.append("\"itemCode\":\""+obj[1]+"\",");
+			result_json.append("\"count\":"+obj[2]+"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
 	public String getDeviceRealTimeCommStatusStat(String orgId,String deviceType) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -139,7 +253,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,String commStatus,Page pager) throws IOException, SQLException{
+	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
@@ -219,14 +333,16 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " left outer join tbl_code c1 on c1.itemcode='DEVICETYPE' and t.devicetype=c1.itemvalue "
 				+ " where  t.orgid in ("+orgId+") ";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
 		}
-		if("online".equalsIgnoreCase(commStatus)){
-			sql+=" and t2.commstatus=1";
-		}else if("offline".equalsIgnoreCase(commStatus)){
-			sql+=" and t2.commstatus=0";
+		if(StringManagerUtils.isNotNull(commStatusStatValue)){
+			sql+=" and decode(t2.commstatus,1,'在线','离线')='"+commStatusStatValue+"'";
+		}
+		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
+			sql+=" and c1.itemname='"+deviceTypeStatValue+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
 		
@@ -822,13 +938,17 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("{ \"success\":true,\"isControl\":"+isControl+",");
 		List<?> list = this.findCallSql(sql);
 		if(list.size()>0){
-			Object[] obj=(Object[]) list.get(0);
-			result_json.append("\"commStatus\":\""+obj[0]+"\",");
-			for(int i=0;i<controlColumns.size();i++){
-				deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[1+i]+"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
-			}
-			if(deviceControlList.toString().endsWith(",")){
-				deviceControlList.deleteCharAt(deviceControlList.length() - 1);
+			if(controlColumns.size()>0){
+				Object[] obj=(Object[]) list.get(0);
+				result_json.append("\"commStatus\":\""+obj[0]+"\",");
+				for(int i=0;i<controlColumns.size();i++){
+					deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[1+i]+"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
+				}
+				if(deviceControlList.toString().endsWith(",")){
+					deviceControlList.deleteCharAt(deviceControlList.length() - 1);
+				}
+			}else{
+				result_json.append("\"commStatus\":\""+list.get(0)+"\",");
 			}
 		}
 		deviceInfoDataList.append("]");

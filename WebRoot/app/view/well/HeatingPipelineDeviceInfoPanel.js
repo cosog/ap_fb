@@ -1,6 +1,7 @@
 //加热管
 var heatingPipelineDeviceInfoHandsontableHelper = null;
 var heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = null;
+var heatingPipelineAdditionalInfoHandsontableHelper = null;
 Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.heatingPipelineDeviceInfoPanel',
@@ -33,7 +34,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
             listeners: {
                 beforeload: function (store, options) {
                     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellName = Ext.getCmp('heatingPipelineDeviceComb_Id').getValue();
+                    var wellName = Ext.getCmp('heatingPipelineDeviceListComb_Id').getValue();
                     var new_params = {
                         orgId: leftOrg_Id,
                         deviceType: 201,
@@ -44,10 +45,10 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
             }
         });
 
-        var heatingPipelineCombo = Ext.create(
+        var heatingPipelineDeviceCombo = Ext.create(
             'Ext.form.field.ComboBox', {
                 fieldLabel: cosog.string.wellName,
-                id: "heatingPipelineDeviceComb_Id",
+                id: "heatingPipelineDeviceListComb_Id",
                 labelWidth: 35,
                 width: 145,
                 labelAlign: 'left',
@@ -65,15 +66,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                 blankText: cosog.string.all,
                 listeners: {
                     expand: function (sm, selections) {
-                        heatingPipelineCombo.getStore().loadPage(1); // 加载井下拉框的store
-                    },
-                    afterRender: function (combo, o) {
-                        if (heatingPipelineCombStore.getTotalCount() > 0) {
-                            var boxkey = heatingPipelineCombStore.data.items[0].data.boxkey;
-                            var boxval = heatingPipelineCombStore.data.items[0].data.boxval;
-                            combo.setValue(boxkey);
-                            combo.setRawValue(boxval);
-                        }
+                        heatingPipelineDeviceCombo.getStore().loadPage(1); // 加载井下拉框的store
                     },
                     select: function (combo, record, index) {
                         try {
@@ -84,9 +77,8 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                     }
                 }
             });
-
         Ext.apply(this, {
-            tbar: [heatingPipelineCombo, '-', {
+            tbar: [heatingPipelineDeviceCombo, '-', {
                 id: 'HeatingPipelineDeviceTotalCount_Id',
                 xtype: 'component',
                 hidden: false,
@@ -106,7 +98,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                     var fields = "";
                     var heads = "";
                     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-                    var wellInformationName = Ext.getCmp('heatingPipelineDeviceComb_Id').getValue();
+                    var wellInformationName = Ext.getCmp('heatingPipelineDeviceListComb_Id').getValue();
                     var url = context + '/wellInformationManagerController/exportWellInformationData';
                     for (var i = 0; i < heatingPipelineDeviceInfoHandsontableHelper.colHeaders.length; i++) {
                         fields += heatingPipelineDeviceInfoHandsontableHelper.columns[i].data + ",";
@@ -129,7 +121,6 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                 handler: function (v, o) {
                     CreateAndLoadHeatingPipelineDeviceInfoTable();
                 }
-
             }, '-', {
                 xtype: 'button',
                 itemId: 'saveHeatingPipelineDeviceDataBtnId',
@@ -158,30 +149,40 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
             layout: 'border',
             items: [{
             	region: 'center',
-            	title:'设备列表',
-            	html: '<div class="HeatingPipelineDeviceContainer" style="width:100%;height:100%;"><div class="con" id="HeatingPipelineDeviceTableDiv_id"></div></div>',
-                listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                    	if (heatingPipelineDeviceInfoHandsontableHelper != null && heatingPipelineDeviceInfoHandsontableHelper.hot != null && heatingPipelineDeviceInfoHandsontableHelper.hot != undefined) {
-                            CreateAndLoadHeatingPipelineDeviceInfoTable();
+            	layout: 'border',
+            	items: [{
+            		region: 'center',
+            		title:'加热管设备列表',
+                	html: '<div class="HeatingPipelineDeviceContainer" style="width:100%;height:100%;"><div class="con" id="HeatingPipelineDeviceTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            if (heatingPipelineDeviceInfoHandsontableHelper != null && heatingPipelineDeviceInfoHandsontableHelper.hot != null && heatingPipelineDeviceInfoHandsontableHelper.hot != undefined) {
+                            	CreateAndLoadHeatingPipelineDeviceInfoTable();
+                            }
                         }
                     }
-                }
+            	},{
+            		region: 'east',
+            		width: '33%',
+            		title:'设备附加信息',
+                	id:'HeatingPipelineAdditionalInfoPanel_Id',
+                	split: true,
+                	collapsible: true,
+                	html: '<div class="HeatingPipelineAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="HeatingPipelineAdditionalInfoTableDiv_id"></div></div>',
+                    listeners: {
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    }
+            	}]
             },{
             	region: 'east',
-                width: '20%',
+                width: '18%',
                 title:'辅件设备列表',
                 id:'HeatingPipelineAuxiliaryDevicePanel_Id',
-                autoScroll: true,
                 split: true,
                 collapsible: true,
                 html: '<div class="HeatingPipelineAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="HeatingPipelineAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                        if (heatingPipelineAuxiliaryDeviceInfoHandsontableHelper != null && heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != null && heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-//                            CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable();
-                        }
-                    }
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
                 }
             }],
             listeners: {
@@ -202,7 +203,7 @@ function CreateAndLoadHeatingPipelineDeviceInfoTable(isNew) {
 		heatingPipelineDeviceInfoHandsontableHelper = null;
 	}
     var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-    var wellInformationName_Id = Ext.getCmp('heatingPipelineDeviceComb_Id').getValue();
+    var wellInformationName_Id = Ext.getCmp('heatingPipelineDeviceListComb_Id').getValue();
     Ext.Ajax.request({
         method: 'POST',
         url: context + '/wellInformationManagerController/doWellInformationShow',
@@ -243,7 +244,7 @@ function CreateAndLoadHeatingPipelineDeviceInfoTable(isNew) {
                         }
                         source += "]";
                         columns += "{data:'" + result.columns[i].dataIndex + "',type:'dropdown',strict:true,allowInvalid:false,source:" + source + "}";
-                    } else if (result.columns[i].dataIndex.toUpperCase() === "applicationScenariosName".toUpperCase()) {
+                    }else if (result.columns[i].dataIndex.toUpperCase() === "applicationScenariosName".toUpperCase()) {
                         var source = "[";
                         for (var j = 0; j < result.applicationScenariosDropdownData.length; j++) {
                             source += "\'" + result.applicationScenariosDropdownData[j] + "\'";
@@ -271,18 +272,19 @@ function CreateAndLoadHeatingPipelineDeviceInfoTable(isNew) {
             } else {
                 heatingPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
-            Ext.getCmp("HeatingPipelineDeviceTotalCount_Id").update({
-                count: result.totalCount
-            });
-            
             if(result.totalRoot.length==0){
             	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue('');
             	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable();
+            	CreateAndLoadHeatingPipelineAdditionalInfoTable();
             }else{
             	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue(0);
             	var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
             	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(rowdata[2]);
+            	CreateAndLoadHeatingPipelineAdditionalInfoTable(rowdata[2]);
             }
+            Ext.getCmp("HeatingPipelineDeviceTotalCount_Id").update({
+                count: result.totalCount
+            });
         },
         failure: function () {
             Ext.MessageBox.alert("错误", "与后台联系的时候出了问题");
@@ -386,11 +388,13 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue(row);
                 	var row1=heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
                 	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(row1[2]);
+                	CreateAndLoadHeatingPipelineAdditionalInfoTable(row1[2]);
                 },
                 afterDestroy: function () {
                 },
                 beforeRemoveRow: function (index, amount) {
                     var ids = [];
+                    //封装id成array传入后台
                     if (amount != 0) {
                         for (var i = index; i < amount + index; i++) {
                             var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
@@ -401,7 +405,13 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                     }
                 },
                 afterChange: function (changes, source) {
+                    //params 参数 1.column num , 2,id, 3,oldvalue , 4.newvalue
                     if (changes != null) {
+//                        var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+//                        if (IframeViewSelection.length > 0 && IframeViewSelection[0].isLeaf()) {} else {
+//                            Ext.MessageBox.alert("信息", "编辑前，请先在左侧选择对应组织节点");
+//                        }
+
                         for (var i = 0; i < changes.length; i++) {
                             var params = [];
                             var index = changes[i][0]; //行号码
@@ -419,6 +429,8 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                             if (params[1] == "protocolName" && params[3] == "Kafka协议") {
                                 heatingPipelineDeviceInfoHandsontableHelper.hot.getCell(index, 6).source = ['modbus-tcp', 'modbus-rtu'];
                             }
+
+                            //仅当单元格发生改变的时候,id!=null,说明是更新
                             if (params[2] != params[3] && params[0] != null && params[0] > 0) {
                                 var data = "{";
                                 for (var j = 0; j < heatingPipelineDeviceInfoHandsontableHelper.columns.length; j++) {
@@ -431,6 +443,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                                 heatingPipelineDeviceInfoHandsontableHelper.updateExpressCount(Ext.JSON.decode(data));
                             }
                         }
+                    
                     }
                 }
             });
@@ -439,8 +452,11 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
         heatingPipelineDeviceInfoHandsontableHelper.insertExpressCount = function () {
             var idsdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtCol(0); //所有的id
             for (var i = 0; i < idsdata.length; i++) {
+                //id=null时,是插入数据,此时的i正好是行号
                 if (idsdata[i] == null || idsdata[i] < 0) {
+                    //获得id=null时的所有数据封装进data
                     var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+                    //var collength = hot.countCols();
                     if (rowdata != null) {
                         var data = "{";
                         for (var j = 0; j < heatingPipelineDeviceInfoHandsontableHelper.columns.length; j++) {
@@ -462,7 +478,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
         heatingPipelineDeviceInfoHandsontableHelper.saveData = function () {
         	var leftOrg_Name=Ext.getCmp("leftOrg_Name").getValue();
         	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
-        	//插入的数据的获取
+            //插入的数据的获取
             heatingPipelineDeviceInfoHandsontableHelper.insertExpressCount();
             //获取辅件配置数据
             var deviceAuxiliaryData={};
@@ -473,14 +489,31 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
             	if(isNotVal(deviceName)){
                 	deviceAuxiliaryData.deviceType=201;
                 	deviceAuxiliaryData.deviceName=deviceName;
+                	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
-                	var auxiliaryDeviceData=heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
-                	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
-                        if (auxiliaryDeviceData[index][0]) {
-                        	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
-                        	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
-                        }
-                    });
+                	if(heatingPipelineAuxiliaryDeviceInfoHandsontableHelper!=null && heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
+                		var auxiliaryDeviceData=heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(auxiliaryDeviceData, function (name, index, countriesItSelf) {
+                            if (auxiliaryDeviceData[index][0]) {
+                            	var auxiliaryDeviceId = auxiliaryDeviceData[index][4];
+                            	deviceAuxiliaryData.auxiliaryDevice.push(auxiliaryDeviceId);
+                            }
+                        });
+                	}
+                	//附加信息
+                	deviceAuxiliaryData.additionalInfoList=[];
+                	if(heatingPipelineAdditionalInfoHandsontableHelper!=null && heatingPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
+                		var additionalInfoData=heatingPipelineAdditionalInfoHandsontableHelper.hot.getData();
+                    	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
+                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                            	var additionalInfo={};
+                            	additionalInfo.itemName=additionalInfoData[index][1];
+                            	additionalInfo.itemValue=additionalInfoData[index][2];
+                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
+                            }
+                        });
+                	}
             	}
             }
             
@@ -536,7 +569,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                     success: function (response) {
                         rdata = Ext.JSON.decode(response.responseText);
                         if (rdata.success) {
-                        	if(invalidData1.length>0 || invalidData2.length>0){
+                            if(invalidData1.length>0 || invalidData2.length>0){
                         		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
                         	}else{
                         		Ext.MessageBox.alert("信息", "保存成功");
@@ -546,6 +579,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                             CreateAndLoadHeatingPipelineDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
+
                         }
                     },
                     failure: function () {
@@ -553,7 +587,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                         heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
                     },
                     params: {
-                    	data: JSON.stringify(saveData),
+                        data: JSON.stringify(saveData),
                         deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
                         orgId: leftOrg_Id,
                         deviceType: 201
@@ -566,12 +600,18 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                     Ext.MessageBox.alert("信息", "无数据变化");
                 }
             }
+        
+            
+            
+
         }
 
         //修改井名
         heatingPipelineDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
+
             if (heatingPipelineDeviceInfoHandsontableHelper.editWellNameList.length > 0 && heatingPipelineDeviceInfoHandsontableHelper.validresult) {
+                //	            	alert(JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -583,6 +623,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                             CreateAndLoadHeatingPipelineDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
+
                         }
                     },
                     failure: function () {
@@ -602,6 +643,8 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 }
             }
         }
+
+
         //删除的优先级最高
         heatingPipelineDeviceInfoHandsontableHelper.delExpressCount = function (ids) {
             //传入的ids.length不可能为0
@@ -612,6 +655,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
             });
             heatingPipelineDeviceInfoHandsontableHelper.AllData.delidslist = heatingPipelineDeviceInfoHandsontableHelper.delidslist;
         }
+
         //updatelist数据更新
         heatingPipelineDeviceInfoHandsontableHelper.screening = function () {
             if (heatingPipelineDeviceInfoHandsontableHelper.updatelist.length != 0 && heatingPipelineDeviceInfoHandsontableHelper.delidslist.lentgh != 0) {
@@ -627,6 +671,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist = heatingPipelineDeviceInfoHandsontableHelper.updatelist;
             }
         }
+
         //更新数据
         heatingPipelineDeviceInfoHandsontableHelper.updateExpressCount = function (data) {
             if (JSON.stringify(data) != "{}") {
@@ -764,3 +809,131 @@ var HeatingPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	        return heatingPipelineAuxiliaryDeviceInfoHandsontableHelper;
 	    }
 };
+
+function CreateAndLoadHeatingPipelineAdditionalInfoTable(heatingPipelineDeviceName,isNew){
+	if(isNew&&heatingPipelineAdditionalInfoHandsontableHelper!=null){
+		if(heatingPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
+			heatingPipelineAdditionalInfoHandsontableHelper.hot.destroy();
+		}
+		heatingPipelineAdditionalInfoHandsontableHelper=null;
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			if(!isNotVal(heatingPipelineDeviceName)){
+				heatingPipelineDeviceName='';
+			}
+			Ext.getCmp("HeatingPipelineAdditionalInfoPanel_Id").setTitle(heatingPipelineDeviceName+"附加信息");
+			if(heatingPipelineAdditionalInfoHandsontableHelper==null || heatingPipelineAdditionalInfoHandsontableHelper.hot==undefined){
+				heatingPipelineAdditionalInfoHandsontableHelper = HeatingPipelineAdditionalInfoHandsontableHelper.createNew("HeatingPipelineAdditionalInfoTableDiv_id");
+				var colHeaders="['序号','名称','值','单位']";
+				var columns="[{data:'id'},{data:'itemName'},{data:'itemValue'},{data:'itemUnit'}]";
+				
+				heatingPipelineAdditionalInfoHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
+				heatingPipelineAdditionalInfoHandsontableHelper.columns=Ext.JSON.decode(columns);
+				if(result.totalRoot.length==0){
+					heatingPipelineAdditionalInfoHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					heatingPipelineAdditionalInfoHandsontableHelper.createTable(result.totalRoot);
+				}
+			}else{
+				if(result.totalRoot.length==0){
+					heatingPipelineAdditionalInfoHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+				}else{
+					heatingPipelineAdditionalInfoHandsontableHelper.hot.loadData(result.totalRoot);
+				}
+			}
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			deviceName:heatingPipelineDeviceName,
+			deviceType:201
+        }
+	});
+};
+
+var HeatingPipelineAdditionalInfoHandsontableHelper = {
+	    createNew: function (divid) {
+	        var heatingPipelineAdditionalInfoHandsontableHelper = {};
+	        heatingPipelineAdditionalInfoHandsontableHelper.hot = '';
+	        heatingPipelineAdditionalInfoHandsontableHelper.divid = divid;
+	        heatingPipelineAdditionalInfoHandsontableHelper.colHeaders = [];
+	        heatingPipelineAdditionalInfoHandsontableHelper.columns = [];
+	        heatingPipelineAdditionalInfoHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
+	            Handsontable.renderers.TextRenderer.apply(this, arguments);
+	            td.style.backgroundColor = 'rgb(242, 242, 242)';
+	        }
+
+	        heatingPipelineAdditionalInfoHandsontableHelper.createTable = function (data) {
+	            $('#' + heatingPipelineAdditionalInfoHandsontableHelper.divid).empty();
+	            var hotElement = document.querySelector('#' + heatingPipelineAdditionalInfoHandsontableHelper.divid);
+	            heatingPipelineAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	                data: data,
+	                hiddenColumns: {
+	                    columns: [0],
+	                    indicators: true
+	                },
+	                columns: heatingPipelineAdditionalInfoHandsontableHelper.columns,
+	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
+	                autoWrapRow: true,
+	                rowHeaders: true, //显示行头
+	                colHeaders: heatingPipelineAdditionalInfoHandsontableHelper.colHeaders, //显示列头
+	                columnSorting: true, //允许排序
+	                contextMenu: {
+	                    items: {
+	                        "row_above": {
+	                            name: '向上插入一行',
+	                        },
+	                        "row_below": {
+	                            name: '向下插入一行',
+	                        },
+	                        "col_left": {
+	                            name: '向左插入一列',
+	                        },
+	                        "col_right": {
+	                            name: '向右插入一列',
+	                        },
+	                        "remove_row": {
+	                            name: '删除行',
+	                        },
+	                        "remove_col": {
+	                            name: '删除列',
+	                        },
+	                        "merge_cell": {
+	                            name: '合并单元格',
+	                        },
+	                        "copy": {
+	                            name: '复制',
+	                        },
+	                        "cut": {
+	                            name: '剪切',
+	                        },
+	                        "paste": {
+	                            name: '粘贴',
+	                            disabled: function () {
+	                            },
+	                            callback: function () {
+	                            }
+	                        }
+	                    }
+	                }, 
+	                sortIndicator: true,
+	                manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
+	                filters: true,
+	                renderAllRows: true,
+	                search: true,
+	                cells: function (row, col, prop) {
+	                    var cellProperties = {};
+	                    var visualRowIndex = this.instance.toVisualRow(row);
+	                    var visualColIndex = this.instance.toVisualColumn(col);
+	                }
+	            });
+	        }
+	        return heatingPipelineAdditionalInfoHandsontableHelper;
+	    }
+	};

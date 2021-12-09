@@ -49,11 +49,9 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                     columns: newColumns,
                     listeners: {
                     	selectionchange: function (view, selected, o) {
-//                    		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
                     	},
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
-//                    		Ext.getCmp("PumpRealTimeMonitoringSelectedCurve_Id").setValue('');
                     		var deviceName=record.data.wellName;
                     		var deviceType=0;
                     		var tabPanel = Ext.getCmp("PumpRealTimeMonitoringCurveAndTableTabPanel");
@@ -74,9 +72,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                 PumpRealTimeMonitoringInfoDeviceListPanel.add(gridPanel);
             }
             if(get_rawData.totalCount>0){
-//            	if(gridPanel.getSelectionModel().getSelection().length>0){
-//            		gridPanel.getSelectionModel().deselectAll(true);
-//            	}
             	gridPanel.getSelectionModel().select(0, true);
             }else{
             	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper!=null){
@@ -97,12 +92,14 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceName=Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').getValue();
-        	var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+        	var commStatusStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+        	var deviceTypeStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:0,
                     deviceName:deviceName,
-                    commStatus:commStatus
+                    commStatusStatValue:commStatusStatValue,
+                    deviceTypeStatValue:deviceTypeStatValue
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

@@ -99,6 +99,12 @@ Ext.define("AP.view.well.PumpDeviceInfoPanel", {
                             }
                             screwPumpAuxiliaryDeviceInfoHandsontableHelper = null;
                         }
+                        if (screwPumpAdditionalInfoHandsontableHelper != null) {
+                            if (screwPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	screwPumpAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            screwPumpAdditionalInfoHandsontableHelper = null;
+                        }
                         //直线电机泵
                         if (linearMotorPumpDeviceInfoHandsontableHelper != null) {
                             if (linearMotorPumpDeviceInfoHandsontableHelper.hot != undefined) {
@@ -111,6 +117,12 @@ Ext.define("AP.view.well.PumpDeviceInfoPanel", {
                             	linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
                             }
                             linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        if (linearMotorPumpAdditionalInfoHandsontableHelper != null) {
+                            if (linearMotorPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	linearMotorPumpAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            linearMotorPumpAdditionalInfoHandsontableHelper = null;
                         }
                         //电潜泵
                         if (electricSubmersiblePumpDeviceInfoHandsontableHelper != null) {
@@ -125,6 +137,12 @@ Ext.define("AP.view.well.PumpDeviceInfoPanel", {
                             }
                             electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = null;
                         }
+                        if (electricSubmersiblePumpAdditionalInfoHandsontableHelper != null) {
+                            if (electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            electricSubmersiblePumpAdditionalInfoHandsontableHelper = null;
+                        }
                         //射流泵
                         if (jetPumpDeviceInfoHandsontableHelper != null) {
                             if (jetPumpDeviceInfoHandsontableHelper.hot != undefined) {
@@ -137,6 +155,12 @@ Ext.define("AP.view.well.PumpDeviceInfoPanel", {
                             	jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
                             }
                             jetPumpAuxiliaryDeviceInfoHandsontableHelper = null;
+                        }
+                        if (jetPumpAdditionalInfoHandsontableHelper != null) {
+                            if (jetPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	jetPumpAdditionalInfoHandsontableHelper.hot.destroy();
+                            }
+                            jetPumpAdditionalInfoHandsontableHelper = null;
                         }
         			}
             	}

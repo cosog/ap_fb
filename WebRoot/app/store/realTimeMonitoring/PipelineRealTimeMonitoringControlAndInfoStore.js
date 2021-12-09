@@ -25,10 +25,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         	var auxiliaryDeviceList=get_rawData.auxiliaryDeviceList;
         	var deviceControlList=get_rawData.deviceControlList;
         	
-        	//设备信息
+        	//设备附加信息
         	var deviceInfoDataStr="{\"items\":[";
         	for(var i=0;i<deviceInfoDataList.length;i++){
-        		deviceInfoDataStr+="{\"item\":\""+deviceInfoDataList[i].title+"\",\"itemcode\":\""+deviceInfoDataList[i].name+"\",\"value\":\""+deviceInfoDataList[i].value+"\"},";
+        		deviceInfoDataStr+="{\"item\":\""+deviceInfoDataList[i].name+"\",\"value\":\""+deviceInfoDataList[i].value+"\"},";
         	}
         	if(stringEndWith(deviceInfoDataStr,",")){
         		deviceInfoDataStr = deviceInfoDataStr.substring(0, deviceInfoDataStr.length - 1);
@@ -51,6 +51,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		if(!isNotVal(deviceInfoGridPanel)){
     			deviceInfoGridPanel=Ext.create('Ext.grid.Panel', {
     				id:'PipelineRealTimeMonitoringDeviceInfoDataGridPanel_Id',
+    				title:'附加信息',
     				border: false,
     				columnLines: true,
     				forceFit: false,
