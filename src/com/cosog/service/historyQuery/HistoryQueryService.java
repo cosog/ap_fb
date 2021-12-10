@@ -31,7 +31,123 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getHistoryQueryDeviceList(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+	public String getHistoryQueryCommStatusStatData(String orgId,String deviceType,String deviceTypeStatValue) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String tableName="tbl_pumpacqdata_latest";
+		String deviceTableName="viw_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			tableName="tbl_pipelineacqdata_latest";
+			deviceTableName="viw_pipelinedevice";
+		}
+		
+		String sql="select t2.commstatus,count(1) from "+deviceTableName+" t "
+				+ " left outer join "+tableName+" t2 on  t2.wellid=t.id "
+				+ " where t.orgid in("+orgId+") ";
+		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
+			sql+=" and t.devicetypename='"+deviceTypeStatValue+"'";
+		}
+		sql+=" group by t2.commstatus";
+		
+		List<?> list = this.findCallSql(sql);
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"item\",children:[] },"
+				+ "{ \"header\":\"变量\",\"dataIndex\":\"count\",children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalCount\":3,");
+		
+		int total=0,online=0,offline=0;
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			if(StringManagerUtils.stringToInteger(obj[0]+"")==1){
+				online=StringManagerUtils.stringToInteger(obj[1]+"");
+			}else{
+				offline=StringManagerUtils.stringToInteger(obj[1]+"");
+			}
+		}
+		total=online+offline;
+		result_json.append("{\"id\":1,");
+		result_json.append("\"item\":\"全部\",");
+		result_json.append("\"itemCode\":\"all\",");
+		result_json.append("\"count\":"+total+"},");
+		
+		result_json.append("{\"id\":2,");
+		result_json.append("\"item\":\"在线\",");
+		result_json.append("\"itemCode\":\"online\",");
+		result_json.append("\"count\":"+online+"},");
+		
+		result_json.append("{\"id\":3,");
+		result_json.append("\"item\":\"离线\",");
+		result_json.append("\"itemCode\":\"offline\",");
+		result_json.append("\"count\":"+offline+"}");
+		result_json.append("]");
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getHistoryQueryDeviceTypeStatData(String orgId,String deviceType,String commStatusStatValue) throws IOException, SQLException{
+		StringBuffer result_json = new StringBuffer();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
+		String tableName="tbl_pumpacqdata_latest";
+		String deviceTableName="viw_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			tableName="tbl_pipelineacqdata_latest";
+			deviceTableName="viw_pipelinedevice";
+		}
+		
+		String sql="select t.devicetypename,t.devicetype,count(1) from "+deviceTableName+" t "
+				+ " left outer join "+tableName+" t2 on t.id=t2.wellid "
+				+ " where t.orgid in("+orgId+") ";
+		
+		
+		
+		if(StringManagerUtils.isNotNull(commStatusStatValue)){
+			sql+=" and decode(t2.commstatus,1,'在线','离线')='"+commStatusStatValue+"'";
+		}
+		sql+=" group by t.devicetypename,t.devicetype";
+		sql+=" order by t.devicetype";
+		
+		List<?> list = this.findCallSql(sql);
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"item\",children:[] },"
+				+ "{ \"header\":\"变量\",\"dataIndex\":\"count\",children:[] }"
+				+ "]";
+		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
+		result_json.append("\"totalCount\":"+list.size()+",");
+		
+		result_json.append("\"totalRoot\":[");
+		for(int i=0;i<list.size();i++){
+			Object[] obj=(Object[]) list.get(i);
+			result_json.append("{\"id\":"+(i+1)+",");
+			result_json.append("\"item\":\""+obj[0]+"\",");
+			result_json.append("\"itemCode\":\""+obj[1]+"\",");
+			result_json.append("\"count\":"+obj[2]+"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]");
+		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
+		result_json.append("}");
+		return result_json.toString().replaceAll("\"null\"", "\"\"");
+	}
+	
+	public String getHistoryQueryDeviceList(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
@@ -47,15 +163,16 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		String columns = "["
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[] },"
-				+ "{ \"header\":\"井名\",\"dataIndex\":\"wellName\",flex:6,children:[] },"
-				+ "{ \"header\":\"通信状态\",\"dataIndex\":\"commStatusName\",flex:4,children:[] },"
-				+ "{ \"header\":\"采集时间\",\"dataIndex\":\"acqTime\",flex:9,children:[] }"
+				+ "{ \"header\":\"井名\",\"dataIndex\":\"wellName\",flex:9,children:[] },"
+				+ "{ \"header\":\"通信状态\",\"dataIndex\":\"commStatusName\",flex:5,children:[] },"
+				+ "{ \"header\":\"采集时间\",\"dataIndex\":\"acqTime\",flex:10,children:[] },"
+				+ "{ \"header\":\"设备类型\",\"dataIndex\":\"deviceTypeName\",flex:6,children:[] }"
 				+ "]";
 		
 		String sql="select t2.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
-				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'),c1.itemname as devicetypename ";
 		
 		
 		sql+= " from "+deviceTableName+" t "
@@ -63,9 +180,16 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " left outer join tbl_code c1 on c1.itemcode='DEVICETYPE' and t.devicetype=c1.itemvalue "
 				+ " where  t.orgid in ("+orgId+") ";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		if(StringManagerUtils.isNotNull(commStatusStatValue)){
+			sql+=" and decode(t2.commstatus,1,'在线','离线')='"+commStatusStatValue+"'";
+		}
+		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
+			sql+=" and c1.itemname='"+deviceTypeStatValue+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
 		
@@ -86,7 +210,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			result_json.append("\"commStatus\":"+obj[2]+",");
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
-			result_json.append("\"acqTime\":\""+obj[5]+"\"},");
+			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[6]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -96,7 +221,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getHistoryQueryDeviceListExportData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+	public String getHistoryQueryDeviceListExportData(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
@@ -114,7 +239,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		String sql="select t2.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
-				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'),c1.itemname as devicetypename ";
 		
 		
 		sql+= " from "+deviceTableName+" t "
@@ -122,9 +247,16 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " left outer join tbl_code c1 on c1.itemcode='DEVICETYPE' and t.devicetype=c1.itemvalue "
 				+ " where  t.orgid in ("+orgId+") ";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
+		}
+		if(StringManagerUtils.isNotNull(commStatusStatValue)){
+			sql+=" and decode(t2.commstatus,1,'在线','离线')='"+commStatusStatValue+"'";
+		}
+		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
+			sql+=" and c1.itemname='"+deviceTypeStatValue+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
 		
@@ -141,7 +273,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			result_json.append("\"commStatus\":"+obj[2]+",");
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
-			result_json.append("\"acqTime\":\""+obj[5]+"\"},");
+			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[6]+"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);

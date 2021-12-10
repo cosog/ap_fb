@@ -1,7 +1,7 @@
 Ext.define('AP.store.alarmQuery.PumpCommunicationAlarmOverviewStore', {
     extend: 'Ext.data.Store',
     alias: 'widget.pumpCommunicationAlarmOverviewStore',
-    fields: ['id','deviceType','deviceTypeName','wellName','alarmTime','user_id','loginIp','action','actionName','remark'],
+    fields: ['id','wellName','alarmTime'],
     autoLoad: true,
     pageSize: 50,
     proxy: {

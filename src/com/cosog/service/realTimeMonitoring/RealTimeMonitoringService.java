@@ -116,11 +116,13 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			deviceTableName="viw_pipelinedevice";
 		}
 		
-		String sql="select t.commstatus,count(1) from "+tableName+" t,"+deviceTableName+" t2 where  t.wellid=t2.id and t2.orgid in("+orgId+") ";
+		String sql="select t2.commstatus,count(1) from "+deviceTableName+" t "
+				+ " left outer join "+tableName+" t2 on  t2.wellid=t.id "
+				+ " where t.orgid in("+orgId+") ";
 		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
-			sql+=" and t2.devicetypename='"+deviceTypeStatValue+"'";
+			sql+=" and t.devicetypename='"+deviceTypeStatValue+"'";
 		}
-		sql+=" group by t.commstatus";
+		sql+=" group by t2.commstatus";
 		
 		List<?> list = this.findCallSql(sql);
 		String columns = "["
@@ -294,7 +296,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String sql="select t.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
-				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'),c1.itemname as devicetypename ";
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
@@ -362,8 +364,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[6]+"\",");
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[7+j]+"\",");
 			}
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);
@@ -378,7 +381,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getDeviceRealTimeOverviewExportData(String orgId,String deviceName,String deviceType,String commStatus) throws IOException, SQLException{
+	public String getDeviceRealTimeOverviewExportData(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		
 		ModbusProtocolConfig.Protocol protocol=null;
@@ -408,7 +411,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			ddicName="pipelineRealTimeOverview";
 		}
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
-		String sql="select t.id,t.wellname,t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		String sql="select t.id,t.wellname,t2.commstatus,"
+				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
+				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
+				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'),c1.itemname as devicetypename ";
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
@@ -440,17 +446,23 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}else{
 				sql+=",t2."+ddicColumnsList.get(i);
 			}
+			
 		}
 		sql+= " from "+deviceTableName+" t "
-				+ "left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
+				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
+				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
+				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
+				+ " left outer join tbl_code c1 on c1.itemcode='DEVICETYPE' and t.devicetype=c1.itemvalue "
 				+ " where  t.orgid in ("+orgId+") ";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
 		}
-		if("online".equalsIgnoreCase(commStatus)){
-			sql+=" and t2.commstatus=1";
-		}else if("offline".equalsIgnoreCase(commStatus)){
-			sql+=" and t2.commstatus=0";
+		if(StringManagerUtils.isNotNull(commStatusStatValue)){
+			sql+=" and decode(t2.commstatus,1,'在线','离线')='"+commStatusStatValue+"'";
+		}
+		if(StringManagerUtils.isNotNull(deviceTypeStatValue)){
+			sql+=" and c1.itemname='"+deviceTypeStatValue+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
 		List<?> list = this.findCallSql(sql);
@@ -463,8 +475,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[6]+"\",");
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[7+j]+"\",");
 			}
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);

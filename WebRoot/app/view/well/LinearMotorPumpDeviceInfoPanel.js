@@ -163,7 +163,7 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                     }
             	},{
             		region: 'east',
-            		width: '33%',
+            		width: '30%',
             		title:'设备附加信息',
                 	id:'LinearMotorPumpAdditionalInfoPanel_Id',
                 	split: true,

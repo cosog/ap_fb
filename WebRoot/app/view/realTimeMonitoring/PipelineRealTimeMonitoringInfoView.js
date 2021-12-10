@@ -112,12 +112,13 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                              handler: function (v, o) {
                             	 var orgId = Ext.getCmp('leftOrg_Id').getValue();
                             	 var deviceName=Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').getValue();
-                            	 var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+                            	 var commStatusStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+                             	 var deviceTypeStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectDeviceType_Id").getValue();
                             	 var deviceType=1;
                             	 var fileName='管设备实时监控数据';
                             	 var title='管设备实时监控数据';
                             	 var columnStr=Ext.getCmp("PipelineRealTimeMonitoringColumnStr_Id").getValue();
-                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
+                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatusStatValue,deviceTypeStatValue,fileName,title,columnStr);
                              }
                          }, '->', {
                          	xtype: 'button',
@@ -144,7 +145,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'通信状态统计图',
+                			title:'通信状态',
                 			layout: 'fit',
                         	id:'PipelineRealTimeMonitoringStatGraphPanel_Id',
                         	html: '<div id="PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
@@ -161,7 +162,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 }
                             }
                 		},{
-                			title:'设备类型统计图',
+                			title:'设备类型',
                 			layout: 'fit',
                         	id:'PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id',
                         	html: '<div id="PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id" style="width:100%;height:100%;"></div>',

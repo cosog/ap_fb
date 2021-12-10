@@ -120,19 +120,21 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		
 		String columns="["
 				+ "{\"header\":\"序号\",\"dataIndex\":\"id\",width:50,children:[]},"
-				+ "{\"header\":\"井名\",\"dataIndex\":\"wellName\",width:80,children:[]},"
-				+ "{\"header\":\"报警时间\",\"dataIndex\":\"alarmTime\",width:150,children:[]}"
+				+ "{\"header\":\"井名\",\"dataIndex\":\"wellName\",flex:8,children:[]},"
+				+ "{\"header\":\"报警时间\",\"dataIndex\":\"alarmTime\",flex:10,children:[]},"
+				+ "{ \"header\":\"设备类型\",\"dataIndex\":\"deviceTypeName\",flex:6,children:[] }"
 				+ "]";
-		String sql="select v.wellid,v.wellname,v.devicetype,v.alarmtype,v.alarmtime from "
-				+ " (select t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype,max(t.alarmtime) as alarmtime "
-				+ " from "+tableName+" t where 1=1";
+		String sql="select v.wellid,v.wellname,v.devicetypename,v.alarmtype,v.alarmtime from "
+				+ " (select t.orgid,t.wellid,t.wellname,c1.itemname as devicetypename,t.alarmtype,max(t.alarmtime) as alarmtime "
+				+ " from "+tableName+" t,tbl_code c1 "
+				+ " where c1.itemcode='DEVICETYPE' and t.devicetype=c1.itemvalue";
 		if(StringManagerUtils.isNotNull(alarmLevel)){
 			sql+=" and t.alarmLevel="+alarmLevel+"";
 		}
 		if(StringManagerUtils.isNotNull(isSendMessage)){
 			sql+=" and t.isSendMessage="+isSendMessage+"";
 		}
-		sql+= " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
+		sql+= " group by t.orgid,t.wellid,t.wellname,c1.itemname,t.alarmtype) v "
 				+ " where v.orgid in("+orgId+") and v.alarmtype="+alarmType;
 		
 		if(StringManagerUtils.isNotNull(deviceName)){
@@ -152,7 +154,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 			Object[] obj=(Object[]) list.get(i);
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
-			result_json.append("\"deviceType\":\""+obj[2]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[2]+"\",");
 			result_json.append("\"alarmType\":\""+obj[3]+"\",");
 			result_json.append("\"alarmTime\":\""+obj[4]+"\"},");
 		}
@@ -169,16 +171,17 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="viw_pipelinealarminfo_latest";
 		}
-		String sql="select v.wellid,v.wellname,v.devicetype,v.alarmtype,v.alarmtime from "
-				+ " (select t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype,max(t.alarmtime) as alarmtime "
-				+ " from "+tableName+" t where 1=1";
+		String sql="select v.wellid,v.wellname,v.devicetypename,v.alarmtype,v.alarmtime from "
+				+ " (select t.orgid,t.wellid,t.wellname,c1.itemname as devicetypename,t.alarmtype,max(t.alarmtime) as alarmtime "
+				+ " from "+tableName+" t,tbl_code c1 "
+				+ " where c1.itemcode='DEVICETYPE' and t.devicetype=c1.itemvalue";
 		if(StringManagerUtils.isNotNull(alarmLevel)){
 			sql+=" and t.alarmLevel="+alarmLevel+"";
 		}
 		if(StringManagerUtils.isNotNull(isSendMessage)){
 			sql+=" and t.isSendMessage="+isSendMessage+"";
 		}
-		sql+= " group by t.orgid,t.wellid,t.wellname,t.devicetype,t.alarmtype) v "
+		sql+= " group by t.orgid,t.wellid,t.wellname,c1.itemname,t.alarmtype) v "
 				+ " where v.orgid in("+orgId+") and v.alarmtype="+alarmType;
 		
 		if(StringManagerUtils.isNotNull(deviceName)){
@@ -191,7 +194,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 			Object[] obj=(Object[]) list.get(i);
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
-			result_json.append("\"deviceType\":\""+obj[2]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[2]+"\",");
 			result_json.append("\"alarmType\":\""+obj[3]+"\",");
 			result_json.append("\"alarmTime\":\""+obj[4]+"\"},");
 		}

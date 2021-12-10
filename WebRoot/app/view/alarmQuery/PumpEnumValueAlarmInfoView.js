@@ -170,7 +170,7 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                 }
             },'-',{
                 xtype: 'button',
-                text: '导出设备概览',
+                text: '导出设备列表',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
@@ -181,8 +181,8 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                 	var isSendMessage=Ext.getCmp('PumpEnumValueAlarmIsSendMessageComb_Id').getValue();
                	 	var alarmType=2;
                	 	
-               	 	var fileName='泵设备枚举量报警概览数据';
-               	 	var title='泵设备枚举量报警概览数据';
+               	 	var fileName='泵设备枚举量报警设备列表';
+               	 	var title='泵设备枚举量报警设备列表';
                	 	var columnStr=Ext.getCmp("PumpEnumValueAlarmOverviewColumnStr_Id").getValue();
                	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
@@ -209,7 +209,7 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
             }],
             items: [{
     			region: 'center',
-    			title: '设备概览',
+    			title: '设备列表',
     			id: 'PumpEnumValueAlarmOverviewPanel_Id',
     			autoScroll: true,
                 scrollable: true,
@@ -218,7 +218,7 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
     			region: 'east',
     			title: '报警数据',
     			id: 'PumpEnumValueAlarmDetailsPanel_Id',
-                width: '80%',
+                width: '70%',
                 autoScroll: true,
                 split: true,
                 collapsible: true,

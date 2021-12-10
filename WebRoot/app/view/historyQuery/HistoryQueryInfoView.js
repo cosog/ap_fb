@@ -31,6 +31,14 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         				tabchange: function (tabPanel, newCard,oldCard, obj) {
         					Ext.getCmp("bottomTab_Id").setValue(newCard.id); 
         					if(newCard.id=="PumpHistoryQueryInfoPanel_Id"){
+        						var statTabActiveId = Ext.getCmp("PumpHistoryQueryStatTabPanel").getActiveTab().id;
+        						if(statTabActiveId=="PumpHistoryQueryStatGraphPanel_Id"){
+        							loadAndInitHistoryQueryCommStatusStat(true);
+        						}else if(newCard.id=="PumpHistoryQueryDeviceTypeStatGraphPanel_Id"){
+        							loadAndInitHistoryQueryDeviceTypeStat(true);
+        						}
+        						Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
+        						Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
         						var gridPanel = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
@@ -38,6 +46,14 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         							Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
         						}
         					}else if(newCard.id=="PipelineHistoryQueryInfoPanel_Id"){
+        						var statTabActiveId = Ext.getCmp("PipelineHistoryQueryStatTabPanel").getActiveTab().id;
+        						if(statTabActiveId=="PipelineHistoryQueryStatGraphPanel_Id"){
+        							loadAndInitHistoryQueryCommStatusStat(true);
+        						}else if(newCard.id=="PipelineHistoryQueryDeviceTypeStatGraphPanel_Id"){
+        							loadAndInitHistoryQueryDeviceTypeStat(true);
+        						}
+        						Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
+        						Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
         						var gridPanel = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
@@ -153,7 +169,7 @@ function createHistoryQueryColumn(columnInfo) {
     return myColumns;
 };
 
-function exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,fileName,title,columnStr) {
+function exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,commStatusStatValue,deviceTypeStatValue,fileName,title,columnStr) {
     var url = context + '/historyQueryController/exportHistoryQueryDeviceListExcel';
     var fields = "";
     var heads = "";
@@ -191,6 +207,8 @@ function exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,fileName,
     + "&orgId=" + orgId 
     + "&deviceType=" + deviceType 
     + "&deviceName=" + URLencode(URLencode(deviceName))
+    + "&commStatusStatValue=" + URLencode(URLencode(commStatusStatValue))
+    + "&deviceTypeStatValue=" + URLencode(URLencode(deviceTypeStatValue))
     + "&fileName=" + URLencode(URLencode(fileName)) 
     + "&title=" + URLencode(URLencode(title));
     openExcelWindow(url + '?flag=true' + param);
@@ -445,4 +463,317 @@ function initDeviceHistoryCurveChartFn(series, tickInterval, divId, title, subti
         },
         series: series
     });
+};
+
+function loadAndInitHistoryQueryCommStatusStat(all){
+	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+	var deviceType=0;
+	var deviceTypeStatValue='';
+	var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
+	if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+		deviceType=0;
+		if(all){
+			Ext.getCmp("PumpHistoryQueryStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PumpHistoryQueryStatSelectDeviceType_Id").setValue('');
+			deviceTypeStatValue='';
+		}else{
+			deviceTypeStatValue=Ext.getCmp("PumpHistoryQueryStatSelectDeviceType_Id").getValue();
+		}
+	}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+		deviceType=1;
+		if(all){
+			Ext.getCmp("PipelineHistoryQueryStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PipelineHistoryQueryStatSelectDeviceType_Id").setValue('');
+			deviceTypeStatValue='';
+		}else{
+			deviceTypeStatValue=Ext.getCmp("PipelineHistoryQueryStatSelectDeviceType_Id").getValue();
+		}
+	}
+	
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/historyQueryController/getHistoryQueryCommStatusStatData',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(result.AlarmShowStyle));
+			initHistoryQueryStatPieOrColChat(result);
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			orgId:orgId,
+			deviceType:deviceType,
+			deviceTypeStatValue:deviceTypeStatValue
+        }
+	});
+}
+
+function initHistoryQueryStatPieOrColChat(get_rawData) {
+	var divid="PumpHistoryQueryStatGraphPanelPieDiv_Id";
+	var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
+	if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+		divid="PumpHistoryQueryStatGraphPanelPieDiv_Id";
+	}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+		divid="PipelineHistoryQueryStatGraphPanelPieDiv_Id";
+	}
+	var title="通信状态";
+	var datalist=get_rawData.totalRoot;
+	
+	var pieDataStr="[";
+	for(var i=0;i<datalist.length;i++){
+		if(datalist[i].itemCode!='all'){
+			pieDataStr+="['"+datalist[i].item+"',"+datalist[i].count+"],";
+		}
+	}
+	
+	if(stringEndWith(pieDataStr,",")){
+		pieDataStr = pieDataStr.substring(0, pieDataStr.length - 1);
+	}
+	pieDataStr+="]";
+	var pieData = Ext.JSON.decode(pieDataStr);
+	
+	var alarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
+	var colors=[];
+	colors.push('#'+alarmShowStyle.Statistics.Normal.BackgroundColor);
+	colors.push('#'+alarmShowStyle.Statistics.FirstLevel.BackgroundColor);
+	
+	ShowHistoryQueryStatPieOrColChat(title,divid, "设备数占", pieData,colors);
+};
+
+function ShowHistoryQueryStatPieOrColChat(title,divid, name, data,colors) {
+	Highcharts.chart(divid, {
+		chart : {
+			plotBackgroundColor : null,
+			plotBorderWidth : null,
+			plotShadow : false
+		},
+		credits : {
+			enabled : false
+		},
+		title : {
+			text : title
+		},
+		colors : colors,
+		tooltip : {
+			pointFormat : '设备数: <b>{point.y}</b> 占: <b>{point.percentage:.1f}%</b>'
+		},
+		legend : {
+			align : 'center',
+			verticalAlign : 'bottom',
+			layout : 'horizontal' //vertical 竖直 horizontal-水平
+		},
+		plotOptions : {
+			pie : {
+				allowPointSelect : true,
+				cursor : 'pointer',
+				dataLabels : {
+					enabled : true,
+					color : '#000000',
+					connectorColor : '#000000',
+					format : '<b>{point.name}</b>: {point.y}台'
+				},
+				events: {
+					click: function(e) {
+						var statSelectCommStatusId="PumpHistoryQueryStatSelectCommStatus_Id";
+						var deviceListComb_Id="HistoryQueryPumpDeviceListComb_Id";
+						var gridPanel_Id="PumpHistoryQueryDeviceListGridPanel_Id";
+						var store="AP.store.realTimeMonitoring.PumpHistoryQueryWellListStore";
+						var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
+						if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+							statSelectCommStatusId="PumpHistoryQueryStatSelectCommStatus_Id";
+							deviceListComb_Id="HistoryQueryPumpDeviceListComb_Id";
+							gridPanel_Id="PumpHistoryQueryDeviceListGridPanel_Id";
+							store="AP.store.historyQuery.PumpHistoryQueryWellListStore";
+						}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+							statSelectCommStatusId="PipelineHistoryQueryStatSelectCommStatus_Id";
+							deviceListComb_Id="HistoryQueryPipelineDeviceListComb_Id";
+							gridPanel_Id="PipelineHistoryQueryDeviceListGridPanel_Id";
+							store="AP.store.historyQuery.PipelineHistoryQueryWellListStore";
+						}
+						
+						if(!e.point.selected){//如果没被选中,则本次是选中
+							Ext.getCmp(statSelectCommStatusId).setValue(e.point.name);
+						}else{//取消选中
+							Ext.getCmp(statSelectCommStatusId).setValue('');
+						}
+						
+						Ext.getCmp(deviceListComb_Id).setValue('');
+						Ext.getCmp(deviceListComb_Id).setRawValue('');
+						var gridPanel = Ext.getCmp(gridPanel_Id);
+						if (isNotVal(gridPanel)) {
+							gridPanel.getSelectionModel().deselectAll(true);
+							gridPanel.getStore().load();
+						}else{
+							Ext.create(store);
+						}
+					}
+				},
+				showInLegend : true
+			}
+		},
+		exporting:{ 
+            enabled:true,    
+            filename:'class-booking-chart',    
+            url:context + '/exportHighcharsPicController/export'
+		},
+		series : [{
+					type : 'pie',
+					name : name,
+					data : data
+				}]
+		});
+};
+
+function loadAndInitHistoryQueryDeviceTypeStat(all){
+	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+	var deviceType=0;
+	var commStatusStatValue='';
+	var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
+	if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+		deviceType=0;
+		if(all){
+			Ext.getCmp("PumpHistoryQueryStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PumpHistoryQueryStatSelectDeviceType_Id").setValue('');
+			commStatusStatValue='';
+		}else{
+			commStatusStatValue=Ext.getCmp("PumpHistoryQueryStatSelectCommStatus_Id").getValue();
+		}
+		
+	}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+		deviceType=1;
+		if(all){
+			Ext.getCmp("PipelineHistoryQueryStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PipelineHistoryQueryStatSelectDeviceType_Id").setValue('');
+			commStatusStatValue='';
+		}else{
+			commStatusStatValue=Ext.getCmp("PipelineHistoryQueryStatSelectCommStatus_Id").getValue();
+		}
+	}
+	Ext.Ajax.request({
+		method:'POST',
+		url:context + '/historyQueryController/getHistoryQueryDeviceTypeStatData',
+		success:function(response) {
+			var result =  Ext.JSON.decode(response.responseText);
+			Ext.getCmp("AlarmShowStyle_Id").setValue(JSON.stringify(result.AlarmShowStyle));
+			initHistoryQueryDeviceTypeStatPieOrColChat(result);
+		},
+		failure:function(){
+			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+		},
+		params: {
+			orgId:orgId,
+			deviceType:deviceType,
+			commStatusStatValue:commStatusStatValue
+        }
+	});
+};
+
+function initHistoryQueryDeviceTypeStatPieOrColChat(get_rawData) {
+	var divid="PumpHistoryQueryDeviceTypeStatPieDiv_Id";
+	var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
+	if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+		divid="PumpHistoryQueryDeviceTypeStatPieDiv_Id";
+	}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+		divid="PipelineHistoryQueryDeviceTypeStatPieDiv_Id";
+	}
+	var title="设备类型";
+	var datalist=get_rawData.totalRoot;
+	
+	var pieDataStr="[";
+	for(var i=0;i<datalist.length;i++){
+		pieDataStr+="['"+datalist[i].item+"',"+datalist[i].count+"],";
+	}
+	
+	if(stringEndWith(pieDataStr,",")){
+		pieDataStr = pieDataStr.substring(0, pieDataStr.length - 1);
+	}
+	pieDataStr+="]";
+	var pieData = Ext.JSON.decode(pieDataStr);
+	var colors=["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
+	ShowHistoryQueryDeviceTypeStatPieChat(title,divid, "设备数占", pieData,colors);
+};
+
+function ShowHistoryQueryDeviceTypeStatPieChat(title,divid, name, data,colors) {
+	Highcharts.chart(divid, {
+		chart : {
+			plotBackgroundColor : null,
+			plotBorderWidth : null,
+			plotShadow : false
+		},
+		credits : {
+			enabled : false
+		},
+		title : {
+			text : title
+		},
+		colors : colors,
+		tooltip : {
+			pointFormat : '设备数: <b>{point.y}</b> 占: <b>{point.percentage:.1f}%</b>'
+		},
+		legend : {
+			align : 'center',
+			verticalAlign : 'bottom',
+			layout : 'horizontal' //vertical 竖直 horizontal-水平
+		},
+		plotOptions : {
+			pie : {
+				allowPointSelect : true,
+				cursor : 'pointer',
+				dataLabels : {
+					enabled : true,
+					color : '#000000',
+					connectorColor : '#000000',
+					format : '<b>{point.name}</b>: {point.y}台'
+				},
+				events: {
+					click: function(e) {
+						var statSelectDeviceType_Id="PumpHistoryQueryStatSelectDeviceType_Id";
+						var deviceListComb_Id="HistoryQueryPumpDeviceListComb_Id";
+						var gridPanel_Id="PumpHistoryQueryDeviceListGridPanel_Id";
+						var store="AP.store.historyQuery.PumpHistoryQueryWellListStore";
+						var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
+						if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+							statSelectDeviceType_Id="PumpHistoryQueryStatSelectDeviceType_Id";
+							deviceListComb_Id="HistoryQueryPumpDeviceListComb_Id";
+							gridPanel_Id="PumpHistoryQueryDeviceListGridPanel_Id";
+							store="AP.store.historyQuery.PumpHistoryQueryWellListStore";
+						}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+							statSelectDeviceType_Id="PipelineHistoryQueryStatSelectDeviceType_Id";
+							deviceListComb_Id="HistoryQueryPipelineDeviceListComb_Id";
+							gridPanel_Id="PipelineHistoryQueryDeviceListGridPanel_Id";
+							store="AP.store.historyQuery.PipelineHistoryQueryWellListStore";
+						}
+						
+						if(!e.point.selected){//如果没被选中,则本次是选中
+							Ext.getCmp(statSelectDeviceType_Id).setValue(e.point.name);
+						}else{//取消选中
+							Ext.getCmp(statSelectDeviceType_Id).setValue('');
+						}
+						
+						Ext.getCmp(deviceListComb_Id).setValue('');
+						Ext.getCmp(deviceListComb_Id).setRawValue('');
+						var gridPanel = Ext.getCmp(gridPanel_Id);
+						if (isNotVal(gridPanel)) {
+							gridPanel.getSelectionModel().deselectAll(true);
+							gridPanel.getStore().load();
+						}else{
+							Ext.create(store);
+						}
+					}
+				},
+				showInLegend : true
+			}
+		},
+		exporting:{ 
+            enabled:true,    
+            filename:'class-booking-chart',    
+            url:context + '/exportHighcharsPicController/export'
+		},
+		series : [{
+					type : 'pie',
+					name : name,
+					data : data
+				}]
+		});
 };

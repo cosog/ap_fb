@@ -106,7 +106,7 @@ public class AlarmQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		alarmType = ParamUtils.getParameter(request, "alarmType");
 		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
 		isSendMessage = ParamUtils.getParameter(request, "isSendMessage");
@@ -191,7 +191,7 @@ public class AlarmQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		alarmType = ParamUtils.getParameter(request, "alarmType");
 		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
 		isSendMessage = ParamUtils.getParameter(request, "isSendMessage");

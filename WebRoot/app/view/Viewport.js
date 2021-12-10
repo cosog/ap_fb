@@ -235,17 +235,17 @@ function websocketOnMessage(evt) {
 			if(activeId=="PumpRealTimeMonitoringInfoPanel_Id" && isExist(orgIdArr,data.orgId+"")>0){
 				//更新通信状态统计
 				getDeviceCommStatusTotal();
-				var PumpRealTimeMonitoringListGrid = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-				if(isNotVal(PumpRealTimeMonitoringListGrid)){
-					var store = PumpRealTimeMonitoringListGrid.getStore();
+				var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+				if(isNotVal(gridPanel)){
+					var store = gridPanel.getStore();
 					//更新概览表
 					var haveDevice=false;
-					var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+					var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").getValue();
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
 							haveDevice=true;
-							if((data.commStatus==1&&commStatus.toUpperCase()=='offline'.toUpperCase()) || (data.commStatus==0&&commStatus.toUpperCase()=='online'.toUpperCase()) ){
+							if((data.commStatus==1&&commStatus=='离线') || (data.commStatus==0&&commStatus=='在线') ){
 								store.loadPage(1);
 							}else{
 								record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
@@ -260,9 +260,9 @@ function websocketOnMessage(evt) {
 						}
 					}
 					if((!haveDevice)
-							&&(commStatus.toUpperCase()=='all'.toUpperCase() 
-									|| (data.commStatus==1&&commStatus.toUpperCase()=='online'.toUpperCase()) 
-									|| (data.commStatus==0&&commStatus.toUpperCase()=='offline'.toUpperCase()) 
+							&&(commStatus==''
+									|| (data.commStatus==1&&commStatus=='在线') 
+									|| (data.commStatus==0&&commStatus=='离线') 
 								)
 						){
 						store.loadPage(1);
@@ -354,33 +354,6 @@ function websocketOnMessage(evt) {
 		        		}
 					}
 				}
-				
-//				if(isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper) &&  isNotVal(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot)){
-//					var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-//					if(wellName==data.wellName && data.CellInfo.length>0){
-//						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=data.CellInfo;
-//						pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(data.totalRoot);
-//						//更新实时曲线
-//						var selectedItem= Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
-//						var acqTime=data.acqTime;
-//						var value='';
-//						if(isNotVal(selectedItem)){
-//							for(var i=0;i<data.CellInfo.length;i++){
-//								if(selectedItem==data.CellInfo[i].columnName){
-//									value=data.CellInfo[i].rawValue;
-//									break;
-//								}
-//							}
-//						}
-//						if(isNotVal(value)){
-//							var chart = $("#pipelineRealTimeMonitoringCurveDiv_Id").highcharts(); 
-//							if(isNotVal(chart)){
-//								var series=chart.series[0];
-//								series.addPoint([Date.parse(acqTime.replace(/-/g, '/')), parseFloat(value)], true, false);
-//							}
-//						}
-//					}
-//				}
 			}
 		}
 	}else if(data.functionCode.toUpperCase()=="pipelineDeviceRealTimeMonitoringStatusData".toUpperCase()){//接收到推送的管设备通信数据
@@ -395,14 +368,12 @@ function websocketOnMessage(evt) {
 					var store = gridPanel.getStore();
 					//更新概览表
 					var haveDevice=false;
-					var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+					var commStatus  = Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").getValue();
 					for(var i=0;i<store.getCount();i++){
 						var record=store.getAt(i);
 						if(record.data.wellName==data.wellName){
 							haveDevice=true;
-							if(data.commStatus==1&&commStatus.toUpperCase()=='offline'.toUpperCase()){
-								store.loadPage(1);
-							}else if(data.commStatus==0&&commStatus.toUpperCase()=='online'.toUpperCase()){
+							if((data.commStatus==1&&commStatus=='离线') || (data.commStatus==0&&commStatus=='在线') ){
 								store.loadPage(1);
 							}else{
 								record.set("commStatusName",(data.commStatus==1?"上线":"离线"));
@@ -412,13 +383,14 @@ function websocketOnMessage(evt) {
 								record.set("acqTime",data.acqTime);
 								record.commit();
 							}
+							
 							break;
 						}
 					}
 					if((!haveDevice)
-							&&(commStatus.toUpperCase()=='all'.toUpperCase() 
-									|| (data.commStatus==1&&commStatus.toUpperCase()=='online'.toUpperCase()) 
-									|| (data.commStatus==0&&commStatus.toUpperCase()=='offline'.toUpperCase()) 
+							&&(commStatus==''
+									|| (data.commStatus==1&&commStatus=='在线') 
+									|| (data.commStatus==0&&commStatus=='离线') 
 								)
 						){
 						store.loadPage(1);
@@ -492,71 +464,62 @@ function websocketClose(websocket) {
 function getDeviceCommStatusTotal(){
 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
 	var deviceType=0;
-	var gridPanelId="PumpRealTimeMonitoringStatGridPanel_Id";
-	var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
-	var activeId = tabPanel.getActiveTab().id;
+	var load=false;
+	var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
 	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
-		gridPanelId="PumpRealTimeMonitoringStatGridPanel_Id";
+		deviceType=0;
+		var statTabActiveId = Ext.getCmp("PumpRealTimeMonitoringStatTabPanel").getActiveTab().id;
+		if(statTabActiveId=="PumpRealTimeMonitoringStatGraphPanel_Id"){
+			load=true;
+		}else if(newCard.id=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+			load=false;
+		}
+		
 	}else{
 		deviceType=1;
-		gridPanelId="PipelineRealTimeMonitoringStatGridPanel_Id";
+		var statTabActiveId = Ext.getCmp("PipelineRealTimeMonitoringStatTabPanel").getActiveTab().id;
+		if(statTabActiveId=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
+			load=true;
+		}else if(newCard.id=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+			load=false;
+		}
 	}
 	
-	Ext.Ajax.request({
-		method:'POST',
-		url:context + '/realTimeMonitoringController/getDeviceRealTimeCommStatusStat',
-		success:function(response) {
-			var result =  Ext.JSON.decode(response.responseText);
-			var all=result.all;
-			var online=result.online;
-			var offline=result.offline;
-
-			var  gridPanel= Ext.getCmp(gridPanelId);
-			if(isNotVal(gridPanel)){
-				var store = gridPanel.getStore();
-				for(var i=0;i<store.getCount();i++){
-					var record=store.getAt(i);
-					if(record.data.itemCode.toUpperCase()=="all".toUpperCase()){
-						record.set("count",all);
-						record.commit();
-					}else if(record.data.itemCode.toUpperCase()=="online".toUpperCase()){
-						record.set("count",online);
-						record.commit();
-					}else if(record.data.itemCode.toUpperCase()=="offline".toUpperCase()){
-						record.set("count",offline);
-						record.commit();
-					}
+	if(load){
+		Ext.Ajax.request({
+			method:'POST',
+			url:context + '/realTimeMonitoringController/getDeviceRealTimeCommStatusStat',
+			success:function(response) {
+				var result =  Ext.JSON.decode(response.responseText);
+				var all=result.all;
+				var online=result.online;
+				var offline=result.offline;
+				var chart =null;
+				if(deviceType===0){
+					chart= $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
+				}else if(deviceType===1){
+					chart= $("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
 				}
-			}
-			
-			
-			var chart =null;
-			if(deviceType===0){
-				chart= $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
-			}else if(deviceType===1){
-				chart= $("#PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts(); 
-			}
-			
-			if(isNotVal(chart)){
-				var series=chart.series[0];
 				
-				var pieDataStr="[";
-				pieDataStr+="['在线',"+online+"],";
-				pieDataStr+="['离线',"+offline+"]";
-				pieDataStr+="]";
-				var pieData = Ext.JSON.decode(pieDataStr);
-				series.setData(pieData);
-			}
-			
-		},
-		failure:function(){
-			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
-		},
-		params: {
-			orgId:orgId,
-			deviceType:deviceType
-        }
-	});
+				if(isNotVal(chart)){
+					var series=chart.series[0];
+					var pieDataStr="[";
+					pieDataStr+="['在线',"+online+"],";
+					pieDataStr+="['离线',"+offline+"]";
+					pieDataStr+="]";
+					var pieData = Ext.JSON.decode(pieDataStr);
+					series.setData(pieData);
+				}
+			},
+			failure:function(){
+				Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
+			},
+			params: {
+				orgId:orgId,
+				deviceType:deviceType
+	        }
+		});
+	}
 }
 
 function fullscreen(){

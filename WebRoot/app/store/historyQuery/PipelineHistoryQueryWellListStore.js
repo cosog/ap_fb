@@ -80,10 +80,14 @@ Ext.define('AP.store.historyQuery.PipelineHistoryQueryWellListStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceName=Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').getValue();
+        	var commStatusStatValue=Ext.getCmp("PipelineHistoryQueryStatSelectCommStatus_Id").getValue();
+			var deviceTypeStatValue=Ext.getCmp("PipelineHistoryQueryStatSelectDeviceType_Id").getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:1,
-                    deviceName:deviceName
+                    deviceName:deviceName,
+                    commStatusStatValue:commStatusStatValue,
+                    deviceTypeStatValue:deviceTypeStatValue
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

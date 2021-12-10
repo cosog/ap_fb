@@ -98,7 +98,7 @@ public class LogQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		operationType = ParamUtils.getParameter(request, "operationType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");

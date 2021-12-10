@@ -38,18 +38,20 @@ public class HistoryQueryController extends BaseController  {
 	private String wellName;
 	private String deviceName;
 	private String deviceType;
+	private String deviceTypeStatValue;
+	private String commStatusStatValue;
 	private String page;
 	private String orgId;
 	private String startDate;
 	private String endDate;
 	private int totals;
 	
-	@RequestMapping("/getHistoryQueryDeviceList")
-	public String getHistoryQueryDeviceList() throws Exception {
+	@RequestMapping("/getHistoryQueryCommStatusStatData")
+	public String getHistoryQueryCommStatusStatData() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
+		deviceTypeStatValue = ParamUtils.getParameter(request, "deviceTypeStatValue");
 		this.pager = new Page("pagerForm", request);
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {
@@ -59,7 +61,59 @@ public class HistoryQueryController extends BaseController  {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		json = historyQueryService.getHistoryQueryDeviceList(orgId,deviceName,deviceType,pager);
+		json = historyQueryService.getHistoryQueryCommStatusStatData(orgId,deviceType,deviceTypeStatValue);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getHistoryQueryDeviceTypeStatData")
+	public String getHistoryQueryDeviceTypeStatData() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		commStatusStatValue = ParamUtils.getParameter(request, "commStatusStatValue");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = historyQueryService.getHistoryQueryDeviceTypeStatData(orgId,deviceType,commStatusStatValue);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getHistoryQueryDeviceList")
+	public String getHistoryQueryDeviceList() throws Exception {
+		String json = "";
+		orgId = ParamUtils.getParameter(request, "orgId");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		commStatusStatValue = ParamUtils.getParameter(request, "commStatusStatValue");
+		deviceTypeStatValue = ParamUtils.getParameter(request, "deviceTypeStatValue");
+		this.pager = new Page("pagerForm", request);
+		User user=null;
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		json = historyQueryService.getHistoryQueryDeviceList(orgId,deviceName,deviceType,commStatusStatValue,deviceTypeStatValue,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -75,8 +129,10 @@ public class HistoryQueryController extends BaseController  {
 	public String exportHistoryQueryDeviceListExcel() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
+		commStatusStatValue = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "commStatusStatValue"),"utf-8");
+		deviceTypeStatValue = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceTypeStatValue"),"utf-8");
 		
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");
@@ -93,7 +149,7 @@ public class HistoryQueryController extends BaseController  {
 			}
 		}
 		
-		json = historyQueryService.getHistoryQueryDeviceListExportData(orgId,deviceName,deviceType,pager);
+		json = historyQueryService.getHistoryQueryDeviceListExportData(orgId,deviceName,deviceType,commStatusStatValue,deviceTypeStatValue,pager);
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
@@ -159,7 +215,7 @@ public class HistoryQueryController extends BaseController  {
 	public String exportHistoryQueryDataExcel() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
@@ -343,5 +399,21 @@ public class HistoryQueryController extends BaseController  {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getDeviceTypeStatValue() {
+		return deviceTypeStatValue;
+	}
+
+	public void setDeviceTypeStatValue(String deviceTypeStatValue) {
+		this.deviceTypeStatValue = deviceTypeStatValue;
+	}
+
+	public String getCommStatusStatValue() {
+		return commStatusStatValue;
+	}
+
+	public void setCommStatusStatValue(String commStatusStatValue) {
+		this.commStatusStatValue = commStatusStatValue;
 	}
 }
