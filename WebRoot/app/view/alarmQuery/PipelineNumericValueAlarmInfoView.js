@@ -171,7 +171,7 @@ Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
                 }
             },'-',{
                 xtype: 'button',
-                text: '导出设备概览',
+                text: '导出设备列表',
                 pressed: true,
                 hidden:false,
                 handler: function (v, o) {
@@ -182,8 +182,8 @@ Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
                 	var isSendMessage=Ext.getCmp('PipelineNumericValueAlarmIsSendMessageComb_Id').getValue();
                	 	var alarmType=1;
                	 	
-               	 	var fileName='管设备数值量报警概览数据';
-               	 	var title='管设备数值量报警概览数据';
+               	 	var fileName='管设备数值量报警设备列表';
+               	 	var title='管设备数值量报警设备列表';
                	 	var columnStr=Ext.getCmp("PipelineNumericValueAlarmOverviewColumnStr_Id").getValue();
                	 	exportAlarmOverviewDataExcel(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
@@ -210,7 +210,7 @@ Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
             }],
     		items: [{
     			region: 'center',
-    			title: '设备概览',
+    			title: '设备列表',
     			id: 'PipelineNumericValueAlarmOverviewPanel_Id',
     			autoScroll: true,
                 scrollable: true,
@@ -219,7 +219,7 @@ Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
     			region: 'east',
     			title: '报警数据',
     			id: 'PipelineNumericValueAlarmDetailsPanel_Id',
-                width: '80%',
+                width: '70%',
                 autoScroll: true,
                 split: true,
                 collapsible: true,

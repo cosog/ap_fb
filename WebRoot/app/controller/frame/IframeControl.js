@@ -320,7 +320,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			var statTabActiveId = Ext.getCmp("PumpRealTimeMonitoringStatTabPanel").getActiveTab().id;
 			if(statTabActiveId=="PumpRealTimeMonitoringStatGraphPanel_Id"){
 				loadAndInitCommStatusStat(true);
-			}else if(newCard.id=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+			}else if(statTabActiveId=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
 				loadAndInitDeviceTypeStat(true);
 			}
 			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setValue('');
@@ -336,7 +336,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			var statTabActiveId = Ext.getCmp("PipelineRealTimeMonitoringStatTabPanel").getActiveTab().id;
 			if(statTabActiveId=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
 				loadAndInitCommStatusStat(true);
-			}else if(newCard.id=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+			}else if(statTabActiveId=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
 				loadAndInitDeviceTypeStat(true);
 			}
 			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setValue('');
@@ -350,9 +350,16 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}
 		}
 	}else if(module_Code == "DeviceHistoryQuery"){
-		var tabPanel = Ext.getCmp("HistoryQueryTabPanel");
-		var activeId = tabPanel.getActiveTab().id;
+		var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
 		if(activeId=="PumpHistoryQueryInfoPanel_Id"){
+			var statTabActiveId = Ext.getCmp("PumpHistoryQueryStatTabPanel").getActiveTab().id;
+			if(statTabActiveId=="PumpHistoryQueryStatGraphPanel_Id"){
+				loadAndInitHistoryQueryCommStatusStat(true);
+			}else if(statTabActiveId=="PumpHistoryQueryDeviceTypeStatGraphPanel_Id"){
+				loadAndInitHistoryQueryDeviceTypeStat(true);
+			}
+			Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
+			Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
 			var gridPanel = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id");
 			if (isNotVal(gridPanel)) {
 				gridPanel.getStore().load();
@@ -360,6 +367,14 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 				Ext.create('AP.store.historyQuery.PumpHistoryQueryWellListStore');
 			}
 		}else if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+			var statTabActiveId = Ext.getCmp("PipelineHistoryQueryStatTabPanel").getActiveTab().id;
+			if(statTabActiveId=="PipelineHistoryQueryStatGraphPanel_Id"){
+				loadAndInitHistoryQueryCommStatusStat(true);
+			}else if(statTabActiveId=="PipelineHistoryQueryDeviceTypeStatGraphPanel_Id"){
+				loadAndInitHistoryQueryDeviceTypeStat(true);
+			}
+			Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
+			Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
 			var gridPanel = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id");
 			if (isNotVal(gridPanel)) {
 				gridPanel.getStore().load();

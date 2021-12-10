@@ -200,9 +200,10 @@ public class RealTimeMonitoringController extends BaseController {
 	public String exportDeviceRealTimeOverviewDataExcel() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		String commStatus = ParamUtils.getParameter(request, "commStatus");
+		commStatusStatValue = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "commStatusStatValue"),"utf-8");
+		deviceTypeStatValue = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceTypeStatValue"),"utf-8");
 		
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");
@@ -218,7 +219,7 @@ public class RealTimeMonitoringController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		json = realTimeMonitoringService.getDeviceRealTimeOverviewExportData(orgId,deviceName,deviceType,commStatus);
+		json = realTimeMonitoringService.getDeviceRealTimeOverviewExportData(orgId,deviceName,deviceType,commStatusStatValue,deviceTypeStatValue);
 		
 		
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);

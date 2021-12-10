@@ -163,7 +163,7 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                     }
             	},{
             		region: 'east',
-            		width: '33%',
+            		width: '30%',
             		title:'设备附加信息',
                 	id:'DiaphragmPumpAdditionalInfoPanel_Id',
                 	split: true,

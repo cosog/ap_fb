@@ -75,44 +75,130 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                 border: false,
                 layout: 'border',
                 items: [{
-                    region: 'center',
-                    title:'设备列表',
-                    id:'PipelineHistoryQueryInfoDeviceListPanel_Id',
-                    border: false,
-                    layout: 'fit',
-                    tbar:[{
-                        id: 'PipelineHistoryQueryInfoDeviceListSelectRow_Id',
-                        xtype: 'textfield',
-                        value: -1,
-                        hidden: true
+                	region: 'center',
+                	layout: 'border',
+                    items:[{
+                    	region: 'center',
+                        title:'设备列表',
+                        id:'PipelineHistoryQueryInfoDeviceListPanel_Id',
+                        border: false,
+                        layout: 'fit',
+                        tbar:[{
+                            id: 'PipelineHistoryQueryInfoDeviceListSelectRow_Id',
+                            xtype: 'textfield',
+                            value: -1,
+                            hidden: true
+                        },{
+                            id: 'PipelineHistoryQueryStatSelectCommStatus_Id',
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        },{
+                            id: 'PipelineHistoryQueryStatSelectDeviceType_Id',
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        },{
+                            id: 'PipelineHistoryQueryWellListColumnStr_Id',
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        },{
+                            id: 'PipelineHistoryQueryDataColumnStr_Id',
+                            xtype: 'textfield',
+                            value: '',
+                            hidden: true
+                        },pipelineDeviceCombo,'-', {
+                            xtype: 'button',
+                            text: cosog.string.exportExcel,
+                            pressed: true,
+                            hidden:false,
+                            handler: function (v, o) {
+                            	var orgId = Ext.getCmp('leftOrg_Id').getValue();
+                            	var deviceName=Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').getValue();
+                            	var commStatusStatValue=Ext.getCmp("PipelineHistoryQueryStatSelectCommStatus_Id").getValue();
+                    			var deviceTypeStatValue=Ext.getCmp("PipelineHistoryQueryStatSelectDeviceType_Id").getValue();
+                           	 	var deviceType=1;
+                           	 	var fileName='管设备历史数据设备列表';
+                           	 	var title='管设备历史数据设备列表';
+                           	 	var columnStr=Ext.getCmp("PipelineHistoryQueryWellListColumnStr_Id").getValue();
+                           	 	exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,commStatusStatValue,deviceTypeStatValue,fileName,title,columnStr);
+                            }
+                        }]
                     },{
-                        id: 'PipelineHistoryQueryWellListColumnStr_Id',
-                        xtype: 'textfield',
-                        value: '',
-                        hidden: true
-                    },{
-                        id: 'PipelineHistoryQueryDataColumnStr_Id',
-                        xtype: 'textfield',
-                        value: '',
-                        hidden: true
-                    },pipelineDeviceCombo,'-', {
-                        xtype: 'button',
-                        text: cosog.string.exportExcel,
-                        pressed: true,
-                        hidden:false,
-                        handler: function (v, o) {
-                        	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-                        	var deviceName=Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').getValue();
-                       	 	var deviceType=1;
-                       	 	var fileName='管设备历史数据设备列表';
-                       	 	var title='管设备历史数据设备列表';
-                       	 	var columnStr=Ext.getCmp("PipelineHistoryQueryWellListColumnStr_Id").getValue();
-                       	 	exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,fileName,title,columnStr);
-                        }
+                    	region: 'south',
+                    	split: true,
+                        collapsible: true,
+                    	height: '40%',
+                    	xtype: 'tabpanel',
+                    	id:'PipelineHistoryQueryStatTabPanel',
+                    	activeTab: 0,
+                        header: false,
+                		tabPosition: 'top',
+                		items: [{
+                			title:'通信状态',
+                			layout: 'fit',
+                        	id:'PipelineHistoryQueryStatGraphPanel_Id',
+                        	html: '<div id="PipelineHistoryQueryStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
+                        	listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	if ($("#PipelineHistoryQueryStatGraphPanelPieDiv_Id").highcharts() != undefined) {
+                                        $("#PipelineHistoryQueryStatGraphPanelPieDiv_Id").highcharts().setSize($("#PipelineHistoryQueryStatGraphPanelPieDiv_Id").offsetWidth, $("#PipelineHistoryQueryStatGraphPanelPieDiv_Id").offsetHeight,true);
+                                    }else{
+                                    	var toolTip=Ext.getCmp("PipelineHistoryQueryStatGraphPanelPieToolTip_Id");
+                                    	if(!isNotVal(toolTip)){
+                                    		Ext.create('Ext.tip.ToolTip', {
+                                                id:'PipelineHistoryQueryStatGraphPanelPieToolTip_Id',
+                                        		target: 'PipelineHistoryQueryStatGraphPanelPieDiv_Id',
+                                                html: '点击饼图不同区域或标签，查看相应统计数据'
+                                            });
+                                    	}
+                                    }
+                                }
+                            }
+                		},{
+                			title:'设备类型',
+                			layout: 'fit',
+                        	id:'PipelineHistoryQueryDeviceTypeStatGraphPanel_Id',
+                        	html: '<div id="PipelineHistoryQueryDeviceTypeStatPieDiv_Id" style="width:100%;height:100%;"></div>',
+                        	listeners: {
+                                resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                                	if ($("#PipelineHistoryQueryDeviceTypeStatPieDiv_Id").highcharts() != undefined) {
+                                        $("#PipelineHistoryQueryDeviceTypeStatPieDiv_Id").highcharts().setSize($("#PipelineHistoryQueryDeviceTypeStatPieDiv_Id").offsetWidth, $("#PipelineHistoryQueryDeviceTypeStatPieDiv_Id").offsetHeight,true);
+                                    }else{
+                                    	var toolTip=Ext.getCmp("PipelineHistoryQueryDeviceTypeStatPieToolTip_Id");
+                                    	if(!isNotVal(toolTip)){
+                                    		Ext.create('Ext.tip.ToolTip', {
+                                                id:'PipelineHistoryQueryDeviceTypeStatPieToolTip_Id',
+                                        		target: 'PipelineHistoryQueryDeviceTypeStatPieDiv_Id',
+                                                html: '点击饼图不同区域或标签，查看相应统计数据'
+                                            });
+                                    	}
+                                    }
+                                }
+                            }
+                		}],
+                		listeners: {
+            				tabchange: function (tabPanel, newCard,oldCard, obj) {
+            					if(newCard.id=="PipelineHistoryQueryStatGraphPanel_Id"){
+            						loadAndInitHistoryQueryCommStatusStat(true);
+            					}else if(newCard.id=="PipelineHistoryQueryDeviceTypeStatGraphPanel_Id"){
+            						loadAndInitHistoryQueryDeviceTypeStat(true);
+            					}
+            					Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
+            					Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
+            					var gridPanel = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id");
+            					if (isNotVal(gridPanel)) {
+            						gridPanel.getStore().load();
+            					}else{
+            						Ext.create('AP.store.historyQuery.PipelineHistoryQueryWellListStore');
+            					}
+            				}
+            			}
                     }]
                 }, {
                 	region: 'east',
-                    width: '75%',
+                    width: '68%',
                     title: '历史数据',
                     autoScroll: true,
                     split: true,

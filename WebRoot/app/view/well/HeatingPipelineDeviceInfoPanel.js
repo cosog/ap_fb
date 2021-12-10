@@ -163,7 +163,7 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                     }
             	},{
             		region: 'east',
-            		width: '33%',
+            		width: '30%',
             		title:'设备附加信息',
                 	id:'HeatingPipelineAdditionalInfoPanel_Id',
                 	split: true,

@@ -413,7 +413,7 @@ function initResourceProbeHistoryCurveChartFn(series, tickInterval, divId, title
 };
 
 
-function exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr) {
+function exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatusStatValue,deviceTypeStatValue,fileName,title,columnStr) {
     var url = context + '/realTimeMonitoringController/exportDeviceRealTimeOverviewDataExcel';
     var fields = "";
     var heads = "";
@@ -450,7 +450,8 @@ function exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatu
     + "&orgId=" + orgId 
     + "&deviceType=" + deviceType 
     + "&deviceName=" + URLencode(URLencode(deviceName))
-    + "&commStatus=" + commStatus
+    + "&commStatusStatValue=" + URLencode(URLencode(commStatusStatValue))
+    + "&deviceTypeStatValue=" + URLencode(URLencode(deviceTypeStatValue))
     + "&fileName=" + URLencode(URLencode(fileName)) 
     + "&title=" + URLencode(URLencode(title));
     openExcelWindow(url + '?flag=true' + param);
@@ -515,18 +516,27 @@ function loadAndInitCommStatusStat(all){
 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
 	var deviceType=0;
 	var deviceTypeStatValue='';
-	if(all){
-		Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
-		Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
-	}
 	var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
 	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
 		deviceType=0;
-		deviceTypeStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").getValue();
+		if(all){
+			Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
+			deviceTypeStatValue='';
+		}else{
+			deviceTypeStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").getValue();
+		}
 	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 		deviceType=1;
-		deviceTypeStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectDeviceType_Id").getValue();
+		if(all){
+			Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PipelineRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
+			deviceTypeStatValue='';
+		}else{
+			deviceTypeStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectDeviceType_Id").getValue();
+		}
 	}
+	
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/realTimeMonitoringController/getRealTimeMonitoringCommStatusStatData',
@@ -556,7 +566,7 @@ function initRealTimeMonitoringStatPieOrColChat(get_rawData) {
 	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 		divid="PipelineRealTimeMonitoringStatGraphPanelPieDiv_Id";
 	}
-	var title="通信状态统计图";
+	var title="通信状态";
 	var datalist=get_rawData.totalRoot;
 	
 	var pieDataStr="[";
@@ -579,7 +589,7 @@ function initRealTimeMonitoringStatPieOrColChat(get_rawData) {
 	
 	ShowRealTimeMonitoringStatPieOrColChat(title,divid, "设备数占", pieData,colors);
 	
-}
+};
 
 function ShowRealTimeMonitoringStatPieOrColChat(title,divid, name, data,colors) {
 	Highcharts.chart(divid, {
@@ -669,17 +679,27 @@ function loadAndInitDeviceTypeStat(all){
 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
 	var deviceType=0;
 	var commStatusStatValue='';
-	if(all){
-		Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
-		Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
-	}
+	
 	var activeId = Ext.getCmp("RealTimeMonitoringTabPanel").getActiveTab().id;
 	if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
 		deviceType=0;
-		commStatusStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+		if(all){
+			Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").setValue('');
+			commStatusStatValue='';
+		}else{
+			commStatusStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+		}
+		
 	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 		deviceType=1;
-		commStatusStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+		if(all){
+			Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+			Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").setValue('');
+			commStatusStatValue='';
+		}else{
+			commStatusStatValue=Ext.getCmp("PipelineRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+		}
 	}
 	Ext.Ajax.request({
 		method:'POST',
@@ -698,7 +718,7 @@ function loadAndInitDeviceTypeStat(all){
 			commStatusStatValue:commStatusStatValue
         }
 	});
-}
+};
 
 function initRealTimeMonitoringDeviceTypeStatPieOrColChat(get_rawData) {
 	var divid="PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id";
@@ -708,7 +728,7 @@ function initRealTimeMonitoringDeviceTypeStatPieOrColChat(get_rawData) {
 	}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
 		divid="PipelineRealTimeMonitoringDeviceTypeStatPieDiv_Id";
 	}
-	var title="设备类型统计图";
+	var title="设备类型";
 	var datalist=get_rawData.totalRoot;
 	
 	var pieDataStr="[";
@@ -723,7 +743,7 @@ function initRealTimeMonitoringDeviceTypeStatPieOrColChat(get_rawData) {
 	var pieData = Ext.JSON.decode(pieDataStr);
 	var colors=["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
 	ShowRealTimeMonitoringDeviceTypeStatPieChat(title,divid, "设备数占", pieData,colors);
-}
+};
 
 function ShowRealTimeMonitoringDeviceTypeStatPieChat(title,divid, name, data,colors) {
 	Highcharts.chart(divid, {

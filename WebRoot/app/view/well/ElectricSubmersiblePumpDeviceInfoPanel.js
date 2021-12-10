@@ -163,7 +163,7 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                     }
             	},{
             		region: 'east',
-            		width: '33%',
+            		width: '30%',
             		title:'设备附加信息',
                 	id:'ElectricSubmersiblePumpAdditionalInfoPanel_Id',
                 	split: true,

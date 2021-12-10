@@ -277,7 +277,7 @@ public class WellInformationManagerController extends BaseController {
 		int offset = (intPage - 1) * pageSize + 1;
 		//wellInformationName = new String(wellInformationName.getBytes("iso-8859-1"), "utf-8");
 //		String orgId=this.findCurrentUserOrgIdInfo("");
-		wellInformationName = ParamUtils.getParameter(request, "wellInformationName");
+		wellInformationName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "wellInformationName"),"utf-8");
 		deviceType= ParamUtils.getParameter(request, "deviceType");
 		String heads = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "heads"),"utf-8");
 		String fields = ParamUtils.getParameter(request, "fields");

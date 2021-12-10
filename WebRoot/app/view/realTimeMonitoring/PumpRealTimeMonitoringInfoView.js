@@ -112,12 +112,13 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                              handler: function (v, o) {
                             	 var orgId = Ext.getCmp('leftOrg_Id').getValue();
                             	 var deviceName=Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').getValue();
-                            	 var commStatus  = Ext.getCmp("PumpRealTimeMonitoringStatGridPanel_Id").getSelectionModel().getSelection()[0].data.itemCode;
+                            	 var commStatusStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectCommStatus_Id").getValue();
+                             	 var deviceTypeStatValue=Ext.getCmp("PumpRealTimeMonitoringStatSelectDeviceType_Id").getValue();
                             	 var deviceType=0;
                             	 var fileName='泵设备实时监控数据';
                             	 var title='泵设备实时监控数据';
                             	 var columnStr=Ext.getCmp("PumpRealTimeMonitoringColumnStr_Id").getValue();
-                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatus,fileName,title,columnStr);
+                            	 exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatusStatValue,deviceTypeStatValue,fileName,title,columnStr);
                              }
                          }, '->', {
                          	xtype: 'button',
@@ -144,7 +145,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                         header: false,
                 		tabPosition: 'top',
                 		items: [{
-                			title:'通信状态统计图',
+                			title:'通信状态',
                 			layout: 'fit',
                         	id:'PumpRealTimeMonitoringStatGraphPanel_Id',
                         	html: '<div id="PumpRealTimeMonitoringStatGraphPanelPieDiv_Id" style="width:100%;height:100%;"></div>',
@@ -153,15 +154,19 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                 	if ($("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts() != undefined) {
                                         $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").highcharts().setSize($("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").offsetWidth, $("#PumpRealTimeMonitoringStatGraphPanelPieDiv_Id").offsetHeight,true);
                                     }else{
-                                    	Ext.create('Ext.tip.ToolTip', {
-                                            target: 'PumpRealTimeMonitoringStatGraphPanelPieDiv_Id',
-                                            html: '点击饼图不同区域或标签，查看相应统计数据'
-                                        });
+                                    	var toolTip=Ext.getCmp("PumpRealTimeMonitoringStatGraphPanelPieToolTip_Id");
+                                    	if(!isNotVal(toolTip)){
+                                    		Ext.create('Ext.tip.ToolTip', {
+                                                id:'PumpRealTimeMonitoringStatGraphPanelPieToolTip_Id',
+                                        		target: 'PumpRealTimeMonitoringStatGraphPanelPieDiv_Id',
+                                                html: '点击饼图不同区域或标签，查看相应统计数据'
+                                            });
+                                    	}
                                     }
                                 }
                             }
                 		},{
-                			title:'设备类型统计图',
+                			title:'设备类型',
                 			layout: 'fit',
                         	id:'PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id',
                         	html: '<div id="PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id" style="width:100%;height:100%;"></div>',
@@ -170,10 +175,14 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                                 	if ($("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").highcharts() != undefined) {
                                         $("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").highcharts().setSize($("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").offsetWidth, $("#PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id").offsetHeight,true);
                                     }else{
-                                    	Ext.create('Ext.tip.ToolTip', {
-                                            target: 'PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id',
-                                            html: '点击饼图不同区域或标签，查看相应统计数据'
-                                        });
+                                    	var toolTip=Ext.getCmp("PumpRealTimeMonitoringDeviceTypeStatPieToolTip_Id");
+                                    	if(!isNotVal(toolTip)){
+                                    		Ext.create('Ext.tip.ToolTip', {
+                                                id:'PumpRealTimeMonitoringDeviceTypeStatPieToolTip_Id',
+                                        		target: 'PumpRealTimeMonitoringDeviceTypeStatPieDiv_Id',
+                                                html: '点击饼图不同区域或标签，查看相应统计数据'
+                                            });
+                                    	}
                                     }
                                 }
                             }
