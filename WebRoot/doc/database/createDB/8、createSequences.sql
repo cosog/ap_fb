@@ -1,7 +1,7 @@
 create sequence HIBERNATE_SEQUENCE
 minvalue 1
 maxvalue 999999999999999999999999999
-start with 123475
+start with 128175
 increment by 1
 cache 20;
 /
@@ -118,6 +118,14 @@ increment by 1
 cache 20;
 /
 
+create sequence SEQ_PIPELINEACQRAWDATA
+minvalue 0
+maxvalue 9999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
 create sequence SEQ_PIPELINEALARMINFO_HIST
 minvalue 0
 maxvalue 9999999999999999999999999
@@ -137,6 +145,14 @@ cache 20;
 create sequence SEQ_PIPELINEDEVICE
 minvalue 0
 maxvalue 9999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PIPELINEDEVICEADDINFO
+minvalue 1
+maxvalue 999999999999999999999999
 start with 1
 increment by 1
 cache 20;
@@ -182,6 +198,14 @@ increment by 1
 cache 20;
 /
 
+create sequence SEQ_PUMPACQRAWDATA
+minvalue 0
+maxvalue 999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
 create sequence SEQ_PUMPALARMINFO_HIST
 minvalue 0
 maxvalue 999999999999999999999999
@@ -201,6 +225,14 @@ cache 20;
 create sequence SEQ_PUMPDEVICE
 minvalue 1
 maxvalue 999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PUMPDEVICEADDINFO
+minvalue 1
+maxvalue 99999999999999999999999
 start with 1
 increment by 1
 cache 20;

@@ -679,12 +679,6 @@ create table TBL_PUMPDEVICE
   slave                VARCHAR2(200),
   instancecode         VARCHAR2(50),
   alarminstancecode    VARCHAR2(50),
-  factorynumber        VARCHAR2(200),
-  model                VARCHAR2(200),
-  productiondate       VARCHAR2(200),
-  deliverydate         VARCHAR2(200),
-  commissioningdate    VARCHAR2(200),
-  controlcabinetmodel  VARCHAR2(200),
   videourl             VARCHAR2(400),
   sortnum              NUMBER(10) default 9999
 )
@@ -730,13 +724,6 @@ create table TBL_PIPELINEDEVICE
   slave                VARCHAR2(200),
   instancecode         VARCHAR2(50),
   alarminstancecode    VARCHAR2(50),
-  factorynumber        VARCHAR2(200),
-  model                VARCHAR2(200),
-  productiondate       VARCHAR2(200),
-  deliverydate         VARCHAR2(200),
-  commissioningdate    VARCHAR2(200),
-  controlcabinetmodel  VARCHAR2(200),
-  pipelinelength       NUMBER(10,2),
   videourl             VARCHAR2(400),
   sortnum              NUMBER(10) default 9999
 )
@@ -798,6 +785,56 @@ create index IDX_SMSDEVICE_ORG on TBL_SMSDEVICE (ORGID)
 create index IDX_SMSDEVICE_SIGNINID on TBL_SMSDEVICE (SIGNINID)
 /
 create index IDX_SMSDEVICE_SORT on TBL_SMSDEVICE (SORTNUM)
+/
+
+/*==============================================================*/
+/* Table: TBL_PUMPDEVICEADDINFO                                    */
+/*==============================================================*/
+create table TBL_PUMPDEVICEADDINFO
+(
+  id        NUMBER(10) not null,
+  wellid    NUMBER(10) not null,
+  itemname  VARCHAR2(200) not null,
+  itemvalue VARCHAR2(200),
+  itemunit  VARCHAR2(200)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPDEVICEADDINFO
+  add constraint PK_PUMPDEVICEADDINFO primary key (ID)
+/
+create index IDX_PUMPDEVICEADDINFO_WELLID on TBL_PUMPDEVICEADDINFO (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEDEVICEADDINFO                                    */
+/*==============================================================*/
+create table TBL_PIPELINEDEVICEADDINFO
+(
+  id        NUMBER(10) not null,
+  wellid    NUMBER(10) not null,
+  itemname  VARCHAR2(200) not null,
+  itemvalue VARCHAR2(200),
+  itemunit  VARCHAR2(200)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEDEVICEADDINFO
+  add constraint PK_PIPELINEDEVICEADDINFO primary key (ID)
+/
+create index IDX_PIPELINEADDINFO_WELLID on TBL_PIPELINEDEVICEADDINFO (WELLID)
 /
 
 /*==============================================================*/
@@ -924,6 +961,32 @@ create index IDX_PUMPACQDATA_LATEST_COMM on TBL_PUMPACQDATA_LATEST (COMMSTATUS)
 create index IDX_PUMPACQDATA_LATEST_TIME on TBL_PUMPACQDATA_LATEST (ACQTIME)
 /
 create index IDX_PUMPACQDATA_LATEST_WELLID on TBL_PUMPACQDATA_LATEST (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PUMPACQRAWDATA                                    */
+/*==============================================================*/
+create table TBL_PUMPACQRAWDATA
+(
+  id      NUMBER(10) not null,
+  wellid  NUMBER(10) not null,
+  acqtime DATE not null,
+  rawdata VARCHAR2(4000)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPACQRAWDATA
+  add constraint PK_PUMPACQRAWDATA primary key (ID)
+/
+create index IDX_PUMPACQRAWDATA_TIME on TBL_PUMPACQRAWDATA (ACQTIME)
+/
+create index IDX_PUMPACQRAWDATA_WELLID on TBL_PUMPACQRAWDATA (WELLID)
 /
 
 /*==============================================================*/
@@ -1078,6 +1141,32 @@ create index IDX_PIPELINEACQDATA_L_COMM on TBL_PIPELINEACQDATA_LATEST (COMMSTATU
 create index IDX_PIPELINEACQDATA_L_TIME on TBL_PIPELINEACQDATA_LATEST (ACQTIME)
 /
 create index IDX_PIPELINEACQDATA_L_WELLID on TBL_PIPELINEACQDATA_LATEST (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEACQRAWDATA                                    */
+/*==============================================================*/
+create table TBL_PIPELINEACQRAWDATA
+(
+  id      NUMBER(10) not null,
+  wellid  NUMBER(10) not null,
+  acqtime DATE not null,
+  rawdata VARCHAR2(4000)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEACQRAWDATA
+  add constraint PK_PIPELINEACQRAWDATA primary key (ID)
+/
+create index IDX_PIPELINEACQRAWDATA_TIME on TBL_PIPELINEACQRAWDATA (ACQTIME)
+/
+create index IDX_PIPELINEACQRAWDATA_WELLID on TBL_PIPELINEACQRAWDATA (WELLID)
 /
 
 /*==============================================================*/

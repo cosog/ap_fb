@@ -530,6 +530,7 @@ function SaveModbusProtocolAddrMappingConfigTreeData(){
 };
 
 function saveModbusProtocolAddrMappingConfigData(configInfo){
+	Ext.getCmp("modbusProtocolConfigInfoViewId").el.mask("协议保存中...").show();
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/saveModbusProtocolAddrMappingConfigData',
@@ -537,7 +538,8 @@ function saveModbusProtocolAddrMappingConfigData(configInfo){
 			var data=Ext.JSON.decode(response.responseText);
 			protocolConfigAddrMappingItemsHandsontableHelper.clearContainer();
 			if (data.success) {
-            	Ext.MessageBox.alert("信息","保存成功");
+				Ext.getCmp("modbusProtocolConfigInfoViewId").getEl().unmask();
+				Ext.MessageBox.alert("信息","保存成功");
             	Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id").getStore().load();
             } else {
             	Ext.MessageBox.alert("信息","数据保存失败");

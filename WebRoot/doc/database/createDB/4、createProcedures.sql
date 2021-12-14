@@ -114,7 +114,7 @@ EXECUTE IMMEDIATE 'truncate table tbl_sysdevice';
 end prd_clear_data;
 /
 
-CREATE OR REPLACE PROCEDURE prd_save_pumpdevive (v_orgname   in varchar2,
+CREATE OR REPLACE PROCEDURE prd_save_pumpdevice (v_orgname   in varchar2,
                                                     v_wellName    in varchar2,
                                                     v_devicetype in NUMBER,
                                                     v_applicationScenariosName    in varchar2,
@@ -122,12 +122,6 @@ CREATE OR REPLACE PROCEDURE prd_save_pumpdevive (v_orgname   in varchar2,
                                                     v_alarmInstance    in varchar2,
                                                     v_signInId    in varchar2,
                                                     v_slave   in varchar2,
-                                                    v_factorynumber in varchar2,
-                                                    v_model in varchar2,
-                                                    v_productiondate in varchar2,
-                                                    v_deliverydate in varchar2,
-                                                    v_commissioningdate in varchar2,
-                                                    v_controlcabinetmodel in varchar2,
                                                     v_videoUrl   in varchar2,
                                                     v_sortNum  in NUMBER,
                                                     v_orgId in varchar2,
@@ -153,18 +147,15 @@ begin
     if orgcount=1 and otherCount=0 then
         p_sql:='select t.org_id  from tbl_org t where t.org_name='''||v_orgname||''' and t.org_id in ('||v_orgId||')';
         EXECUTE IMMEDIATE p_sql into p_orgId;
-        
         select count(*) into wellcount from tbl_pumpdevice t where t.wellName=v_wellName;
         if wellcount>0 then
            Update tbl_pumpdevice t
            Set t.orgid   = p_orgId,
+               t.devicetype=v_devicetype,
                t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
                t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
                t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
                t.signinid=v_signInId,t.slave=v_slave,
-               t.factorynumber=v_factorynumber,t.model=v_model,
-               t.productiondate=v_productiondate,t.deliverydate=v_deliverydate,t.commissioningdate=v_commissioningdate,
-               t.controlcabinetmodel=v_controlcabinetmodel,
                t.videourl=v_videourl,
                t.sortnum=v_sortNum
            Where t.wellName=v_wellName;
@@ -173,10 +164,8 @@ begin
         elsif wellcount=0 then
               if v_license=0 or wellamount<v_license then
                   insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,
-                  factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,
                   videourl,Sortnum)
                   values(p_orgId,v_wellName,v_devicetype,v_signInId,v_slave,
-                  v_factorynumber,v_model,v_productiondate,v_deliverydate,v_commissioningdate,v_controlcabinetmodel,
                   v_videourl,v_sortNum);
                   commit;
                   update tbl_pumpdevice t set
@@ -198,10 +187,10 @@ Exception
   When Others Then
     p_msg := Sqlerrm || ',' || '²Ù×÷Ê§°Ü';
     dbms_output.put_line('p_msg:' || p_msg);
-end prd_save_pumpdevive;
+end prd_save_pumpdevice;
 /
 
-CREATE OR REPLACE PROCEDURE prd_save_pipelinedevive (v_orgname   in varchar2,
+CREATE OR REPLACE PROCEDURE prd_save_pipelinedevice (v_orgname   in varchar2,
                                                     v_wellName    in varchar2,
                                                     v_devicetype in NUMBER,
                                                     v_applicationScenariosName    in varchar2,
@@ -209,13 +198,6 @@ CREATE OR REPLACE PROCEDURE prd_save_pipelinedevive (v_orgname   in varchar2,
                                                     v_alarmInstance    in varchar2,
                                                     v_signInId    in varchar2,
                                                     v_slave   in varchar2,
-                                                    v_factorynumber in varchar2,
-                                                    v_model in varchar2,
-                                                    v_productiondate in varchar2,
-                                                    v_deliverydate in varchar2,
-                                                    v_commissioningdate in varchar2,
-                                                    v_controlcabinetmodel in varchar2,
-                                                    v_pipelinelength in NUMBER,
                                                     v_videoUrl   in varchar2,
                                                     v_sortNum  in NUMBER,
                                                     v_orgId in varchar2,
@@ -245,13 +227,11 @@ begin
         if wellcount>0 then
            Update tbl_pipelinedevice t
            Set t.orgid   = p_orgId,
+               t.devicetype=v_devicetype,
                t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
                t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
                t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
                t.signinid=v_signInId,t.slave=v_slave,
-               t.factorynumber=v_factorynumber,t.model=v_model,
-               t.productiondate=v_productiondate,t.deliverydate=v_deliverydate,t.commissioningdate=v_commissioningdate,
-               t.controlcabinetmodel=v_controlcabinetmodel,t.pipelinelength=v_pipelinelength,
                t.videourl=v_videourl,
                t.sortnum=v_sortNum
            Where t.wellName=v_wellName;
@@ -260,10 +240,8 @@ begin
         elsif wellcount=0 then
               if v_license=0 or wellamount<v_license then
                   insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,
-                  factorynumber,model,productiondate,deliverydate,commissioningdate,controlcabinetmodel,pipelinelength,
                   videourl,Sortnum)
                   values(p_orgId,v_wellName,v_devicetype,v_signInId,v_slave,
-                  v_factorynumber,v_model,v_productiondate,v_deliverydate,v_commissioningdate,v_controlcabinetmodel,v_pipelinelength,
                   v_videourl,v_sortNum);
                   commit;
                   update tbl_pipelinedevice t set
@@ -285,7 +263,7 @@ Exception
   When Others Then
     p_msg := Sqlerrm || ',' || '²Ù×÷Ê§°Ü';
     dbms_output.put_line('p_msg:' || p_msg);
-end prd_save_pipelinedevive;
+end prd_save_pipelinedevice;
 /
 
 CREATE OR REPLACE PROCEDURE prd_save_smsdevice (v_orgname   in varchar2,

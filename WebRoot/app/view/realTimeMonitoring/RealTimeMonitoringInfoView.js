@@ -446,6 +446,8 @@ function exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatu
     }
     fields = "id," + lockedfields+","+unlockedfields;
     heads = "序号," + lockedheads+","+unlockedheads;
+    fields="";
+    heads="";
     var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
     + "&orgId=" + orgId 
     + "&deviceType=" + deviceType 
@@ -460,6 +462,7 @@ function exportRealTimeMonitoringDataExcel(orgId,deviceType,deviceName,commStatu
 
 
 function gotoDeviceHistory(deviceName,deviceType){
+	Ext.getCmp("realtimeTurnToHisyorySign_Id").setValue('true');//跳转标志
 	var tabPanel = Ext.getCmp("frame_center_ids");
 	var moduleId="DeviceHistoryQuery";
 	var getTabId = tabPanel.getComponent(moduleId);

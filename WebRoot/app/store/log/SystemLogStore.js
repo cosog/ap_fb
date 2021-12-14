@@ -67,7 +67,10 @@ Ext.define('AP.store.log.SystemLogStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var orgSelection= Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
-        	if(orgSelection.length==0){
+        	var iframeViewStore=Ext.getCmp("IframeView_Id").getStore();
+        	if(orgSelection.length==0 && iframeViewStore.getCount()>0&&iframeViewStore.getAt(0).data.text=='组织根节点'){
+        		orgId='';
+        	}else if(orgSelection.length>0 && orgSelection[0].data.text=='组织根节点'){
         		orgId='';
         	}
         	var startDate=Ext.getCmp('SystemLogQueryStartDate_Id').rawValue;

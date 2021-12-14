@@ -350,6 +350,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}
 		}
 	}else if(module_Code == "DeviceHistoryQuery"){
+		var realtimeTurnToHisyorySign=Ext.getCmp("realtimeTurnToHisyorySign_Id").getValue();
 		var activeId = Ext.getCmp("HistoryQueryTabPanel").getActiveTab().id;
 		if(activeId=="PumpHistoryQueryInfoPanel_Id"){
 			var statTabActiveId = Ext.getCmp("PumpHistoryQueryStatTabPanel").getActiveTab().id;
@@ -358,8 +359,13 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}else if(statTabActiveId=="PumpHistoryQueryDeviceTypeStatGraphPanel_Id"){
 				loadAndInitHistoryQueryDeviceTypeStat(true);
 			}
-			Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
-			Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
+			
+			if(isNotVal(realtimeTurnToHisyorySign)){//如果是实时跳转
+				Ext.getCmp("realtimeTurnToHisyorySign_Id").setValue('');
+			}else{
+				Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
+				Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
+			}
 			var gridPanel = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id");
 			if (isNotVal(gridPanel)) {
 				gridPanel.getStore().load();
@@ -373,8 +379,12 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}else if(statTabActiveId=="PipelineHistoryQueryDeviceTypeStatGraphPanel_Id"){
 				loadAndInitHistoryQueryDeviceTypeStat(true);
 			}
-			Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
-			Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
+			if(isNotVal(realtimeTurnToHisyorySign)){//如果是实时跳转
+				Ext.getCmp("realtimeTurnToHisyorySign_Id").setValue('');
+			}else{
+				Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
+				Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
+			}
 			var gridPanel = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id");
 			if (isNotVal(gridPanel)) {
 				gridPanel.getStore().load();

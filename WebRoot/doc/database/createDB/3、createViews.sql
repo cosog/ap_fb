@@ -4,21 +4,21 @@
 create or replace view viw_pumpdevice as
 select t.id,org.org_name as orgName,org.org_id as orgid,
 t.wellname,
-t.devicetype,
+t.devicetype,c2.itemname as devicetypename,
 t.applicationscenarios,c1.itemname as applicationScenariosName,
 t.signinid,t.slave,
 t.videourl,
 t.instancecode,
 decode(t.devicetype,2,t4.name,t2.name) as instancename,
 t.alarminstancecode,t3.name as alarminstancename,
-t.factorynumber,t.model,t.productiondate,t.deliverydate,t.commissioningdate,t.controlcabinetmodel,
 t.sortnum
 from tbl_pumpdevice t
 left outer join  tbl_org org  on t.orgid=org.org_id
 left outer join tbl_protocolinstance t2 on t.instancecode=t2.code
 left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code
 left outer join tbl_protocolsmsinstance t4 on t.instancecode =t4.code
-left outer join tbl_code c1 on c1.itemcode='APPLICATIONSCENARIOS' and t.applicationscenarios=c1.itemvalue;
+left outer join tbl_code c1 on c1.itemcode='APPLICATIONSCENARIOS' and t.applicationscenarios=c1.itemvalue
+left outer join tbl_code c2 on c2.itemcode='DEVICETYPE' and t.devicetype=c2.itemvalue;
 /
 
 /*==============================================================*/
@@ -27,22 +27,21 @@ left outer join tbl_code c1 on c1.itemcode='APPLICATIONSCENARIOS' and t.applicat
 create or replace view viw_pipelinedevice as
 select t.id,org.org_name as orgName,org.org_id as orgid,
 t.wellname,
-t.devicetype,
+t.devicetype,c2.itemname as devicetypename,
 t.applicationscenarios,c1.itemname as applicationScenariosName,
 t.signinid,t.slave,
 t.videourl,
 t.instancecode,
 decode(t.devicetype,2,t4.name,t2.name) as instancename,
 t.alarminstancecode,t3.name as alarminstancename,
-t.factorynumber,t.model,t.productiondate,t.deliverydate,t.commissioningdate,t.controlcabinetmodel,
-t.pipelinelength,
 t.sortnum
 from tbl_pipelinedevice t
 left outer join  tbl_org org  on t.orgid=org.org_id
 left outer join tbl_protocolinstance t2 on t.instancecode=t2.code
 left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code
 left outer join tbl_protocolsmsinstance t4 on t.instancecode =t4.code
-left outer join tbl_code c1 on c1.itemcode='APPLICATIONSCENARIOS' and t.applicationscenarios=c1.itemvalue;
+left outer join tbl_code c1 on c1.itemcode='APPLICATIONSCENARIOS' and t.applicationscenarios=c1.itemvalue
+left outer join tbl_code c2 on c2.itemcode='DEVICETYPE' and t.devicetype=c2.itemvalue;
 /
 
 /*==============================================================*/
@@ -58,6 +57,16 @@ t.sortnum
 from tbl_smsdevice t
 left outer join  tbl_org org  on t.orgid=org.org_id
 left outer join tbl_protocolsmsinstance t2 on t.instancecode =t2.code;
+/
+
+/*==============================================================*/
+/* View: viw_pumpacqrawdata                             */
+/*==============================================================*/
+create or replace view viw_pumpacqrawdata as
+select t2.id,t2.wellid,t.devicetype,t.signinid,t.slave,t2.acqtime,t2.rawdata,t.orgid
+from tbl_pumpdevice t,tbl_pumpacqrawdata t2,tbl_code t3
+where t.id=t2.wellid
+and t3.itemcode='DEVICETYPE' and t3.itemvalue=t.devicetype;
 /
 
 /*==============================================================*/
@@ -94,6 +103,16 @@ t2.recoverytime,t.orgid
  and t3.itemcode='BJJB' and t3.itemvalue=t2.alarmlevel
  and t4.itemcode='DEVICETYPE' and t4.itemvalue=t.devicetype
  and t5.itemcode='alarmType' and t5.itemvalue=t2.alarmtype;
+/
+
+/*==============================================================*/
+/* View: viw_pipelineacqrawdata                             */
+/*==============================================================*/
+create or replace view viw_pipelineacqrawdata as
+select t2.id,t2.wellid,t.devicetype,t.signinid,t.slave,t2.acqtime,t2.rawdata,t.orgid
+from tbl_pipelinedevice t,tbl_pipelineacqrawdata t2,tbl_code t3
+where t.id=t2.wellid
+and t3.itemcode='DEVICETYPE' and t3.itemvalue=t.devicetype;
 /
 
 /*==============================================================*/

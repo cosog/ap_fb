@@ -331,7 +331,31 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             autoScroll: true,
                             scrollable: true
                 		}]
-                    }]
+                    }],
+                    listeners: {
+                        beforeCollapse: function (panel, eOpts) {
+                        	var container=$('#pumpRealTimeMonitoringCurveContainer');
+		        			if(container!=undefined && container.length>0){
+		        				var containerChildren=container[0].children;
+		        				if(containerChildren!=undefined && containerChildren.length>0){
+		        					for(var i=0;i<containerChildren.length;i++){
+		        						$("#"+containerChildren[i].id).hide(); 
+		        					}
+		        				}
+		        			}
+                        },
+                        expand: function (panel, eOpts) {
+                        	var container=$('#pumpRealTimeMonitoringCurveContainer');
+		        			if(container!=undefined && container.length>0){
+		        				var containerChildren=container[0].children;
+		        				if(containerChildren!=undefined && containerChildren.length>0){
+		        					for(var i=0;i<containerChildren.length;i++){
+		        						$("#"+containerChildren[i].id).show(); 
+		        					}
+		        				}
+		        			}
+                        }
+                    }
                 }]
             }]
         });

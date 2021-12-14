@@ -52,7 +52,7 @@ public class ResourceMonitoringTask {
     private static CallableStatement cs= null;
     
 	@SuppressWarnings("static-access")
-	@Scheduled(cron = "0/1 * * * * ?")
+//	@Scheduled(cron = "0/1 * * * * ?")
 	public void checkAndSendResourceMonitoring() throws SQLException, UnsupportedEncodingException, ParseException{
 		String probeMemUrl=Config.getInstance().configFile.getDriverConfig().getProbe().getMem();
 		String probeCPUUrl=Config.getInstance().configFile.getDriverConfig().getProbe().getCpu();
@@ -206,7 +206,7 @@ public class ResourceMonitoringTask {
 //        		+ " order by b.file_id ";
 		String sql="SELECT  round(SUM(bytes)/(1024*1024),2) as used,count(1)*32*1024 as totol, round(SUM(bytes)*100/(count(1)*32*1024*1024*1024),2) as usedpercent "
 				+ "FROM dba_data_files t "
-				+ "where  Upper(t.tablespace_name) like 'AGILE_DATA%' "
+				+ "where  Upper(t.tablespace_name) like 'AP_FB_DATA%' "
 				+ "and t.BYTES<34359721984";
         TableSpaceInfo tableSpaceInfo=new TableSpaceInfo();
         conn=OracleJdbcUtis.getConnection();
@@ -216,7 +216,7 @@ public class ResourceMonitoringTask {
 		pstmt = conn.prepareStatement(sql); 
 		rs=pstmt.executeQuery();
 		while(rs.next()){
-			tableSpaceInfo.setTableSpaceName("AGILE_DATA");
+			tableSpaceInfo.setTableSpaceName("AP_FB_DATA");
 			tableSpaceInfo.setUsed(rs.getFloat(1));
 			tableSpaceInfo.setTotal(rs.getFloat(2));
 			tableSpaceInfo.setFree(rs.getFloat(2)-rs.getFloat(1));
@@ -229,8 +229,6 @@ public class ResourceMonitoringTask {
 			}else{
 				tableSpaceInfo.setAlarmLevel(0);
 			}
-			
-			
 		}
 		OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
         return tableSpaceInfo;
