@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts2.ServletActionContext;
@@ -22,11 +23,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cosog.controller.base.BaseController;
 import com.cosog.model.Org;
 import com.cosog.model.User;
+import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.back.WellInformationManagerService;
 import com.cosog.service.base.CommonDataService;
+import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.service.realTimeMonitoring.RealTimeMonitoringService;
 import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.Config;
@@ -53,6 +56,8 @@ public class RealTimeMonitoringController extends BaseController {
 	private RealTimeMonitoringService<?> realTimeMonitoringService;
 	@Autowired
 	private CommonDataService service;
+	@Autowired
+	private DataitemsInfoService dataitemsInfoService;
 	private String limit;
 	private String msg = "";
 	private String wellName;
@@ -210,6 +215,14 @@ public class RealTimeMonitoringController extends BaseController {
 		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
 		
+		DataDictionary ddic = null;
+		String ddicName="pumpRealTimeOverview";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			ddicName="pipelineRealTimeOverview";
+		}
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		heads=StringUtils.join(ddic.getHeaders(), ",");
+		fields=StringUtils.join(ddic.getFields(), ",");
 		this.pager = new Page("pagerForm", request);
 		User user=null;
 		if (!StringManagerUtils.isNotNull(orgId)) {

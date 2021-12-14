@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cosog.controller.base.BaseController;
 import com.cosog.controller.realTimeMonitoring.RealTimeMonitoringController;
 import com.cosog.model.User;
+import com.cosog.model.data.DataDictionary;
 import com.cosog.service.base.CommonDataService;
+import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.service.historyQuery.HistoryQueryService;
 import com.cosog.utils.Constants;
 import com.cosog.utils.Page;
@@ -33,6 +36,8 @@ public class HistoryQueryController extends BaseController  {
 	private HistoryQueryService<?> historyQueryService;
 	@Autowired
 	private CommonDataService service;
+	@Autowired
+	private DataitemsInfoService dataitemsInfoService;
 	private String limit;
 	private String msg = "";
 	private String wellName;
@@ -224,6 +229,15 @@ public class HistoryQueryController extends BaseController  {
 		String fields = ParamUtils.getParameter(request, "fields");
 		String fileName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "fileName"),"utf-8");
 		String title = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "title"),"utf-8");
+		
+		DataDictionary ddic = null;
+		String ddicName="pumpHistoryQuery";
+		if(StringManagerUtils.stringToInteger(deviceType)!=0){
+			ddicName="pipelineHistoryQuery";
+		}
+		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		heads=StringUtils.join(ddic.getHeaders(), ",");
+		fields=StringUtils.join(ddic.getFields(), ",");
 		
 		this.pager = new Page("pagerForm", request);
 		User user=null;

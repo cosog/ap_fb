@@ -37,8 +37,8 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         						}else if(newCard.id=="PumpHistoryQueryDeviceTypeStatGraphPanel_Id"){
         							loadAndInitHistoryQueryDeviceTypeStat(true);
         						}
-        						Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
-        						Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
+//        						Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setValue('');
+//        						Ext.getCmp('HistoryQueryPumpDeviceListComb_Id').setRawValue('');
         						var gridPanel = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
@@ -52,8 +52,8 @@ Ext.define("AP.view.historyQuery.HistoryQueryInfoView", {
         						}else if(newCard.id=="PipelineHistoryQueryDeviceTypeStatGraphPanel_Id"){
         							loadAndInitHistoryQueryDeviceTypeStat(true);
         						}
-        						Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
-        						Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
+//        						Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setValue('');
+//        						Ext.getCmp('HistoryQueryPipelineDeviceListComb_Id').setRawValue('');
         						var gridPanel = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id");
         						if (isNotVal(gridPanel)) {
         							gridPanel.getStore().load();
@@ -247,6 +247,8 @@ function exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDa
     }
     fields="id"+(isNotVal(lockedfields)?(","+lockedfields):"")+(isNotVal(unlockedfields)?(","+unlockedfields):"");
     heads="序号"+(isNotVal(lockedheads)?(","+lockedheads):"")+(isNotVal(unlockedheads)?(","+unlockedheads):"");
+    fields="";
+    heads="";
     var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
     + "&orgId=" + orgId 
     + "&deviceType=" + deviceType 
