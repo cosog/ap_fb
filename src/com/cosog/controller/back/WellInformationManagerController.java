@@ -16,17 +16,24 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cosog.controller.base.BaseController;
+import com.cosog.model.AcquisitionUnit;
+import com.cosog.model.AuxiliaryDeviceInformation;
 import com.cosog.model.MasterAndAuxiliaryDevice;
 import com.cosog.model.Org;
 import com.cosog.model.PipelineDeviceAddInfo;
+import com.cosog.model.PipelineDeviceInformation;
 import com.cosog.model.PumpDeviceAddInfo;
+import com.cosog.model.PumpDeviceInformation;
+import com.cosog.model.SmsDeviceInformation;
 import com.cosog.model.User;
 import com.cosog.model.gridmodel.AuxiliaryDeviceConfig;
 import com.cosog.model.gridmodel.AuxiliaryDeviceHandsontableChangedData;
-import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.back.WellInformationManagerService;
 import com.cosog.service.base.CommonDataService;
@@ -51,6 +58,14 @@ public class WellInformationManagerController extends BaseController {
 	@Autowired
 	private WellInformationManagerService<?> wellInformationManagerService;
 	@Autowired
+	private WellInformationManagerService<PumpDeviceInformation> pumpDeviceManagerService;
+	@Autowired
+	private WellInformationManagerService<PipelineDeviceInformation> pipelineDeviceManagerService;
+	@Autowired
+	private WellInformationManagerService<SmsDeviceInformation> smsDeviceManagerService;
+	@Autowired
+	private WellInformationManagerService<AuxiliaryDeviceInformation> auxiliaryDeviceManagerService;
+	@Autowired
 	private CommonDataService service;
 	private String limit;
 	private String msg = "";
@@ -62,6 +77,27 @@ public class WellInformationManagerController extends BaseController {
 	private String page;
 	private String orgId;
 	private int totals;
+	
+	//添加绑定前缀 
+	@InitBinder("pumpDeviceInformation")
+	public void initBinder(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("pumpDeviceInformation.");
+	}
+	
+	@InitBinder("pipelineDeviceInformation")
+	public void initBinder2(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("pipelineDeviceInformation.");
+	}
+	
+	@InitBinder("auxiliaryDeviceInformation")
+	public void initBinder3(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("auxiliaryDeviceInformation.");
+	}
+	
+	@InitBinder("smsDeviceInformation")
+	public void initBinder4(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("smsDeviceInformation.");
+	}
 	
 	/**
 	 * <p>
@@ -86,6 +122,93 @@ public class WellInformationManagerController extends BaseController {
 			}
 		}
 		String json = this.wellInformationManagerService.loadWellComboxList(pager,orgId, wellName,deviceType);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getDeviceOrgChangeDeviceList")
+	public String getDeviceOrgChangeDeviceList() throws Exception {
+		this.pager=new Page("pageForm",request);
+		String wellName = ParamUtils.getParameter(request, "wellName");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		orgId=ParamUtils.getParameter(request, "orgId");
+		User user = null;
+		HttpSession session=request.getSession();
+		user = (User) session.getAttribute("userLogin");
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		String json = this.wellInformationManagerService.getDeviceOrgChangeDeviceList(pager,orgId, wellName,deviceType);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/changeDeviceOrg")
+	public String changeDeviceOrg() throws Exception {
+		this.pager=new Page("pageForm",request);
+		String selectedDeviceId = ParamUtils.getParameter(request, "selectedDeviceId");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		String selectedOrgId=ParamUtils.getParameter(request, "selectedOrgId");
+		User user = null;
+		HttpSession session=request.getSession();
+		user = (User) session.getAttribute("userLogin");
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		this.wellInformationManagerService.changeDeviceOrg(selectedDeviceId,selectedOrgId,deviceType);
+		String json = "{\"success\":true}";
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getAcqInstanceCombList")
+	public String getAcqInstanceCombList() throws IOException {
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		String json=wellInformationManagerService.getAcqInstanceCombList(deviceType);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getAlarmInstanceCombList")
+	public String getAlarmInstanceCombList() throws IOException {
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		String json=wellInformationManagerService.getAlarmInstanceCombList(deviceType);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getSMSInstanceCombList")
+	public String getSMSInstanceCombList() throws IOException {
+		String json=wellInformationManagerService.getSMSInstanceCombList();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -170,6 +293,28 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getDeviceInformationData")
+	public String getDeviceInformationData() throws IOException {
+		String recordId = ParamUtils.getParameter(request, "recordId");
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		String json="";
+		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+			json = this.wellInformationManagerService.getPumpDeviceInformationData(recordId);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+//			json = this.wellInformationManagerService.getPipeDeviceInfoList(map, pager,recordCount);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
+//			json = this.wellInformationManagerService.getSMSDeviceInfoList(map, pager,recordCount);
+		}
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/doAuxiliaryDeviceShow")
 	public String doAuxiliaryDeviceShow() throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -226,10 +371,10 @@ public class WellInformationManagerController extends BaseController {
 	@RequestMapping("/getAuxiliaryDevice")
 	public String getAuxiliaryDevice() throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
-		String deviceName= ParamUtils.getParameter(request, "deviceName");
+		String deviceId= ParamUtils.getParameter(request, "deviceId");
 		deviceType= ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		String json = this.wellInformationManagerService.getAuxiliaryDevice(deviceName,deviceType);
+		String json = this.wellInformationManagerService.getAuxiliaryDevice(deviceId,deviceType);
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -242,10 +387,10 @@ public class WellInformationManagerController extends BaseController {
 	@RequestMapping("/getDeviceAdditionalInfo")
 	public String getDeviceAdditionalInfo() throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
-		String deviceName= ParamUtils.getParameter(request, "deviceName");
+		String deviceId= ParamUtils.getParameter(request, "deviceId");
 		deviceType= ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		String json = this.wellInformationManagerService.getDeviceAdditionalInfo(deviceName,deviceType);
+		String json = this.wellInformationManagerService.getDeviceAdditionalInfo(deviceId,deviceType);
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -397,40 +542,36 @@ public class WellInformationManagerController extends BaseController {
 			type = new TypeToken<AuxiliaryDeviceConfig>() {}.getType();
 			AuxiliaryDeviceConfig auxiliaryDeviceConfig=gson.fromJson(deviceAuxiliaryData, type);
 			if(auxiliaryDeviceConfig!=null){
-				String sql="select t.id from "+deviceTableName+" t "
-						+ " where t.orgid in("+orgId+") and t.devicetype="+auxiliaryDeviceConfig.getDeviceType()+" and t.wellname='"+auxiliaryDeviceConfig.getDeviceName()+"'";
-				List list = this.service.findCallSql(sql);
-				if(list.size()>0&&StringManagerUtils.isInteger(list.get(0)+"")){
-					int deviceId=StringManagerUtils.stringToInteger(list.get(0)+"");
-					this.wellInformationManagerService.deleteMasterAndAuxiliary(deviceId);
-					if(auxiliaryDeviceConfig.getAuxiliaryDevice()!=null&&auxiliaryDeviceConfig.getAuxiliaryDevice().size()>0){
-						for(int i=0;i<auxiliaryDeviceConfig.getAuxiliaryDevice().size();i++){
-							MasterAndAuxiliaryDevice masterAndAuxiliaryDevice=new MasterAndAuxiliaryDevice();
-							masterAndAuxiliaryDevice.setMasterid(deviceId);
-							masterAndAuxiliaryDevice.setAuxiliaryid(auxiliaryDeviceConfig.getAuxiliaryDevice().get(i));
-							masterAndAuxiliaryDevice.setMatrix("0,0,0");
-							this.wellInformationManagerService.grantMasterAuxiliaryDevice(masterAndAuxiliaryDevice);
-						}
+
+				int deviceId=auxiliaryDeviceConfig.getDeviceId();
+				this.wellInformationManagerService.deleteMasterAndAuxiliary(deviceId);
+				if(auxiliaryDeviceConfig.getAuxiliaryDevice()!=null&&auxiliaryDeviceConfig.getAuxiliaryDevice().size()>0){
+					for(int i=0;i<auxiliaryDeviceConfig.getAuxiliaryDevice().size();i++){
+						MasterAndAuxiliaryDevice masterAndAuxiliaryDevice=new MasterAndAuxiliaryDevice();
+						masterAndAuxiliaryDevice.setMasterid(deviceId);
+						masterAndAuxiliaryDevice.setAuxiliaryid(auxiliaryDeviceConfig.getAuxiliaryDevice().get(i));
+						masterAndAuxiliaryDevice.setMatrix("0,0,0");
+						this.wellInformationManagerService.grantMasterAuxiliaryDevice(masterAndAuxiliaryDevice);
 					}
-					
-					this.wellInformationManagerService.deleteDeviceAdditionalInfo(deviceId,StringManagerUtils.stringToInteger(deviceType));
-					if(auxiliaryDeviceConfig.getAdditionalInfoList()!=null&&auxiliaryDeviceConfig.getAdditionalInfoList().size()>0){
-						for(int i=0;i<auxiliaryDeviceConfig.getAdditionalInfoList().size();i++){
-							if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
-								PumpDeviceAddInfo pumpDeviceAddInfo=new PumpDeviceAddInfo();
-								pumpDeviceAddInfo.setWellId(deviceId);
-								pumpDeviceAddInfo.setItemName(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemName());
-								pumpDeviceAddInfo.setItemValue(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemValue());
-								pumpDeviceAddInfo.setItemUnit(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemUnit());
-								this.wellInformationManagerService.saveDeviceAdditionalInfo(pumpDeviceAddInfo);
-							}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
-								PipelineDeviceAddInfo pipelineDeviceAddInfo=new PipelineDeviceAddInfo();
-								pipelineDeviceAddInfo.setWellId(deviceId);
-								pipelineDeviceAddInfo.setItemName(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemName());
-								pipelineDeviceAddInfo.setItemValue(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemValue());
-								pipelineDeviceAddInfo.setItemUnit(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemUnit());
-								this.wellInformationManagerService.saveDeviceAdditionalInfo(pipelineDeviceAddInfo);
-							}
+				}
+				
+				this.wellInformationManagerService.deleteDeviceAdditionalInfo(deviceId,StringManagerUtils.stringToInteger(deviceType));
+				if(auxiliaryDeviceConfig.getAdditionalInfoList()!=null&&auxiliaryDeviceConfig.getAdditionalInfoList().size()>0){
+					for(int i=0;i<auxiliaryDeviceConfig.getAdditionalInfoList().size();i++){
+						if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+							PumpDeviceAddInfo pumpDeviceAddInfo=new PumpDeviceAddInfo();
+							pumpDeviceAddInfo.setWellId(deviceId);
+							pumpDeviceAddInfo.setItemName(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemName());
+							pumpDeviceAddInfo.setItemValue(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemValue());
+							pumpDeviceAddInfo.setItemUnit(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemUnit());
+							this.wellInformationManagerService.saveDeviceAdditionalInfo(pumpDeviceAddInfo);
+						}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+							PipelineDeviceAddInfo pipelineDeviceAddInfo=new PipelineDeviceAddInfo();
+							pipelineDeviceAddInfo.setWellId(deviceId);
+							pipelineDeviceAddInfo.setItemName(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemName());
+							pipelineDeviceAddInfo.setItemValue(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemValue());
+							pipelineDeviceAddInfo.setItemUnit(auxiliaryDeviceConfig.getAdditionalInfoList().get(i).getItemUnit());
+							this.wellInformationManagerService.saveDeviceAdditionalInfo(pipelineDeviceAddInfo);
 						}
 					}
 				}
@@ -474,6 +615,126 @@ public class WellInformationManagerController extends BaseController {
 		log.warn("jh json is ==" + json);
 		pw.flush();
 		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/doPumpDeviceAdd")
+	public String doPumpDeviceAdd(@ModelAttribute PumpDeviceInformation pumpDeviceInformation) throws IOException {
+		String result = "";
+		PrintWriter out = response.getWriter();
+		HttpSession session=request.getSession();
+		try {
+			User user = (User) session.getAttribute("userLogin");
+			if(pumpDeviceInformation.getOrgId()==null){
+				pumpDeviceInformation.setOrgId(user.getUserOrgid());
+			}
+			this.pumpDeviceManagerService.doPumpDeviceAdd(pumpDeviceInformation);
+			List<String> addWellList=new ArrayList<String>();
+			addWellList.add(pumpDeviceInformation.getWellName());
+			EquipmentDriverServerTask.initPumpDriverAcquisitionInfoConfig(addWellList,"update");
+			pumpDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pumpDeviceInformation.getDeviceType(), user);
+			result = "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			out.print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+			out.print(result);
+		}
+		return null;
+	}
+	
+	@RequestMapping("/doPumpDeviceEdit")
+	public String doPumpDeviceEdit(@ModelAttribute PumpDeviceInformation pumpDeviceInformation) throws IOException {
+		String result = "";
+		PrintWriter out = response.getWriter();
+		HttpSession session=request.getSession();
+		try {
+			User user = (User) session.getAttribute("userLogin");
+			if(pumpDeviceInformation.getOrgId()==null){
+				pumpDeviceInformation.setOrgId(user.getUserOrgid());
+			}
+			this.pumpDeviceManagerService.doPumpDeviceEdit(pumpDeviceInformation);
+			List<String> addWellList=new ArrayList<String>();
+			addWellList.add(pumpDeviceInformation.getWellName());
+			EquipmentDriverServerTask.initPumpDriverAcquisitionInfoConfig(addWellList,"update");
+			pumpDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pumpDeviceInformation.getDeviceType(), user);
+			result = "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			out.print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+			out.print(result);
+		}
+		return null;
+	}
+	
+	@RequestMapping("/doPipelineDeviceAdd")
+	public String doPipelineDeviceAdd(@ModelAttribute PipelineDeviceInformation pipelineDeviceInformation) throws IOException {
+		String result = "";
+		PrintWriter out = response.getWriter();
+		HttpSession session=request.getSession();
+		try {
+			User user = (User) session.getAttribute("userLogin");
+			this.pipelineDeviceManagerService.doPipelineDeviceAdd(pipelineDeviceInformation);
+			List<String> addWellList=new ArrayList<String>();
+			addWellList.add(pipelineDeviceInformation.getWellName());
+			EquipmentDriverServerTask.initPipelineDriverAcquisitionInfoConfig(addWellList,"update");
+			pipelineDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pipelineDeviceInformation.getDeviceType(), user);
+			result = "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			out.print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+			out.print(result);
+		}
+		return null;
+	}
+	
+	@RequestMapping("/doSMSDeviceAdd")
+	public String doSMSDeviceAdd(@ModelAttribute SmsDeviceInformation smsDeviceInformation) throws IOException {
+		String result = "";
+		PrintWriter out = response.getWriter();
+		HttpSession session=request.getSession();
+		try {
+			User user = (User) session.getAttribute("userLogin");
+			this.smsDeviceManagerService.doSMSDeviceAdd(smsDeviceInformation);
+			List<String> addWellList=new ArrayList<String>();
+			addWellList.add(smsDeviceInformation.getWellName());
+			EquipmentDriverServerTask.initSMSDevice(addWellList,"update");
+			pipelineDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, 300, user);
+			result = "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			out.print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+			out.print(result);
+		}
+		return null;
+	}
+	
+	@RequestMapping("/doAuxiliaryDeviceAdd")
+	public String doAuxiliaryDeviceAdd(@ModelAttribute AuxiliaryDeviceInformation auxiliaryDeviceInformation) throws IOException {
+		String result = "";
+		PrintWriter out = response.getWriter();
+		try {
+			this.auxiliaryDeviceManagerService.doAuxiliaryDeviceAdd(auxiliaryDeviceInformation);
+			result = "{success:true,msg:true}";
+			response.setCharacterEncoding(Constants.ENCODING_UTF8);
+			out.print(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = "{success:false,msg:false}";
+			out.print(result);
+		}
 		return null;
 	}
 	

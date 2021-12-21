@@ -78,21 +78,21 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                 }
             });
         Ext.apply(this, {
-            tbar: [waterGatheringPipelineDeviceCombo, '-', {
-                id: 'WaterGatheringPipelineDeviceTotalCount_Id',
-                xtype: 'component',
-                hidden: false,
-                tpl: cosog.string.totalCount + ': {count}',
-                style: 'margin-right:15px'
-            },{
+            tbar: [waterGatheringPipelineDeviceCombo, '-',{
                 id: 'WaterGatheringPipelineDeviceSelectRow_Id',
                 xtype: 'textfield',
                 value: 0,
                 hidden: true
-            }, '->', {
+            },{
+                id: 'WaterGatheringPipelineDeviceSelectEndRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
+            }, {
                 xtype: 'button',
                 text: cosog.string.exportExcel,
-                pressed: true,
+//                pressed: true,
+                iconCls: 'export',
                 hidden: false,
                 handler: function (v, o) {
                     var fields = "";
@@ -116,36 +116,131 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                 xtype: 'button',
                 iconCls: 'note-refresh',
                 text: cosog.string.refresh,
-                pressed: true,
+//                pressed: true,
                 hidden: false,
                 handler: function (v, o) {
                     CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
                 }
-            }, '-', {
+            },'-', {
+                id: 'WaterGatheringPipelineDeviceTotalCount_Id',
+                xtype: 'component',
+                hidden: false,
+                tpl: cosog.string.totalCount + ': {count}',
+                style: 'margin-right:15px'
+            },'->', {
+    			xtype: 'button',
+                text: '添加设备',
+                iconCls: 'add',
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.PipelineDeviceInfoWindow", {
+                        title: '添加设备'
+                    });
+                    window.show();
+                    Ext.getCmp("pipelineDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pipelineDeviceType_Id").setValue(202);
+                    Ext.getCmp("pipelineDeviceOrg_Id").setValue(selectedOrgId);
+                    Ext.getCmp("addFormPipelineDevice_Id").show();
+                    Ext.getCmp("updateFormPipelineDevice_Id").hide();
+                    return false;
+    			}
+    		}, '-',{
+    			xtype: 'button',
+    			id: 'deleteWaterGatheringPipelineDeviceNameBtn_Id',
+    			text: '删除设备',
+    			iconCls: 'delete',
+    			handler: function (v, o) {
+    				var startRow= Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").getValue();
+    				var endRow= Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").getValue();
+    				var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+    				if(startRow!=''&&endRow!=''){
+    					startRow=parseInt(startRow);
+    					endRow=parseInt(endRow);
+    					var deleteInfo='是否删除第'+(startRow+1)+"行~第"+(endRow+1)+"行数据";
+    					if(startRow==endRow){
+    						deleteInfo='是否删除第'+(startRow+1)+"行数据";
+    					}
+    					
+    					Ext.Msg.confirm(cosog.string.yesdel, deleteInfo, function (btn) {
+    			            if (btn == "yes") {
+    			            	for(var i=startRow;i<=endRow;i++){
+    	    						var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+    	    						if (rowdata[0] != null && parseInt(rowdata[0])>0) {
+    	    		                    waterGatheringPipelineDeviceInfoHandsontableHelper.delidslist.push(rowdata[0]);
+    	    		                }
+    	    					}
+    	    					var saveData={};
+    	    	            	saveData.updatelist=[];
+    	    	            	saveData.insertlist=[];
+    	    	            	saveData.delidslist=waterGatheringPipelineDeviceInfoHandsontableHelper.delidslist;
+    	    	            	Ext.Ajax.request({
+    	    	                    method: 'POST',
+    	    	                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
+    	    	                    success: function (response) {
+    	    	                        rdata = Ext.JSON.decode(response.responseText);
+    	    	                        if (rdata.success) {
+    	    	                        	Ext.MessageBox.alert("信息", "删除成功");
+    	    	                            //保存以后重置全局容器
+    	    	                            waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
+    	    	                        } else {
+    	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
+    	    	                        }
+    	    	                    },
+    	    	                    failure: function () {
+    	    	                        Ext.MessageBox.alert("信息", "请求失败");
+    	    	                        waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                    },
+    	    	                    params: {
+    	    	                        data: JSON.stringify(saveData),
+    	    	                        orgId: leftOrg_Id,
+    	    	                        deviceType: 202
+    	    	                    }
+    	    	                });
+    			            }
+    			        });
+    				}else{
+    					Ext.MessageBox.alert("信息","请先选中要删除的行");
+    				}
+    			}
+    		},"-", {
                 xtype: 'button',
                 itemId: 'saveWaterGatheringPipelineDeviceDataBtnId',
                 id: 'saveWaterGatheringPipelineDeviceDataBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
                     waterGatheringPipelineDeviceInfoHandsontableHelper.saveData();
                 }
-            }, '-', {
-                xtype: 'button',
-                itemId: 'editWaterGatheringPipelineDeviceNameBtnId',
-                id: 'editWaterGatheringPipelineDeviceNameBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
-                text: '修改设备名称',
-                iconCls: 'edit',
-                handler: function (v, o) {
-                    waterGatheringPipelineDeviceInfoHandsontableHelper.editWellName();
-                }
-            }],
+            },"-", {
+    			xtype: 'button',
+    			text:'设备隶属迁移',
+    			iconCls: 'move',
+    			handler: function (v, o) {
+    				var window = Ext.create("AP.view.well.DeviceOrgChangeWindow", {
+                        title: '设备隶属迁移'
+                    });
+                    window.show();
+                    Ext.getCmp('DeviceOrgChangeWinDeviceType_Id').setValue(202);
+                    Ext.create("AP.store.well.DeviceOrgChangeDeviceListStore");
+                    Ext.create("AP.store.well.DeviceOrgChangeOrgListStore");
+    			}
+    		}],
             layout: 'border',
             items: [{
             	region: 'center',
@@ -211,6 +306,7 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
             var result = Ext.JSON.decode(response.responseText);
             if (waterGatheringPipelineDeviceInfoHandsontableHelper == null || waterGatheringPipelineDeviceInfoHandsontableHelper.hot == null || waterGatheringPipelineDeviceInfoHandsontableHelper.hot == undefined) {
                 waterGatheringPipelineDeviceInfoHandsontableHelper = WaterGatheringPipelineDeviceInfoHandsontableHelper.createNew("WaterGatheringPipelineDeviceTableDiv_id");
+                waterGatheringPipelineDeviceInfoHandsontableHelper.dataLength=result.totalCount;
                 var colHeaders = "[";
                 var columns = "[";
 
@@ -270,17 +366,20 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
                 waterGatheringPipelineDeviceInfoHandsontableHelper.columns = Ext.JSON.decode(columns);
                 waterGatheringPipelineDeviceInfoHandsontableHelper.createTable(result.totalRoot);
             } else {
-                waterGatheringPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
+            	waterGatheringPipelineDeviceInfoHandsontableHelper.dataLength=result.totalCount;
+            	waterGatheringPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
             if(result.totalRoot.length==0){
             	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue('');
-            	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable();
-            	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable();
+            	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue('');
+            	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(0,'');
+            	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(0,'');
             }else{
             	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(0);
+            	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(0);
             	var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
-            	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(rowdata[2]);
-            	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(rowdata[2]);
+            	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
+            	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
             Ext.getCmp("WaterGatheringPipelineDeviceTotalCount_Id").update({
                 count: result.totalCount
@@ -308,6 +407,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
         waterGatheringPipelineDeviceInfoHandsontableHelper.validresult = true; //数据校验
         waterGatheringPipelineDeviceInfoHandsontableHelper.colHeaders = [];
         waterGatheringPipelineDeviceInfoHandsontableHelper.columns = [];
+        waterGatheringPipelineDeviceInfoHandsontableHelper.dataLength = 0;
 
         waterGatheringPipelineDeviceInfoHandsontableHelper.AllData = {};
         waterGatheringPipelineDeviceInfoHandsontableHelper.updatelist = [];
@@ -335,44 +435,44 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: waterGatheringPipelineDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
-                contextMenu: {
-                    items: {
-                        "row_above": {
-                            name: '向上插入一行',
-                        },
-                        "row_below": {
-                            name: '向下插入一行',
-                        },
-                        "col_left": {
-                            name: '向左插入一列',
-                        },
-                        "col_right": {
-                            name: '向右插入一列',
-                        },
-                        "remove_row": {
-                            name: '删除行',
-                        },
-                        "remove_col": {
-                            name: '删除列',
-                        },
-                        "merge_cell": {
-                            name: '合并单元格',
-                        },
-                        "copy": {
-                            name: '复制',
-                        },
-                        "cut": {
-                            name: '剪切',
-                        },
-                        "paste": {
-                            name: '粘贴',
-                            disabled: function () {
-                            },
-                            callback: function () {
-                            }
-                        }
-                    }
-                }, //右键菜单展示
+//                contextMenu: {
+//                    items: {
+//                        "row_above": {
+//                            name: '向上插入一行',
+//                        },
+//                        "row_below": {
+//                            name: '向下插入一行',
+//                        },
+//                        "col_left": {
+//                            name: '向左插入一列',
+//                        },
+//                        "col_right": {
+//                            name: '向右插入一列',
+//                        },
+//                        "remove_row": {
+//                            name: '删除行',
+//                        },
+//                        "remove_col": {
+//                            name: '删除列',
+//                        },
+//                        "merge_cell": {
+//                            name: '合并单元格',
+//                        },
+//                        "copy": {
+//                            name: '复制',
+//                        },
+//                        "cut": {
+//                            name: '剪切',
+//                        },
+//                        "paste": {
+//                            name: '粘贴',
+//                            disabled: function () {
+//                            },
+//                            callback: function () {
+//                            }
+//                        }
+//                    }
+//                }, //右键菜单展示
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -383,12 +483,25 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                     var cellProperties = {};
                     var visualRowIndex = this.instance.toVisualRow(row);
                     var visualColIndex = this.instance.toVisualColumn(col);
+//                    if(visualRowIndex < waterGatheringPipelineDeviceInfoHandsontableHelper.dataLength){
+//                    	cellProperties.readOnly = true;
+//                    }
+                    return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(row);
-                	var row1=waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
-                	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(row1[2]);
-                	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(row1[2]);
+                	var startRow=row;
+                	var endRow=row2;
+                	if(row>row2){
+                		startRow=row2;
+                    	endRow=row;
+                	}
+                	
+                	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(startRow);
+                	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(endRow);
+                	
+                	var row1=waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(row1[0],row1[1]);
+                	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -485,10 +598,10 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
             var WaterGatheringPipelineDeviceSelectRow= Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").getValue();
             if(isNotVal(WaterGatheringPipelineDeviceSelectRow)){
             	var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(WaterGatheringPipelineDeviceSelectRow);
-            	deviceName=rowdata[2];
-            	if(isNotVal(deviceName)){
+            	var deviceId=rowdata[0];
+            	if(isNotVal(deviceId) && parseInt(deviceId)>0 ){
                 	deviceAuxiliaryData.deviceType=202;
-                	deviceAuxiliaryData.deviceName=deviceName;
+                	deviceAuxiliaryData.deviceId=deviceId;
                 	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	if(waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper!=null && waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
@@ -516,102 +629,38 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 	}
             	}
             }
-            
-            if (JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData) != "{}" && waterGatheringPipelineDeviceInfoHandsontableHelper.validresult) {
-            	var orgArr=leftOrg_Name.split(",");
-            	var saveData={};
-            	saveData.updatelist=[];
-            	saveData.insertlist=[];
-            	saveData.delidslist=waterGatheringPipelineDeviceInfoHandsontableHelper.delidslist;
-            	
-            	var invalidData1=[];
-            	var invalidData2=[];
-            	var invalidDataInfo="";
-            	if(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
-                	for(var i=0;i<waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
-                		var orgName=waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
-                		var diveceName=waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.updatelist.push(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	if(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
-                	for(var i=0;i<waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
-                		var orgName=waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
-                		var diveceName=waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.insertlist.push(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	Ext.Ajax.request({
-                    method: 'POST',
-                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
-                    success: function (response) {
-                        rdata = Ext.JSON.decode(response.responseText);
-                        if (rdata.success) {
-                            if(invalidData1.length>0 || invalidData2.length>0){
-                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
-                        	}else{
-                        		Ext.MessageBox.alert("信息", "保存成功");
-                        	}
-                            //保存以后重置全局容器
-                            waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
-                            CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
-                        } else {
-                            Ext.MessageBox.alert("信息", "数据保存失败");
-
-                        }
-                    },
-                    failure: function () {
-                        Ext.MessageBox.alert("信息", "请求失败");
+        	Ext.Ajax.request({
+                method: 'POST',
+                url: context + '/wellInformationManagerController/saveWellHandsontableData',
+                success: function (response) {
+                    rdata = Ext.JSON.decode(response.responseText);
+                    if (rdata.success) {
+                    	Ext.MessageBox.alert("信息", "保存成功");
+                        //保存以后重置全局容器
                         waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
-                    },
-                    params: {
-                        data: JSON.stringify(saveData),
-                        deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
-                        orgId: leftOrg_Id,
-                        deviceType: 202
-                    }
-                });
-            } else {
-                if (!waterGatheringPipelineDeviceInfoHandsontableHelper.validresult) {
-                    Ext.MessageBox.alert("信息", "数据类型错误");
-                } else {
-                    Ext.MessageBox.alert("信息", "无数据变化");
-                }
-            }
-        
-            
-            
+                        CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
+                    } else {
+                        Ext.MessageBox.alert("信息", "数据保存失败");
 
+                    }
+                },
+                failure: function () {
+                    Ext.MessageBox.alert("信息", "请求失败");
+                    waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+                },
+                params: {
+                    data: JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.AllData),
+                    deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
+                    orgId: leftOrg_Id,
+                    deviceType: 202
+                }
+            });
         }
 
         //修改井名
         waterGatheringPipelineDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
-
             if (waterGatheringPipelineDeviceInfoHandsontableHelper.editWellNameList.length > 0 && waterGatheringPipelineDeviceInfoHandsontableHelper.validresult) {
-                //	            	alert(JSON.stringify(waterGatheringPipelineDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -623,7 +672,6 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                             CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
-
                         }
                     },
                     failure: function () {
@@ -703,7 +751,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
     }
 };
 
-function CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(waterGatheringPipelineDeviceName,isNew){
+function CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper!=null){
 		if(waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
 			waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
@@ -715,10 +763,10 @@ function CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(waterGather
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(waterGatheringPipelineDeviceName)){
-				waterGatheringPipelineDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("WaterGatheringPipelineAuxiliaryDevicePanel_Id").setTitle(waterGatheringPipelineDeviceName+"辅件设备列表");
+			Ext.getCmp("WaterGatheringPipelineAuxiliaryDevicePanel_Id").setTitle(deviceName+"辅件设备列表");
 			if(waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper==null || waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = WaterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.createNew("WaterGatheringPipelineAuxiliaryDeviceTableDiv_id");
 				var colHeaders="['','序号','名称','规格型号','']";
@@ -739,7 +787,7 @@ function CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(waterGather
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:waterGatheringPipelineDeviceName,
+			deviceId:deviceId,
 			deviceType:202
         }
 	});
@@ -810,7 +858,7 @@ var WaterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	    }
 };
 
-function CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(waterGatheringPipelineDeviceName,isNew){
+function CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&waterGatheringPipelineAdditionalInfoHandsontableHelper!=null){
 		if(waterGatheringPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
 			waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.destroy();
@@ -822,10 +870,10 @@ function CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(waterGatheringPi
 		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(waterGatheringPipelineDeviceName)){
-				waterGatheringPipelineDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("WaterGatheringPipelineAdditionalInfoPanel_Id").setTitle(waterGatheringPipelineDeviceName+"附加信息");
+			Ext.getCmp("WaterGatheringPipelineAdditionalInfoPanel_Id").setTitle(deviceName+"附加信息");
 			if(waterGatheringPipelineAdditionalInfoHandsontableHelper==null || waterGatheringPipelineAdditionalInfoHandsontableHelper.hot==undefined){
 				waterGatheringPipelineAdditionalInfoHandsontableHelper = WaterGatheringPipelineAdditionalInfoHandsontableHelper.createNew("WaterGatheringPipelineAdditionalInfoTableDiv_id");
 				var colHeaders="['序号','名称','值','单位']";
@@ -850,7 +898,7 @@ function CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(waterGatheringPi
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:waterGatheringPipelineDeviceName,
+			deviceId:deviceId,
 			deviceType:202
         }
 	});

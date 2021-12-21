@@ -96,15 +96,13 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionUnitInfoWindow", {
                 hidden:true,
                 anchor: '100%',
                 value: ''
-                
             }, {
             	id: 'acquisitionUnitRemark_Id',
             	name: "acquisitionUnit.remark",
                 fieldLabel: '单元描述',
                 anchor: '100%',
                 value: '',
-                xtype: 'textareafield',
-                
+                xtype: 'textareafield'
             }],
             buttons: [{
             	xtype: 'button',

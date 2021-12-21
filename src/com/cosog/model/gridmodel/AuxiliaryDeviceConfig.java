@@ -4,7 +4,7 @@ import java.util.List;
 
 public class AuxiliaryDeviceConfig {
 	private int deviceType;
-	private String deviceName;
+	private int deviceId;
 	private List<Integer> auxiliaryDevice;
 	private List<AdditionalInfo> additionalInfoList;
 	public int getDeviceType() {
@@ -13,12 +13,7 @@ public class AuxiliaryDeviceConfig {
 	public void setDeviceType(int deviceType) {
 		this.deviceType = deviceType;
 	}
-	public String getDeviceName() {
-		return deviceName;
-	}
-	public void setDeviceName(String deviceName) {
-		this.deviceName = deviceName;
-	}
+	
 	public List<Integer> getAuxiliaryDevice() {
 		return auxiliaryDevice;
 	}
@@ -56,5 +51,12 @@ public class AuxiliaryDeviceConfig {
 			this.itemUnit = itemUnit;
 		}
 		
+	}
+
+	public int getDeviceId() {
+		return deviceId;
+	}
+	public void setDeviceId(int deviceId) {
+		this.deviceId = deviceId;
 	}
 }

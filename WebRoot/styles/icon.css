@@ -199,6 +199,10 @@
 	background-image: url(../images/icon/export.png) !important;
 }
 
+.move {
+	background-image: url(../images/icon/move.png) !important;
+}
+
 .Stat {
 	background-image: url(../images/icon/stat.png) !important;
 }

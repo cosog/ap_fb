@@ -986,12 +986,12 @@ public class BaseDao extends HibernateDaoSupport {
 		}
 		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
 		try {
-			cs = conn.prepareCall("{call prd_save_pumpdevice(?,?,?,?,?,?,?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_update_pumpdevice(?,?,?,?,?,?,?,?,?,?)}");
 			if(wellHandsontableChangedData.getUpdatelist()!=null){
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
 						
-						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getOrgName());
+						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getId());
 						cs.setString(2, wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						cs.setString(3, deviceType+"");
 						cs.setString(4, wellHandsontableChangedData.getUpdatelist().get(i).getApplicationScenariosName());
@@ -1002,8 +1002,6 @@ public class BaseDao extends HibernateDaoSupport {
 						
 						cs.setString(9, wellHandsontableChangedData.getUpdatelist().get(i).getVideoUrl());
 						cs.setString(10, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
-						cs.setString(11, orgId);
-						cs.setInt(12, license.getNumber());
 						cs.executeUpdate();
 						updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
@@ -1020,7 +1018,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
 						
-						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getOrgName());
+						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getId());
 						cs.setString(2, wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						cs.setString(3, deviceType+"");
 						cs.setString(4, wellHandsontableChangedData.getInsertlist().get(i).getApplicationScenariosName());
@@ -1031,8 +1029,7 @@ public class BaseDao extends HibernateDaoSupport {
 						
 						cs.setString(9, wellHandsontableChangedData.getInsertlist().get(i).getVideoUrl());
 						cs.setString(10, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
-						cs.setString(11, orgId);
-						cs.setInt(12, license.getNumber());
+//						cs.setInt(13, license.getNumber());
 						cs.executeUpdate();
 						addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
@@ -1104,12 +1101,12 @@ public class BaseDao extends HibernateDaoSupport {
 		}
 		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
 		try {
-			cs = conn.prepareCall("{call prd_save_pipelinedevice(?,?,?,?,?,?,?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_update_pipelinedevice(?,?,?,?,?,?,?,?,?,?)}");
 			if(wellHandsontableChangedData.getUpdatelist()!=null){
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
 						
-						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getOrgName());
+						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getId());
 						cs.setString(2, wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						cs.setString(3, deviceType+"");
 						cs.setString(4, wellHandsontableChangedData.getUpdatelist().get(i).getApplicationScenariosName());
@@ -1120,8 +1117,6 @@ public class BaseDao extends HibernateDaoSupport {
 						
 						cs.setString(9, wellHandsontableChangedData.getUpdatelist().get(i).getVideoUrl());
 						cs.setString(10, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
-						cs.setString(11, orgId);
-						cs.setInt(12, license.getNumber());
 						cs.executeUpdate();
 						updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
@@ -1138,7 +1133,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
 						
-						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getOrgName());
+						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getId());
 						cs.setString(2, wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						cs.setString(3, deviceType+"");
 						cs.setString(4, wellHandsontableChangedData.getInsertlist().get(i).getApplicationScenariosName());
@@ -1149,8 +1144,7 @@ public class BaseDao extends HibernateDaoSupport {
 						
 						cs.setString(9, wellHandsontableChangedData.getInsertlist().get(i).getVideoUrl());
 						cs.setString(10, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
-						cs.setString(11, orgId);
-						cs.setInt(12, license.getNumber());
+//						cs.setInt(12, license.getNumber());
 						cs.executeUpdate();
 						addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
@@ -1219,16 +1213,15 @@ public class BaseDao extends HibernateDaoSupport {
 		List<String> addWellList=new ArrayList<String>();
 		List<String> deleteWellList=new ArrayList<String>();
 		try {
-			cs = conn.prepareCall("{call prd_save_smsdevice(?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_update_smsdevice(?,?,?,?,?)}");
 			if(wellHandsontableChangedData.getUpdatelist()!=null){
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
-						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getOrgName());
+						cs.setString(1, wellHandsontableChangedData.getUpdatelist().get(i).getId());
 						cs.setString(2, wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						cs.setString(3, wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName());
 						cs.setString(4, wellHandsontableChangedData.getUpdatelist().get(i).getSignInId());
 						cs.setString(5, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
-						cs.setString(6, orgId);
 						cs.executeUpdate();
 						updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
@@ -1244,12 +1237,11 @@ public class BaseDao extends HibernateDaoSupport {
 			if(wellHandsontableChangedData.getInsertlist()!=null){
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
-						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getOrgName());
+						cs.setString(1, wellHandsontableChangedData.getInsertlist().get(i).getId());
 						cs.setString(2, wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						cs.setString(3, wellHandsontableChangedData.getInsertlist().get(i).getInstanceName());
 						cs.setString(4, wellHandsontableChangedData.getInsertlist().get(i).getSignInId());
 						cs.setString(5, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
-						cs.setString(6, orgId);
 						cs.executeUpdate();
 						addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
@@ -1312,15 +1304,16 @@ public class BaseDao extends HibernateDaoSupport {
 		CallableStatement cs=null;
 		PreparedStatement ps=null;
 		try {
-			cs = conn.prepareCall("{call prd_save_auxiliarydevice(?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_update_auxiliarydevice(?,?,?,?,?,?)}");
 			if(auxiliaryDeviceHandsontableChangedData.getUpdatelist()!=null){
 				for(int i=0;i<auxiliaryDeviceHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getName())){
-						cs.setString(1, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getName());
-						cs.setInt(2, "管辅件".equals(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getType())?1:0);
-						cs.setString(3, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getModel());
-						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getRemark());
-						cs.setString(5, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort():"9999");
+						cs.setString(1, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getId());
+						cs.setString(2, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getName());
+						cs.setInt(3, "管辅件".equals(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getType())?1:0);
+						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getModel());
+						cs.setString(5, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getRemark());
+						cs.setString(6, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort():"9999");
 						cs.executeUpdate();
 					}
 				}
@@ -1328,11 +1321,12 @@ public class BaseDao extends HibernateDaoSupport {
 			if(auxiliaryDeviceHandsontableChangedData.getInsertlist()!=null){
 				for(int i=0;i<auxiliaryDeviceHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getName())){
-						cs.setString(1, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getName());
-						cs.setInt(2, "管辅件".equals(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getType())?1:0);
-						cs.setString(3, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getModel());
-						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getRemark());
-						cs.setString(5, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort():"9999");
+						cs.setString(1, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getId());
+						cs.setString(2, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getName());
+						cs.setInt(3, "管辅件".equals(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getType())?1:0);
+						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getModel());
+						cs.setString(5, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getRemark());
+						cs.setString(6, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort():"9999");
 						cs.executeUpdate();
 					}
 				}

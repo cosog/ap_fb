@@ -78,21 +78,21 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                 }
             });
         Ext.apply(this, {
-            tbar: [diaphragmPumpDeviceCombo, '-', {
-                id: 'DiaphragmPumpDeviceTotalCount_Id',
-                xtype: 'component',
-                hidden: false,
-                tpl: cosog.string.totalCount + ': {count}',
-                style: 'margin-right:15px'
-            },{
+            tbar: [diaphragmPumpDeviceCombo, '-',{
                 id: 'DiaphragmPumpDeviceSelectRow_Id',
                 xtype: 'textfield',
                 value: 0,
                 hidden: true
-            }, '->', {
+            },{
+                id: 'DiaphragmPumpDeviceSelectEndRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
+            }, {
                 xtype: 'button',
                 text: cosog.string.exportExcel,
-                pressed: true,
+//                pressed: true,
+                iconCls: 'export',
                 hidden: false,
                 handler: function (v, o) {
                     var fields = "";
@@ -116,36 +116,131 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                 xtype: 'button',
                 iconCls: 'note-refresh',
                 text: cosog.string.refresh,
-                pressed: true,
+//                pressed: true,
                 hidden: false,
                 handler: function (v, o) {
                     CreateAndLoadDiaphragmPumpDeviceInfoTable();
                 }
-            }, '-', {
+            },'-', {
+                id: 'DiaphragmPumpDeviceTotalCount_Id',
+                xtype: 'component',
+                hidden: false,
+                tpl: cosog.string.totalCount + ': {count}',
+                style: 'margin-right:15px'
+            },'->', {
+    			xtype: 'button',
+                text: '添加设备',
+                iconCls: 'add',
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.PumpDeviceInfoWindow", {
+                        title: '添加设备'
+                    });
+                    window.show();
+                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pumpDeviceType_Id").setValue(101);
+                    Ext.getCmp("pumpDeviceOrg_Id").setValue(selectedOrgId);
+                    Ext.getCmp("addFormPumpDevice_Id").show();
+                    Ext.getCmp("updateFormPumpDevice_Id").hide();
+                    return false;
+    			}
+    		}, '-',{
+    			xtype: 'button',
+    			id: 'deleteDiaphragmPumpDeviceNameBtn_Id',
+    			text: '删除设备',
+    			iconCls: 'delete',
+    			handler: function (v, o) {
+    				var startRow= Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").getValue();
+    				var endRow= Ext.getCmp("DiaphragmPumpDeviceSelectEndRow_Id").getValue();
+    				var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+    				if(startRow!=''&&endRow!=''){
+    					startRow=parseInt(startRow);
+    					endRow=parseInt(endRow);
+    					var deleteInfo='是否删除第'+(startRow+1)+"行~第"+(endRow+1)+"行数据";
+    					if(startRow==endRow){
+    						deleteInfo='是否删除第'+(startRow+1)+"行数据";
+    					}
+    					
+    					Ext.Msg.confirm(cosog.string.yesdel, deleteInfo, function (btn) {
+    			            if (btn == "yes") {
+    			            	for(var i=startRow;i<=endRow;i++){
+    	    						var rowdata = diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+    	    						if (rowdata[0] != null && parseInt(rowdata[0])>0) {
+    	    		                    diaphragmPumpDeviceInfoHandsontableHelper.delidslist.push(rowdata[0]);
+    	    		                }
+    	    					}
+    	    					var saveData={};
+    	    	            	saveData.updatelist=[];
+    	    	            	saveData.insertlist=[];
+    	    	            	saveData.delidslist=diaphragmPumpDeviceInfoHandsontableHelper.delidslist;
+    	    	            	Ext.Ajax.request({
+    	    	                    method: 'POST',
+    	    	                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
+    	    	                    success: function (response) {
+    	    	                        rdata = Ext.JSON.decode(response.responseText);
+    	    	                        if (rdata.success) {
+    	    	                        	Ext.MessageBox.alert("信息", "删除成功");
+    	    	                            //保存以后重置全局容器
+    	    	                            diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            CreateAndLoadDiaphragmPumpDeviceInfoTable();
+    	    	                        } else {
+    	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
+    	    	                        }
+    	    	                    },
+    	    	                    failure: function () {
+    	    	                        Ext.MessageBox.alert("信息", "请求失败");
+    	    	                        diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
+    	    	                    },
+    	    	                    params: {
+    	    	                        data: JSON.stringify(saveData),
+    	    	                        orgId: leftOrg_Id,
+    	    	                        deviceType: 101
+    	    	                    }
+    	    	                });
+    			            }
+    			        });
+    				}else{
+    					Ext.MessageBox.alert("信息","请先选中要删除的行");
+    				}
+    			}
+    		},"-", {
                 xtype: 'button',
                 itemId: 'saveDiaphragmPumpDeviceDataBtnId',
                 id: 'saveDiaphragmPumpDeviceDataBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
                     diaphragmPumpDeviceInfoHandsontableHelper.saveData();
                 }
-            }, '-', {
-                xtype: 'button',
-                itemId: 'editDiaphragmPumpDeviceNameBtnId',
-                id: 'editDiaphragmPumpDeviceNameBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
-                text: '修改设备名称',
-                iconCls: 'edit',
-                handler: function (v, o) {
-                    diaphragmPumpDeviceInfoHandsontableHelper.editWellName();
-                }
-            }],
+            },"-", {
+    			xtype: 'button',
+    			text:'设备隶属迁移',
+    			iconCls: 'move',
+    			handler: function (v, o) {
+    				var window = Ext.create("AP.view.well.DeviceOrgChangeWindow", {
+                        title: '设备隶属迁移'
+                    });
+                    window.show();
+                    Ext.getCmp('DeviceOrgChangeWinDeviceType_Id').setValue(101);
+                    Ext.create("AP.store.well.DeviceOrgChangeDeviceListStore");
+                    Ext.create("AP.store.well.DeviceOrgChangeOrgListStore");
+    			}
+    		}],
             layout: 'border',
             items: [{
             	region: 'center',
@@ -211,6 +306,7 @@ function CreateAndLoadDiaphragmPumpDeviceInfoTable(isNew) {
             var result = Ext.JSON.decode(response.responseText);
             if (diaphragmPumpDeviceInfoHandsontableHelper == null || diaphragmPumpDeviceInfoHandsontableHelper.hot == null || diaphragmPumpDeviceInfoHandsontableHelper.hot == undefined) {
                 diaphragmPumpDeviceInfoHandsontableHelper = DiaphragmPumpDeviceInfoHandsontableHelper.createNew("DiaphragmPumpDeviceTableDiv_id");
+                diaphragmPumpDeviceInfoHandsontableHelper.dataLength=result.totalCount;
                 var colHeaders = "[";
                 var columns = "[";
 
@@ -270,17 +366,20 @@ function CreateAndLoadDiaphragmPumpDeviceInfoTable(isNew) {
                 diaphragmPumpDeviceInfoHandsontableHelper.columns = Ext.JSON.decode(columns);
                 diaphragmPumpDeviceInfoHandsontableHelper.createTable(result.totalRoot);
             } else {
-                diaphragmPumpDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
+            	diaphragmPumpDeviceInfoHandsontableHelper.dataLength=result.totalCount;
+            	diaphragmPumpDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
             if(result.totalRoot.length==0){
             	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue('');
-            	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable();
-            	CreateAndLoadDiaphragmPumpAdditionalInfoTable();
+            	Ext.getCmp("DiaphragmPumpDeviceSelectEndRow_Id").setValue('');
+            	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(0,'');
+            	CreateAndLoadDiaphragmPumpAdditionalInfoTable(0,'');
             }else{
             	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue(0);
+            	Ext.getCmp("DiaphragmPumpDeviceSelectEndRow_Id").setValue(0);
             	var rowdata = diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
-            	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(rowdata[2]);
-            	CreateAndLoadDiaphragmPumpAdditionalInfoTable(rowdata[2]);
+            	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
+            	CreateAndLoadDiaphragmPumpAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
             Ext.getCmp("DiaphragmPumpDeviceTotalCount_Id").update({
                 count: result.totalCount
@@ -308,6 +407,7 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
         diaphragmPumpDeviceInfoHandsontableHelper.validresult = true; //数据校验
         diaphragmPumpDeviceInfoHandsontableHelper.colHeaders = [];
         diaphragmPumpDeviceInfoHandsontableHelper.columns = [];
+        diaphragmPumpDeviceInfoHandsontableHelper.dataLength = 0;
 
         diaphragmPumpDeviceInfoHandsontableHelper.AllData = {};
         diaphragmPumpDeviceInfoHandsontableHelper.updatelist = [];
@@ -335,44 +435,44 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: diaphragmPumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
-                contextMenu: {
-                    items: {
-                        "row_above": {
-                            name: '向上插入一行',
-                        },
-                        "row_below": {
-                            name: '向下插入一行',
-                        },
-                        "col_left": {
-                            name: '向左插入一列',
-                        },
-                        "col_right": {
-                            name: '向右插入一列',
-                        },
-                        "remove_row": {
-                            name: '删除行',
-                        },
-                        "remove_col": {
-                            name: '删除列',
-                        },
-                        "merge_cell": {
-                            name: '合并单元格',
-                        },
-                        "copy": {
-                            name: '复制',
-                        },
-                        "cut": {
-                            name: '剪切',
-                        },
-                        "paste": {
-                            name: '粘贴',
-                            disabled: function () {
-                            },
-                            callback: function () {
-                            }
-                        }
-                    }
-                }, //右键菜单展示
+//                contextMenu: {
+//                    items: {
+//                        "row_above": {
+//                            name: '向上插入一行',
+//                        },
+//                        "row_below": {
+//                            name: '向下插入一行',
+//                        },
+//                        "col_left": {
+//                            name: '向左插入一列',
+//                        },
+//                        "col_right": {
+//                            name: '向右插入一列',
+//                        },
+//                        "remove_row": {
+//                            name: '删除行',
+//                        },
+//                        "remove_col": {
+//                            name: '删除列',
+//                        },
+//                        "merge_cell": {
+//                            name: '合并单元格',
+//                        },
+//                        "copy": {
+//                            name: '复制',
+//                        },
+//                        "cut": {
+//                            name: '剪切',
+//                        },
+//                        "paste": {
+//                            name: '粘贴',
+//                            disabled: function () {
+//                            },
+//                            callback: function () {
+//                            }
+//                        }
+//                    }
+//                }, //右键菜单展示
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -383,12 +483,25 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                     var cellProperties = {};
                     var visualRowIndex = this.instance.toVisualRow(row);
                     var visualColIndex = this.instance.toVisualColumn(col);
+//                    if(visualRowIndex < diaphragmPumpDeviceInfoHandsontableHelper.dataLength){
+//                    	cellProperties.readOnly = true;
+//                    }
+                    return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue(row);
-                	var row1=diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
-                	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(row1[2]);
-                	CreateAndLoadDiaphragmPumpAdditionalInfoTable(row1[2]);
+                	var startRow=row;
+                	var endRow=row2;
+                	if(row>row2){
+                		startRow=row2;
+                    	endRow=row;
+                	}
+                	
+                	Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue(startRow);
+                	Ext.getCmp("DiaphragmPumpDeviceSelectEndRow_Id").setValue(endRow);
+                	
+                	var row1=diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                	CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(row1[0],row1[1]);
+                	CreateAndLoadDiaphragmPumpAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -485,10 +598,10 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
             var DiaphragmPumpDeviceSelectRow= Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").getValue();
             if(isNotVal(DiaphragmPumpDeviceSelectRow)){
             	var rowdata = diaphragmPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(DiaphragmPumpDeviceSelectRow);
-            	deviceName=rowdata[2];
-            	if(isNotVal(deviceName)){
+            	var deviceId=rowdata[0];
+            	if(isNotVal(deviceId) && parseInt(deviceId)>0 ){
                 	deviceAuxiliaryData.deviceType=101;
-                	deviceAuxiliaryData.deviceName=deviceName;
+                	deviceAuxiliaryData.deviceId=deviceId;
                 	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	if(diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper!=null && diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
@@ -517,101 +630,88 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
             	}
             }
             
-            if (JSON.stringify(diaphragmPumpDeviceInfoHandsontableHelper.AllData) != "{}" && diaphragmPumpDeviceInfoHandsontableHelper.validresult) {
-            	var orgArr=leftOrg_Name.split(",");
-            	var saveData={};
-            	saveData.updatelist=[];
-            	saveData.insertlist=[];
-            	saveData.delidslist=diaphragmPumpDeviceInfoHandsontableHelper.delidslist;
-            	
-            	var invalidData1=[];
-            	var invalidData2=[];
-            	var invalidDataInfo="";
-            	if(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
-                	for(var i=0;i<diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
-                		var orgName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
-                		var diveceName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.updatelist.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	if(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
-                	for(var i=0;i<diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
-                		var orgName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
-                		var diveceName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.insertlist.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	Ext.Ajax.request({
-                    method: 'POST',
-                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
-                    success: function (response) {
-                        rdata = Ext.JSON.decode(response.responseText);
-                        if (rdata.success) {
-                            if(invalidData1.length>0 || invalidData2.length>0){
-                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
-                        	}else{
-                        		Ext.MessageBox.alert("信息", "保存成功");
-                        	}
-                            //保存以后重置全局容器
-                            diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
-                            CreateAndLoadDiaphragmPumpDeviceInfoTable();
-                        } else {
-                            Ext.MessageBox.alert("信息", "数据保存失败");
 
-                        }
-                    },
-                    failure: function () {
-                        Ext.MessageBox.alert("信息", "请求失败");
+        	var orgArr=leftOrg_Name.split(",");
+        	var saveData={};
+        	saveData.updatelist=[];
+        	saveData.insertlist=[];
+        	saveData.delidslist=diaphragmPumpDeviceInfoHandsontableHelper.delidslist;
+        	
+        	var invalidData1=[];
+        	var invalidData2=[];
+        	var invalidDataInfo="";
+//        	if(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
+//            	for(var i=0;i<diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
+//            		var orgName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
+//            		var diveceName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
+//            		if(isNotVal(diveceName)){
+//            			var orgCount=isExist(orgArr,orgName);
+//                		if(orgCount>1){//所选组织下具有多个同名组织
+//                			invalidData1.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+//                			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+//                		}else if(orgCount===1){//所选组织下无重复组织
+//                			saveData.updatelist.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+//                		}else{//不具备所填写组织权限
+//                			invalidData2.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
+//                			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+//                		}
+//            		}
+//            	}
+//            }
+//        	if(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
+//            	for(var i=0;i<diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
+//            		var orgName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
+//            		var diveceName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
+//            		if(isNotVal(diveceName)){
+//            			var orgCount=isExist(orgArr,orgName);
+//                		if(orgCount>1){//所选组织下具有多个同名组织
+//                			invalidData1.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+//                			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
+//                		}else if(orgCount===1){//所选组织下无重复组织
+//                			saveData.insertlist.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+//                		}else{//不具备所填写组织权限
+//                			invalidData2.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
+//                			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
+//                		}
+//            		}
+//            	}
+//            }
+        	Ext.Ajax.request({
+                method: 'POST',
+                url: context + '/wellInformationManagerController/saveWellHandsontableData',
+                success: function (response) {
+                    rdata = Ext.JSON.decode(response.responseText);
+                    if (rdata.success) {
+                        if(invalidData1.length>0 || invalidData2.length>0){
+                    		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
+                    	}else{
+                    		Ext.MessageBox.alert("信息", "保存成功");
+                    	}
+                        //保存以后重置全局容器
                         diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
-                    },
-                    params: {
-                        data: JSON.stringify(saveData),
-                        deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
-                        orgId: leftOrg_Id,
-                        deviceType: 101
-                    }
-                });
-            } else {
-                if (!diaphragmPumpDeviceInfoHandsontableHelper.validresult) {
-                    Ext.MessageBox.alert("信息", "数据类型错误");
-                } else {
-                    Ext.MessageBox.alert("信息", "无数据变化");
-                }
-            }
-        
-            
-            
+                        CreateAndLoadDiaphragmPumpDeviceInfoTable();
+                    } else {
+                        Ext.MessageBox.alert("信息", "数据保存失败");
 
+                    }
+                },
+                failure: function () {
+                    Ext.MessageBox.alert("信息", "请求失败");
+                    diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
+                },
+                params: {
+                    data: JSON.stringify(diaphragmPumpDeviceInfoHandsontableHelper.AllData),
+                    deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
+                    orgId: leftOrg_Id,
+                    deviceType: 101
+                }
+            });
         }
 
         //修改井名
         diaphragmPumpDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
-
             if (diaphragmPumpDeviceInfoHandsontableHelper.editWellNameList.length > 0 && diaphragmPumpDeviceInfoHandsontableHelper.validresult) {
-                //	            	alert(JSON.stringify(diaphragmPumpDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -623,7 +723,6 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                             CreateAndLoadDiaphragmPumpDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
-
                         }
                     },
                     failure: function () {
@@ -703,7 +802,7 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
     }
 };
 
-function CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(diaphragmPumpDeviceName,isNew){
+function CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper!=null){
 		if(diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
 			diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
@@ -715,10 +814,10 @@ function CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(diaphragmPumpDeviceN
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(diaphragmPumpDeviceName)){
-				diaphragmPumpDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("DiaphragmPumpAuxiliaryDevicePanel_Id").setTitle(diaphragmPumpDeviceName+"辅件设备列表");
+			Ext.getCmp("DiaphragmPumpAuxiliaryDevicePanel_Id").setTitle(deviceName+"辅件设备列表");
 			if(diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper==null || diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				diaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = DiaphragmPumpAuxiliaryDeviceInfoHandsontableHelper.createNew("DiaphragmPumpAuxiliaryDeviceTableDiv_id");
 				var colHeaders="['','序号','名称','规格型号','']";
@@ -739,7 +838,7 @@ function CreateAndLoadDiaphragmPumpAuxiliaryDeviceInfoTable(diaphragmPumpDeviceN
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:diaphragmPumpDeviceName,
+			deviceId:deviceId,
 			deviceType:101
         }
 	});
@@ -810,7 +909,7 @@ var DiaphragmPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	    }
 };
 
-function CreateAndLoadDiaphragmPumpAdditionalInfoTable(diaphragmPumpDeviceName,isNew){
+function CreateAndLoadDiaphragmPumpAdditionalInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&diaphragmPumpAdditionalInfoHandsontableHelper!=null){
 		if(diaphragmPumpAdditionalInfoHandsontableHelper.hot!=undefined){
 			diaphragmPumpAdditionalInfoHandsontableHelper.hot.destroy();
@@ -822,10 +921,10 @@ function CreateAndLoadDiaphragmPumpAdditionalInfoTable(diaphragmPumpDeviceName,i
 		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(diaphragmPumpDeviceName)){
-				diaphragmPumpDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("DiaphragmPumpAdditionalInfoPanel_Id").setTitle(diaphragmPumpDeviceName+"附加信息");
+			Ext.getCmp("DiaphragmPumpAdditionalInfoPanel_Id").setTitle(deviceName+"附加信息");
 			if(diaphragmPumpAdditionalInfoHandsontableHelper==null || diaphragmPumpAdditionalInfoHandsontableHelper.hot==undefined){
 				diaphragmPumpAdditionalInfoHandsontableHelper = DiaphragmPumpAdditionalInfoHandsontableHelper.createNew("DiaphragmPumpAdditionalInfoTableDiv_id");
 				var colHeaders="['序号','名称','值','单位']";
@@ -850,7 +949,7 @@ function CreateAndLoadDiaphragmPumpAdditionalInfoTable(diaphragmPumpDeviceName,i
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:diaphragmPumpDeviceName,
+			deviceId:deviceId,
 			deviceType:101
         }
 	});

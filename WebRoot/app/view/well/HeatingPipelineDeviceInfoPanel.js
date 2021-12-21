@@ -78,21 +78,21 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                 }
             });
         Ext.apply(this, {
-            tbar: [heatingPipelineDeviceCombo, '-', {
-                id: 'HeatingPipelineDeviceTotalCount_Id',
-                xtype: 'component',
-                hidden: false,
-                tpl: cosog.string.totalCount + ': {count}',
-                style: 'margin-right:15px'
-            },{
+            tbar: [{
                 id: 'HeatingPipelineDeviceSelectRow_Id',
                 xtype: 'textfield',
                 value: 0,
                 hidden: true
-            }, '->', {
+            },{
+                id: 'HeatingPipelineDeviceSelectEndRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
+            },heatingPipelineDeviceCombo, '-', {
                 xtype: 'button',
                 text: cosog.string.exportExcel,
-                pressed: true,
+//                pressed: true,
+                iconCls: 'export',
                 hidden: false,
                 handler: function (v, o) {
                     var fields = "";
@@ -116,36 +116,131 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                 xtype: 'button',
                 iconCls: 'note-refresh',
                 text: cosog.string.refresh,
-                pressed: true,
+//                pressed: true,
                 hidden: false,
                 handler: function (v, o) {
                     CreateAndLoadHeatingPipelineDeviceInfoTable();
                 }
-            }, '-', {
+            },'-', {
+                id: 'HeatingPipelineDeviceTotalCount_Id',
+                xtype: 'component',
+                hidden: false,
+                tpl: cosog.string.totalCount + ': {count}',
+                style: 'margin-right:15px'
+            },'->', {
+    			xtype: 'button',
+                text: '添加设备',
+                iconCls: 'add',
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.PipelineDeviceInfoWindow", {
+                        title: '添加设备'
+                    });
+                    window.show();
+                    Ext.getCmp("pipelineDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pipelineDeviceType_Id").setValue(201);
+                    Ext.getCmp("pipelineDeviceOrg_Id").setValue(selectedOrgId);
+                    Ext.getCmp("addFormPipelineDevice_Id").show();
+                    Ext.getCmp("updateFormPipelineDevice_Id").hide();
+                    return false;
+    			}
+    		},'-',{
+    			xtype: 'button',
+    			id: 'deleteHeatingPipelineDeviceNameBtn_Id',
+    			text: '删除设备',
+    			iconCls: 'delete',
+    			handler: function (v, o) {
+    				var startRow= Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").getValue();
+    				var endRow= Ext.getCmp("HeatingPipelineDeviceSelectEndRow_Id").getValue();
+    				var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+    				if(startRow!=''&&endRow!=''){
+    					startRow=parseInt(startRow);
+    					endRow=parseInt(endRow);
+    					var deleteInfo='是否删除第'+(startRow+1)+"行~第"+(endRow+1)+"行数据";
+    					if(startRow==endRow){
+    						deleteInfo='是否删除第'+(startRow+1)+"行数据";
+    					}
+    					
+    					Ext.Msg.confirm(cosog.string.yesdel, deleteInfo, function (btn) {
+    			            if (btn == "yes") {
+    			            	for(var i=startRow;i<=endRow;i++){
+    	    						var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+    	    						if (rowdata[0] != null && parseInt(rowdata[0])>0) {
+    	    		                    heatingPipelineDeviceInfoHandsontableHelper.delidslist.push(rowdata[0]);
+    	    		                }
+    	    					}
+    	    					var saveData={};
+    	    	            	saveData.updatelist=[];
+    	    	            	saveData.insertlist=[];
+    	    	            	saveData.delidslist=heatingPipelineDeviceInfoHandsontableHelper.delidslist;
+    	    	            	Ext.Ajax.request({
+    	    	                    method: 'POST',
+    	    	                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
+    	    	                    success: function (response) {
+    	    	                        rdata = Ext.JSON.decode(response.responseText);
+    	    	                        if (rdata.success) {
+    	    	                        	Ext.MessageBox.alert("信息", "删除成功");
+    	    	                            //保存以后重置全局容器
+    	    	                            heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            CreateAndLoadHeatingPipelineDeviceInfoTable();
+    	    	                        } else {
+    	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
+    	    	                        }
+    	    	                    },
+    	    	                    failure: function () {
+    	    	                        Ext.MessageBox.alert("信息", "请求失败");
+    	    	                        heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                    },
+    	    	                    params: {
+    	    	                        data: JSON.stringify(saveData),
+    	    	                        orgId: leftOrg_Id,
+    	    	                        deviceType: 201
+    	    	                    }
+    	    	                });
+    			            }
+    			        });
+    				}else{
+    					Ext.MessageBox.alert("信息","请先选中要删除的行");
+    				}
+    			}
+    		},"-", {
                 xtype: 'button',
                 itemId: 'saveHeatingPipelineDeviceDataBtnId',
                 id: 'saveHeatingPipelineDeviceDataBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
                     heatingPipelineDeviceInfoHandsontableHelper.saveData();
                 }
-            }, '-', {
-                xtype: 'button',
-                itemId: 'editHeatingPipelineDeviceNameBtnId',
-                id: 'editHeatingPipelineDeviceNameBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
-                text: '修改设备名称',
-                iconCls: 'edit',
-                handler: function (v, o) {
-                    heatingPipelineDeviceInfoHandsontableHelper.editWellName();
-                }
-            }],
+            },'-',{
+    			xtype: 'button',
+    			text:'设备隶属迁移',
+    			iconCls: 'move',
+    			handler: function (v, o) {
+    				var window = Ext.create("AP.view.well.DeviceOrgChangeWindow", {
+                        title: '设备隶属迁移'
+                    });
+                    window.show();
+                    Ext.getCmp('DeviceOrgChangeWinDeviceType_Id').setValue(201);
+                    Ext.create("AP.store.well.DeviceOrgChangeDeviceListStore");
+                    Ext.create("AP.store.well.DeviceOrgChangeOrgListStore");
+    			}
+    		}],
             layout: 'border',
             items: [{
             	region: 'center',
@@ -211,6 +306,7 @@ function CreateAndLoadHeatingPipelineDeviceInfoTable(isNew) {
             var result = Ext.JSON.decode(response.responseText);
             if (heatingPipelineDeviceInfoHandsontableHelper == null || heatingPipelineDeviceInfoHandsontableHelper.hot == null || heatingPipelineDeviceInfoHandsontableHelper.hot == undefined) {
                 heatingPipelineDeviceInfoHandsontableHelper = HeatingPipelineDeviceInfoHandsontableHelper.createNew("HeatingPipelineDeviceTableDiv_id");
+                heatingPipelineDeviceInfoHandsontableHelper.dataLength=result.totalCount;
                 var colHeaders = "[";
                 var columns = "[";
 
@@ -270,17 +366,20 @@ function CreateAndLoadHeatingPipelineDeviceInfoTable(isNew) {
                 heatingPipelineDeviceInfoHandsontableHelper.columns = Ext.JSON.decode(columns);
                 heatingPipelineDeviceInfoHandsontableHelper.createTable(result.totalRoot);
             } else {
-                heatingPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
+            	heatingPipelineDeviceInfoHandsontableHelper.dataLength=result.totalCount;
+            	heatingPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
             if(result.totalRoot.length==0){
             	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue('');
-            	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable();
-            	CreateAndLoadHeatingPipelineAdditionalInfoTable();
+            	Ext.getCmp("HeatingPipelineDeviceSelectEndRow_Id").setValue('');
+            	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(0,'');
+            	CreateAndLoadHeatingPipelineAdditionalInfoTable(0,'');
             }else{
             	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue(0);
+            	Ext.getCmp("HeatingPipelineDeviceSelectEndRow_Id").setValue(0);
             	var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
-            	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(rowdata[2]);
-            	CreateAndLoadHeatingPipelineAdditionalInfoTable(rowdata[2]);
+            	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
+            	CreateAndLoadHeatingPipelineAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
             Ext.getCmp("HeatingPipelineDeviceTotalCount_Id").update({
                 count: result.totalCount
@@ -308,6 +407,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
         heatingPipelineDeviceInfoHandsontableHelper.validresult = true; //数据校验
         heatingPipelineDeviceInfoHandsontableHelper.colHeaders = [];
         heatingPipelineDeviceInfoHandsontableHelper.columns = [];
+        heatingPipelineDeviceInfoHandsontableHelper.dataLength = 0;
 
         heatingPipelineDeviceInfoHandsontableHelper.AllData = {};
         heatingPipelineDeviceInfoHandsontableHelper.updatelist = [];
@@ -335,44 +435,44 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: heatingPipelineDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
-                contextMenu: {
-                    items: {
-                        "row_above": {
-                            name: '向上插入一行',
-                        },
-                        "row_below": {
-                            name: '向下插入一行',
-                        },
-                        "col_left": {
-                            name: '向左插入一列',
-                        },
-                        "col_right": {
-                            name: '向右插入一列',
-                        },
-                        "remove_row": {
-                            name: '删除行',
-                        },
-                        "remove_col": {
-                            name: '删除列',
-                        },
-                        "merge_cell": {
-                            name: '合并单元格',
-                        },
-                        "copy": {
-                            name: '复制',
-                        },
-                        "cut": {
-                            name: '剪切',
-                        },
-                        "paste": {
-                            name: '粘贴',
-                            disabled: function () {
-                            },
-                            callback: function () {
-                            }
-                        }
-                    }
-                }, //右键菜单展示
+//                contextMenu: {
+//                    items: {
+//                        "row_above": {
+//                            name: '向上插入一行',
+//                        },
+//                        "row_below": {
+//                            name: '向下插入一行',
+//                        },
+//                        "col_left": {
+//                            name: '向左插入一列',
+//                        },
+//                        "col_right": {
+//                            name: '向右插入一列',
+//                        },
+//                        "remove_row": {
+//                            name: '删除行',
+//                        },
+//                        "remove_col": {
+//                            name: '删除列',
+//                        },
+//                        "merge_cell": {
+//                            name: '合并单元格',
+//                        },
+//                        "copy": {
+//                            name: '复制',
+//                        },
+//                        "cut": {
+//                            name: '剪切',
+//                        },
+//                        "paste": {
+//                            name: '粘贴',
+//                            disabled: function () {
+//                            },
+//                            callback: function () {
+//                            }
+//                        }
+//                    }
+//                }, //右键菜单展示
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -383,12 +483,25 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                     var cellProperties = {};
                     var visualRowIndex = this.instance.toVisualRow(row);
                     var visualColIndex = this.instance.toVisualColumn(col);
+//                    if(visualRowIndex < heatingPipelineDeviceInfoHandsontableHelper.dataLength){
+//                    	cellProperties.readOnly = true;
+//                    }
+                    return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue(row);
-                	var row1=heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
-                	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(row1[2]);
-                	CreateAndLoadHeatingPipelineAdditionalInfoTable(row1[2]);
+                	var startRow=row;
+                	var endRow=row2;
+                	if(row>row2){
+                		startRow=row2;
+                    	endRow=row;
+                	}
+                	
+                	Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue(startRow);
+                	Ext.getCmp("HeatingPipelineDeviceSelectEndRow_Id").setValue(endRow);
+                	
+                	var row1=heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                	CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(row1[0],row1[1]);
+                	CreateAndLoadHeatingPipelineAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -485,10 +598,10 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
             var HeatingPipelineDeviceSelectRow= Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").getValue();
             if(isNotVal(HeatingPipelineDeviceSelectRow)){
             	var rowdata = heatingPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(HeatingPipelineDeviceSelectRow);
-            	deviceName=rowdata[2];
-            	if(isNotVal(deviceName)){
+            	var deviceId=rowdata[0];
+            	if(isNotVal(deviceId) && parseInt(deviceId)>0 ){
                 	deviceAuxiliaryData.deviceType=201;
-                	deviceAuxiliaryData.deviceName=deviceName;
+                	deviceAuxiliaryData.deviceId=deviceId;
                 	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	if(heatingPipelineAuxiliaryDeviceInfoHandsontableHelper!=null && heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
@@ -516,102 +629,38 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 	}
             	}
             }
-            
-            if (JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.AllData) != "{}" && heatingPipelineDeviceInfoHandsontableHelper.validresult) {
-            	var orgArr=leftOrg_Name.split(",");
-            	var saveData={};
-            	saveData.updatelist=[];
-            	saveData.insertlist=[];
-            	saveData.delidslist=heatingPipelineDeviceInfoHandsontableHelper.delidslist;
-            	
-            	var invalidData1=[];
-            	var invalidData2=[];
-            	var invalidDataInfo="";
-            	if(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
-                	for(var i=0;i<heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
-                		var orgName=heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
-                		var diveceName=heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.updatelist.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	if(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
-                	for(var i=0;i<heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
-                		var orgName=heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
-                		var diveceName=heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.insertlist.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(heatingPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	Ext.Ajax.request({
-                    method: 'POST',
-                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
-                    success: function (response) {
-                        rdata = Ext.JSON.decode(response.responseText);
-                        if (rdata.success) {
-                            if(invalidData1.length>0 || invalidData2.length>0){
-                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
-                        	}else{
-                        		Ext.MessageBox.alert("信息", "保存成功");
-                        	}
-                            //保存以后重置全局容器
-                            heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
-                            CreateAndLoadHeatingPipelineDeviceInfoTable();
-                        } else {
-                            Ext.MessageBox.alert("信息", "数据保存失败");
-
-                        }
-                    },
-                    failure: function () {
-                        Ext.MessageBox.alert("信息", "请求失败");
+        	Ext.Ajax.request({
+                method: 'POST',
+                url: context + '/wellInformationManagerController/saveWellHandsontableData',
+                success: function (response) {
+                    rdata = Ext.JSON.decode(response.responseText);
+                    if (rdata.success) {
+                    	Ext.MessageBox.alert("信息", "保存成功");
+                        //保存以后重置全局容器
                         heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
-                    },
-                    params: {
-                        data: JSON.stringify(saveData),
-                        deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
-                        orgId: leftOrg_Id,
-                        deviceType: 201
-                    }
-                });
-            } else {
-                if (!heatingPipelineDeviceInfoHandsontableHelper.validresult) {
-                    Ext.MessageBox.alert("信息", "数据类型错误");
-                } else {
-                    Ext.MessageBox.alert("信息", "无数据变化");
-                }
-            }
-        
-            
-            
+                        CreateAndLoadHeatingPipelineDeviceInfoTable();
+                    } else {
+                        Ext.MessageBox.alert("信息", "数据保存失败");
 
+                    }
+                },
+                failure: function () {
+                    Ext.MessageBox.alert("信息", "请求失败");
+                    heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
+                },
+                params: {
+                    data: JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.AllData),
+                    deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
+                    orgId: leftOrg_Id,
+                    deviceType: 201
+                }
+            });
         }
 
         //修改井名
         heatingPipelineDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
-
             if (heatingPipelineDeviceInfoHandsontableHelper.editWellNameList.length > 0 && heatingPipelineDeviceInfoHandsontableHelper.validresult) {
-                //	            	alert(JSON.stringify(heatingPipelineDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -623,7 +672,6 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                             CreateAndLoadHeatingPipelineDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
-
                         }
                     },
                     failure: function () {
@@ -703,7 +751,7 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
     }
 };
 
-function CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(heatingPipelineDeviceName,isNew){
+function CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&heatingPipelineAuxiliaryDeviceInfoHandsontableHelper!=null){
 		if(heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
 			heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
@@ -715,10 +763,10 @@ function CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(heatingPipelineDev
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(heatingPipelineDeviceName)){
-				heatingPipelineDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("HeatingPipelineAuxiliaryDevicePanel_Id").setTitle(heatingPipelineDeviceName+"辅件设备列表");
+			Ext.getCmp("HeatingPipelineAuxiliaryDevicePanel_Id").setTitle(deviceName+"辅件设备列表");
 			if(heatingPipelineAuxiliaryDeviceInfoHandsontableHelper==null || heatingPipelineAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				heatingPipelineAuxiliaryDeviceInfoHandsontableHelper = HeatingPipelineAuxiliaryDeviceInfoHandsontableHelper.createNew("HeatingPipelineAuxiliaryDeviceTableDiv_id");
 				var colHeaders="['','序号','名称','规格型号','']";
@@ -739,7 +787,7 @@ function CreateAndLoadHeatingPipelineAuxiliaryDeviceInfoTable(heatingPipelineDev
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:heatingPipelineDeviceName,
+			deviceId:deviceId,
 			deviceType:201
         }
 	});
@@ -810,7 +858,7 @@ var HeatingPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	    }
 };
 
-function CreateAndLoadHeatingPipelineAdditionalInfoTable(heatingPipelineDeviceName,isNew){
+function CreateAndLoadHeatingPipelineAdditionalInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&heatingPipelineAdditionalInfoHandsontableHelper!=null){
 		if(heatingPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
 			heatingPipelineAdditionalInfoHandsontableHelper.hot.destroy();
@@ -822,10 +870,10 @@ function CreateAndLoadHeatingPipelineAdditionalInfoTable(heatingPipelineDeviceNa
 		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(heatingPipelineDeviceName)){
-				heatingPipelineDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("HeatingPipelineAdditionalInfoPanel_Id").setTitle(heatingPipelineDeviceName+"附加信息");
+			Ext.getCmp("HeatingPipelineAdditionalInfoPanel_Id").setTitle(deviceName+"附加信息");
 			if(heatingPipelineAdditionalInfoHandsontableHelper==null || heatingPipelineAdditionalInfoHandsontableHelper.hot==undefined){
 				heatingPipelineAdditionalInfoHandsontableHelper = HeatingPipelineAdditionalInfoHandsontableHelper.createNew("HeatingPipelineAdditionalInfoTableDiv_id");
 				var colHeaders="['序号','名称','值','单位']";
@@ -850,7 +898,7 @@ function CreateAndLoadHeatingPipelineAdditionalInfoTable(heatingPipelineDeviceNa
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:heatingPipelineDeviceName,
+			deviceId:deviceId,
 			deviceType:201
         }
 	});

@@ -177,7 +177,7 @@ public class ResourceMonitoringTask {
         float result=0;
         String sql="SELECT tablespace_name,file_id,file_name,round(bytes / (1024 * 1024), 2) total_space "
         		+ " FROM dba_data_files t"
-        		+ " where tablespace_name='AGILE_DATA'";
+        		+ " where tablespace_name='AP_FB_DATA'";
         conn=OracleJdbcUtis.getConnection();
         if(conn==null){
         	return -1;
@@ -202,7 +202,7 @@ public class ResourceMonitoringTask {
 //        		+ " (SELECT tablespace_name, SUM(bytes) free FROM dba_free_space GROUP BY tablespace_name) a,  "
 //        		+ " (SELECT file_id,tablespace_name, SUM(bytes) total FROM dba_data_files GROUP BY file_id,tablespace_name) b   "
 //        		+ " WHERE a.tablespace_name = b.tablespace_name "
-//        		+ " and Upper(a.tablespace_name) like 'AGILE_DATA%' "
+//        		+ " and Upper(a.tablespace_name) like 'AP_FB_DATA%' "
 //        		+ " order by b.file_id ";
 		String sql="SELECT  round(SUM(bytes)/(1024*1024),2) as used,count(1)*32*1024 as totol, round(SUM(bytes)*100/(count(1)*32*1024*1024*1024),2) as usedpercent "
 				+ "FROM dba_data_files t "
