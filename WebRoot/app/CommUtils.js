@@ -7779,4 +7779,37 @@ function isExist(arr,data){
 		}
 	}
 	return r;
+};
+function foreachAndSearchOrgAbsolutePath(orgStoreData, orgId) {
+	var rtnArr=[];
+	var rtnStr="";
+	const foreachAndSearchOrgAbsolutePathname=function(storeData, id) {
+		if(storeData){
+			for(let record of storeData){
+				if(record.data.orgId===id){
+					if(record.parentNode){
+						foreachAndSearchOrgAbsolutePathname(storeData,record.parentNode.data.orgId);
+					}
+					rtnArr.push(record.data.text);
+				}else{
+//					if(record.childNodes){
+//						foreachAndSearchOrgAbsolutePathname(record.childNodes,orgId);
+//					}
+				}
+			}
+		}
+	};
+	foreachAndSearchOrgAbsolutePathname(orgStoreData, orgId);
+	for(var i=0;i<rtnArr.length;i++){
+		rtnStr+=rtnArr[i];
+		if(i<rtnArr.length-1){
+			rtnStr+="/";
+		}
+	}
+	return rtnStr;
 }
+
+
+
+
+

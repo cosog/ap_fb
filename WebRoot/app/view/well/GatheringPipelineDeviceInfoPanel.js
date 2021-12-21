@@ -78,21 +78,21 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                 }
             });
         Ext.apply(this, {
-            tbar: [gatheringPipelineDeviceCombo, '-', {
-                id: 'GatheringPipelineDeviceTotalCount_Id',
-                xtype: 'component',
-                hidden: false,
-                tpl: cosog.string.totalCount + ': {count}',
-                style: 'margin-right:15px'
-            },{
+            tbar: [gatheringPipelineDeviceCombo, '-',{
                 id: 'GatheringPipelineDeviceSelectRow_Id',
                 xtype: 'textfield',
                 value: 0,
                 hidden: true
-            }, '->', {
+            },{
+                id: 'GatheringPipelineDeviceSelectEndRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
+            }, {
                 xtype: 'button',
                 text: cosog.string.exportExcel,
-                pressed: true,
+//                pressed: true,
+                iconCls: 'export',
                 hidden: false,
                 handler: function (v, o) {
                     var fields = "";
@@ -116,36 +116,131 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                 xtype: 'button',
                 iconCls: 'note-refresh',
                 text: cosog.string.refresh,
-                pressed: true,
+//                pressed: true,
                 hidden: false,
                 handler: function (v, o) {
                     CreateAndLoadGatheringPipelineDeviceInfoTable();
                 }
-            }, '-', {
+            },'-', {
+                id: 'GatheringPipelineDeviceTotalCount_Id',
+                xtype: 'component',
+                hidden: false,
+                tpl: cosog.string.totalCount + ': {count}',
+                style: 'margin-right:15px'
+            },'->', {
+    			xtype: 'button',
+                text: '添加设备',
+                iconCls: 'add',
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.PipelineDeviceInfoWindow", {
+                        title: '添加设备'
+                    });
+                    window.show();
+                    Ext.getCmp("pipelineDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pipelineDeviceType_Id").setValue(203);
+                    Ext.getCmp("pipelineDeviceOrg_Id").setValue(selectedOrgId);
+                    Ext.getCmp("addFormPipelineDevice_Id").show();
+                    Ext.getCmp("updateFormPipelineDevice_Id").hide();
+                    return false;
+    			}
+    		}, '-',{
+    			xtype: 'button',
+    			id: 'deleteGatheringPipelineDeviceNameBtn_Id',
+    			text: '删除设备',
+    			iconCls: 'delete',
+    			handler: function (v, o) {
+    				var startRow= Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").getValue();
+    				var endRow= Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").getValue();
+    				var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
+    				if(startRow!=''&&endRow!=''){
+    					startRow=parseInt(startRow);
+    					endRow=parseInt(endRow);
+    					var deleteInfo='是否删除第'+(startRow+1)+"行~第"+(endRow+1)+"行数据";
+    					if(startRow==endRow){
+    						deleteInfo='是否删除第'+(startRow+1)+"行数据";
+    					}
+    					
+    					Ext.Msg.confirm(cosog.string.yesdel, deleteInfo, function (btn) {
+    			            if (btn == "yes") {
+    			            	for(var i=startRow;i<=endRow;i++){
+    	    						var rowdata = gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+    	    						if (rowdata[0] != null && parseInt(rowdata[0])>0) {
+    	    		                    gatheringPipelineDeviceInfoHandsontableHelper.delidslist.push(rowdata[0]);
+    	    		                }
+    	    					}
+    	    					var saveData={};
+    	    	            	saveData.updatelist=[];
+    	    	            	saveData.insertlist=[];
+    	    	            	saveData.delidslist=gatheringPipelineDeviceInfoHandsontableHelper.delidslist;
+    	    	            	Ext.Ajax.request({
+    	    	                    method: 'POST',
+    	    	                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
+    	    	                    success: function (response) {
+    	    	                        rdata = Ext.JSON.decode(response.responseText);
+    	    	                        if (rdata.success) {
+    	    	                        	Ext.MessageBox.alert("信息", "删除成功");
+    	    	                            //保存以后重置全局容器
+    	    	                            gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            CreateAndLoadGatheringPipelineDeviceInfoTable();
+    	    	                        } else {
+    	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
+    	    	                        }
+    	    	                    },
+    	    	                    failure: function () {
+    	    	                        Ext.MessageBox.alert("信息", "请求失败");
+    	    	                        gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                    },
+    	    	                    params: {
+    	    	                        data: JSON.stringify(saveData),
+    	    	                        orgId: leftOrg_Id,
+    	    	                        deviceType: 203
+    	    	                    }
+    	    	                });
+    			            }
+    			        });
+    				}else{
+    					Ext.MessageBox.alert("信息","请先选中要删除的行");
+    				}
+    			}
+    		},"-", {
                 xtype: 'button',
                 itemId: 'saveGatheringPipelineDeviceDataBtnId',
                 id: 'saveGatheringPipelineDeviceDataBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
                     gatheringPipelineDeviceInfoHandsontableHelper.saveData();
                 }
-            }, '-', {
-                xtype: 'button',
-                itemId: 'editGatheringPipelineDeviceNameBtnId',
-                id: 'editGatheringPipelineDeviceNameBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
-                text: '修改设备名称',
-                iconCls: 'edit',
-                handler: function (v, o) {
-                    gatheringPipelineDeviceInfoHandsontableHelper.editWellName();
-                }
-            }],
+            },"-", {
+    			xtype: 'button',
+    			text:'设备隶属迁移',
+    			iconCls: 'move',
+    			handler: function (v, o) {
+    				var window = Ext.create("AP.view.well.DeviceOrgChangeWindow", {
+                        title: '设备隶属迁移'
+                    });
+                    window.show();
+                    Ext.getCmp('DeviceOrgChangeWinDeviceType_Id').setValue(203);
+                    Ext.create("AP.store.well.DeviceOrgChangeDeviceListStore");
+                    Ext.create("AP.store.well.DeviceOrgChangeOrgListStore");
+    			}
+    		}],
             layout: 'border',
             items: [{
             	region: 'center',
@@ -211,6 +306,7 @@ function CreateAndLoadGatheringPipelineDeviceInfoTable(isNew) {
             var result = Ext.JSON.decode(response.responseText);
             if (gatheringPipelineDeviceInfoHandsontableHelper == null || gatheringPipelineDeviceInfoHandsontableHelper.hot == null || gatheringPipelineDeviceInfoHandsontableHelper.hot == undefined) {
                 gatheringPipelineDeviceInfoHandsontableHelper = GatheringPipelineDeviceInfoHandsontableHelper.createNew("GatheringPipelineDeviceTableDiv_id");
+                gatheringPipelineDeviceInfoHandsontableHelper.dataLength=result.totalCount;
                 var colHeaders = "[";
                 var columns = "[";
 
@@ -270,17 +366,20 @@ function CreateAndLoadGatheringPipelineDeviceInfoTable(isNew) {
                 gatheringPipelineDeviceInfoHandsontableHelper.columns = Ext.JSON.decode(columns);
                 gatheringPipelineDeviceInfoHandsontableHelper.createTable(result.totalRoot);
             } else {
-                gatheringPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
+            	gatheringPipelineDeviceInfoHandsontableHelper.dataLength=result.totalCount;
+            	gatheringPipelineDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
             if(result.totalRoot.length==0){
             	Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue('');
-            	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable();
-            	CreateAndLoadGatheringPipelineAdditionalInfoTable();
+            	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue('');
+            	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(0,'');
+            	CreateAndLoadGatheringPipelineAdditionalInfoTable(0,'');
             }else{
             	Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue(0);
+            	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue(0);
             	var rowdata = gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
-            	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(rowdata[2]);
-            	CreateAndLoadGatheringPipelineAdditionalInfoTable(rowdata[2]);
+            	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
+            	CreateAndLoadGatheringPipelineAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
             Ext.getCmp("GatheringPipelineDeviceTotalCount_Id").update({
                 count: result.totalCount
@@ -308,6 +407,7 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
         gatheringPipelineDeviceInfoHandsontableHelper.validresult = true; //数据校验
         gatheringPipelineDeviceInfoHandsontableHelper.colHeaders = [];
         gatheringPipelineDeviceInfoHandsontableHelper.columns = [];
+        gatheringPipelineDeviceInfoHandsontableHelper.dataLength = 0;
 
         gatheringPipelineDeviceInfoHandsontableHelper.AllData = {};
         gatheringPipelineDeviceInfoHandsontableHelper.updatelist = [];
@@ -335,44 +435,44 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: gatheringPipelineDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
-                contextMenu: {
-                    items: {
-                        "row_above": {
-                            name: '向上插入一行',
-                        },
-                        "row_below": {
-                            name: '向下插入一行',
-                        },
-                        "col_left": {
-                            name: '向左插入一列',
-                        },
-                        "col_right": {
-                            name: '向右插入一列',
-                        },
-                        "remove_row": {
-                            name: '删除行',
-                        },
-                        "remove_col": {
-                            name: '删除列',
-                        },
-                        "merge_cell": {
-                            name: '合并单元格',
-                        },
-                        "copy": {
-                            name: '复制',
-                        },
-                        "cut": {
-                            name: '剪切',
-                        },
-                        "paste": {
-                            name: '粘贴',
-                            disabled: function () {
-                            },
-                            callback: function () {
-                            }
-                        }
-                    }
-                }, //右键菜单展示
+//                contextMenu: {
+//                    items: {
+//                        "row_above": {
+//                            name: '向上插入一行',
+//                        },
+//                        "row_below": {
+//                            name: '向下插入一行',
+//                        },
+//                        "col_left": {
+//                            name: '向左插入一列',
+//                        },
+//                        "col_right": {
+//                            name: '向右插入一列',
+//                        },
+//                        "remove_row": {
+//                            name: '删除行',
+//                        },
+//                        "remove_col": {
+//                            name: '删除列',
+//                        },
+//                        "merge_cell": {
+//                            name: '合并单元格',
+//                        },
+//                        "copy": {
+//                            name: '复制',
+//                        },
+//                        "cut": {
+//                            name: '剪切',
+//                        },
+//                        "paste": {
+//                            name: '粘贴',
+//                            disabled: function () {
+//                            },
+//                            callback: function () {
+//                            }
+//                        }
+//                    }
+//                }, //右键菜单展示
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -383,12 +483,25 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                     var cellProperties = {};
                     var visualRowIndex = this.instance.toVisualRow(row);
                     var visualColIndex = this.instance.toVisualColumn(col);
+//                    if(visualRowIndex < gatheringPipelineDeviceInfoHandsontableHelper.dataLength){
+//                    	cellProperties.readOnly = true;
+//                    }
+                    return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue(row);
-                	var row1=gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(row);
-                	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(row1[2]);
-                	CreateAndLoadGatheringPipelineAdditionalInfoTable(row1[2]);
+                	var startRow=row;
+                	var endRow=row2;
+                	if(row>row2){
+                		startRow=row2;
+                    	endRow=row;
+                	}
+                	
+                	Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue(startRow);
+                	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue(endRow);
+                	
+                	var row1=gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(row1[0],row1[1]);
+                	CreateAndLoadGatheringPipelineAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -485,10 +598,10 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
             var GatheringPipelineDeviceSelectRow= Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").getValue();
             if(isNotVal(GatheringPipelineDeviceSelectRow)){
             	var rowdata = gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(GatheringPipelineDeviceSelectRow);
-            	deviceName=rowdata[2];
-            	if(isNotVal(deviceName)){
+            	var deviceId=rowdata[0];
+            	if(isNotVal(deviceId) && parseInt(deviceId)>0 ){
                 	deviceAuxiliaryData.deviceType=203;
-                	deviceAuxiliaryData.deviceName=deviceName;
+                	deviceAuxiliaryData.deviceId=deviceId;
                 	//辅件设备
                 	deviceAuxiliaryData.auxiliaryDevice=[];
                 	if(gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper!=null && gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
@@ -516,102 +629,38 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                 	}
             	}
             }
-            
-            if (JSON.stringify(gatheringPipelineDeviceInfoHandsontableHelper.AllData) != "{}" && gatheringPipelineDeviceInfoHandsontableHelper.validresult) {
-            	var orgArr=leftOrg_Name.split(",");
-            	var saveData={};
-            	saveData.updatelist=[];
-            	saveData.insertlist=[];
-            	saveData.delidslist=gatheringPipelineDeviceInfoHandsontableHelper.delidslist;
-            	
-            	var invalidData1=[];
-            	var invalidData2=[];
-            	var invalidDataInfo="";
-            	if(gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
-                	for(var i=0;i<gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
-                		var orgName=gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
-                		var diveceName=gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.updatelist.push(gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(gatheringPipelineDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	if(gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
-                	for(var i=0;i<gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
-                		var orgName=gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
-                		var diveceName=gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
-                		if(isNotVal(diveceName)){
-                			var orgCount=isExist(orgArr,orgName);
-                    		if(orgCount>1){//所选组织下具有多个同名组织
-                    			invalidData1.push(gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-                    		}else if(orgCount===1){//所选组织下无重复组织
-                    			saveData.insertlist.push(gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    		}else{//不具备所填写组织权限
-                    			invalidData2.push(gatheringPipelineDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-                    			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-                    		}
-                		}
-                	}
-                }
-            	Ext.Ajax.request({
-                    method: 'POST',
-                    url: context + '/wellInformationManagerController/saveWellHandsontableData',
-                    success: function (response) {
-                        rdata = Ext.JSON.decode(response.responseText);
-                        if (rdata.success) {
-                            if(invalidData1.length>0 || invalidData2.length>0){
-                        		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
-                        	}else{
-                        		Ext.MessageBox.alert("信息", "保存成功");
-                        	}
-                            //保存以后重置全局容器
-                            gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
-                            CreateAndLoadGatheringPipelineDeviceInfoTable();
-                        } else {
-                            Ext.MessageBox.alert("信息", "数据保存失败");
-
-                        }
-                    },
-                    failure: function () {
-                        Ext.MessageBox.alert("信息", "请求失败");
+        	Ext.Ajax.request({
+                method: 'POST',
+                url: context + '/wellInformationManagerController/saveWellHandsontableData',
+                success: function (response) {
+                    rdata = Ext.JSON.decode(response.responseText);
+                    if (rdata.success) {
+                    	Ext.MessageBox.alert("信息", "保存成功");
+                        //保存以后重置全局容器
                         gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
-                    },
-                    params: {
-                        data: JSON.stringify(saveData),
-                        deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
-                        orgId: leftOrg_Id,
-                        deviceType: 203
-                    }
-                });
-            } else {
-                if (!gatheringPipelineDeviceInfoHandsontableHelper.validresult) {
-                    Ext.MessageBox.alert("信息", "数据类型错误");
-                } else {
-                    Ext.MessageBox.alert("信息", "无数据变化");
-                }
-            }
-        
-            
-            
+                        CreateAndLoadGatheringPipelineDeviceInfoTable();
+                    } else {
+                        Ext.MessageBox.alert("信息", "数据保存失败");
 
+                    }
+                },
+                failure: function () {
+                    Ext.MessageBox.alert("信息", "请求失败");
+                    gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+                },
+                params: {
+                    data: JSON.stringify(gatheringPipelineDeviceInfoHandsontableHelper.AllData),
+                    deviceAuxiliaryData: JSON.stringify(deviceAuxiliaryData),
+                    orgId: leftOrg_Id,
+                    deviceType: 203
+                }
+            });
         }
 
         //修改井名
         gatheringPipelineDeviceInfoHandsontableHelper.editWellName = function () {
             //插入的数据的获取
-
             if (gatheringPipelineDeviceInfoHandsontableHelper.editWellNameList.length > 0 && gatheringPipelineDeviceInfoHandsontableHelper.validresult) {
-                //	            	alert(JSON.stringify(gatheringPipelineDeviceInfoHandsontableHelper.editWellNameList));
                 Ext.Ajax.request({
                     method: 'POST',
                     url: context + '/wellInformationManagerController/editWellName',
@@ -623,7 +672,6 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                             CreateAndLoadGatheringPipelineDeviceInfoTable();
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
-
                         }
                     },
                     failure: function () {
@@ -703,7 +751,7 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
     }
 };
 
-function CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(gatheringPipelineDeviceName,isNew){
+function CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper!=null){
 		if(gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot!=undefined){
 			gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.destroy();
@@ -715,10 +763,10 @@ function CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(gatheringPipelin
 		url:context + '/wellInformationManagerController/getAuxiliaryDevice',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(gatheringPipelineDeviceName)){
-				gatheringPipelineDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("GatheringPipelineAuxiliaryDevicePanel_Id").setTitle(gatheringPipelineDeviceName+"辅件设备列表");
+			Ext.getCmp("GatheringPipelineAuxiliaryDevicePanel_Id").setTitle(deviceName+"辅件设备列表");
 			if(gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper==null || gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot==undefined){
 				gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = GatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.createNew("GatheringPipelineAuxiliaryDeviceTableDiv_id");
 				var colHeaders="['','序号','名称','规格型号','']";
@@ -739,7 +787,7 @@ function CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(gatheringPipelin
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:gatheringPipelineDeviceName,
+			deviceId:deviceId,
 			deviceType:203
         }
 	});
@@ -810,7 +858,7 @@ var GatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	    }
 };
 
-function CreateAndLoadGatheringPipelineAdditionalInfoTable(gatheringPipelineDeviceName,isNew){
+function CreateAndLoadGatheringPipelineAdditionalInfoTable(deviceId,deviceName,isNew){
 	if(isNew&&gatheringPipelineAdditionalInfoHandsontableHelper!=null){
 		if(gatheringPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
 			gatheringPipelineAdditionalInfoHandsontableHelper.hot.destroy();
@@ -822,10 +870,10 @@ function CreateAndLoadGatheringPipelineAdditionalInfoTable(gatheringPipelineDevi
 		url:context + '/wellInformationManagerController/getDeviceAdditionalInfo',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
-			if(!isNotVal(gatheringPipelineDeviceName)){
-				gatheringPipelineDeviceName='';
+			if(!isNotVal(deviceName)){
+				deviceName='';
 			}
-			Ext.getCmp("GatheringPipelineAdditionalInfoPanel_Id").setTitle(gatheringPipelineDeviceName+"附加信息");
+			Ext.getCmp("GatheringPipelineAdditionalInfoPanel_Id").setTitle(deviceName+"附加信息");
 			if(gatheringPipelineAdditionalInfoHandsontableHelper==null || gatheringPipelineAdditionalInfoHandsontableHelper.hot==undefined){
 				gatheringPipelineAdditionalInfoHandsontableHelper = GatheringPipelineAdditionalInfoHandsontableHelper.createNew("GatheringPipelineAdditionalInfoTableDiv_id");
 				var colHeaders="['序号','名称','值','单位']";
@@ -850,7 +898,7 @@ function CreateAndLoadGatheringPipelineAdditionalInfoTable(gatheringPipelineDevi
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
-			deviceName:gatheringPipelineDeviceName,
+			deviceId:deviceId,
 			deviceType:203
         }
 	});

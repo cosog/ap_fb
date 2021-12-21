@@ -8,6 +8,16 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
     initComponent: function () {
         Ext.apply(this, {
             tbar: [{
+                id: 'AuxiliaryDeviceSelectRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
+            },{
+                id: 'AuxiliaryDeviceSelectEndRow_Id',
+                xtype: 'textfield',
+                value: 0,
+                hidden: true
+            },{
                 xtype: "combobox",
                 fieldLabel: '辅件类型',
                 id: 'AuxiliaryDeviceTypeComb_Id',
@@ -35,15 +45,10 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
                     }
                 }
             }, '-', {
-                id: 'AuxiliaryDeviceTotalCount_Id',
-                xtype: 'component',
-                hidden: false,
-                tpl: cosog.string.totalCount + ': {count}',
-                style: 'margin-right:15px'
-            }, '->', {
                 xtype: 'button',
                 text: cosog.string.exportExcel,
-                pressed: true,
+//                pressed: true,
+                iconCls: 'export',
                 hidden: false,
                 handler: function (v, o) {
                     var fields = "";
@@ -79,35 +84,96 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
                 xtype: 'button',
                 iconCls: 'note-refresh',
                 text: cosog.string.refresh,
-                pressed: true,
+//                pressed: true,
                 hidden: false,
                 handler: function (v, o) {
                     CreateAndLoadAuxiliaryDeviceInfoTable();
                 }
 
-            }, '-', {
+            },'-', {
+                id: 'AuxiliaryDeviceTotalCount_Id',
+                xtype: 'component',
+                hidden: false,
+                tpl: cosog.string.totalCount + ': {count}',
+                style: 'margin-right:15px'
+            }, '->',{
+    			xtype: 'button',
+                text: '添加设备',
+                iconCls: 'add',
+                handler: function (v, o) {
+                	var window = Ext.create("AP.view.well.AuxiliaryDeviceInfoWindow", {
+                        title: '添加设备'
+                    });
+                    window.show();
+                    Ext.getCmp("addFormAuxiliaryDevice_Id").show();
+                    Ext.getCmp("updateFormAuxiliaryDevice_Id").hide();
+                    return false;
+    			}
+    		}, '-',{
+    			xtype: 'button',
+    			text: '删除设备',
+    			iconCls: 'delete',
+    			handler: function (v, o) {
+    				var startRow= Ext.getCmp("AuxiliaryDeviceSelectRow_Id").getValue();
+    				var endRow= Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").getValue();
+    				if(startRow!=''&&endRow!=''){
+    					startRow=parseInt(startRow);
+    					endRow=parseInt(endRow);
+    					var deleteInfo='是否删除第'+(startRow+1)+"行~第"+(endRow+1)+"行数据";
+    					if(startRow==endRow){
+    						deleteInfo='是否删除第'+(startRow+1)+"行数据";
+    					}
+    					
+    					Ext.Msg.confirm(cosog.string.yesdel, deleteInfo, function (btn) {
+    			            if (btn == "yes") {
+    			            	for(var i=startRow;i<=endRow;i++){
+    	    						var rowdata = auxiliaryDeviceInfoHandsontableHelper.hot.getDataAtRow(i);
+    	    						if (rowdata[0] != null && parseInt(rowdata[0])>0) {
+    	    		                    auxiliaryDeviceInfoHandsontableHelper.delidslist.push(rowdata[0]);
+    	    		                }
+    	    					}
+    	    					var saveData={};
+    	    	            	saveData.updatelist=[];
+    	    	            	saveData.insertlist=[];
+    	    	            	saveData.delidslist=auxiliaryDeviceInfoHandsontableHelper.delidslist;
+    	    	            	Ext.Ajax.request({
+    	    	                    method: 'POST',
+    	    	                    url: context + '/wellInformationManagerController/saveAuxiliaryDeviceHandsontableData',
+    	    	                    success: function (response) {
+    	    	                        rdata = Ext.JSON.decode(response.responseText);
+    	    	                        if (rdata.success) {
+    	    	                        	Ext.MessageBox.alert("信息", "删除成功");
+    	    	                        	auxiliaryDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            CreateAndLoadAuxiliaryDeviceInfoTable();
+    	    	                        } else {
+    	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
+    	    	                        }
+    	    	                    },
+    	    	                    failure: function () {
+    	    	                        Ext.MessageBox.alert("信息", "请求失败");
+    	    	                        auxiliaryDeviceInfoHandsontableHelper.clearContainer();
+    	    	                    },
+    	    	                    params: {
+    	    	                        data: JSON.stringify(saveData)
+    	    	                    }
+    	    	                });
+    			            }
+    			        });
+    				}else{
+    					Ext.MessageBox.alert("信息","请先选中要删除的行");
+    				}
+    			}
+    		}, '-', {
                 xtype: 'button',
                 itemId: 'saveAuxiliaryDeviceDataBtnId',
                 id: 'saveAuxiliaryDeviceDataBtn_Id',
                 disabled: false,
                 hidden: false,
-                pressed: true,
+//                pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
                     auxiliaryDeviceInfoHandsontableHelper.saveData();
-                }
-            }, '-', {
-                xtype: 'button',
-                itemId: 'editAuxiliaryDeviceNameBtnId',
-                id: 'editAuxiliaryDeviceNameBtn_Id',
-                disabled: false,
-                hidden: false,
-                pressed: true,
-                text: '修改设备名称',
-                iconCls: 'edit',
-                handler: function (v, o) {
-                    auxiliaryDeviceInfoHandsontableHelper.editWellName();
                 }
             }],
             html: '<div class="AuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="AuxiliaryDeviceTableDiv_id"></div></div>',
@@ -222,44 +288,44 @@ var AuxiliaryDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: auxiliaryDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
-                contextMenu: {
-                    items: {
-                        "row_above": {
-                            name: '向上插入一行',
-                        },
-                        "row_below": {
-                            name: '向下插入一行',
-                        },
-                        "col_left": {
-                            name: '向左插入一列',
-                        },
-                        "col_right": {
-                            name: '向右插入一列',
-                        },
-                        "remove_row": {
-                            name: '删除行',
-                        },
-                        "remove_col": {
-                            name: '删除列',
-                        },
-                        "merge_cell": {
-                            name: '合并单元格',
-                        },
-                        "copy": {
-                            name: '复制',
-                        },
-                        "cut": {
-                            name: '剪切',
-                        },
-                        "paste": {
-                            name: '粘贴',
-                            disabled: function () {
-                            },
-                            callback: function () {
-                            }
-                        }
-                    }
-                }, //右键菜单展示
+//                contextMenu: {
+//                    items: {
+//                        "row_above": {
+//                            name: '向上插入一行',
+//                        },
+//                        "row_below": {
+//                            name: '向下插入一行',
+//                        },
+//                        "col_left": {
+//                            name: '向左插入一列',
+//                        },
+//                        "col_right": {
+//                            name: '向右插入一列',
+//                        },
+//                        "remove_row": {
+//                            name: '删除行',
+//                        },
+//                        "remove_col": {
+//                            name: '删除列',
+//                        },
+//                        "merge_cell": {
+//                            name: '合并单元格',
+//                        },
+//                        "copy": {
+//                            name: '复制',
+//                        },
+//                        "cut": {
+//                            name: '剪切',
+//                        },
+//                        "paste": {
+//                            name: '粘贴',
+//                            disabled: function () {
+//                            },
+//                            callback: function () {
+//                            }
+//                        }
+//                    }
+//                }, //右键菜单展示
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -271,6 +337,17 @@ var AuxiliaryDeviceInfoHandsontableHelper = {
                     var cellProperties = {};
                     var visualRowIndex = this.instance.toVisualRow(row);
                     var visualColIndex = this.instance.toVisualColumn(col);
+                },
+                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
+                	var startRow=row;
+                	var endRow=row2;
+                	if(row>row2){
+                		startRow=row2;
+                    	endRow=row;
+                	}
+                	
+                	Ext.getCmp("AuxiliaryDeviceSelectRow_Id").setValue(startRow);
+                	Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").setValue(endRow);
                 },
                 afterDestroy: function () {
                 },

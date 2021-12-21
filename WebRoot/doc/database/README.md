@@ -916,8 +916,8 @@
 |----------|--------------------------------|--------------------|----------|
 | 1        | PRD_RESET_SEQUENCE             | 重置序列           |          |
 | 2        | PRD_CLEAR_DATA                 | 清理数据并重置序列 |          |
-| 3        | PRD_SAVE_PUMPDEVIVE            | 保存泵设备数据     |          |
-| 4        | PRD_SAVE_PIPELINEDEVIVE        | 保存管设备数据     |          |
+| 3        | PRD_SAVE_PUMPDEVICE            | 保存泵设备数据     |          |
+| 4        | PRD_SAVE_PIPELINEDEVICE        | 保存管设备数据     |          |
 | 5        | PRD_SAVE_SMSDEVICE             | 保存短信设备数据   |          |
 | 6        | PRD_SAVE_AUXILIARYDEVICE       | 保存辅件设备数据   |          |
 | 7        | PRD_CHANGE_PUMPDEVICENAME      | 修改泵设备名称     |          |
