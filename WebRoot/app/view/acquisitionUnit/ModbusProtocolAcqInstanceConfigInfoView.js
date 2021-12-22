@@ -60,12 +60,13 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqInstanceConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigInstancePropertiesHandsontableHelper!=null && protocolConfigInstancePropertiesHandsontableHelper.hot!=undefined){
-                            		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
-                            		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
-                            		if(isNotVal(gridPanel)){
-                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            			CreateProtocolInstanceConfigPropertiesInfoTable(selectedItem.data);
-                            		}
+//                            		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
+//                            		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
+//                            		if(isNotVal(gridPanel)){
+//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                            			CreateProtocolInstanceConfigPropertiesInfoTable(selectedItem.data);
+//                            		}
+                            		protocolConfigInstancePropertiesHandsontableHelper.hot.refreshDimensions();
                             	}
                             }
                         }
@@ -80,20 +81,21 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqInstanceConfigInfoView', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                         	if(protocolInstanceConfigItemsHandsontableHelper!=null && protocolInstanceConfigItemsHandsontableHelper.hot!=undefined){
-                        		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
-                        		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
-                        		if(isNotVal(gridPanel)){
-                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            	    if(selectedItem.data.classes==0){
-                            	    	if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                                			CreateProtocolInstanceAcqItemsInfoTable(selectedItem.data.children[0].id,selectedItem.data.children[0].text,selectedItem.data.children[0].classes);
-                                		}else{
-                                			CreateProtocolInstanceAcqItemsInfoTable(-1,'',1);
-                                		}
-                                	}else{
-                                		CreateProtocolInstanceAcqItemsInfoTable(selectedItem.data.id,selectedItem.data.text,selectedItem.data.classes);
-                                	}
-                        		}
+//                        		var selectRow= Ext.getCmp("ScadaProtocolModbusInstanceConfigSelectRow_Id").getValue();
+//                        		var gridPanel=Ext.getCmp("ModbusProtocolInstanceConfigTreeGridPanel_Id");
+//                        		if(isNotVal(gridPanel)){
+//                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                            	    if(selectedItem.data.classes==0){
+//                            	    	if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+//                                			CreateProtocolInstanceAcqItemsInfoTable(selectedItem.data.children[0].id,selectedItem.data.children[0].text,selectedItem.data.children[0].classes);
+//                                		}else{
+//                                			CreateProtocolInstanceAcqItemsInfoTable(-1,'',1);
+//                                		}
+//                                	}else{
+//                                		CreateProtocolInstanceAcqItemsInfoTable(selectedItem.data.id,selectedItem.data.text,selectedItem.data.classes);
+//                                	}
+//                        		}
+                        		protocolInstanceConfigItemsHandsontableHelper.hot.refreshDimensions();
                         	}
                         }
                     }
@@ -206,6 +208,7 @@ var ProtocolConfigInstancePropertiesHandsontableHelper = {
 	        	$('#'+protocolConfigInstancePropertiesHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolConfigInstancePropertiesHandsontableHelper.divid);
 	        	protocolConfigInstancePropertiesHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [2,5,5],
 	                columns:protocolConfigInstancePropertiesHandsontableHelper.columns,
@@ -331,6 +334,7 @@ var ProtocolInstanceConfigItemsHandsontableHelper = {
 	        	$('#'+protocolInstanceConfigItemsHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolInstanceConfigItemsHandsontableHelper.divid);
 	        	protocolInstanceConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [50,120,80,80,80,80,80,80,80,80],
 	                columns:protocolInstanceConfigItemsHandsontableHelper.columns,

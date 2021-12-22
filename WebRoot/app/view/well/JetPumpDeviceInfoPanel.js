@@ -252,7 +252,7 @@ Ext.define('AP.view.well.JetPumpDeviceInfoPanel', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             if (jetPumpDeviceInfoHandsontableHelper != null && jetPumpDeviceInfoHandsontableHelper.hot != null && jetPumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            	CreateAndLoadJetPumpDeviceInfoTable();
+                            	jetPumpDeviceInfoHandsontableHelper.hot.refreshDimensions();
                             }
                         }
                     }
@@ -265,7 +265,11 @@ Ext.define('AP.view.well.JetPumpDeviceInfoPanel', {
                 	collapsible: true,
                 	html: '<div class="JetPumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="JetPumpAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                        	if (jetPumpAdditionalInfoHandsontableHelper != null && jetPumpAdditionalInfoHandsontableHelper.hot != null && jetPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                        		jetPumpAdditionalInfoHandsontableHelper.hot.refreshDimensions();
+                            }
+                        }
                     }
             	}]
             },{
@@ -277,7 +281,11 @@ Ext.define('AP.view.well.JetPumpDeviceInfoPanel', {
                 collapsible: true,
                 html: '<div class="JetPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="JetPumpAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                    	if (jetPumpAuxiliaryDeviceInfoHandsontableHelper != null && jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                    		jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
+                        }
+                    }
                 }
             }],
             listeners: {
@@ -424,7 +432,8 @@ var JetPumpDeviceInfoHandsontableHelper = {
             $('#' + jetPumpDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + jetPumpDeviceInfoHandsontableHelper.divid);
             jetPumpDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -435,6 +444,7 @@ var JetPumpDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: jetPumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
+                allowInsertRow:false,
 //                contextMenu: {
 //                    items: {
 //                        "row_above": {
@@ -489,19 +499,40 @@ var JetPumpDeviceInfoHandsontableHelper = {
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("JetPumpDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("JetPumpDeviceSelectEndRow_Id").setValue('');
+                    	CreateAndLoadJetPumpAuxiliaryDeviceInfoTable(0,'');
+                    	CreateAndLoadJetPumpAdditionalInfoTable(0,'');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	
+                    	Ext.getCmp("JetPumpDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("JetPumpDeviceSelectEndRow_Id").setValue(endRow);
+                    	
+                    	var row1=jetPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                    	var recordId=0;
+                    	var deviceName='';
+                    	if(isNotVal(row1[0])){
+                    		recordId=row1[0];
+                    	}
+                    	if(isNotVal(row1[1])){
+                    		deviceName=row1[1];
+                    	}
+                    	CreateAndLoadJetPumpAuxiliaryDeviceInfoTable(recordId,deviceName);
+                    	CreateAndLoadJetPumpAdditionalInfoTable(recordId,deviceName);
                 	}
-                	
-                	Ext.getCmp("JetPumpDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("JetPumpDeviceSelectEndRow_Id").setValue(endRow);
-                	
-                	var row1=jetPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
-                	CreateAndLoadJetPumpAuxiliaryDeviceInfoTable(row1[0],row1[1]);
-                	CreateAndLoadJetPumpAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -868,6 +899,7 @@ var JetPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        	$('#'+jetPumpAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+jetPumpAuxiliaryDeviceInfoHandsontableHelper.divid);
 	        	jetPumpAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
@@ -971,7 +1003,8 @@ var JetPumpAdditionalInfoHandsontableHelper = {
 	            $('#' + jetPumpAdditionalInfoHandsontableHelper.divid).empty();
 	            var hotElement = document.querySelector('#' + jetPumpAdditionalInfoHandsontableHelper.divid);
 	            jetPumpAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-	                data: data,
+	            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
 	                    indicators: true

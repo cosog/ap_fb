@@ -231,7 +231,8 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                         	if(smsDeviceInfoHandsontableHelper!=null&&smsDeviceInfoHandsontableHelper.hot!=null&&smsDeviceInfoHandsontableHelper.hot!=undefined){
-                        		CreateAndLoadSMSDeviceInfoTable();
+//                        		CreateAndLoadSMSDeviceInfoTable();
+                        		smsDeviceInfoHandsontableHelper.hot.refreshDimensions();
                         	}
                         },
                         beforeclose: function ( panel, eOpts) {
@@ -295,6 +296,13 @@ function CreateAndLoadSMSDeviceInfoTable(isNew){
 			}else{
 				smsDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
 			}
+			if(result.totalRoot.length==0){
+				Ext.getCmp("SMSDeviceSelectRow_Id").setValue('');
+            	Ext.getCmp("SMSDeviceSelectEndRow_Id").setValue('');
+            }else{
+            	Ext.getCmp("SMSDeviceSelectRow_Id").setValue(0);
+            	Ext.getCmp("SMSDeviceSelectEndRow_Id").setValue(0);
+            }
 			Ext.getCmp("SMSDeviceTotalCount_Id").update({count: result.totalCount});
 		},
 		failure:function(){
@@ -335,6 +343,7 @@ var SMSDeviceInfoHandsontableHelper = {
 	        	$('#'+smsDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+smsDeviceInfoHandsontableHelper.divid);
 	        	smsDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	                hiddenColumns: {
 	                    columns: [0],
@@ -346,54 +355,10 @@ var SMSDeviceInfoHandsontableHelper = {
 	                rowHeaders: true,//显示行头
 	                colHeaders:smsDeviceInfoHandsontableHelper.colHeaders,//显示列头
 	                columnSorting: true,//允许排序
-//	                colWidths:[50,90,75, 80,100,70, 80,100,70, 140,120, 80,80,80,80,80, 80,80,80,80,80,  80,80,80,120, 80, 75],
-//	                colWidths:50,
-//	                contextMenu: {
-//	                	items: {
-//	                	    "row_above": {
-//	                	      name: '向上插入一行',
-//	                	    },
-//	                	    "row_below": {
-//	                	      name: '向下插入一行',
-//	                	    },
-//	                	    "col_left": {
-//	                	      name: '向左插入一列',
-//	                	    },
-//	                	    "col_right": {
-//	                	      name: '向右插入一列',
-//	                	    },
-//	                	    "remove_row": {
-//	                	      name: '删除行',
-//	                	    },
-//	                	    "remove_col": {
-//	                	      name: '删除列',
-//	                	    },
-//	                	    "merge_cell": {
-//	                	      name: '合并单元格',
-//	                	    },
-//	                	    "copy": {
-//	                	      name: '复制',
-//	                	    },
-//	                	    "cut": {
-//	                	      name: '剪切',
-//	                	    },
-//	                	    "paste": {
-//	                	      name: '粘贴',
-//	                	      disabled: function() {
-////	                	        return self.clipboardCache.length === 0;
-//	                	      },
-//	                	      callback: function() {
-////	                	        var plugin = this.getPlugin('copyPaste');
-////	                	        this.listen();
-////	                	        plugin.paste(self.clipboardCache);
-//	                	      }
-//	                	    }
-//	                	}
-//	                },//右键菜单展示
+	                allowInsertRow:false,
 	                sortIndicator: true,
 	                manualColumnResize:true,//当值为true时，允许拖动，当为false时禁止拖动
 	                manualRowResize:true,//当值为true时，允许拖动，当为false时禁止拖动
-//	                dropdownMenu: ['filter_by_condition', 'filter_by_value', 'filter_action_bar'],
 	                filters: true,
 	                renderAllRows: true,
 	                search: true,
@@ -415,15 +380,25 @@ var SMSDeviceInfoHandsontableHelper = {
 //	                    }
 	                },
 	                afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-	                	var startRow=row;
-	                	var endRow=row2;
-	                	if(row>row2){
-	                		startRow=row2;
-	                    	endRow=row;
+	                	if(row<0 && row2<0){//只选中表头
+	                		Ext.getCmp("SMSDeviceSelectRow_Id").setValue('');
+		                	Ext.getCmp("SMSDeviceSelectEndRow_Id").setValue('');
+	                	}else{
+	                		if(row<0){
+	                    		row=0;
+	                    	}
+	                    	if(row2<0){
+	                    		row2=0;
+	                    	}
+	                    	var startRow=row;
+		                	var endRow=row2;
+		                	if(row>row2){
+		                		startRow=row2;
+		                    	endRow=row;
+		                	}
+		                	Ext.getCmp("SMSDeviceSelectRow_Id").setValue(startRow);
+		                	Ext.getCmp("SMSDeviceSelectEndRow_Id").setValue(endRow);
 	                	}
-	                	
-	                	Ext.getCmp("SMSDeviceSelectRow_Id").setValue(startRow);
-	                	Ext.getCmp("SMSDeviceSelectEndRow_Id").setValue(endRow);
 	                },
 	                afterDestroy: function() {
 	                    // 移除事件
@@ -642,4 +617,3 @@ var SMSDeviceInfoHandsontableHelper = {
 	        return smsDeviceInfoHandsontableHelper;
 	    }
 };
-

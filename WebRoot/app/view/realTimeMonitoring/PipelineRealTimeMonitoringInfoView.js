@@ -265,12 +265,13 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 listeners: {
                                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                                     	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null && pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
-                                    		var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
-                                    		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-                                    		if(isNotVal(gridPanel)){
-                                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                    			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
-                                    		}
+//                                    		var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
+//                                    		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+//                                    		if(isNotVal(gridPanel)){
+//                                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                                    			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
+//                                    		}
+                                    		pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.refreshDimensions();
                                     	}
                                     }
                                 }
@@ -585,8 +586,8 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
 	        	$('#'+pipelineDeviceRealTimeMonitoringDataHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+pipelineDeviceRealTimeMonitoringDataHandsontableHelper.divid);
 	        	pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
-//	        		colWidths: [30,15,30,15,30,15,30,15],
 	        		colWidths: [30,20,30,20,30,20],
 	                columns:pipelineDeviceRealTimeMonitoringDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

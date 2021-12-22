@@ -252,7 +252,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             if (waterGatheringPipelineDeviceInfoHandsontableHelper != null && waterGatheringPipelineDeviceInfoHandsontableHelper.hot != null && waterGatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
-                            	CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
+                            	waterGatheringPipelineDeviceInfoHandsontableHelper.hot.refreshDimensions();
                             }
                         }
                     }
@@ -265,7 +265,11 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                 	collapsible: true,
                 	html: '<div class="WaterGatheringPipelineAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                        	if (waterGatheringPipelineAdditionalInfoHandsontableHelper != null && waterGatheringPipelineAdditionalInfoHandsontableHelper.hot != null && waterGatheringPipelineAdditionalInfoHandsontableHelper.hot != undefined) {
+                        		waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.refreshDimensions();
+                            }
+                        }
                     }
             	}]
             },{
@@ -277,7 +281,11 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                 collapsible: true,
                 html: '<div class="WaterGatheringPipelineAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="WaterGatheringPipelineAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                    	if (waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper != null && waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != null && waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                    		waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
+                        }
+                    }
                 }
             }],
             listeners: {
@@ -424,7 +432,8 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
             $('#' + waterGatheringPipelineDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + waterGatheringPipelineDeviceInfoHandsontableHelper.divid);
             waterGatheringPipelineDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -435,6 +444,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: waterGatheringPipelineDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
+                allowInsertRow:false,
 //                contextMenu: {
 //                    items: {
 //                        "row_above": {
@@ -489,19 +499,40 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue('');
+                    	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(0,'');
+                    	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(0,'');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	
+                    	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(endRow);
+                    	
+                    	var row1=waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                    	var recordId=0;
+                    	var deviceName='';
+                    	if(isNotVal(row1[0])){
+                    		recordId=row1[0];
+                    	}
+                    	if(isNotVal(row1[1])){
+                    		deviceName=row1[1];
+                    	}
+                    	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(recordId,deviceName);
+                    	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(recordId,deviceName);
                 	}
-                	
-                	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(endRow);
-                	
-                	var row1=waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
-                	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(row1[0],row1[1]);
-                	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -817,6 +848,7 @@ var WaterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	        	$('#'+waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.divid);
 	        	waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
@@ -920,7 +952,8 @@ var WaterGatheringPipelineAdditionalInfoHandsontableHelper = {
 	            $('#' + waterGatheringPipelineAdditionalInfoHandsontableHelper.divid).empty();
 	            var hotElement = document.querySelector('#' + waterGatheringPipelineAdditionalInfoHandsontableHelper.divid);
 	            waterGatheringPipelineAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-	                data: data,
+	            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
 	                    indicators: true

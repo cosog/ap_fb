@@ -67,12 +67,13 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqUnitConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigAcqUnitPropertiesHandsontableHelper!=null && protocolConfigAcqUnitPropertiesHandsontableHelper.hot!=undefined){
-                            		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
-                            		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
-                            		if(isNotVal(gridPanel)){
-                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            			CreateProtocolAcqUnitConfigPropertiesInfoTable(selectedItem.data);
-                            		}
+//                            		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
+//                            		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
+//                            		if(isNotVal(gridPanel)){
+//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                            			CreateProtocolAcqUnitConfigPropertiesInfoTable(selectedItem.data);
+//                            		}
+                            		protocolConfigAcqUnitPropertiesHandsontableHelper.hot.refreshDimensions();
                             	}
                             }
                         }
@@ -88,20 +89,21 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqUnitConfigInfoView', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                         	if(protocolAcqUnitConfigItemsHandsontableHelper!=null && protocolAcqUnitConfigItemsHandsontableHelper.hot!=undefined){
-                        		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
-                        		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
-                        		if(isNotVal(gridPanel)){
-                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                        			if(selectedItem.data.classes==0){
-                                		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                                			CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
-                                		}
-                                	}else if(selectedItem.data.classes==1){
-                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
-                                	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
-                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
-                                	}
-                        		}
+//                        		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
+//                        		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
+//                        		if(isNotVal(gridPanel)){
+//                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                        			if(selectedItem.data.classes==0){
+//                                		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+//                                			CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
+//                                		}
+//                                	}else if(selectedItem.data.classes==1){
+//                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
+//                                	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
+//                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
+//                                	}
+//                        		}
+                        		protocolAcqUnitConfigItemsHandsontableHelper.hot.refreshDimensions();
                         	}
                         }
                     }
@@ -193,13 +195,9 @@ var ProtocolAcqUnitConfigItemsHandsontableHelper = {
 	        	$('#'+protocolAcqUnitConfigItemsHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolAcqUnitConfigItemsHandsontableHelper.divid);
 	        	protocolAcqUnitConfigItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [25,50,140,60,80,80,80,60,60,60,70,60,70],
-//	        		colWidths: [25,50,140,60,60,80,80,80,80,80,80,80,60,60,60,60],
-//	                hiddenColumns: {
-//	                    columns: [0],
-//	                    indicators: true
-//	                },
 	                columns:protocolAcqUnitConfigItemsHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
@@ -391,12 +389,9 @@ var ProtocolConfigAcqUnitPropertiesHandsontableHelper = {
 	        	$('#'+protocolConfigAcqUnitPropertiesHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolConfigAcqUnitPropertiesHandsontableHelper.divid);
 	        	protocolConfigAcqUnitPropertiesHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [2,3,5],
-//	                hiddenColumns: {
-//	                    columns: [0],
-//	                    indicators: true
-//	                },
 	                columns:protocolConfigAcqUnitPropertiesHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,

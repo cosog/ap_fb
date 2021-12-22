@@ -252,7 +252,7 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             if (screwPumpDeviceInfoHandsontableHelper != null && screwPumpDeviceInfoHandsontableHelper.hot != null && screwPumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            	CreateAndLoadScrewPumpDeviceInfoTable();
+                            	screwPumpDeviceInfoHandsontableHelper.hot.refreshDimensions();
                             }
                         }
                     }
@@ -265,7 +265,11 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
                 	collapsible: true,
                 	html: '<div class="ScrewPumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="ScrewPumpAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                        	if (screwPumpAdditionalInfoHandsontableHelper != null && screwPumpAdditionalInfoHandsontableHelper.hot != null && screwPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                        		screwPumpAdditionalInfoHandsontableHelper.hot.refreshDimensions();
+                            }
+                        }
                     }
             	}]
             },{
@@ -277,7 +281,11 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
                 collapsible: true,
                 html: '<div class="ScrewPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ScrewPumpAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                    	if (screwPumpAuxiliaryDeviceInfoHandsontableHelper != null && screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                    		screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
+                        }
+                    }
                 }
             }],
             listeners: {
@@ -424,7 +432,8 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
             $('#' + screwPumpDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + screwPumpDeviceInfoHandsontableHelper.divid);
             screwPumpDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -435,6 +444,7 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: screwPumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
+                allowInsertRow:false,
 //                contextMenu: {
 //                    items: {
 //                        "row_above": {
@@ -489,19 +499,40 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("ScrewPumpDeviceSelectEndRow_Id").setValue('');
+                    	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(0,'');
+                    	CreateAndLoadScrewPumpAdditionalInfoTable(0,'');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	
+                    	Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("ScrewPumpDeviceSelectEndRow_Id").setValue(endRow);
+                    	
+                    	var row1=screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                    	var recordId=0;
+                    	var deviceName='';
+                    	if(isNotVal(row1[0])){
+                    		recordId=row1[0];
+                    	}
+                    	if(isNotVal(row1[1])){
+                    		deviceName=row1[1];
+                    	}
+                    	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(recordId,deviceName);
+                    	CreateAndLoadScrewPumpAdditionalInfoTable(recordId,deviceName);
                 	}
-                	
-                	Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("ScrewPumpDeviceSelectEndRow_Id").setValue(endRow);
-                	
-                	var row1=screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
-                	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(row1[0],row1[1]);
-                	CreateAndLoadScrewPumpAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -868,6 +899,7 @@ var ScrewPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        	$('#'+screwPumpAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+screwPumpAuxiliaryDeviceInfoHandsontableHelper.divid);
 	        	screwPumpAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
@@ -971,7 +1003,8 @@ var ScrewPumpAdditionalInfoHandsontableHelper = {
 	            $('#' + screwPumpAdditionalInfoHandsontableHelper.divid).empty();
 	            var hotElement = document.querySelector('#' + screwPumpAdditionalInfoHandsontableHelper.divid);
 	            screwPumpAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-	                data: data,
+	            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
 	                    indicators: true

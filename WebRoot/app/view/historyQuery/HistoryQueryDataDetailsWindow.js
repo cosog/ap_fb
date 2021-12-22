@@ -35,15 +35,19 @@ Ext.define("AP.view.historyQuery.HistoryQueryDataDetailsWindow", {
         	html: '<div id="HistoryQueryDataDetailsDiv_Id" style="width:100%;height:100%;"></div>',
             listeners: {
                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-                    var recordId=Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").getValue();
-                    var deviceName=Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").getValue();
-                    var deviceType=0;
-                    var tabPanel = Ext.getCmp("HistoryQueryTabPanel");
-            		var activeId = tabPanel.getActiveTab().id;
-            		if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
-            			deviceType=1;
-            		}
-                    CreateDeviceHistoryQueryDataTable(recordId,deviceName,deviceType);
+                	if(deviceHistoryQueryDataHandsontableHelper!=null&&deviceHistoryQueryDataHandsontableHelper.hot!=null&&deviceHistoryQueryDataHandsontableHelper.hot!=undefined){
+                		deviceHistoryQueryDataHandsontableHelper.hot.refreshDimensions();
+                	}else{
+                      var recordId=Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").getValue();
+                      var deviceName=Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").getValue();
+                      var deviceType=0;
+                      var tabPanel = Ext.getCmp("HistoryQueryTabPanel");
+              			var activeId = tabPanel.getActiveTab().id;
+              			if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
+              				deviceType=1;
+              			}
+              			CreateDeviceHistoryQueryDataTable(recordId,deviceName,deviceType);
+                	}
                 },
                 beforeclose: function ( panel, eOpts) {
                 	if(deviceHistoryQueryDataHandsontableHelper!=null){
@@ -224,8 +228,8 @@ var DeviceHistoryQueryDataHandsontableHelper = {
 	        	$('#'+deviceHistoryQueryDataHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+deviceHistoryQueryDataHandsontableHelper.divid);
 	        	deviceHistoryQueryDataHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
-//	        		colWidths: [30,15,30,15,30,15,30,15],
 	        		colWidths: [30,20,30,20,30,20],
 	                columns:deviceHistoryQueryDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

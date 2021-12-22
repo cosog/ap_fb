@@ -67,12 +67,13 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigAddrMaooingPropertiesHandsontableHelper!=null && protocolConfigAddrMaooingPropertiesHandsontableHelper.hot!=undefined){
-                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
-                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
-                            		if(isNotVal(gridPanel)){
-                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            			CreateProtocolConfigAddrMappingPropertiesInfoTable(selectedItem.data);
-                            		}
+//                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+//                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
+//                            		if(isNotVal(gridPanel)){
+//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                            			CreateProtocolConfigAddrMappingPropertiesInfoTable(selectedItem.data);
+//                            		}
+                            		protocolConfigAddrMaooingPropertiesHandsontableHelper.hot.refreshDimensions();
                             	}
                             }
                         }
@@ -95,18 +96,19 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigAddrMappingItemsHandsontableHelper!=null && protocolConfigAddrMappingItemsHandsontableHelper.hot!=undefined){
-                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
-                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
-                            		if(isNotVal(gridPanel)){
-                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            			if(selectedItem.data.classes==0){
-                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-                                    			CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
-                                    		}
-                                    	}else if(selectedItem.data.classes==1){
-                                    		CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
-                                    	}
-                            		}
+//                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+//                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
+//                            		if(isNotVal(gridPanel)){
+//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                            			if(selectedItem.data.classes==0){
+//                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
+//                                    			CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
+//                                    		}
+//                                    	}else if(selectedItem.data.classes==1){
+//                                    		CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
+//                                    	}
+//                            		}
+                            		protocolConfigAddrMappingItemsHandsontableHelper.hot.refreshDimensions();
                             	}
                             }
                         }
@@ -123,21 +125,9 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
                         html:'<div class="ModbusProtocolAddrMappingItemsMeaningTableInfoContainer" style="width:100%;height:100%;"><div class="con" id="ModbusProtocolAddrMappingItemsMeaningTableInfoDiv_id"></div></div>',
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
-//                            	var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
-//                            	var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
-//                            	if(isNotVal(gridPanel)){
-//                            		var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                            		var protocolCode="";
-//                            		if(selectedProtocol.data.classes==1){//选中的是协议
-//                            			protocolCode=selectedProtocol.data.code;
-//                            		}else if(selectedProtocol.data.classes==0 && isNotVal(selectedProtocol.data.children) && selectedProtocol.data.children.length>0){
-//                            			protocolCode=selectedProtocol.data.children[0].code;
-//                            		}
-//                            		var AddrMappingItemsSelectRow= Ext.getCmp("ModbusProtocolAddrMappingItemsSelectRow_Id").getValue();
-//                            		var row1=protocolConfigAddrMappingItemsHandsontableHelper.hot.getDataAtRow(AddrMappingItemsSelectRow);
-//                            		var itemAddr=row1[2];
-//                            		CreateModbusProtocolAddrMappingItemsMeaningConfigInfoTable(protocolCode,itemAddr,true);
-//                            	}
+                            	if(protocolAddrMappingItemsMeaningConfigHandsontableHelper!=null && protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot!=undefined){
+                            		protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot.refreshDimensions();
+                            	}
                             }
                         }
                     	
@@ -240,12 +230,9 @@ var ProtocolConfigAddrMappingItemsHandsontableHelper = {
 	        	$('#'+protocolConfigAddrMappingItemsHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolConfigAddrMappingItemsHandsontableHelper.divid);
 	        	protocolConfigAddrMappingItemsHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [50,130,80,80,80,80,80,80,80,80,80],
-//	                hiddenColumns: {
-//	                    columns: [0],
-//	                    indicators: true
-//	                },
 	                columns:protocolConfigAddrMappingItemsHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
@@ -411,12 +398,9 @@ var ProtocolConfigAddrMaooingPropertiesHandsontableHelper = {
 	        	$('#'+protocolConfigAddrMaooingPropertiesHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolConfigAddrMaooingPropertiesHandsontableHelper.divid);
 	        	protocolConfigAddrMaooingPropertiesHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [2,3,5],
-//	                hiddenColumns: {
-//	                    columns: [0],
-//	                    indicators: true
-//	                },
 	                columns:protocolConfigAddrMaooingPropertiesHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
@@ -629,12 +613,9 @@ var ProtocolAddrMappingItemsMeaningConfigHandsontableHelper = {
 	        	$('#'+protocolAddrMappingItemsMeaningConfigHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+protocolAddrMappingItemsMeaningConfigHandsontableHelper.divid);
 	        	protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		colWidths: [1,3],
-//	                hiddenColumns: {
-//	                    columns: [0],
-//	                    indicators: true
-//	                },
 	                columns:protocolAddrMappingItemsMeaningConfigHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
 	                autoWrapRow: true,
