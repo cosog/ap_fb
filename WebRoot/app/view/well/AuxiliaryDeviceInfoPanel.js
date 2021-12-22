@@ -180,7 +180,8 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
             listeners: {
                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                     if (auxiliaryDeviceInfoHandsontableHelper != null && auxiliaryDeviceInfoHandsontableHelper.hot != null && auxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
-                        CreateAndLoadAuxiliaryDeviceInfoTable();
+//                        CreateAndLoadAuxiliaryDeviceInfoTable();
+                    	auxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
                     }
                 },
                 beforeclose: function (panel, eOpts) {
@@ -237,6 +238,13 @@ function CreateAndLoadAuxiliaryDeviceInfoTable(isNew) {
             } else {
                 auxiliaryDeviceInfoHandsontableHelper.hot.loadData(result.totalRoot);
             }
+            if(result.totalRoot.length==0){
+            	Ext.getCmp("AuxiliaryDeviceSelectRow_Id").setValue('');
+            	Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").setValue('');
+            }else{
+            	Ext.getCmp("AuxiliaryDeviceSelectRow_Id").setValue(0);
+            	Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").setValue(0);
+            }
             Ext.getCmp("AuxiliaryDeviceTotalCount_Id").update({
                 count: result.totalCount
             });
@@ -277,7 +285,8 @@ var AuxiliaryDeviceInfoHandsontableHelper = {
             $('#' + auxiliaryDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + auxiliaryDeviceInfoHandsontableHelper.divid);
             auxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -288,44 +297,7 @@ var AuxiliaryDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: auxiliaryDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
-//                contextMenu: {
-//                    items: {
-//                        "row_above": {
-//                            name: '向上插入一行',
-//                        },
-//                        "row_below": {
-//                            name: '向下插入一行',
-//                        },
-//                        "col_left": {
-//                            name: '向左插入一列',
-//                        },
-//                        "col_right": {
-//                            name: '向右插入一列',
-//                        },
-//                        "remove_row": {
-//                            name: '删除行',
-//                        },
-//                        "remove_col": {
-//                            name: '删除列',
-//                        },
-//                        "merge_cell": {
-//                            name: '合并单元格',
-//                        },
-//                        "copy": {
-//                            name: '复制',
-//                        },
-//                        "cut": {
-//                            name: '剪切',
-//                        },
-//                        "paste": {
-//                            name: '粘贴',
-//                            disabled: function () {
-//                            },
-//                            callback: function () {
-//                            }
-//                        }
-//                    }
-//                }, //右键菜单展示
+                allowInsertRow:false,
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -339,15 +311,25 @@ var AuxiliaryDeviceInfoHandsontableHelper = {
                     var visualColIndex = this.instance.toVisualColumn(col);
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("AuxiliaryDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").setValue('');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	Ext.getCmp("AuxiliaryDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").setValue(endRow);
                 	}
-                	
-                	Ext.getCmp("AuxiliaryDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("AuxiliaryDeviceSelectEndRow_Id").setValue(endRow);
                 },
                 afterDestroy: function () {
                 },

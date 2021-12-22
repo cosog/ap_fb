@@ -252,7 +252,8 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             if (electricSubmersiblePumpDeviceInfoHandsontableHelper != null && electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != null && electricSubmersiblePumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            	CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
+//                            	CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
+                            	electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.refreshDimensions();
                             }
                         }
                     }
@@ -265,7 +266,11 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                 	collapsible: true,
                 	html: '<div class="ElectricSubmersiblePumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="ElectricSubmersiblePumpAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                            if (electricSubmersiblePumpAdditionalInfoHandsontableHelper != null && electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot != null && electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                            	electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.refreshDimensions();
+                            }
+                        }
                     }
             	}]
             },{
@@ -277,7 +282,11 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                 collapsible: true,
                 html: '<div class="ElectricSubmersiblePumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="ElectricSubmersiblePumpAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                        if (electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper != null && electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                        	electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
+                        }
+                    }
                 }
             }],
             listeners: {
@@ -424,7 +433,8 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
             $('#' + electricSubmersiblePumpDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + electricSubmersiblePumpDeviceInfoHandsontableHelper.divid);
             electricSubmersiblePumpDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -435,6 +445,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: electricSubmersiblePumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
+                allowInsertRow:false,
 //                contextMenu: {
 //                    items: {
 //                        "row_above": {
@@ -489,19 +500,40 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectEndRow_Id").setValue('');
+                    	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(0,'');
+                    	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(0,'');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	
+                    	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectEndRow_Id").setValue(endRow);
+                    	
+                    	var row1=electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                    	var recordId=0;
+                    	var deviceName='';
+                    	if(isNotVal(row1[0])){
+                    		recordId=row1[0];
+                    	}
+                    	if(isNotVal(row1[1])){
+                    		deviceName=row1[1];
+                    	}
+                    	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(recordId,deviceName);
+                    	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(recordId,deviceName);
                 	}
-                	
-                	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectEndRow_Id").setValue(endRow);
-                	
-                	var row1=electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
-                	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(row1[0],row1[1]);
-                	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -868,6 +900,7 @@ var ElectricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        	$('#'+electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.divid);
 	        	electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
@@ -971,7 +1004,8 @@ var ElectricSubmersiblePumpAdditionalInfoHandsontableHelper = {
 	            $('#' + electricSubmersiblePumpAdditionalInfoHandsontableHelper.divid).empty();
 	            var hotElement = document.querySelector('#' + electricSubmersiblePumpAdditionalInfoHandsontableHelper.divid);
 	            electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-	                data: data,
+	            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
 	                    indicators: true

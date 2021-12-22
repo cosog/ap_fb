@@ -252,7 +252,7 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             if (linearMotorPumpDeviceInfoHandsontableHelper != null && linearMotorPumpDeviceInfoHandsontableHelper.hot != null && linearMotorPumpDeviceInfoHandsontableHelper.hot != undefined) {
-                            	CreateAndLoadLinearMotorPumpDeviceInfoTable();
+                            	linearMotorPumpDeviceInfoHandsontableHelper.hot.refreshDimensions();
                             }
                         }
                     }
@@ -265,7 +265,11 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                 	collapsible: true,
                 	html: '<div class="LinearMotorPumpAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="LinearMotorPumpAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                        	if (linearMotorPumpAdditionalInfoHandsontableHelper != null && linearMotorPumpAdditionalInfoHandsontableHelper.hot != null && linearMotorPumpAdditionalInfoHandsontableHelper.hot != undefined) {
+                        		linearMotorPumpAdditionalInfoHandsontableHelper.hot.refreshDimensions();
+                            }
+                        }
                     }
             	}]
             },{
@@ -277,7 +281,11 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                 collapsible: true,
                 html: '<div class="LinearMotorPumpAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="LinearMotorPumpAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                    	if (linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper != null && linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot != null && linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                    		linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
+                        }
+                    }
                 }
             }],
             listeners: {
@@ -424,7 +432,8 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
             $('#' + linearMotorPumpDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + linearMotorPumpDeviceInfoHandsontableHelper.divid);
             linearMotorPumpDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -435,6 +444,7 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: linearMotorPumpDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
+                allowInsertRow:false,
 //                contextMenu: {
 //                    items: {
 //                        "row_above": {
@@ -489,19 +499,40 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("LinearMotorPumpDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("LinearMotorPumpDeviceSelectEndRow_Id").setValue('');
+                    	CreateAndLoadLinearMotorPumpAuxiliaryDeviceInfoTable(0,'');
+                    	CreateAndLoadLinearMotorPumpAdditionalInfoTable(0,'');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	
+                    	Ext.getCmp("LinearMotorPumpDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("LinearMotorPumpDeviceSelectEndRow_Id").setValue(endRow);
+                    	
+                    	var row1=linearMotorPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                    	var recordId=0;
+                    	var deviceName='';
+                    	if(isNotVal(row1[0])){
+                    		recordId=row1[0];
+                    	}
+                    	if(isNotVal(row1[1])){
+                    		deviceName=row1[1];
+                    	}
+                    	CreateAndLoadLinearMotorPumpAuxiliaryDeviceInfoTable(recordId,deviceName);
+                    	CreateAndLoadLinearMotorPumpAdditionalInfoTable(recordId,deviceName);
                 	}
-                	
-                	Ext.getCmp("LinearMotorPumpDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("LinearMotorPumpDeviceSelectEndRow_Id").setValue(endRow);
-                	
-                	var row1=linearMotorPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
-                	CreateAndLoadLinearMotorPumpAuxiliaryDeviceInfoTable(row1[0],row1[1]);
-                	CreateAndLoadLinearMotorPumpAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -868,6 +899,7 @@ var LinearMotorPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        	$('#'+linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.divid);
 	        	linearMotorPumpAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
@@ -971,7 +1003,8 @@ var LinearMotorPumpAdditionalInfoHandsontableHelper = {
 	            $('#' + linearMotorPumpAdditionalInfoHandsontableHelper.divid).empty();
 	            var hotElement = document.querySelector('#' + linearMotorPumpAdditionalInfoHandsontableHelper.divid);
 	            linearMotorPumpAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-	                data: data,
+	            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
 	                    indicators: true

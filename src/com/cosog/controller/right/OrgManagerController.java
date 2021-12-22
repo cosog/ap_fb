@@ -299,6 +299,14 @@ public class OrgManagerController extends BaseController {
 	public String constructOrgTreeGridTree() throws IOException {
 		String orgName = ParamUtils.getParameter(request, "orgName");
 		String orgId = ParamUtils.getParameter(request, "orgId");
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			User user = null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
 		List<?> list = this.orgService.queryOrgs(Org.class, orgName,orgId);
 		String json = "";
 		OrgRecursion r = new OrgRecursion();

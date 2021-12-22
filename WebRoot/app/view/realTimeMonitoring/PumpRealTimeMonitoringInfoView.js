@@ -263,12 +263,13 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                             	listeners: {
                                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                                     	if(pumpDeviceRealTimeMonitoringDataHandsontableHelper!=null && pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
-                                    		var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
-                                    		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
-                                    		if(isNotVal(gridPanel)){
-                                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                                    			CreatePumpDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,0)
-                                    		}
+//                                    		var selectRow= Ext.getCmp("PumpRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
+//                                    		var gridPanel=Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+//                                    		if(isNotVal(gridPanel)){
+//                                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
+//                                    			CreatePumpDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,0)
+//                                    		}
+                                    		pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot.refreshDimensions();
                                     	}
                                     }
                                 }
@@ -559,8 +560,8 @@ var PumpDeviceRealTimeMonitoringDataHandsontableHelper = {
 	        	$('#'+pumpDeviceRealTimeMonitoringDataHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+pumpDeviceRealTimeMonitoringDataHandsontableHelper.divid);
 	        	pumpDeviceRealTimeMonitoringDataHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
-//	        		colWidths: [30,15,30,15,30,15,30,15],
 	        		colWidths: [30,20,30,20,30,20],
 	                columns:pumpDeviceRealTimeMonitoringDataHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

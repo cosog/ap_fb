@@ -252,7 +252,7 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             if (gatheringPipelineDeviceInfoHandsontableHelper != null && gatheringPipelineDeviceInfoHandsontableHelper.hot != null && gatheringPipelineDeviceInfoHandsontableHelper.hot != undefined) {
-                            	CreateAndLoadGatheringPipelineDeviceInfoTable();
+                            	gatheringPipelineDeviceInfoHandsontableHelper.hot.refreshDimensions();
                             }
                         }
                     }
@@ -265,7 +265,11 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                 	collapsible: true,
                 	html: '<div class="GatheringPipelineAdditionalInfoContainer" style="width:100%;height:100%;"><div class="con" id="GatheringPipelineAdditionalInfoTableDiv_id"></div></div>',
                     listeners: {
-                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                        resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                        	if (gatheringPipelineAdditionalInfoHandsontableHelper != null && gatheringPipelineAdditionalInfoHandsontableHelper.hot != null && gatheringPipelineAdditionalInfoHandsontableHelper.hot != undefined) {
+                        		gatheringPipelineAdditionalInfoHandsontableHelper.hot.refreshDimensions();
+                            }
+                        }
                     }
             	}]
             },{
@@ -277,7 +281,11 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                 collapsible: true,
                 html: '<div class="GatheringPipelineAuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="GatheringPipelineAuxiliaryDeviceTableDiv_id"></div></div>',
                 listeners: {
-                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {}
+                    resize: function (abstractcomponent, adjWidth, adjHeight, options) {
+                    	if (gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper != null && gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != null && gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot != undefined) {
+                    		gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot.refreshDimensions();
+                        }
+                    }
                 }
             }],
             listeners: {
@@ -424,7 +432,8 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
             $('#' + gatheringPipelineDeviceInfoHandsontableHelper.divid).empty();
             var hotElement = document.querySelector('#' + gatheringPipelineDeviceInfoHandsontableHelper.divid);
             gatheringPipelineDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-                data: data,
+            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+            	data: data,
                 hiddenColumns: {
                     columns: [0],
                     indicators: true
@@ -435,6 +444,7 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                 rowHeaders: true, //显示行头
                 colHeaders: gatheringPipelineDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
+                allowInsertRow:false,
 //                contextMenu: {
 //                    items: {
 //                        "row_above": {
@@ -489,19 +499,40 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
-                	var startRow=row;
-                	var endRow=row2;
-                	if(row>row2){
-                		startRow=row2;
-                    	endRow=row;
+                	if(row<0 && row2<0){//只选中表头
+                		Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue('');
+                    	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue('');
+                    	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(0,'');
+                    	CreateAndLoadGatheringPipelineAdditionalInfoTable(0,'');
+                	}else{
+                		if(row<0){
+                    		row=0;
+                    	}
+                    	if(row2<0){
+                    		row2=0;
+                    	}
+                    	var startRow=row;
+                    	var endRow=row2;
+                    	if(row>row2){
+                    		startRow=row2;
+                        	endRow=row;
+                    	}
+                    	
+                    	Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue(startRow);
+                    	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue(endRow);
+                    	
+                    	var row1=gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
+                    	var recordId=0;
+                    	var deviceName='';
+                    	if(isNotVal(row1[0])){
+                    		recordId=row1[0];
+                    	}
+                    	if(isNotVal(row1[1])){
+                    		deviceName=row1[1];
+                    	}
+                    	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(recordId,deviceName);
+                    	CreateAndLoadGatheringPipelineAdditionalInfoTable(recordId,deviceName);
                 	}
-                	
-                	Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue(startRow);
-                	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue(endRow);
-                	
-                	var row1=gatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(startRow);
-                	CreateAndLoadGatheringPipelineAuxiliaryDeviceInfoTable(row1[0],row1[1]);
-                	CreateAndLoadGatheringPipelineAdditionalInfoTable(row1[0],row1[1]);
                 },
                 afterDestroy: function () {
                 },
@@ -817,6 +848,7 @@ var GatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	        	$('#'+gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.divid).empty();
 	        	var hotElement = document.querySelector('#'+gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.divid);
 	        	gatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.hot = new Handsontable(hotElement, {
+	        		licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
@@ -920,7 +952,8 @@ var GatheringPipelineAdditionalInfoHandsontableHelper = {
 	            $('#' + gatheringPipelineAdditionalInfoHandsontableHelper.divid).empty();
 	            var hotElement = document.querySelector('#' + gatheringPipelineAdditionalInfoHandsontableHelper.divid);
 	            gatheringPipelineAdditionalInfoHandsontableHelper.hot = new Handsontable(hotElement, {
-	                data: data,
+	            	licenseKey: '96860-f3be6-b4941-2bd32-fd62b',
+	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
 	                    indicators: true

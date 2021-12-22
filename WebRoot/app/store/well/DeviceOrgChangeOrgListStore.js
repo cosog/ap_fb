@@ -53,7 +53,7 @@ Ext.define('AP.store.well.DeviceOrgChangeOrgListStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
             var new_params = {
-            	orgId:orgId
+//            	orgId:orgId
             };
             Ext.apply(store.proxy.extraParams, new_params);
         }
