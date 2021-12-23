@@ -152,7 +152,7 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
                         title: '添加设备'
                     });
                     window.show();
-                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认<br/>&nbsp;");
                     Ext.getCmp("pumpDeviceType_Id").setValue(102);
                     Ext.getCmp("pumpDeviceOrg_Id").setValue(selectedOrgId);
                     Ext.getCmp("addFormPumpDevice_Id").show();
@@ -197,6 +197,8 @@ Ext.define('AP.view.well.ScrewPumpDeviceInfoPanel', {
     	    	                        	Ext.MessageBox.alert("信息", "删除成功");
     	    	                            //保存以后重置全局容器
     	    	                            screwPumpDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(0);
+    	    	                        	Ext.getCmp("ScrewPumpDeviceSelectEndRow_Id").setValue(0);
     	    	                            CreateAndLoadScrewPumpDeviceInfoTable();
     	    	                        } else {
     	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
@@ -383,9 +385,8 @@ function CreateAndLoadScrewPumpDeviceInfoTable(isNew) {
             	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(0,'');
             	CreateAndLoadScrewPumpAdditionalInfoTable(0,'');
             }else{
-            	Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(0);
-            	Ext.getCmp("ScrewPumpDeviceSelectEndRow_Id").setValue(0);
-            	var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
+            	var selectedRow=Ext.getCmp("ScrewPumpDeviceSelectRow_Id").getValue();
+            	var rowdata = screwPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(selectedRow);
             	CreateAndLoadScrewPumpAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
             	CreateAndLoadScrewPumpAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
@@ -436,7 +437,7 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
             	data: data,
                 hiddenColumns: {
                     columns: [0],
-                    indicators: true
+                    indicators: false
                 },
                 columns: screwPumpDeviceInfoHandsontableHelper.columns,
                 stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
@@ -649,11 +650,11 @@ var ScrewPumpDeviceInfoHandsontableHelper = {
                 	if(screwPumpAdditionalInfoHandsontableHelper!=null && screwPumpAdditionalInfoHandsontableHelper.hot!=undefined){
                 		var additionalInfoData=screwPumpAdditionalInfoHandsontableHelper.hot.getData();
                     	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
-                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                    		if (isNotVal(additionalInfoData[index][1])) {
                             	var additionalInfo={};
                             	additionalInfo.itemName=additionalInfoData[index][1];
-                            	additionalInfo.itemValue=additionalInfoData[index][2];
-                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	additionalInfo.itemValue=isNotVal(additionalInfoData[index][2])?additionalInfoData[index][2]:"";
+                            	additionalInfo.itemUnit=isNotVal(additionalInfoData[index][3])?additionalInfoData[index][3]:"";
                             	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
                             }
                         });
@@ -903,7 +904,7 @@ var ScrewPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
-	                    indicators: true
+	                    indicators: false
 	                },
 	        		colWidths: [25,50,80,80],
 	                columns:screwPumpAuxiliaryDeviceInfoHandsontableHelper.columns,
@@ -1007,7 +1008,7 @@ var ScrewPumpAdditionalInfoHandsontableHelper = {
 	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
-	                    indicators: true
+	                    indicators: false
 	                },
 	                columns: screwPumpAdditionalInfoHandsontableHelper.columns,
 	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

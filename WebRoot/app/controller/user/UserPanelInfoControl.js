@@ -48,6 +48,8 @@ var SaveDataInfoSubmitBtnForm = function () {
                 Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font> 】：" + cosog.string.contactadmin + "！");
             }
         });
+    } else {
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -56,6 +58,7 @@ var SaveDataInfoSubmitBtnForm = function () {
 // 窗体上的修改按钮事件
 function UpdateDataInfoSubmitBtnForm() {
     var getUpdateDataInfoSubmitBtnFormId = Ext.getCmp("user_addwin_Id").down('form');
+    Ext.getCmp("userOrgid_Id1").allowBlank=true;
     Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
     if (getUpdateDataInfoSubmitBtnFormId.getForm().isValid()) {
 //        Ext.getCmp("user_addwin_Id").el.mask(cosog.string.updatewait).show();
@@ -83,6 +86,8 @@ function UpdateDataInfoSubmitBtnForm() {
                 Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + " </font>】：" + cosog.string.contactadmin + "！");
             }
         });
+    } else {
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     return false;
 };

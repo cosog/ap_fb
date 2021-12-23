@@ -10,7 +10,7 @@ public class ModbusProtocolAlarmInstanceSaveData {
 	String name;
 	int deviceType=0;
 	int alarmUnitId;
-	int sort=0;
+	String sort;
 	
 	private List<String> delidslist;
 
@@ -46,11 +46,11 @@ public class ModbusProtocolAlarmInstanceSaveData {
 		this.deviceType = deviceType;
 	}
 
-	public int getSort() {
+	public String getSort() {
 		return sort;
 	}
 
-	public void setSort(int sort) {
+	public void setSort(String sort) {
 		this.sort = sort;
 	}
 

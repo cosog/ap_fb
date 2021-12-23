@@ -149,7 +149,7 @@ Ext.define('AP.view.well.SMSDeviceInfoView', {
                                 title: '添加设备'
                             });
                             window.show();
-                            Ext.getCmp("smsDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                            Ext.getCmp("smsDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认<br/>&nbsp;");
                             Ext.getCmp("smsDeviceOrg_Id").setValue(selectedOrgId);
                             Ext.getCmp("addFormSMSDevice_Id").show();
                             Ext.getCmp("updateFormSMSDevice_Id").hide();
@@ -347,7 +347,7 @@ var SMSDeviceInfoHandsontableHelper = {
 	        		data: data,
 	                hiddenColumns: {
 	                    columns: [0],
-	                    indicators: true
+	                    indicators: false
 	                },
 	                columns:smsDeviceInfoHandsontableHelper.columns,
 	                stretchH: 'all',//延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

@@ -47,7 +47,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
         var protocolAndAcqUnitTree=Ext.create('AP.view.well.TreePicker',{
         	id:'modbusInstanceProtocolAndAcqUnit_Id',
         	anchor: '100%',
-        	fieldLabel: '采控单元',
+        	fieldLabel: '采控单元<font color=red>*</font>',
             emptyText: '请选择采控单元...',
             blankText: '请选择采控单元...',
             displayField: 'text',
@@ -84,7 +84,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
             }, {
                 id: 'formModbusProtocolInstanceName_Id',
                 name: "protocolInstance.name",
-                fieldLabel: '实例名称',
+                fieldLabel: '实例名称<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
@@ -95,7 +95,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				name : "protocolInstance.deviceType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '设备类型',
+				fieldLabel : '设备类型<font color=red>*</font>',
 				id : 'modbusProtocolInstanceDeviceTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -130,7 +130,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				name : "protocolInstance.acqProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '采集协议类型',
+				fieldLabel : '采集协议类型<font color=red>*</font>',
 				id : 'modbusInstanceAcqProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -160,7 +160,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				name : "protocolInstance.ctrlProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '控制协议类型',
+				fieldLabel : '控制协议类型<font color=red>*</font>',
 				id : 'modbusInstanceCtrlProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -212,7 +212,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
             	id: "modbusProtocolInstanceSort_Id",
                 name: 'protocolInstance.sort',
                 fieldLabel: '排序',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '100%',
                 msgTarget: 'side'

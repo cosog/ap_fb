@@ -685,7 +685,7 @@ public class StringManagerUtils {
 	}
 
 	public static boolean isNum(String str) {
-		return str.matches("^[-+]?(([0-9]+)([.]([0-9]+))?|([.]([0-9]+))?)$");
+		return str!=null&&str.matches("^[-+]?(([0-9]+)([.]([0-9]+))?|([.]([0-9]+))?)$");
 	}
 
 	/**

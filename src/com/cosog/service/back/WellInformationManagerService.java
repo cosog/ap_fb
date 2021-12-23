@@ -159,11 +159,11 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		String sql="select t.code,t.name from tbl_protocolinstance t where t.devicetype="+protocolType+" order by t.sort";
 		
 		List<?> list = this.findCallSql(sql);
-		result_json.append("{\"totals\":"+list.size()+",\"list\":[");
+		result_json.append("{\"totals\":"+(list.size()+1)+",\"list\":[{\"boxkey\":\"\",\"boxval\":\"&nbsp;\"},");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[])list.get(i);
-			result_json.append("{boxkey:\"" + obj[0] + "\",");
-			result_json.append("boxval:\"" + obj[1] + "\"},");
+			result_json.append("{\"boxkey\":\"" + obj[0] + "\",");
+			result_json.append("\"boxval\":\"" + obj[1] + "\"},");
 		}
 		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -183,11 +183,11 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		String sql="select t.code,t.name from tbl_protocolalarminstance t where t.devicetype="+protocolType+" order by t.sort";
 		
 		List<?> list = this.findCallSql(sql);
-		result_json.append("{\"totals\":"+list.size()+",\"list\":[");
+		result_json.append("{\"totals\":"+(list.size()+1)+",\"list\":[{\"boxkey\":\"\",\"boxval\":\"&nbsp;\"},");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[])list.get(i);
-			result_json.append("{boxkey:\"" + obj[0] + "\",");
-			result_json.append("boxval:\"" + obj[1] + "\"},");
+			result_json.append("{\"boxkey\":\"" + obj[0] + "\",");
+			result_json.append("\"boxval\":\"" + obj[1] + "\"},");
 		}
 		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -200,11 +200,11 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		String sql="select t.code,t.name from tbl_protocolsmsinstance t order by t.sort";
 		List<?> list = this.findCallSql(sql);
-		result_json.append("{\"totals\":"+list.size()+",\"list\":[");
+		result_json.append("{\"totals\":"+(list.size()+1)+",\"list\":[{\"boxkey\":\"\",\"boxval\":\"&nbsp;\"},");
 		for(int i=0;i<list.size();i++){
 			Object[] obj = (Object[])list.get(i);
-			result_json.append("{boxkey:\"" + obj[0] + "\",");
-			result_json.append("boxval:\"" + obj[1] + "\"},");
+			result_json.append("{\"boxkey\":\"" + obj[0] + "\",");
+			result_json.append("\"boxval\":\"" + obj[1] + "\"},");
 		}
 		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -661,12 +661,16 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
 		List<?> applicationScenariosList = this.findCallSql(applicationScenariosSql);
 		
-		for(int i=0;i<instanceList.size();i++){
-			instanceDropdownData.append("'"+instanceList.get(i)+"',");
+		if(instanceList.size()>0){
+			instanceDropdownData.append("\"\",");
+			for(int i=0;i<instanceList.size();i++){
+				instanceDropdownData.append("'"+instanceList.get(i)+"',");
+			}
+			if(instanceDropdownData.toString().endsWith(",")){
+				instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+			}
 		}
-		if(instanceDropdownData.toString().endsWith(",")){
-			instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
-		}
+		
 		
 		if(alarmInstanceList.size()>0){
 			alarmInstanceDropdownData.append("\"\",");
@@ -817,11 +821,14 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
 		List<?> applicationScenariosList = this.findCallSql(applicationScenariosSql);
 		
-		for(int i=0;i<instanceList.size();i++){
-			instanceDropdownData.append("'"+instanceList.get(i)+"',");
-		}
-		if(instanceDropdownData.toString().endsWith(",")){
-			instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+		if(instanceList.size()>0){
+			instanceDropdownData.append("\"\",");
+			for(int i=0;i<instanceList.size();i++){
+				instanceDropdownData.append("'"+instanceList.get(i)+"',");
+			}
+			if(instanceDropdownData.toString().endsWith(",")){
+				instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+			}
 		}
 		if(alarmInstanceList.size()>0){
 			alarmInstanceDropdownData.append("\"\",");
@@ -957,12 +964,17 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 
 		SMSInstanceDropdownData.append("[");
 		List<?> SMSInstanceList = this.findCallSql(SMSInstanceSql);
-		for(int i=0;i<SMSInstanceList.size();i++){
-			SMSInstanceDropdownData.append("'"+SMSInstanceList.get(i)+"',");
+		
+		if(SMSInstanceList.size()>0){
+			SMSInstanceDropdownData.append("\"\",");
+			for(int i=0;i<SMSInstanceList.size();i++){
+				SMSInstanceDropdownData.append("'"+SMSInstanceList.get(i)+"',");
+			}
+			if(SMSInstanceDropdownData.toString().endsWith(",")){
+				SMSInstanceDropdownData.deleteCharAt(SMSInstanceDropdownData.length() - 1);
+			}
 		}
-		if(SMSInstanceDropdownData.toString().endsWith(",")){
-			SMSInstanceDropdownData.deleteCharAt(SMSInstanceDropdownData.length() - 1);
-		}
+		
 		SMSInstanceDropdownData.append("]");
 		
 		String json = "";

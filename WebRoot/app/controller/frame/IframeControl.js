@@ -288,25 +288,40 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 		var tabPanel = Ext.getCmp("PumpDeviceManagerTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
 		if(activeId=="DiaphragmPumpDeviceInfoTabPanel_Id"){
+			Ext.getCmp("DiaphragmPumpDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("DiaphragmPumpDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadDiaphragmPumpDeviceInfoTable(true);
 		}else if(activeId=="ScrewPumpDeviceInfoTabPanel_Id"){
+			Ext.getCmp("ScrewPumpDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("ScrewPumpDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadScrewPumpDeviceInfoTable(true);
 		}else if(activeId=="LinearMotorPumpDeviceInfoTabPanel_Id"){
+			Ext.getCmp("LinearMotorPumpDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("LinearMotorPumpDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadLinearMotorPumpDeviceInfoTable(true);
 		}else if(activeId=="ElectricSubmersiblePumpDeviceInfoTabPanel_Id"){
+			Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadElectricSubmersiblePumpDeviceInfoTable(true);
 		}else if(activeId=="JetPumpDeviceInfoTabPanel_Id"){
+			Ext.getCmp("JetPumpDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("JetPumpDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadJetPumpDeviceInfoTable(true);
 		}
 	}else if(module_Code == "PipelineDeviceManager"){
-//		CreateAndLoadPipelineDeviceInfoTable(true);
 		var tabPanel = Ext.getCmp("PipelineDeviceManagerTabPanel");
 		var activeId = tabPanel.getActiveTab().id;
 		if(activeId=="HeatingPipelineDeviceInfoTabPanel_Id"){
+			Ext.getCmp("HeatingPipelineDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("HeatingPipelineDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadHeatingPipelineDeviceInfoTable(true);
 		}else if(activeId=="WaterGatheringPipelineDeviceInfoTabPanel_Id"){
+			Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadWaterGatheringPipelineDeviceInfoTable(true);
 		}else if(activeId=="GatheringPipelineDeviceInfoTabPanel_Id"){
+			Ext.getCmp("GatheringPipelineDeviceSelectRow_Id").setValue(0);
+        	Ext.getCmp("GatheringPipelineDeviceSelectEndRow_Id").setValue(0);
 			CreateAndLoadGatheringPipelineDeviceInfoTable(true);
 		}
 	}else if(module_Code == "SMSDeviceManager"){

@@ -21,7 +21,7 @@ public class ModbusProtocolInstanceSaveData {
 	String heartbeatPrefix;
 	String heartbeatSuffix;
 	
-	int sort=0;
+	String sort;
 	
 	private List<String> delidslist;
 
@@ -113,11 +113,11 @@ public class ModbusProtocolInstanceSaveData {
 		this.heartbeatSuffix = heartbeatSuffix;
 	}
 
-	public int getSort() {
+	public String getSort() {
 		return sort;
 	}
 
-	public void setSort(int sort) {
+	public void setSort(String sort) {
 		this.sort = sort;
 	}
 

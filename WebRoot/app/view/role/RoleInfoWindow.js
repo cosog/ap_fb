@@ -27,7 +27,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
         var RoleTypeCombox = new Ext.form.ComboBox({
             id: 'roleFlagComboxfield_Id',
             value: 0,
-            fieldLabel: '控制权限',
+            fieldLabel: '控制权限<font color=red>*</font>',
             typeAhead : true,
             allowBlank: false,
             autoSelect:true,
@@ -56,7 +56,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
         var receiveSMSCombox = new Ext.form.ComboBox({
             id: 'receiveSMSComboxfield_Id',
             value: 0,
-            fieldLabel: '接收报警短信',
+            fieldLabel: '接收报警短信<font color=red>*</font>',
             typeAhead : true,
             allowBlank: false,
             autoSelect:true,
@@ -85,7 +85,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
         var receiveMailCombox = new Ext.form.ComboBox({
             id: 'receiveMailComboxfield_Id',
             value: 0,
-            fieldLabel: '接收报警邮件',
+            fieldLabel: '接收报警邮件<font color=red>*</font>',
             typeAhead : true,
             allowBlank: false,
             autoSelect:true,
@@ -129,13 +129,15 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 id: 'receiveMail_Id',
                 value: 0
             }, {
-                fieldLabel: cosog.string.roleName,
+                fieldLabel: cosog.string.roleName+'<font color=red>*</font>',
+                allowBlank: false,
                 anchor: '100%',
                 id: 'role_Name_Id',
                 name: "role.roleName"
             }, {
                 id: 'roleCode_Id',
-                fieldLabel: cosog.string.roleCode,
+                fieldLabel: cosog.string.roleCode+'<font color=red>*</font>',
+                allowBlank: false,
                 anchor: '100%',
                 value: '',
                 name: "role.roleCode"
@@ -143,7 +145,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
             	xtype: 'numberfield',
             	id: "roleShowLevel_Id",
                 name: 'role.showLevel',
-                fieldLabel: '数据显示级别',
+                fieldLabel: '数据显示级别<font color=red>*</font>',
                 allowBlank: false,
                 minValue: 1,
                 anchor: '100%',

@@ -29,7 +29,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
             }, {
                 id: 'formModbusprotocolSMSInstanceName_Id',
                 name: "protocolSMSInstance.name",
-                fieldLabel: '实例名称',
+                fieldLabel: '实例名称<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
@@ -48,7 +48,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				name : "protocolSMSInstance.acqProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '采集协议类型',
+				fieldLabel : '采集协议类型<font color=red>*</font>',
 				id : 'modbusInstanceAcqProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -78,7 +78,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
 				name : "protocolSMSInstance.ctrlProtocolType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '控制协议类型',
+				fieldLabel : '控制协议类型<font color=red>*</font>',
 				id : 'modbusInstanceCtrlProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -106,7 +106,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolSMSInstanceInfoWindow", {
             	id: "modbusProtocolSMSInstanceSort_Id",
                 name: 'protocolSMSInstance.sort',
                 fieldLabel: '排序',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '100%',
                 msgTarget: 'side'

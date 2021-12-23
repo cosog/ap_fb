@@ -13,26 +13,44 @@ Ext.define("AP.view.role.RoleInfoView", {
         		region:'west',
         		width:'75%',
         		layout: "fit",
+        		title:'角色列表',
+        		header:false,
         		items:RoleInfoGridPanel
         	},{
         		region:'center',
-        		title:'权限角色授予',
+        		title:'模块授权',
+        		header:false,
         		layout: "fit",
         		items:RightModuleInfoGridPanel,
-        		bbar: ['->', {
+        		tbar: [{
+                    xtype: 'label',
+                    html: '模块授权',
+                    style: 'margin-left: 4px'
+                },'->', {
                     xtype: 'button',
                     itemId: 'addRightModuleLableClassBtnId',
                     id: 'addRightModuleLableClassBtn_Id',
                     text: '保存',
                     iconCls: 'save',
-                    pressed: true,
+                    pressed: false,
                     handler: function () {
                     	grantRolePermission();
                     }
-        		}, {
-                    xtype: 'tbspacer',
-                    flex: 1
         		}]
+//        		bbar: ['->', {
+//                    xtype: 'button',
+//                    itemId: 'addRightModuleLableClassBtnId',
+//                    id: 'addRightModuleLableClassBtn_Id',
+//                    text: '保存',
+//                    iconCls: 'save',
+//                    pressed: true,
+//                    handler: function () {
+//                    	grantRolePermission();
+//                    }
+//        		}, {
+//                    xtype: 'tbspacer',
+//                    flex: 1
+//        		}]
         	}]
         });
         me.callParent(arguments);

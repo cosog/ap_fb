@@ -57,7 +57,7 @@ var SaveOrgDataInfoSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！" + cosog.string.validdata + ".</font>。");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -93,6 +93,8 @@ function UpdateOrgDataInfoSubmitBtnForm() {
                 Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + " </font>】：" + cosog.string.contactadmin + "！");
             }
         });
+    } else {
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     return false;
 };
@@ -140,15 +142,6 @@ function addOrgInfo() {
             title: cosog.string.addOrg
         });
         orgInfoWindow.show();
-//        var org=Ext.getCmp("IframeView_Id").getStore();
-//        if(userOrg_Id!=0&&org.data.items.length>0){
-//        	var parentOrgId=org.data.items[0].data.orgId;
-//        	var parentOrgName=org.data.items[0].data.text;
-//        	var orgName_Parent_Id = Ext.getCmp('orgName_Parent_Id1');
-//            orgName_Parent_Id.setValue(parentOrgId);
-//            orgName_Parent_Id.setRawValue(parentOrgName);
-//            Ext.getCmp('orgName_Parent_Id').setValue(parentOrgId);
-//        }
         var orgName_Parent_Id = Ext.getCmp('orgName_Parent_Id1').getValue();
         if (orgName_Parent_Id == null) {
             orgName_Parent_Id = "0";

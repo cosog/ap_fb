@@ -152,7 +152,7 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                         title: '添加设备'
                     });
                     window.show();
-                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认<br/>&nbsp;");
                     Ext.getCmp("pumpDeviceType_Id").setValue(104);
                     Ext.getCmp("pumpDeviceOrg_Id").setValue(selectedOrgId);
                     Ext.getCmp("addFormPumpDevice_Id").show();
@@ -197,6 +197,8 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
     	    	                        	Ext.MessageBox.alert("信息", "删除成功");
     	    	                            //保存以后重置全局容器
     	    	                            electricSubmersiblePumpDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(0);
+    	    	                        	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectEndRow_Id").setValue(0);
     	    	                            CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
     	    	                        } else {
     	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
@@ -384,9 +386,8 @@ function CreateAndLoadElectricSubmersiblePumpDeviceInfoTable(isNew) {
             	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(0,'');
             	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(0,'');
             }else{
-            	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").setValue(0);
-            	Ext.getCmp("ElectricSubmersiblePumpDeviceSelectEndRow_Id").setValue(0);
-            	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
+            	var selectedRow=Ext.getCmp("ElectricSubmersiblePumpDeviceSelectRow_Id").getValue();
+            	var rowdata = electricSubmersiblePumpDeviceInfoHandsontableHelper.hot.getDataAtRow(selectedRow);
             	CreateAndLoadElectricSubmersiblePumpAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
             	CreateAndLoadElectricSubmersiblePumpAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
@@ -437,7 +438,7 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
             	data: data,
                 hiddenColumns: {
                     columns: [0],
-                    indicators: true
+                    indicators: false
                 },
                 columns: electricSubmersiblePumpDeviceInfoHandsontableHelper.columns,
                 stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
@@ -650,11 +651,11 @@ var ElectricSubmersiblePumpDeviceInfoHandsontableHelper = {
                 	if(electricSubmersiblePumpAdditionalInfoHandsontableHelper!=null && electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot!=undefined){
                 		var additionalInfoData=electricSubmersiblePumpAdditionalInfoHandsontableHelper.hot.getData();
                     	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
-                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                    		if (isNotVal(additionalInfoData[index][1])) {
                             	var additionalInfo={};
                             	additionalInfo.itemName=additionalInfoData[index][1];
-                            	additionalInfo.itemValue=additionalInfoData[index][2];
-                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	additionalInfo.itemValue=isNotVal(additionalInfoData[index][2])?additionalInfoData[index][2]:"";
+                            	additionalInfo.itemUnit=isNotVal(additionalInfoData[index][3])?additionalInfoData[index][3]:"";
                             	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
                             }
                         });
@@ -904,7 +905,7 @@ var ElectricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
-	                    indicators: true
+	                    indicators: false
 	                },
 	        		colWidths: [25,50,80,80],
 	                columns:electricSubmersiblePumpAuxiliaryDeviceInfoHandsontableHelper.columns,
@@ -1008,7 +1009,7 @@ var ElectricSubmersiblePumpAdditionalInfoHandsontableHelper = {
 	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
-	                    indicators: true
+	                    indicators: false
 	                },
 	                columns: electricSubmersiblePumpAdditionalInfoHandsontableHelper.columns,
 	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

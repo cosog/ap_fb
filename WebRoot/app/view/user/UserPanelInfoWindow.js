@@ -112,7 +112,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
         // Simple ComboBox using the data store
         var UserTypeCombox = Ext.create(
             'Ext.form.field.ComboBox', {
-                fieldLabel: '角色',
+                fieldLabel: '角色<font color=red>*</font>',
                 id: 'userType_Id1',
                 anchor: '100%',
                 value: '',
@@ -120,7 +120,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
                 emptyText: '--请选择角色--',
                 blankText: '--请选择角色--',
                 typeAhead: true,
-                allowBlank: true,
+                allowBlank: false,
                 blankText: cosog.string.required,
                 triggerAction: 'all',
                 displayField: "boxval",
@@ -137,7 +137,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
             autoLoad: false,
             proxy: {
                 type: 'ajax',
-                url: context + '/orgManagerController/constructOrgRightTree',
+                url: context + '/orgManagerController/loadOrgComboxTreeData',
                 reader: 'json'
             },
             root: {
@@ -147,13 +147,8 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
             listeners: {
             	beforeload: function (store, options) {
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-                    var org_name_Id = Ext.getCmp('org_name_Id');
-                    if (!Ext.isEmpty(org_name_Id)) {
-                        org_name_Id = org_name_Id.getValue();
-                    }
                     var new_params = {
-                    	orgId:orgId,
-                        orgName: org_name_Id
+                    	orgId:orgId
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
                 }
@@ -161,18 +156,19 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
         });
         var xltree=Ext.create('AP.view.well.TreePicker',{
         	id:'userOrgid_Id1',
-        	fieldLabel: cosog.string.orgName,
+        	fieldLabel: cosog.string.orgName+'<font color=red>*</font>',
             emptyText: cosog.string.chooseOrg,
             blankText: cosog.string.chooseOrg,
             anchor: '100%',
             displayField: 'text',
+            allowBlank: false,
             autoScroll:true,
             forceSelection : true,// 只能选择下拉框里面的内容
             rootVisible: false,
             store:OrgTreeStore,
             listeners: {
                 select: function (picker,record,eOpts) {
-                	Ext.getCmp("user_addwin_Id").down('form').getChildByElement("userOrgid_Id").setValue(record.data.orgId);
+                	Ext.getCmp("user_addwin_Id").down('form').getChildByElement("userOrgid_Id").setValue(record.data.id);
                 }
             }
         });
@@ -185,7 +181,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
         var quidkLoginComboxsimp = new Ext.form.ComboBox({
             id: 'userQuidkLoginComboxfield_Id',
             value: '0',
-            fieldLabel: '快捷登录',
+            fieldLabel: '快捷登录<font color=red>*</font>',
             typeAhead : true,
             allowBlank: false,
             autoSelect:true,
@@ -235,7 +231,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
                     id: 'userTitle_Id',
                     name: 'user.userTitle'
          },xltree,UserTypeCombox,{
-                    fieldLabel: cosog.string.userName,
+                    fieldLabel: cosog.string.userName+'<font color=red>*</font>',
                     id: 'userName_Id',
                     anchor: '100%',
                     allowBlank: false,
@@ -243,7 +239,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
                     blankText: cosog.string.required
          }
          , {
-                    fieldLabel: cosog.string.userId,
+                    fieldLabel: cosog.string.userId+'<font color=red>*</font>',
                     //minLength : 2,
                     allowBlank: false,
                     anchor: '100%',
@@ -283,7 +279,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
                     name: "user.userPwd",
                     inputType: 'password',
                     anchor: '100%',
-                    fieldLabel: cosog.string.userPwd,
+                    fieldLabel: cosog.string.userPwd+'<font color=red>*</font>',
                     emptyText: cosog.string.enterpwd,
                     labelWidth: 100,
                     allowBlank: false,
@@ -298,7 +294,7 @@ Ext.define("AP.view.user.UserPanelInfoWindow", {
              vtypeText: cosog.string.enterpwdNotEqual,
              confirmTo: "userPwd_Id",
              anchor: '100%',
-             fieldLabel:cosog.string.enterNewPwdAgain1,
+             fieldLabel:cosog.string.enterNewPwdAgain1+'<font color=red>*</font>',
              allowBlank: false,
              labelWidth: 100,
              msgTarget: 'side',

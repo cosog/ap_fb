@@ -26,7 +26,7 @@ Ext.define("AP.view.org.OrgInfoWindow", {
             autoLoad: false,
             proxy: {
                 type: 'ajax',
-                url: context + '/orgManagerController/constructOrgRightTree',
+                url: context + '/orgManagerController/loadOrgComboxTreeData',
                 reader: 'json'
             },
             root: {
@@ -36,13 +36,8 @@ Ext.define("AP.view.org.OrgInfoWindow", {
             listeners: {
             	beforeload: function (store, options) {
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-                    var org_name_Id = Ext.getCmp('org_name_Id');
-                    if (!Ext.isEmpty(org_name_Id)) {
-                        org_name_Id = org_name_Id.getValue();
-                    }
                     var new_params = {
-                    	orgId:orgId,
-                        orgName: org_name_Id
+                    	orgId:orgId
                     };
                     Ext.apply(store.proxy.extraParams, new_params);
                 }
@@ -51,7 +46,7 @@ Ext.define("AP.view.org.OrgInfoWindow", {
         var xltree=Ext.create('AP.view.well.TreePicker',{
         	id:'orgName_Parent_Id1',
         	anchor: '95%',
-        	fieldLabel: cosog.string.superOrg,
+        	fieldLabel: cosog.string.superOrg+'<font color=red>*</font>',
             emptyText: cosog.string.chooseOrg,
             blankText: cosog.string.chooseOrg,
             displayField: 'text',
@@ -62,8 +57,8 @@ Ext.define("AP.view.org.OrgInfoWindow", {
             store:OrgTreeStore,
             listeners: {
                 select: function (picker,record,eOpts) {
-                	Ext.getCmp("org_addwin_Id").down('form').getChildByElement("orgName_Parent_Id").setValue(record.data.orgId);
-                	var record_=record.data.orgId;
+                	Ext.getCmp("org_addwin_Id").down('form').getChildByElement("orgName_Parent_Id").setValue(record.data.id);
+                	var record_=record.data.id;
     		    	// 动态返回当前单位级别下的的最大maxId值
     				Ext.Ajax.request({
     					method : 'POST',
@@ -115,7 +110,7 @@ Ext.define("AP.view.org.OrgInfoWindow", {
         // Simple ComboBox using the data store
         var OrgTypeCombox = Ext.create(
             'Ext.form.field.ComboBox', {
-                fieldLabel: cosog.string.orgType,
+                fieldLabel: cosog.string.orgType+'<font color=red>*</font>',
                 name: 'org.orgType',
                 id: 'org_Type_Id',
                 anchor: '95%',
@@ -125,6 +120,8 @@ Ext.define("AP.view.org.OrgInfoWindow", {
                 blankText: cosog.string.all,
                 typeAhead: true,
                 allowBlank: false,
+                forceSelection : true,
+                editable : false,
                 triggerAction: 'all',
                 displayField: "boxval",
                 valueField: "boxkey",
@@ -216,21 +213,21 @@ Ext.define("AP.view.org.OrgInfoWindow", {
                 id: 'orgCode_hidden_Id'
 
             }, xltree, OrgTypeCombox, {
-                fieldLabel: cosog.string.orgName,
+                fieldLabel: cosog.string.orgName+'<font color=red>*</font>',
                 id: 'orgName_Id',
                 allowBlank: false,
                 anchor: '95%',
                 name: "org.orgName"
             }, {
                 id: 'orgCode_Id',
-                fieldLabel: cosog.string.orgCode,
+                fieldLabel: cosog.string.orgCode+'<font color=red>*</font>',
                 allowBlank: false,
                 value: '',
                 anchor: '95%',
                 name: "org.orgCode"
             }, {
                 xtype: "textfield",
-                fieldLabel: cosog.string.orgLevel,
+                fieldLabel: cosog.string.orgLevel+'<font color=red>*</font>',
                 allowBlank: false,
                 id: 'orgLevel_Id',
                 anchor: '95%',

@@ -49,7 +49,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
         
         var modbusProtocolComb = Ext.create(
 				'Ext.form.field.ComboBox', {
-					fieldLabel :  '协议名称',
+					fieldLabel :  '协议名称<font color=red>*</font>',
 					id : 'formAlarmUnitProtocolComb_Id',
 					anchor : '100%',
 					store: modbusProtocolStore,
@@ -85,7 +85,7 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
 			},modbusProtocolComb, {
                 id: 'formAlarmUnitName_Id',
                 name: "alarmUnit.unitName",
-                fieldLabel: '单元名称',
+                fieldLabel: '单元名称<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''

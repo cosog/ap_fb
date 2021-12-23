@@ -67,6 +67,10 @@ Ext.define("AP.view.well.SMSDeviceInfoWindow", {
 					valueField : "boxkey",
 					listeners : {
 						select: function (v,o) {
+							if(o.data.boxkey==''){
+								v.setValue('');
+								v.setRawValue(' ');
+							}
 							Ext.getCmp("smsDeviceAcqInstanceCode_Id").setValue(this.value);
 	                    }
 					}
@@ -86,7 +90,7 @@ Ext.define("AP.view.well.SMSDeviceInfoWindow", {
                 value: '',
                 name: "smsDeviceInformation.orgId"
             },{
-                fieldLabel: '设备名称',
+                fieldLabel: '设备名称<font color=red>*</font>',
                 id: 'smsDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
@@ -110,7 +114,7 @@ Ext.define("AP.view.well.SMSDeviceInfoWindow", {
             	id: "smsDeviceSortNum_Id",
             	name: "smsDeviceInformation.sortNum",
                 fieldLabel: '排序编号',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '95%',
                 msgTarget: 'side'
@@ -145,7 +149,7 @@ Ext.define("AP.view.well.SMSDeviceInfoWindow", {
                             }
                         });
                     } else {
-                        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+                    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
                     }
                     return false;
                 }

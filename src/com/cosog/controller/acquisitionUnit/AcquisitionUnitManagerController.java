@@ -1422,7 +1422,12 @@ public class AcquisitionUnitManagerController extends BaseController {
 					protocolInstance.setSignInSuffix(modbusProtocolInstanceSaveData.getSignInSuffix());
 					protocolInstance.setHeartbeatPrefix(modbusProtocolInstanceSaveData.getHeartbeatPrefix());
 					protocolInstance.setHeartbeatSuffix(modbusProtocolInstanceSaveData.getHeartbeatSuffix());
-					protocolInstance.setSort(modbusProtocolInstanceSaveData.getSort());
+					
+					if(StringManagerUtils.isNum(modbusProtocolInstanceSaveData.getSort())){
+						protocolInstance.setSort(StringManagerUtils.stringToInteger(modbusProtocolInstanceSaveData.getSort()));
+					}else{
+						protocolInstance.setSort(null);
+					}
 					
 					try {
 						this.protocolInstanceManagerService.doModbusProtocolInstanceEdit(protocolInstance);
@@ -1503,8 +1508,11 @@ public class AcquisitionUnitManagerController extends BaseController {
 				protocolAlarmInstance.setName(modbusProtocolAlarmInstanceSaveData.getName());
 				protocolAlarmInstance.setDeviceType(modbusProtocolAlarmInstanceSaveData.getDeviceType());
 				protocolAlarmInstance.setAlarmUnitId(modbusProtocolAlarmInstanceSaveData.getAlarmUnitId());
-				protocolAlarmInstance.setSort(modbusProtocolAlarmInstanceSaveData.getSort());
-				
+				if(StringManagerUtils.isNum(modbusProtocolAlarmInstanceSaveData.getSort())){
+					protocolAlarmInstance.setSort(StringManagerUtils.stringToInteger(modbusProtocolAlarmInstanceSaveData.getSort()));
+				}else{
+					protocolAlarmInstance.setSort(null);
+				}
 				try {
 					this.protocolAlarmInstanceManagerService.doModbusProtocolAlarmInstanceEdit(protocolAlarmInstance);
 					json = "{success:true,msg:true}";

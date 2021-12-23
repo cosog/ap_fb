@@ -24,7 +24,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
 //            autoLoad: false,
 //            proxy: {
 //                type: 'ajax',
-//                url: context + '/orgManagerController/constructOrgRightTree',
+//                url: context + '/orgManagerController/loadOrgComboxTreeData',
 //                reader: 'json'
 //            },
 //            root: {
@@ -34,13 +34,8 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
 //            listeners: {
 //            	beforeload: function (store, options) {
 //                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-//                    var org_name_Id = Ext.getCmp('org_name_Id');
-//                    if (!Ext.isEmpty(org_name_Id)) {
-//                        org_name_Id = org_name_Id.getValue();
-//                    }
 //                    var new_params = {
-//                    	orgId:orgId,
-//                        orgName: org_name_Id
+////                    	orgId:orgId
 //                    };
 //                    Ext.apply(store.proxy.extraParams, new_params);
 //                }
@@ -60,7 +55,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
 //            store:OrgTreeStore,
 //            listeners: {
 //                select: function (picker,record,eOpts) {
-//                	Ext.getCmp("pumpDeviceOrg_Id").setValue(record.data.orgId);
+//                	Ext.getCmp("pumpDeviceOrg_Id").setValue(record.data.id);
 //                }
 //            }
 //        });
@@ -115,6 +110,10 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
 					valueField : "boxkey",
 					listeners : {
 						select: function (v,o) {
+							if(o.data.boxkey==''){
+								v.setValue('');
+								v.setRawValue(' ');
+							}
 							Ext.getCmp("pumpDeviceAcqInstanceCode_Id").setValue(this.value);
 	                    }
 					}
@@ -170,6 +169,10 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
 					valueField : "boxkey",
 					listeners : {
 						select: function (v,o) {
+							if(o.data.boxkey==''){
+								v.setValue('');
+								v.setRawValue(' ');
+							}
 							Ext.getCmp("pumpDeviceAlarmInstanceCode_Id").setValue(this.value);
 	                    }
 					}
@@ -212,14 +215,14 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
             }, 
 //            orgTreePicker, 
             {
-                fieldLabel: '井名',
+                fieldLabel: '井名<font color=red>*</font>',
                 id: 'pumpDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
                 name: "pumpDeviceInformation.wellName"
             }, {
             	xtype : "combobox",
-				fieldLabel : '应用场景',
+				fieldLabel : '应用场景<font color=red>*</font>',
 				id : 'pumpDeviceApplicationScenariosComb_Id',
 				anchor : '95%',
 				triggerAction : 'all',
@@ -280,7 +283,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
             	id: "pumpDeviceSortNum_Id",
             	name: "pumpDeviceInformation.sortNum",
                 fieldLabel: '排序编号',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '95%',
                 msgTarget: 'side'
@@ -329,7 +332,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                             }
                         });
                     } else {
-                        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+                        Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
                     }
                     return false;
                 }

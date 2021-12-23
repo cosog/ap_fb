@@ -152,7 +152,7 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
                         title: '添加设备'
                     });
                     window.show();
-                    Ext.getCmp("pipelineDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pipelineDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认<br/>&nbsp;");
                     Ext.getCmp("pipelineDeviceType_Id").setValue(202);
                     Ext.getCmp("pipelineDeviceOrg_Id").setValue(selectedOrgId);
                     Ext.getCmp("addFormPipelineDevice_Id").show();
@@ -197,6 +197,8 @@ Ext.define('AP.view.well.WaterGatheringPipelineDeviceInfoPanel', {
     	    	                        	Ext.MessageBox.alert("信息", "删除成功");
     	    	                            //保存以后重置全局容器
     	    	                            waterGatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(0);
+    	    	                        	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(0);
     	    	                            CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
     	    	                        } else {
     	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
@@ -383,9 +385,8 @@ function CreateAndLoadWaterGatheringPipelineDeviceInfoTable(isNew) {
             	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(0,'');
             	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(0,'');
             }else{
-            	Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").setValue(0);
-            	Ext.getCmp("WaterGatheringPipelineDeviceSelectEndRow_Id").setValue(0);
-            	var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
+            	var selectedRow=Ext.getCmp("WaterGatheringPipelineDeviceSelectRow_Id").getValue();
+            	var rowdata = waterGatheringPipelineDeviceInfoHandsontableHelper.hot.getDataAtRow(selectedRow);
             	CreateAndLoadWaterGatheringPipelineAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
             	CreateAndLoadWaterGatheringPipelineAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
@@ -436,7 +437,7 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
             	data: data,
                 hiddenColumns: {
                     columns: [0],
-                    indicators: true
+                    indicators: false
                 },
                 columns: waterGatheringPipelineDeviceInfoHandsontableHelper.columns,
                 stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
@@ -649,11 +650,11 @@ var WaterGatheringPipelineDeviceInfoHandsontableHelper = {
                 	if(waterGatheringPipelineAdditionalInfoHandsontableHelper!=null && waterGatheringPipelineAdditionalInfoHandsontableHelper.hot!=undefined){
                 		var additionalInfoData=waterGatheringPipelineAdditionalInfoHandsontableHelper.hot.getData();
                     	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
-                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                    		if (isNotVal(additionalInfoData[index][1])) {
                             	var additionalInfo={};
                             	additionalInfo.itemName=additionalInfoData[index][1];
-                            	additionalInfo.itemValue=additionalInfoData[index][2];
-                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	additionalInfo.itemValue=isNotVal(additionalInfoData[index][2])?additionalInfoData[index][2]:"";
+                            	additionalInfo.itemUnit=isNotVal(additionalInfoData[index][3])?additionalInfoData[index][3]:"";
                             	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
                             }
                         });
@@ -852,7 +853,7 @@ var WaterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper = {
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
-	                    indicators: true
+	                    indicators: false
 	                },
 	        		colWidths: [25,50,80,80],
 	                columns:waterGatheringPipelineAuxiliaryDeviceInfoHandsontableHelper.columns,
@@ -956,7 +957,7 @@ var WaterGatheringPipelineAdditionalInfoHandsontableHelper = {
 	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
-	                    indicators: true
+	                    indicators: false
 	                },
 	                columns: waterGatheringPipelineAdditionalInfoHandsontableHelper.columns,
 	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
