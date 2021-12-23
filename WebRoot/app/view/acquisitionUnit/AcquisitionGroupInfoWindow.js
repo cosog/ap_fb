@@ -49,7 +49,7 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
         
         var modbusProtocolComb = Ext.create(
 				'Ext.form.field.ComboBox', {
-					fieldLabel :  '协议名称',
+					fieldLabel :  '协议名称<font color=red>*</font>',
 					id : 'formAcquisitionGroupProtocolComb_Id',
 					anchor : '100%',
 					store: modbusProtocolStore,
@@ -101,7 +101,7 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
         
         var acqUnitComb = Ext.create(
         		'Ext.form.field.ComboBox', {
-					fieldLabel :  '单元名称',
+					fieldLabel :  '单元名称<font color=red>*</font>',
 					id : 'formAcquisitionGroupAcqUnitComb_Id',
 					anchor : '100%',
 					store: acqUnitStore,
@@ -145,7 +145,8 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
 			},acqUnitComb, {
                 id: 'formAcquisitionGroupName_Id',
                 name: "acquisitionGroup.groupName",
-                fieldLabel: '组名称',
+                fieldLabel: '组名称<font color=red>*</font>',
+                allowBlank: false,
                 anchor: '100%',
                 value: ''
             },{
@@ -155,7 +156,7 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
 				name : "acquisitionGroup.type"
 			},{
             	xtype : "combobox",
-				fieldLabel : '组类型',
+				fieldLabel : '组类型<font color=red>*</font>',
 				id : 'formAcquisitionGroupTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',

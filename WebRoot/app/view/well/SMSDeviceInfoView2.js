@@ -86,7 +86,7 @@ function CreateAndLoadSMSDeviceInfoTable() {
         stretchH: 'all',
         hiddenColumns: {
             columns: [0],
-            indicators: true
+            indicators: false
         },
         contextMenu: true,
         multiColumnSorting: true,

@@ -91,6 +91,36 @@ public class OrgManagerController extends BaseController {
 
 		return null;
 	}
+	
+	@RequestMapping("/loadOrgComboxTreeData")
+	public String loadOrgComboxTreeData() throws IOException {
+		String orgId = ParamUtils.getParameter(request, "orgId");
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			User user = null;
+			HttpSession session=request.getSession();
+			user = (User) session.getAttribute("userLogin");
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		list = this.orgService.loadOrgs(Org.class,"",orgId);
+		String json = "";
+		Recursion r = new Recursion();
+		for (Org org : list) {
+			if (!r.hasParent(list, org)) {
+				json = r.recursionOrgCombTree(list, org);
+			}
+		}
+		json = r.modifyStr(json);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+
+		return null;
+	}
 
 	/**
 	 * <p>

@@ -152,7 +152,7 @@ Ext.define('AP.view.well.JetPumpDeviceInfoPanel', {
                         title: '添加设备'
                     });
                     window.show();
-                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【"+selectedOrgName+"】下,请确认<br/>&nbsp;");
+                    Ext.getCmp("pumpDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认<br/>&nbsp;");
                     Ext.getCmp("pumpDeviceType_Id").setValue(105);
                     Ext.getCmp("pumpDeviceOrg_Id").setValue(selectedOrgId);
                     Ext.getCmp("addFormPumpDevice_Id").show();
@@ -197,6 +197,8 @@ Ext.define('AP.view.well.JetPumpDeviceInfoPanel', {
     	    	                        	Ext.MessageBox.alert("信息", "删除成功");
     	    	                            //保存以后重置全局容器
     	    	                            jetPumpDeviceInfoHandsontableHelper.clearContainer();
+    	    	                            Ext.getCmp("JetPumpDeviceSelectRow_Id").setValue(0);
+    	    	                        	Ext.getCmp("JetPumpDeviceSelectEndRow_Id").setValue(0);
     	    	                            CreateAndLoadJetPumpDeviceInfoTable();
     	    	                        } else {
     	    	                            Ext.MessageBox.alert("信息", "数据保存失败");
@@ -383,9 +385,8 @@ function CreateAndLoadJetPumpDeviceInfoTable(isNew) {
             	CreateAndLoadJetPumpAuxiliaryDeviceInfoTable(0,'');
             	CreateAndLoadJetPumpAdditionalInfoTable(0,'');
             }else{
-            	Ext.getCmp("JetPumpDeviceSelectRow_Id").setValue(0);
-            	Ext.getCmp("JetPumpDeviceSelectEndRow_Id").setValue(0);
-            	var rowdata = jetPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(0);
+            	var selectedRow=Ext.getCmp("JetPumpDeviceSelectRow_Id").getValue();
+            	var rowdata = jetPumpDeviceInfoHandsontableHelper.hot.getDataAtRow(selectedRow);
             	CreateAndLoadJetPumpAuxiliaryDeviceInfoTable(rowdata[0],rowdata[1]);
             	CreateAndLoadJetPumpAdditionalInfoTable(rowdata[0],rowdata[1]);
             }
@@ -436,7 +437,7 @@ var JetPumpDeviceInfoHandsontableHelper = {
             	data: data,
                 hiddenColumns: {
                     columns: [0],
-                    indicators: true
+                    indicators: false
                 },
                 columns: jetPumpDeviceInfoHandsontableHelper.columns,
                 stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸
@@ -649,11 +650,11 @@ var JetPumpDeviceInfoHandsontableHelper = {
                 	if(jetPumpAdditionalInfoHandsontableHelper!=null && jetPumpAdditionalInfoHandsontableHelper.hot!=undefined){
                 		var additionalInfoData=jetPumpAdditionalInfoHandsontableHelper.hot.getData();
                     	Ext.Array.each(additionalInfoData, function (name, index, countriesItSelf) {
-                            if (isNotVal(additionalInfoData[index][1]) && isNotVal(additionalInfoData[index][2])) {
+                    		if (isNotVal(additionalInfoData[index][1])) {
                             	var additionalInfo={};
                             	additionalInfo.itemName=additionalInfoData[index][1];
-                            	additionalInfo.itemValue=additionalInfoData[index][2];
-                            	additionalInfo.itemUnit=additionalInfoData[index][3]==null?"":additionalInfoData[index][3];
+                            	additionalInfo.itemValue=isNotVal(additionalInfoData[index][2])?additionalInfoData[index][2]:"";
+                            	additionalInfo.itemUnit=isNotVal(additionalInfoData[index][3])?additionalInfoData[index][3]:"";
                             	deviceAuxiliaryData.additionalInfoList.push(additionalInfo);
                             }
                         });
@@ -903,7 +904,7 @@ var JetPumpAuxiliaryDeviceInfoHandsontableHelper = {
 	        		data: data,
 	        		hiddenColumns: {
 	                    columns: [4],
-	                    indicators: true
+	                    indicators: false
 	                },
 	        		colWidths: [25,50,80,80],
 	                columns:jetPumpAuxiliaryDeviceInfoHandsontableHelper.columns,
@@ -1007,7 +1008,7 @@ var JetPumpAdditionalInfoHandsontableHelper = {
 	            	data: data,
 	                hiddenColumns: {
 	                    columns: [0],
-	                    indicators: true
+	                    indicators: false
 	                },
 	                columns: jetPumpAdditionalInfoHandsontableHelper.columns,
 	                stretchH: 'all', //延伸列的宽度, last:延伸最后一列,all:延伸所有列,none默认不延伸

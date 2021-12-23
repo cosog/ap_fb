@@ -48,7 +48,7 @@ var saveModbusProtocolSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -104,7 +104,7 @@ var SaveAcquisitionGroupSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！" + cosog.string.validdata + ".</font>。");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -223,7 +223,7 @@ var SaveAcquisitionUnitSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！" + cosog.string.validdata + ".</font>。");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -613,7 +613,7 @@ var saveModbusProtocolInstanceSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -656,7 +656,7 @@ var SaveAlarmUnitSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！" + cosog.string.validdata + ".</font>。");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -699,7 +699,7 @@ var saveModbusProtocolAlarmInstanceSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -781,7 +781,7 @@ var saveModbusProtocolSMSInstanceSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;

@@ -52,6 +52,10 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
                     	},
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").setValue(index);
+                    		Ext.getCmp('PumpHistoryQueryStartDate_Id').setValue('');
+                    		Ext.getCmp('PumpHistoryQueryStartDate_Id').setRawValue('');
+                    		Ext.getCmp('PumpHistoryQueryEndDate_Id').setValue('');
+                    		Ext.getCmp('PumpHistoryQueryEndDate_Id').setRawValue('');
                     		var gridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
                             if (isNotVal(gridPanel)) {
                             	gridPanel.getStore().loadPage(1);

@@ -1202,8 +1202,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pumpTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pumpTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
 					pumpTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
-					pumpTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					pumpTree_json.append("\"iconCls\": \"Protocol\",");
+					pumpTree_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					pumpTree_json.append("\"iconCls\": \"protocol\",");
 					pumpTree_json.append("\"expanded\": true,");
 					pumpTree_json.append("\"children\": [");
 					for(int j=0;j<unitList.size();j++){
@@ -1215,7 +1215,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							pumpTree_json.append("\"text\":\""+unitObj[2]+"\",");
 							pumpTree_json.append("\"remark\":\""+unitObj[3]+"\",");
 							pumpTree_json.append("\"protocol\":\""+unitObj[4]+"\",");
-							pumpTree_json.append("\"iconCls\": \"AcqUnit\",");
+							pumpTree_json.append("\"iconCls\": \"acqUnit\",");
 							pumpTree_json.append("\"expanded\": true,");
 							pumpTree_json.append("\"children\": [");
 							for(int k=0;k<groupList.size();k++){
@@ -1232,7 +1232,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									pumpTree_json.append("\"type\":"+groupObj[7]+",");
 									pumpTree_json.append("\"typeName\":\""+("0".equalsIgnoreCase(groupObj[7]+"")?"采集组":"控制组")+"\",");
 									pumpTree_json.append("\"unitId\":"+groupObj[groupObj.length-1]+",");
-									pumpTree_json.append("\"iconCls\": \"AcqGroup\",");
+									pumpTree_json.append("\"iconCls\": \"acqGroup\",");
 									pumpTree_json.append("\"leaf\": true");
 									pumpTree_json.append("},");
 								}
@@ -1253,8 +1253,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pipelineTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pipelineTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
 					pipelineTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
-					pipelineTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					pipelineTree_json.append("\"iconCls\": \"Protocol\",");
+					pipelineTree_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					pipelineTree_json.append("\"iconCls\": \"protocol\",");
 					pipelineTree_json.append("\"expanded\": true,");
 					pipelineTree_json.append("\"children\": [");
 					for(int j=0;j<unitList.size();j++){
@@ -1266,7 +1266,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							pipelineTree_json.append("\"text\":\""+unitObj[2]+"\",");
 							pipelineTree_json.append("\"remark\":\""+unitObj[3]+"\",");
 							pipelineTree_json.append("\"protocol\":\""+unitObj[4]+"\",");
-							pipelineTree_json.append("\"iconCls\": \"AcqUnit\",");
+							pipelineTree_json.append("\"iconCls\": \"acqUnit\",");
 							pipelineTree_json.append("\"expanded\": true,");
 							pipelineTree_json.append("\"children\": [");
 							for(int k=0;k<groupList.size();k++){
@@ -1283,7 +1283,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									pipelineTree_json.append("\"type\":"+groupObj[7]+",");
 									pipelineTree_json.append("\"typeName\":\""+("0".equalsIgnoreCase(groupObj[7]+"")?"采集组":"控制组")+"\",");
 									pipelineTree_json.append("\"unitId\":"+groupObj[groupObj.length-1]+",");
-									pipelineTree_json.append("\"iconCls\": \"AcqGroup\",");
+									pipelineTree_json.append("\"iconCls\": \"acqGroup\",");
 									pipelineTree_json.append("\"leaf\": true");
 									pipelineTree_json.append("},");
 								}
@@ -1314,8 +1314,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		result_json.append("[");
 		
-		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
-		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
+		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
+		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
 //		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
@@ -1345,8 +1345,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pumpTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pumpTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
 					pumpTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
-					pumpTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					pumpTree_json.append("\"iconCls\": \"Protocol\",");
+					pumpTree_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					pumpTree_json.append("\"iconCls\": \"protocol\",");
 					pumpTree_json.append("\"leaf\": true");
 					pumpTree_json.append("},");
 				}else{
@@ -1354,8 +1354,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pipelineTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pipelineTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
 					pipelineTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
-					pipelineTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					pipelineTree_json.append("\"iconCls\": \"Protocol\",");
+					pipelineTree_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					pipelineTree_json.append("\"iconCls\": \"protocol\",");
 					pipelineTree_json.append("\"leaf\": true");
 					pipelineTree_json.append("},");
 				}
@@ -1373,8 +1373,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		result_json.append("[");
 		
-		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
-		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
+		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
+		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
 //		System.out.println(result_json.toString());
 		return result_json.toString();
@@ -1406,8 +1406,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					result_json.append("{\"classes\":1,");
 					result_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					result_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
-					result_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					result_json.append("\"iconCls\": \"Protocol\",");
+					result_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					result_json.append("\"iconCls\": \"protocol\",");
 					result_json.append("\"expanded\": true,");
 					result_json.append("\"disabled\": true,");
 					result_json.append("\"children\": [");
@@ -1420,7 +1420,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							result_json.append("\"text\":\""+unitObj[2]+"\",");
 							result_json.append("\"remark\":\""+unitObj[3]+"\",");
 							result_json.append("\"protocol\":\""+unitObj[4]+"\",");
-							result_json.append("\"iconCls\": \"AcqUnit\",");
+							result_json.append("\"iconCls\": \"acqUnit\",");
 							result_json.append("\"leaf\": true},");
 						}
 					}
@@ -1466,8 +1466,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					result_json.append("{\"classes\":1,");
 					result_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					result_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
-					result_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					result_json.append("\"iconCls\": \"Protocol\",");
+					result_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					result_json.append("\"iconCls\": \"protocol\",");
 					result_json.append("\"expanded\": true,");
 					result_json.append("\"disabled\": true,");
 					result_json.append("\"children\": [");
@@ -1480,7 +1480,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							result_json.append("\"text\":\""+unitObj[2]+"\",");
 							result_json.append("\"remark\":\""+unitObj[3]+"\",");
 							result_json.append("\"protocol\":\""+unitObj[4]+"\",");
-							result_json.append("\"iconCls\": \"AcqGroup\",");
+							result_json.append("\"iconCls\": \"acqGroup\",");
 							result_json.append("\"leaf\": true},");
 						}
 					}
@@ -1529,8 +1529,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pumpTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pumpTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
 					pumpTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
-					pumpTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					pumpTree_json.append("\"iconCls\": \"Protocol\",");
+					pumpTree_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					pumpTree_json.append("\"iconCls\": \"protocol\",");
 					pumpTree_json.append("\"expanded\": true,");
 					pumpTree_json.append("\"children\": [");
 					for(int j=0;j<unitList.size();j++){
@@ -1542,7 +1542,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							pumpTree_json.append("\"text\":\""+unitObj[2]+"\",");
 							pumpTree_json.append("\"remark\":\""+unitObj[3]+"\",");
 							pumpTree_json.append("\"protocol\":\""+unitObj[4]+"\",");
-							pumpTree_json.append("\"iconCls\": \"AcqGroup\",");
+							pumpTree_json.append("\"iconCls\": \"acqGroup\",");
 							pumpTree_json.append("\"leaf\": true");
 							pumpTree_json.append("},");
 						}
@@ -1556,8 +1556,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 					pipelineTree_json.append("\"text\":\""+modbusProtocolConfig.getProtocol().get(i).getName()+"\",");
 					pipelineTree_json.append("\"code\":\""+modbusProtocolConfig.getProtocol().get(i).getCode()+"\",");
 					pipelineTree_json.append("\"deviceType\":"+modbusProtocolConfig.getProtocol().get(i).getDeviceType()+",");
-					pipelineTree_json.append("\"sort\":"+modbusProtocolConfig.getProtocol().get(i).getSort()+",");
-					pipelineTree_json.append("\"iconCls\": \"Protocol\",");
+					pipelineTree_json.append("\"sort\":\""+modbusProtocolConfig.getProtocol().get(i).getSort()+"\",");
+					pipelineTree_json.append("\"iconCls\": \"protocol\",");
 					pipelineTree_json.append("\"expanded\": true,");
 					pipelineTree_json.append("\"children\": [");
 					for(int j=0;j<unitList.size();j++){
@@ -1569,7 +1569,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 							pipelineTree_json.append("\"text\":\""+unitObj[2]+"\",");
 							pipelineTree_json.append("\"remark\":\""+unitObj[3]+"\",");
 							pipelineTree_json.append("\"protocol\":\""+unitObj[4]+"\",");
-							pipelineTree_json.append("\"iconCls\": \"AcqGroup\",");
+							pipelineTree_json.append("\"iconCls\": \"acqGroup\",");
 							pipelineTree_json.append("\"leaf\": true");
 							pipelineTree_json.append("},");
 						}
@@ -1593,8 +1593,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		result_json.append("[");
 		
-		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
-		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
+		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
+		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
 //		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
@@ -1630,17 +1630,17 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pumpTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
 				pumpTree_json.append("\"heartbeatSuffix\":\""+obj[8]+"\",");
 				pumpTree_json.append("\"deviceType\":"+obj[9]+",");
-				pumpTree_json.append("\"sort\":"+obj[10]+",");
+				pumpTree_json.append("\"sort\":\""+obj[10]+"\",");
 				pumpTree_json.append("\"unitId\":"+obj[11]+",");
 				pumpTree_json.append("\"unitName\":\""+obj[12]+"\",");
-				pumpTree_json.append("\"iconCls\": \"Protocol\",");
+				pumpTree_json.append("\"iconCls\": \"protocol\",");
 
 				pumpTree_json.append("\"expanded\": true,");
 				pumpTree_json.append("\"children\": [");
 				pumpTree_json.append("{\"classes\":2,");
 				pumpTree_json.append("\"text\":\""+obj[12]+"\",");
 				pumpTree_json.append("\"id\":"+obj[11]+",");
-				pumpTree_json.append("\"iconCls\": \"AcqUnit\","); 
+				pumpTree_json.append("\"iconCls\": \"acqUnit\","); 
 				
 				pumpTree_json.append("\"expanded\": true,");
 				pumpTree_json.append("\"children\": [");
@@ -1651,7 +1651,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 						pumpTree_json.append("\"id\":"+groupObj[0]+",");
 						pumpTree_json.append("\"text\":\""+groupObj[1]+"\",");
 						pumpTree_json.append("\"code\":\""+groupObj[2]+"\",");
-						pumpTree_json.append("\"iconCls\": \"AcqGroup\","); 
+						pumpTree_json.append("\"iconCls\": \"acqGroup\","); 
 						pumpTree_json.append("\"leaf\": true},");
 					}
 				}
@@ -1676,17 +1676,17 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"heartbeatPrefix\":\""+obj[7]+"\",");
 				pipelineTree_json.append("\"heartbeatSuffix\":\""+obj[8]+"\",");
 				pipelineTree_json.append("\"deviceType\":"+obj[9]+",");
-				pipelineTree_json.append("\"sort\":"+obj[10]+",");
+				pipelineTree_json.append("\"sort\":\""+obj[10]+"\",");
 				pipelineTree_json.append("\"unitId\":"+obj[11]+",");
 				pipelineTree_json.append("\"unitName\":\""+obj[12]+"\",");
-				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
+				pipelineTree_json.append("\"iconCls\": \"protocol\",");
 				pipelineTree_json.append("\"expanded\": true,");
 				
 				pipelineTree_json.append("\"children\": [");
 				pipelineTree_json.append("{\"classes\":2,");
 				pipelineTree_json.append("\"text\":\""+obj[12]+"\",");
 				pipelineTree_json.append("\"id\":"+obj[11]+",");
-				pipelineTree_json.append("\"iconCls\": \"AcqUnit\","); 
+				pipelineTree_json.append("\"iconCls\": \"acqUnit\","); 
 				pipelineTree_json.append("\"expanded\": true,");
 				pipelineTree_json.append("\"children\": [");
 				for(int j=0;j<groupList.size();j++){
@@ -1696,7 +1696,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 						pipelineTree_json.append("\"id\":"+groupObj[0]+",");
 						pipelineTree_json.append("\"text\":\""+groupObj[1]+"\",");
 						pipelineTree_json.append("\"code\":\""+groupObj[2]+"\",");
-						pipelineTree_json.append("\"iconCls\": \"AcqGroup\","); 
+						pipelineTree_json.append("\"iconCls\": \"acqGroup\","); 
 						pipelineTree_json.append("\"leaf\": true},");
 					}
 				}
@@ -1723,8 +1723,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		result_json.append("[");
 		
-		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
-		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
+		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
+		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
 //		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
@@ -1750,14 +1750,14 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pumpTree_json.append("\"alarmUnitId\":"+obj[3]+",");
 				pumpTree_json.append("\"alarmUnitName\":\""+obj[4]+"\",");
 				pumpTree_json.append("\"deviceType\":"+obj[5]+",");
-				pumpTree_json.append("\"sort\":"+obj[6]+",");
-				pumpTree_json.append("\"iconCls\": \"Protocol\",");
+				pumpTree_json.append("\"sort\":\""+obj[6]+"\",");
+				pumpTree_json.append("\"iconCls\": \"protocol\",");
 				pumpTree_json.append("\"expanded\": true,");
 				pumpTree_json.append("\"children\": [");
 				pumpTree_json.append("{\"classes\":2,");
 				pumpTree_json.append("\"id\":"+obj[3]+",");
 				pumpTree_json.append("\"text\":\""+obj[4]+"\",");
-				pumpTree_json.append("\"iconCls\": \"AcqGroup\","); 
+				pumpTree_json.append("\"iconCls\": \"acqGroup\","); 
 				pumpTree_json.append("\"leaf\": true}");
 				pumpTree_json.append("]");
 				
@@ -1772,14 +1772,14 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				pipelineTree_json.append("\"alarmUnitId\":"+obj[3]+",");
 				pipelineTree_json.append("\"alarmUnitName\":\""+obj[4]+"\",");
 				pipelineTree_json.append("\"deviceType\":"+obj[5]+",");
-				pipelineTree_json.append("\"sort\":"+obj[6]+",");
-				pipelineTree_json.append("\"iconCls\": \"Protocol\",");
+				pipelineTree_json.append("\"sort\":\""+obj[6]+"\",");
+				pipelineTree_json.append("\"iconCls\": \"protocol\",");
 				pipelineTree_json.append("\"expanded\": true,");
 				pipelineTree_json.append("\"children\": [");
 				pipelineTree_json.append("{\"classes\":2,");
 				pipelineTree_json.append("\"id\":"+obj[3]+",");
 				pipelineTree_json.append("\"text\":\""+obj[4]+"\",");
-				pipelineTree_json.append("\"iconCls\": \"AcqGroup\","); 
+				pipelineTree_json.append("\"iconCls\": \"acqGroup\","); 
 				pipelineTree_json.append("\"leaf\": true}");
 				pipelineTree_json.append("]");
 				
@@ -1799,8 +1799,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		
 		result_json.append("[");
 		
-		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
-		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"Device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
+		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
+		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
 //		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");

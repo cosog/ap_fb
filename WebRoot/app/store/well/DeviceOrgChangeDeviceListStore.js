@@ -64,7 +64,7 @@ Ext.define('AP.store.well.DeviceOrgChangeDeviceListStore', {
         	var deviceName=Ext.getCmp('DeviceOrgChangeDeviceListComb_Id').getValue();
         	var deviceType=Ext.getCmp("DeviceOrgChangeWinDeviceType_Id").getValue();
             var new_params = {
-//                    orgId: orgId,
+                    orgId: orgId,
                     deviceType:deviceType,
                     wellName:deviceName
                 };

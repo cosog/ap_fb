@@ -62,6 +62,34 @@ public class Recursion {
 		return data;
 	}
 	
+	public String recursionOrgCombTree(List list, Org node) {
+
+		String data = "";
+		if (hasChild(list, node)) {
+			returnStr.append("{\"text\":\"" + node.getOrgName() + "\",");
+			returnStr.append("\"expanded\":true,");
+			returnStr.append("\"id\":" + node.getOrgId() + ",");
+			returnStr.append("\"orgParent\":" + node.getOrgParent() + ",");
+			returnStr.append("\"orgCode\":\""+node.getOrgCode()+"\",");
+			returnStr.append("\"children\":[");
+			List childList = getChildList(list, node);
+			Iterator it = childList.iterator();
+			while (it.hasNext()) {
+				Org n = (Org) it.next();
+				recursionOrgCombTree(list, n);
+			}
+			returnStr.append("]},");
+		} else {
+			returnStr.append("{\"id\":"+node.getOrgId()+",");
+			returnStr.append("\"orgParent\":"+node.getOrgParent()+",");
+			returnStr.append("\"text\":\""+node.getOrgName()+"\",");
+			returnStr.append("\"orgCode\":\""+node.getOrgCode()+"\",");
+			returnStr.append("\"leaf\":true },");
+		}
+		data = returnStr.toString();
+		return data;
+	}
+	
 	
 	public String recursionMObileOrgTree(List list, Org node) {
 

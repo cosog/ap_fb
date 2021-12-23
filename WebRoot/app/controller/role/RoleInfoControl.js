@@ -49,7 +49,7 @@ var SaveroleDataInfoSubmitBtnForm = function () {
             }
         });
     } else {
-        Ext.Msg.alert(cosog.string.ts, "<font color=red>SORRY！" + cosog.string.validdata + ".</font>。");
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     // 设置返回值 false : 让Extjs4 自动回调 success函数
     return false;
@@ -83,6 +83,8 @@ function UpdateroleDataInfoSubmitBtnForm() {
                 Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + " </font>】：" + cosog.string.contactadmin + "！");
             }
         });
+    } else {
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
     }
     return false;
 };

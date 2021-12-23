@@ -92,8 +92,9 @@ Ext.define("AP.view.well.DeviceOrgChangeWindow", {
         Ext.apply(me, {
         	bbar: ['->', {
                 xtype: 'button',
-                text: '保存',
-                iconCls: 'save',
+                text: '迁移',
+                iconCls: 'move',
+                style: 'margin-right: 15px;margin-bottom: 5px',
                 pressed: true,
                 handler: function () {
                 	var selectedDevice=Ext.getCmp("DeviceOrgChangeDeviceListGridPanel_Id").getSelectionModel().getSelection();
@@ -137,10 +138,12 @@ Ext.define("AP.view.well.DeviceOrgChangeWindow", {
                 		}
                 	});
                 }
-    		}, {
-                xtype: 'tbspacer',
-                flex: 1
-    		}],
+    		}
+//        	, {
+//                xtype: 'tbspacer',
+//                flex: 1
+//    		}
+        	],
         	layout: 'border',
             items: [{
             	region: 'center',

@@ -23,14 +23,14 @@ Ext.define("AP.view.well.AuxiliaryDeviceInfoWindow", {
             id: 'addAuxiliaryDeviceForm_Id',
             defaultType: 'textfield',
             items: [{
-                fieldLabel: '设备名称',
+                fieldLabel: '设备名称<font color=red>*</font>',
                 id: 'auxiliaryDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
                 name: "auxiliaryDeviceInformation.name"
             }, {
             	xtype : "combobox",
-				fieldLabel : '类型',
+				fieldLabel : '类型<font color=red>*</font>',
 				id : 'auxiliaryDeviceTypeComb_Id',
 				anchor : '95%',
 				triggerAction : 'all',
@@ -79,7 +79,7 @@ Ext.define("AP.view.well.AuxiliaryDeviceInfoWindow", {
             	id: "auxiliaryDeviceSort_Id",
             	name: "auxiliaryDeviceInformation.sort",
                 fieldLabel: '排序编号',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '95%',
                 msgTarget: 'side'
@@ -115,7 +115,7 @@ Ext.define("AP.view.well.AuxiliaryDeviceInfoWindow", {
                             }
                         });
                     } else {
-                        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+                    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
                     }
                     return false;
                 }

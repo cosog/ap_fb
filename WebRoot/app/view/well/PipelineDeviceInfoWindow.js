@@ -68,6 +68,10 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
 					valueField : "boxkey",
 					listeners : {
 						select: function (v,o) {
+							if(o.data.boxkey==''){
+								v.setValue('');
+								v.setRawValue(' ');
+							}
 							Ext.getCmp("pipelineDeviceAcqInstanceCode_Id").setValue(this.value);
 	                    }
 					}
@@ -123,6 +127,10 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
 					valueField : "boxkey",
 					listeners : {
 						select: function (v,o) {
+							if(o.data.boxkey==''){
+								v.setValue('');
+								v.setRawValue(' ');
+							}
 							Ext.getCmp("pipelineDeviceAlarmInstanceCode_Id").setValue(this.value);
 	                    }
 					}
@@ -157,14 +165,14 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
             }, 
 //            orgTreePicker, 
             {
-                fieldLabel: '井名',
+                fieldLabel: '井名<font color=red>*</font>',
                 id: 'pipelineDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
                 name: "pipelineDeviceInformation.wellName"
             }, {
             	xtype : "combobox",
-				fieldLabel : '应用场景',
+				fieldLabel : '应用场景<font color=red>*</font>',
 				id : 'pipelineDeviceApplicationScenariosComb_Id',
 				anchor : '95%',
 				triggerAction : 'all',
@@ -225,7 +233,7 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
             	id: "pipelineDeviceSortNum_Id",
             	name: "pipelineDeviceInformation.sortNum",
                 fieldLabel: '排序编号',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '95%',
                 msgTarget: 'side'
@@ -270,7 +278,7 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
                             }
                         });
                     } else {
-                        Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.validdata + "</font>");
+                    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
                     }
                     return false;
                 }

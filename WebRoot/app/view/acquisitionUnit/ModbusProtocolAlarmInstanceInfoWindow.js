@@ -47,7 +47,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
         var protocolAndAlarmUnitTree=Ext.create('AP.view.well.TreePicker',{
         	id:'modbusInstanceProtocolAndAlarmUnit_Id',
         	anchor: '100%',
-        	fieldLabel: '报警单元',
+        	fieldLabel: '报警单元<font color=red>*</font>',
             emptyText: '请选择报警单元...',
             blankText: '请选择报警单元...',
             displayField: 'text',
@@ -85,7 +85,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
             }, {
                 id: 'formModbusProtocolAlarmInstanceName_Id',
                 name: "protocolAlarmInstance.name",
-                fieldLabel: '实例名称',
+                fieldLabel: '实例名称<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
                 value: ''
@@ -96,7 +96,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
 				name : "protocolAlarmInstance.deviceType"
 			},{
             	xtype : "combobox",
-				fieldLabel : '设备类型',
+				fieldLabel : '设备类型<font color=red>*</font>',
 				id : 'modbusProtocolAlarmInstanceDeviceTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
@@ -129,7 +129,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
             	id: "modbusProtocolAlarmInstanceSort_Id",
                 name: 'protocolAlarmInstance.sort',
                 fieldLabel: '排序',
-                allowBlank: false,
+                allowBlank: true,
                 minValue: 1,
                 anchor: '100%',
                 msgTarget: 'side'

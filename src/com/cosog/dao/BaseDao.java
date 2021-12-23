@@ -1225,8 +1225,7 @@ public class BaseDao extends HibernateDaoSupport {
 						cs.executeUpdate();
 						updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId())
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName()) 
 								){
 							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
@@ -1246,7 +1245,6 @@ public class BaseDao extends HibernateDaoSupport {
 						addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
 								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName()) 
 								){
 							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
