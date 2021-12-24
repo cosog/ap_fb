@@ -446,61 +446,43 @@ ExtDel_ObjectInfo = function(grid_id, row, data_id, action_name) {
 	// 删除条件
 	var deletejson = [];
 	Ext.Array.each(row, function(name, index, countriesItSelf) {
-				deletejson.push(row[index].get(data_id));
-			});
-	var delparamsId = "" + deletejson.join(",");
-	// AJAX提交方式
-	Ext.Ajax.request({
-		url : action_name,
-		method : "POST",
-		// 提交参数
-		params : {
-			paramsId : delparamsId
-		},
-		success : function(response) {
-			var result = Ext.JSON.decode(response.responseText);
-			Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'"
-					+ context
-					+ "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
-			if (result.flag == true) {
-				//判断是否是后台井、井场、组织模块 清除地图覆盖物重新请求数据
-//				if(grid_id=="wellsitePanel_Id"){
-//					if(mapHelperWellsite!=null){
-//						mapHelperWellsite.clearOverlays();
-//						SaveBackMapData(mapHelperWellsite,"wellsite",m_BackDefaultZoomLevel);
-//					}
-//				}
-//				if(grid_id=="wellPanel_Id"){
-//					if(mapHelperWell!=null){
-//    					mapHelperWell.clearOverlays();
-//    					SaveBackMapData(mapHelperWell,"well",m_BackDefaultZoomLevel);
-//    				}else{
-//    					updateWellMapDataAndShowMap();
-//    				}
-//				}
-//				if(grid_id=="OrgInfoTreeGridView_Id"){
-//					if(mapHelperOrg!=null){
-//						mapHelperOrg.clearOverlays();
-//						SaveBackMapData(mapHelperOrg,"org",m_BackDefaultZoomLevel);
-//					}
-//				}
-				Ext.Msg.alert('提示', "【<font color=blue>成功删除</font>】"+ row.length + "条数据信息。");
-			}
-			if (result.flag == false) {
-				Ext.Msg.alert('提示', "<font color=red>SORRY！删除失败。</font>");
-			}
-			// 刷新Grid
-			if(grid_id=="OrgInfoTreeGridView_Id"){
-				var store=Ext.getCmp(grid_id).getStore()
-                store.proxy.extraParams.tid = 0;
-                store.load();
-			}
-			Ext.getCmp(grid_id).getStore().load();
-		},
-		failure : function() {
-			Ext.Msg.alert("提示", "【<font color=red>异常抛出 </font>】：请与管理员联系！");
-		}
+		if(row[index].get(data_id)>0){
+			deletejson.push(row[index].get(data_id));
+		}		
 	});
+	if(deletejson.length>0){
+		var delparamsId = "" + deletejson.join(",");
+		Ext.Ajax.request({
+			url : action_name,
+			method : "POST",
+			params : {
+				paramsId : delparamsId
+			},
+			success : function(response) {
+				var result = Ext.JSON.decode(response.responseText);
+				Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'"
+						+ context
+						+ "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+				if (result.flag == true) {
+					Ext.Msg.alert('提示', "【<font color=blue>成功删除</font>】"+ row.length + "条数据信息。");
+				}
+				if (result.flag == false) {
+					Ext.Msg.alert('提示', "<font color=red>SORRY！删除失败。</font>");
+				}
+				if(grid_id=="OrgInfoTreeGridView_Id"){
+					var store=Ext.getCmp(grid_id).getStore()
+	                store.proxy.extraParams.tid = 0;
+	                store.load();
+				}
+				Ext.getCmp(grid_id).getStore().load();
+			},
+			failure : function() {
+				Ext.Msg.alert("提示", "【<font color=red>异常抛出 </font>】：请与管理员联系！");
+			}
+		});
+	}else{
+		Ext.Msg.alert('提示', "<font color=red>所选属性无效，删除失败。</font>");
+	}
 	return false;
 };
 
@@ -2624,6 +2606,7 @@ createDiagStatisticsColumn = function(columnInfo) {
 	for (var i = 0; i < myArr.length; i++) {
 		var attr = myArr[i];
 		var width_="";
+		var flex_ = "";
 		var lock_="";
 		var hidden_="";
 		if(isNotVal(attr.lock)){
@@ -2635,15 +2618,18 @@ createDiagStatisticsColumn = function(columnInfo) {
 		if(isNotVal(attr.width)){
 			width_=",width:"+attr.width;
 		}
-		myColumns +="{text:'" + attr.header + "'";
+		if (isNotVal(attr.flex)) {
+        	flex_ = ",flex:" + attr.flex;
+        }
+		myColumns +="{text:'" + attr.header + "'"+width_+flex_;
 		 if (attr.dataIndex=='id'){
-		  myColumns +=",width:"+attr.width+",xtype: 'rownumberer',sortable:false,align:'center',locked:false" ;
+		  myColumns +=",xtype: 'rownumberer',sortable:false,align:'center',locked:false" ;
 		}else if(attr.dataIndex=='gtcjsj'||"updatetime"==attr.dataIndex){
-			myColumns +=hidden_+lock_+width_+",sortable : false,align:'center',dataIndex:'"+attr.dataIndex+"',renderer:Ext.util.Format.dateRenderer('Y-m-d H:i:s')";
+			myColumns +=hidden_+lock_+",sortable : false,align:'center',dataIndex:'"+attr.dataIndex+"',renderer:Ext.util.Format.dateRenderer('Y-m-d H:i:s')";
 		}else if(attr.dataIndex=='gxrq'){
-			myColumns +=hidden_+lock_+width_+",sortable : false,align:'center',dataIndex:'"+attr.dataIndex+"',renderer:Ext.util.Format.dateRenderer('Y-m-d')";
+			myColumns +=hidden_+lock_+",sortable : false,align:'center',dataIndex:'"+attr.dataIndex+"',renderer:Ext.util.Format.dateRenderer('Y-m-d')";
 		}else {
-			myColumns +=hidden_+lock_+width_+",align:'center',dataIndex:'"+attr.dataIndex+"'";
+			myColumns +=hidden_+lock_+",align:'center',dataIndex:'"+attr.dataIndex+"'";
 		}
 		myColumns += "}";
 		if (i < myArr.length - 1) {
@@ -2739,10 +2725,9 @@ createTreeHeadColumns = function(columnInfo) {
 	for (var i = 0; i < myArr.length; i++) {
 		var attr = myArr[i];
 		myColumns += "{ header:'" + attr.header + "'";
-		  if (attr.dataIndex=='text'){
+		if (attr.dataIndex=='text'){
 			myColumns +=",xtype: 'treecolumn',dataIndex:'"+attr.dataIndex+"'";
-		}
-		else {
+		}else {
 			myColumns +=",dataIndex:'"+attr.dataIndex+"'";
 		}
 		myColumns +="}";
@@ -7809,7 +7794,55 @@ function foreachAndSearchOrgAbsolutePath(orgStoreData, orgId) {
 	return rtnStr;
 }
 
+function foreachAndSearchOrgAbsolutePathId(orgStoreData, orgId) {
+	var rtnArr=[];
+	var rtnStr="";
+	const foreachAndSearchOrgAbsolutePathId=function(storeData, id) {
+		if(storeData){
+			for(let record of storeData){
+				if(record.data.orgId===id){
+					if(record.parentNode){
+						foreachAndSearchOrgAbsolutePathId(storeData,record.parentNode.data.orgId);
+					}
+					rtnArr.push(record.data.orgId);
+				}else{
+				}
+			}
+		}
+	};
+	foreachAndSearchOrgAbsolutePathId(orgStoreData, orgId);
+	rtnStr = "" + rtnArr.join(",");
+	return rtnStr;
+}
 
-
-
-
+function foreachAndSearchOrgChildId(rec) {
+	var rtnArr=[];
+	const recursionOrgChildId=function(chlidArray) {
+		var ch_length;
+		var ch_node = chlidArray.childNodes;
+		if (isNotVal(ch_node)) {
+			ch_length = ch_node.length;
+		} else {
+			ch_length = chlidArray.length;
+		}
+		if (ch_length > 0) {
+			if (!Ext.isEmpty(chlidArray)) {
+				Ext.Array.each(chlidArray, function(childArrNode, index, fog) {
+							var x_node_seId = fog[index].data.orgId;
+							rtnArr.push(x_node_seId);
+							// 递归
+							if (childArrNode.childNodes != null) {
+								recursionOrgChildId(childArrNode.childNodes);
+							}
+						});
+			}
+		} else {
+			if (isNotVal(chlidArray)) {
+				var x_node_seId = chlidArray.data.orgId;
+				rtnArr.push(x_node_seId);
+			}
+		}
+	};
+	recursionOrgChildId(rec);
+	return rtnArr.join(",");
+}
