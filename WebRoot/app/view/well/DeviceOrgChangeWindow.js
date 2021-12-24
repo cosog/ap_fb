@@ -110,7 +110,7 @@ Ext.define("AP.view.well.DeviceOrgChangeWindow", {
                 	}
                 	var selectedDeviceId="";
                 	var selectedDeviceArr=[];
-                	var selectedOrgId=selectedOrg[0].data.orgId;
+                	var selectedOrgId=selectedOrg[0].data.id;
                 	for(var i=0;i<selectedDevice.length;i++){
                 		selectedDeviceArr.push(selectedDevice[i].data.id);
                 	}

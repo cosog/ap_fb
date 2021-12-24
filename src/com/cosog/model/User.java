@@ -46,6 +46,7 @@ public class User implements java.io.Serializable {
 	private String pageSize;
 	private Integer userType;
 	private Integer userQuickLogin;
+	private Integer userEnable;
 	private String userOrgids;
 	private String userOrgNames;
 	private String userParentOrgids;
@@ -73,9 +74,6 @@ public class User implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue
-	// @GeneratedValue(generator = "paymentableGenerator")
-	// @GenericGenerator(name = "paymentableGenerator", strategy =
-	// "com.gao.utils.UUIDGenerator")
 	@Column(name = "user_No", nullable = false, insertable = true, updatable = true, length = 32)
 	public Integer getUserNo() {
 		return this.userNo;
@@ -196,6 +194,17 @@ public class User implements java.io.Serializable {
 	
 	public void setUserQuickLogin(Integer userQuickLogin) {
 		this.userQuickLogin = userQuickLogin;
+	}
+	
+
+
+	@Column(name = "USER_ENABLE", precision = 38, scale = 0)
+	public Integer getUserEnable() {
+		return userEnable;
+	}
+
+	public void setUserEnable(Integer userEnable) {
+		this.userEnable = userEnable;
 	}
 
 	public void setOrgName(String orgName) {

@@ -182,8 +182,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
             baseCls: 'x-plain',
             id: 'addPumpDeviceForm_Id',
             defaultType: 'textfield',
-            items: [
-            	{
+            items: [{
                 xtype: 'label',
                 id: 'pumpDeviceWinOgLabel_Id',
                 html: ''
@@ -287,7 +286,6 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                 minValue: 1,
                 anchor: '95%',
                 msgTarget: 'side'
-            
             }],
             buttons: [{
                 id: 'addFormPumpDevice_Id',

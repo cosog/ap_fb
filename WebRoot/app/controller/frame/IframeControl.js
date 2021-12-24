@@ -31,7 +31,7 @@ function extTreeItemsSelectedChange(view, selected, o) {
 	if (selected.length > 0) {
 		var rec=selected[0];
 		selectresult=[];
-		var org_Id = selectEachTreeFn(rec);// 获取到当前点击的组织ID
+		var org_Id = foreachAndSearchOrgChildId(rec);// 获取到当前点击的组织ID
 		selectReeTextRsult = [];
 		var org_Name=selectEachTreeText(rec);
 		if(!(org_Id.indexOf(userOrg_Ids)>0)){

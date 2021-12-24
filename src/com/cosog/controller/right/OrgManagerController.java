@@ -178,15 +178,14 @@ public class OrgManagerController extends BaseController {
 				if (map.get("orgTree") != null && oldUserId.equalsIgnoreCase(curUserId)) {
 					list = (List<Org>) map.get("orgTree");
 				} else {
-					list = orgService.findloadOrgTreeListById(Org.class, user.getUserorgids());
+					list = orgService.loadOrgAndChildTreeListById(Org.class, user.getUserOrgid());
 					map.put("oldUser", "");
 					map.put("oldUser", user);
 					map.put("orgTree", list);
 				}
 			}else{
 				log.warn("用户拥有的组织未启用缓存...");
-//				list = orgService.findloadOrgTreeListById(Org.class, user.getOrgtreeid());
-				list = orgService.findloadOrgTreeListById(Org.class, user.getUserorgids());
+				list = orgService.loadOrgAndChildTreeListById(Org.class, user.getUserOrgid());
 			}
 
 			for (Org o : list) {
@@ -495,9 +494,12 @@ public class OrgManagerController extends BaseController {
 	public String doOrgBulkDelete() {
 		try {
 			String OrgIds = ParamUtils.getParameter(request, "paramsId");
-			this.orgService.bulkDelete(OrgIds);
+			int deleteCount=0;
+			if(StringManagerUtils.isNotNull(OrgIds)){
+				deleteCount=this.orgService.bulkDelete(OrgIds);
+			}
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
-			String result = "{success:true,flag:true}";
+			String result = "{success:true,flag:true,\"deleteCount\":"+deleteCount+"}";
 			Map<String, Object> map = DataModelMap.getMapObject();
 			HttpSession session=request.getSession();
 			User userInfo = this.findCurrentUserInfo();

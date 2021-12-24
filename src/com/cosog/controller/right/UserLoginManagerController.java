@@ -193,7 +193,7 @@ public class UserLoginManagerController extends BaseController {
 //				user = this.service.doLogin(username, UnixPwdCrypt.crypt("dogVSgod", userPass));
 				user = this.service.doLogin(username, StringManagerUtils.stringToMD5(userPass));
 			}
-			if (user != null) {
+			if (user != null&&user.getUserEnable()==1) {
 				user.setPicUrl(picUrl);// 通过session传到前台
 				int pageSize = Config.getInstance().configFile.getOthers().getPageSize();
 				boolean SyncOrAsync=Config.getInstance().configFile.getOthers().getSyncOrAsync();
@@ -214,6 +214,8 @@ public class UserLoginManagerController extends BaseController {
 				session.setAttribute("SESSION_USERNAME", username);
 				out.print("{success:true,flag:'normal'}");
 				this.service.saveSystemLog(user);
+			}else if(user != null && user.getUserEnable()!=1){
+				out.print("{success:true,flag:false,'msg':'<font color=\"purple\">用户" + username + "已被禁用 !</font>' }");
 			} else {
 				if(locale.equalsIgnoreCase("zh_CN")){
 				out.print("{success:true,flag:false,'msg':'<font color=\"purple\">用户" + username + "的账号或密码错误 !</font>' }");

@@ -81,27 +81,41 @@ public class UserManagerService<T> extends BaseService<T> {
 	 */
 	
 	public String doUserShow(Page pager, Map map,String orgIds) throws IOException, SQLException {
-		String sql = "";
 		StringBuffer sqlwhere = new StringBuffer();
-		sqlwhere.append("select userNo,userName,userOrgid,userId,userPwd,userType,userTypeName,userPhone,userInEmail,userTitle,userTitleName,userRegtime,orgName,userQuickLogin,userQuickLoginName   from (");
-		sqlwhere.append("select u.user_no as  userNo,u.user_name as userName,u.user_orgid as userOrgid,u.user_id as userId,");
-		sqlwhere.append("u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName ,");
-		sqlwhere.append("u.user_phone as userPhone,u.user_in_email as userInEmail,");
-		sqlwhere.append("u.user_title as userTitle,c.itemname as userTitleName, to_char(u.user_regtime,'YYYY-MM-DD hh24:mi:ss') as userRegtime,");
-		sqlwhere.append("u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin,0,'否','是') as userQuickLoginName,");
-		sqlwhere.append("o.org_name as orgName  from  tbl_code  c, tbl_user u left outer join  tbl_org o on u.user_orgid=o.org_id  left outer join tbl_role r on u.user_type=r.role_id ");
-		sqlwhere.append("where  u.user_title=c.itemvalue  and c.itemcode='USER_TITLE' ");
-		String userName = (String) map.get("userName");
-		if (!"".equals(userName) && null != userName && userName.length() > 0) {
-			sqlwhere.append(" and u.user_name like '%" + userName + "%'");
-		}
-		sqlwhere.append(" and u.user_orgid in (" + orgIds + ")");
-		sqlwhere.append("   order by u.user_no )");
-		String getResult = "";
-		sql = sqlwhere.toString();
 		String columnsString=	service.showTableHeadersColumns("userMange");
-		getResult = this.findPageBySqlEntity(sql.toString(),columnsString,  "",pager);
-		return getResult;
+		String userName = (String) map.get("userName");
+		String sql="select u.user_no as  userNo,u.user_name as userName,u.user_orgid as userOrgid,o.org_name as orgName,u.user_id as userId,"
+				+ " u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName,u.user_phone as userPhone,u.user_in_email as userInEmail,"
+				+ " to_char(u.user_regtime@'YYYY-MM-DD hh24:mi:ss') as userRegtime,"
+				+ " u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin@0@'否'@'是') as userQuickLoginName,"
+				+ " u.user_enable as userEnable,decode(u.user_enable@1@'激活'@'禁用') as userEnableName"
+				+ " from tbl_user u"
+				+ " left outer join  tbl_org o on u.user_orgid=o.org_id"
+				+ " left outer join tbl_role r on u.user_type=r.role_id"
+				+ " where u.user_orgid in (" + orgIds + ")";
+		if (!"".equals(userName) && null != userName && userName.length() > 0) {
+			sql+=" and u.user_name like '%" + userName + "%'";
+		}
+		sql+=" order by u.user_no";
+		
+//		sqlwhere.append("select userNo,userName,userOrgid,userId,userPwd,userType,userTypeName,userPhone,userInEmail,userRegtime,orgName,userQuickLogin,userQuickLoginName   from (");
+//		sqlwhere.append("select u.user_no as  userNo,u.user_name as userName,u.user_orgid as userOrgid,u.user_id as userId,");
+//		sqlwhere.append("u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName ,");
+//		sqlwhere.append("u.user_phone as userPhone,u.user_in_email as userInEmail,");
+//		sqlwhere.append("to_char(u.user_regtime,'YYYY-MM-DD hh24:mi:ss') as userRegtime,");
+//		sqlwhere.append("u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin,0,'否','是') as userQuickLoginName,");
+//		sqlwhere.append("o.org_name as orgName  from tbl_user u left outer join  tbl_org o on u.user_orgid=o.org_id  left outer join tbl_role r on u.user_type=r.role_id ");
+//		sqlwhere.append("where  1=1 ");
+//		String userName = (String) map.get("userName");
+//		if (!"".equals(userName) && null != userName && userName.length() > 0) {
+//			sqlwhere.append(" and u.user_name like '%" + userName + "%'");
+//		}
+//		sqlwhere.append(" and u.user_orgid in (" + orgIds + ")");
+//		sqlwhere.append("   order by u.user_no )");
+//		String getResult = "";
+//		sql = sqlwhere.toString();
+		
+		return this.findPageBySqlEntity(sql.toString(),columnsString,  "",pager);
 
 	}
 

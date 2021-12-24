@@ -98,7 +98,7 @@ public class OrgManagerService<T> extends BaseService<T> {
 		if(StringManagerUtils.isNotNull(orgId)){
 			sqlBuffer.append(" and u.orgId in ("+orgId+")");
 		}
-		sqlBuffer.append(" order by u.orgId ");
+		sqlBuffer.append(" order by u.orgSeq,u.orgId ");
 		return getBaseDao().find(sqlBuffer.toString());
 		
 	}
@@ -159,7 +159,15 @@ public class OrgManagerService<T> extends BaseService<T> {
 		return getBaseDao().find(queryString);
 	}
 	
-	
+	public List<T> loadOrgAndChildTreeListById(Class<T> clazz, int orgId) {
+//		String queryString = "SELECT u FROM Org u  where u.orgCode like  '" + orgTreeId + "%'  order by u.orgCode  ";
+		String queryString = "SELECT u FROM Org u  ";
+		if(orgId!=0){
+			queryString+=" where u.orgId in  (select u2.orgId from Org u2 start with u2.orgId = "+orgId+" connect by u2.orgParent = prior u2.orgId)";
+		}
+		queryString+= "  order by u.orgSeq,u.orgId  ";
+		return getBaseDao().find(queryString);
+	}
 	
 	//递归查询一个节点的父节点（oracle sql实现）
 	public String findParentIds(int orgid){
@@ -247,17 +255,16 @@ public class OrgManagerService<T> extends BaseService<T> {
 
 	public List<?> queryOrgs(Class<T> clazz, String orgName,String orgId) {
 		StringBuffer sqlBuffer = new StringBuffer();
-		sqlBuffer.append("SELECT org_id,org_code,org_name,org_memo,org_parent,org_level,org_type,c.itemname as orgTypeName ,org_coordx,org_coordy,show_level as showLevel "
-				+ "FROM tbl_org u,tbl_code c "
-				+ "WHERE c.itemcode='ORG_TYPE' and c.itemvalue=u.org_type "
-				+ "and u.org_id not in( select o2.org_id from tbl_org o2 where o2.org_name='组织根节点' and o2.org_parent=0 )");
+		sqlBuffer.append("SELECT org_id,org_parent,org_name,org_memo,org_seq "
+				+ "FROM tbl_org t "
+				+ "WHERE t.org_id not in( select o2.org_id from tbl_org o2 where o2.org_name='组织根节点' and o2.org_parent=0 )");
 		if(StringManagerUtils.isNotNull(orgId)){
-			sqlBuffer.append(" and u.org_id in ("+orgId+")");
+			sqlBuffer.append(" and t.org_id in ("+orgId+")");
 		}
 		if(StringManagerUtils.isNotNull(orgName)){
-			sqlBuffer.append(" and u.org_Name like '%" + orgName + "%' ");
+			sqlBuffer.append(" and t.org_Name like '%" + orgName + "%' ");
 		}
-		sqlBuffer.append(" order by u.org_code  asc");
+		sqlBuffer.append(" order by t.org_seq,t.org_id");
 		return this.findCallSql(sqlBuffer.toString());
 	}
 	
@@ -363,12 +370,17 @@ public class OrgManagerService<T> extends BaseService<T> {
 	 * @throws Exception
 	 */
 
-	public void bulkDelete(final String ids) throws Exception {
+	public int  bulkDelete(final String ids) throws Exception {
 		Log.debug("bulkDelete" + ids);
-		final String hql = "DELETE Org u where u.orgId in (" + ids + ")";
-		final String delUserHql = "DELETE User u where u.userOrgid in (" + ids + ")";
-		getBaseDao().bulkObjectDelete(hql);
-		this.getBaseDao().bulkObjectDelete(delUserHql);
+		String deleteUserSql="delete from tbl_user t where t.user_orgid in(select t2.org_id from tbl_org t2 start with t2.org_id = "+ids+" connect by t2.org_parent = prior t2.org_id)";
+		String deleteOrgSql="delete from tbl_org t where t.org_id in(select t2.org_id from tbl_org t2 start with t2.org_id = "+ids+" connect by t2.org_parent = prior t2.org_id)";
+		getBaseDao().updateOrDeleteBySql(deleteUserSql);
+		return getBaseDao().updateOrDeleteBySql(deleteOrgSql);
+		
+//		final String hql = "DELETE Org u where u.orgId in (" + ids + ") or u.orgParent in(" + ids + ")";
+//		final String delUserHql = "DELETE User u where u.userOrgid in (" + ids + ")";
+//		getBaseDao().bulkObjectDelete(hql);
+//		this.getBaseDao().bulkObjectDelete(delUserHql);
 	}
 
 	public T getOrg(Class<T> clazz, int id) {
