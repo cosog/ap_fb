@@ -310,7 +310,7 @@ public class UserManagerController extends BaseController {
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
 		String type = ParamUtils.getParameter(request, "type");
-		String json = this.userService.loadUserType(user.getUserType());
+		String json = this.userService.loadUserType(user);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -342,6 +342,46 @@ public class UserManagerController extends BaseController {
 		pw.close();
 		return null;
 	}
+	
+	@RequestMapping("/getUserOrgChangeUserList")
+	public String getUserOrgChangeUserList() throws Exception {
+		this.pager=new Page("pageForm",request);
+		String userName = ParamUtils.getParameter(request, "userName");
+		orgId=ParamUtils.getParameter(request, "orgId");
+		User user = null;
+		HttpSession session=request.getSession();
+		user = (User) session.getAttribute("userLogin");
+		if (!StringManagerUtils.isNotNull(orgId)) {
+			if (user != null) {
+				orgId = "" + user.getUserorgids();
+			}
+		}
+		String json = this.userService.getUserOrgChangeUserList(pager,orgId, userName);
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/changeUserOrg")
+	public String changeUserOrg() throws Exception {
+		this.pager=new Page("pageForm",request);
+		String selectedUserId = ParamUtils.getParameter(request, "selectedUserId");
+		String selectedOrgId=ParamUtils.getParameter(request, "selectedOrgId");
+		this.userService.changeUserOrg(selectedUserId,selectedOrgId);
+		String json = "{\"success\":true}";
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	public String getLimit() {
 		return limit;
 	}

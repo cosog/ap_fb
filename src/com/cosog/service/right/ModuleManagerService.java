@@ -247,13 +247,13 @@ public class ModuleManagerService<T> extends BaseService<T> {
 	 * 
 	 */
 	public List<T> queryRightModules(Class<T> clazz, String moduleName,User user) throws Exception {
-		String roleCodeSql="select role_code from tbl_role where role_id="+user.getUserType();
+		String roleCodeSql="select role_level from tbl_role where role_id="+user.getUserType();
 		List<?> list = this.findCallSql(roleCodeSql);
-		String roleCode="";
+		String roleLevel="";
 		if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
-			roleCode = list.get(0).toString();
+			roleLevel = list.get(0).toString();
 		}
-		if ("systemRole".equals(roleCode))
+		if ("1".equals(roleLevel))
 			return loadRightModules(clazz);
 		String queryString = "SELECT  m FROM Module m where 1=1 and m.mdType in(0,1)  and m.mdId in " 
 				+ "( select distinct rm.rmModuleid from User u ,Role role,RoleModule rm "

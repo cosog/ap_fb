@@ -17,13 +17,6 @@ Ext.define("AP.view.role.RoleInfoWindow", {
     border: false,
     initComponent: function () {
         var me = this;
-        var RoleTypeStore = new Ext.data.SimpleStore({
-        	autoLoad : false,
-            fields: ['roleFlag', 'roleFlagName'],
-            data: [['0', '否'], ['1', '是']]
-        });
-
-        // Simple ComboBox using the data store
         var RoleTypeCombox = new Ext.form.ComboBox({
             id: 'roleFlagComboxfield_Id',
             value: 0,
@@ -32,74 +25,20 @@ Ext.define("AP.view.role.RoleInfoWindow", {
             allowBlank: false,
             autoSelect:true,
             editable:false,
-			
             anchor: '100%',
             emptyText: '--请选择--',
             triggerAction: 'all',
-            store: RoleTypeStore,
+            store: new Ext.data.SimpleStore({
+            	autoLoad : false,
+                fields: ['roleFlag', 'roleFlagName'],
+                data: [['0', '否'], ['1', '是']]
+            }),
             displayField: 'roleFlagName',
             valueField: 'roleFlag',
             queryMode : 'local',
             listeners: {
             	select: function (v,o) {
 					Ext.getCmp("roleFlag_Id").setValue(this.value);
-                }
-            }
-        });
-        
-        var receiveSMSStore = new Ext.data.SimpleStore({
-        	autoLoad : false,
-            fields: ['boxkey', 'boxval'],
-            data: [['0', '否'], ['1', '是']]
-        });
-        
-        var receiveSMSCombox = new Ext.form.ComboBox({
-            id: 'receiveSMSComboxfield_Id',
-            value: 0,
-            fieldLabel: '接收报警短信<font color=red>*</font>',
-            typeAhead : true,
-            allowBlank: false,
-            autoSelect:true,
-            editable:false,
-			
-            anchor: '100%',
-            emptyText: '--请选择--',
-            triggerAction: 'all',
-            store: receiveSMSStore,
-            displayField: 'boxval',
-            valueField: 'boxkey',
-            queryMode : 'local',
-            listeners: {
-            	select: function (v,o) {
-					Ext.getCmp("receiveSMS_Id").setValue(this.value);
-                }
-            }
-        });
-        
-        var receiveMailStore = new Ext.data.SimpleStore({
-        	autoLoad : false,
-            fields: ['boxkey', 'boxval'],
-            data: [['0', '否'], ['1', '是']]
-        });
-        
-        var receiveMailCombox = new Ext.form.ComboBox({
-            id: 'receiveMailComboxfield_Id',
-            value: 0,
-            fieldLabel: '接收报警邮件<font color=red>*</font>',
-            typeAhead : true,
-            allowBlank: false,
-            autoSelect:true,
-            editable:false,
-            anchor: '100%',
-            emptyText: '--请选择--',
-            triggerAction: 'all',
-            store: receiveMailStore,
-            displayField: 'boxval',
-            valueField: 'boxkey',
-            queryMode : 'local',
-            listeners: {
-            	select: function (v,o) {
-					Ext.getCmp("receiveMail_Id").setValue(this.value);
                 }
             }
         });
@@ -119,29 +58,22 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 id: 'roleFlag_Id',
                 value: 0
             }, {
-                xtype: "hidden",
-                name: 'role.receiveSMS',
-                id: 'receiveSMS_Id',
-                value: 0
-            }, {
-                xtype: "hidden",
-                name: 'role.receiveMail',
-                id: 'receiveMail_Id',
-                value: 0
-            }, {
                 fieldLabel: cosog.string.roleName+'<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
                 id: 'role_Name_Id',
                 name: "role.roleName"
-            }, {
-                id: 'roleCode_Id',
-                fieldLabel: cosog.string.roleCode+'<font color=red>*</font>',
+            },{
+            	xtype: 'numberfield',
+            	id: "roleLevel_Id",
+                name: 'role.roleLevel',
+                fieldLabel: '角色等级<font color=red>*</font>',
                 allowBlank: false,
+                minValue: 1,
+                value:1,
                 anchor: '100%',
-                value: '',
-                name: "role.roleCode"
-            },RoleTypeCombox,receiveSMSCombox,receiveMailCombox, {
+                msgTarget: 'side'
+            },RoleTypeCombox, {
             	xtype: 'numberfield',
             	id: "roleShowLevel_Id",
                 name: 'role.showLevel',
@@ -157,9 +89,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 xtype: 'textareafield',
                 value: '',
                 name: "role.remark"
-            }
-            //, RoleTypeCombox
-            ],
+            }],
             buttons: [{
                 id: 'addFormrole_Id',
                 xtype: 'button',
