@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cosog.controller.base.BaseController;
 import com.cosog.model.Role;
+import com.cosog.model.User;
 import com.cosog.service.right.RoleManagerService;
 import com.cosog.utils.Constants;
 import com.cosog.utils.Page;
@@ -130,6 +132,8 @@ public class RoleManagerController extends BaseController {
 	public String doRoleShow() throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		roleName = ParamUtils.getParameter(request, "roleName");
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
 		int intPage = Integer.parseInt((page == null || page == "0") ? "1": page);
 		int pageSize = Integer.parseInt((limit == null || limit == "0") ? "10": limit);
 		int offset = (intPage - 1) * pageSize;
@@ -139,7 +143,7 @@ public class RoleManagerController extends BaseController {
 		map.put("roleName", roleName);
 		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
 		this.pager = new Page("pagerForm", request);
-		String json = this.roleService.getRoleList(map,pager);
+		String json = this.roleService.getRoleList(map,pager,user);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();

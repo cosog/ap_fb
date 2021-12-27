@@ -238,6 +238,52 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                 ]
             },{
             	xtype: 'fieldcontainer',
+                fieldLabel : '接收报警短信<font color=red>*</font>',
+                defaultType: 'radiofield',
+                anchor: '100%',
+                defaults: {
+                    flex: 1
+                },
+                layout: 'hbox',
+                items: [
+                    {
+                        boxLabel:'是',
+                        name:'user.receiveSMS',
+                        inputValue: '1',
+                        id: 'userReceiveSMSRadio1_Id'
+                    }, {
+                        boxLabel: '否',
+                        name:'user.receiveSMS',
+                        checked:true,
+                        inputValue:'0',
+                        id:'userReceiveSMSRadio0_Id'
+                    }
+                ]
+            },{
+            	xtype: 'fieldcontainer',
+                fieldLabel : '接收报警邮件<font color=red>*</font>',
+                defaultType: 'radiofield',
+                anchor: '100%',
+                defaults: {
+                    flex: 1
+                },
+                layout: 'hbox',
+                items: [
+                    {
+                        boxLabel:'是',
+                        name:'user.receiveMail',
+                        inputValue: '1',
+                        id: 'userReceiveMailRadio1_Id'
+                    }, {
+                        boxLabel: '否',
+                        name:'user.receiveMail',
+                        checked:true,
+                        inputValue:'0',
+                        id:'userReceiveMailRadio0_Id'
+                    }
+                ]
+            },{
+            	xtype: 'fieldcontainer',
                 fieldLabel : '状态<font color=red>*</font>',
                 defaultType: 'radiofield',
                 anchor: '100%',

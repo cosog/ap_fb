@@ -154,16 +154,15 @@ public class OrgManagerService<T> extends BaseService<T> {
 	 * @return
 	 */
 	public List<T> findloadOrgTreeListById(Class<T> clazz, String orgTreeId) {
-//		String queryString = "SELECT u FROM Org u  where u.orgCode like  '" + orgTreeId + "%'  order by u.orgCode  ";
 		String queryString = "SELECT u FROM Org u  where u.orgId in  (" + orgTreeId + ")  order by u.orgCode  ";
 		return getBaseDao().find(queryString);
 	}
 	
 	public List<T> loadOrgAndChildTreeListById(Class<T> clazz, int orgId) {
-//		String queryString = "SELECT u FROM Org u  where u.orgCode like  '" + orgTreeId + "%'  order by u.orgCode  ";
-		String queryString = "SELECT u FROM Org u  ";
+		String queryString = "select u from Org u  ";
 		if(orgId!=0){
-			queryString+=" where u.orgId in  (select u2.orgId from Org u2 start with u2.orgId = "+orgId+" connect by u2.orgParent = prior u2.orgId)";
+			String orgIds=findChildIds(orgId);
+			queryString+=" where u.orgId in  ("+orgIds+")";
 		}
 		queryString+= "  order by u.orgSeq,u.orgId  ";
 		return getBaseDao().find(queryString);
@@ -190,26 +189,25 @@ public class OrgManagerService<T> extends BaseService<T> {
 		return parentIds;
 	}
 	
-	//递归查询一个节点的父节点（oracle sql实现）
-		public String findChildIds(int orgid){
-			String childIds="0";
-			StringBuffer orgIdString = new StringBuffer();
-			List<?> list;
-			//递归查询子节点所有父节点sql语句
-			String queryString="select org_id from tbl_org t start with org_id="+orgid+" connect by prior  org_id=org_parent";
-			if(orgid==0){
-				queryString="select org_id from tbl_org t ";
-			}
-			list=getBaseDao().findCallSql(queryString);
-			if(list.size()>0){
-				for(int i=0;i<list.size();i++){
-					orgIdString.append(list.get(i)+",");
-				}
-				orgIdString.deleteCharAt(orgIdString.length() - 1);
-				childIds=orgIdString.toString();
-			}
-			return childIds;
+	//递归查询一个节点及其子节点
+	public String findChildIds(int orgid){
+		String childIds="0";
+		StringBuffer orgIdString = new StringBuffer();
+		List<?> list;
+		String queryString="select org_id from tbl_org t start with org_id="+orgid+" connect by prior  org_id=org_parent";
+		if(orgid==0){
+			queryString="select org_id from tbl_org t ";
 		}
+		list=getBaseDao().findCallSql(queryString);
+		if(list.size()>0){
+			for(int i=0;i<list.size();i++){
+				orgIdString.append(list.get(i)+",");
+			}
+			orgIdString.deleteCharAt(orgIdString.length() - 1);
+			childIds=orgIdString.toString();
+		}
+		return childIds;
+	}
 		
 		public String findChildNames(int orgid){
 			String childNames="";

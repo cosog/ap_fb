@@ -8,6 +8,18 @@ Ext.define('AP.view.role.RoleInfoGridPanel', {
         var roleStore = Ext.create("AP.store.role.RoleInfoStore");
         Ext.apply(this, {
         	tbar: [{
+                xtype: "hidden",
+                id: 'currentUserRoleLevel_Id',
+                value: 0
+            },{
+                xtype: "hidden",
+                id: 'currentUserRoleShowLevel_Id',
+                value: 0
+            },{
+                xtype: "hidden",
+                id: 'currentUserRoleFlag_Id',
+                value: 0
+            },{
                 id: 'RoleName_Id',
                 fieldLabel: cosog.string.roleName,
                 name: 'RoleName',

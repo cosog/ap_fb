@@ -32,8 +32,10 @@ public class WebSocketByJavax {
     public void onOpen(@PathParam("userId") String userId,Session session) throws IOException{
         this.userId = userId+"_"+new Date().getTime();
         this.session=session;
-        clients.put(this.userId,this);
-        addOnlineCount();
+        synchronized(clients){
+        	clients.put(this.userId,this);
+            addOnlineCount();
+        }
         logger.debug("新连接：{}",this.userId);
         System.out.println("接收到客户端连接:"+this.userId);
         System.out.println("当前线上用户数量:"+clients.size()+","+this.getOnlineCount());
@@ -45,8 +47,10 @@ public class WebSocketByJavax {
 	@OnClose
     public void onClose(){
         logger.debug("连接：{} 关闭",this.userId);
-        clients.remove(userId);
-        subOnlineCount();
+        synchronized(clients){
+        	clients.remove(userId);
+            subOnlineCount();
+        }
         System.out.println("用户"+userId+"已退出！");
         System.out.println("剩余在线用户"+clients.size()+","+this.getOnlineCount());
     }
@@ -77,7 +81,9 @@ public class WebSocketByJavax {
     public void sendMessageToBy(String To,String message) throws IOException {
         for (WebSocketByJavax item : clients.values()) { 
             if (item.userId.contains(To) ) 
-                item.session.getAsyncRemote().sendText(message);
+            	synchronized(item.session){
+            		item.session.getAsyncRemote().sendText(message);
+            	}
         }
     }
     

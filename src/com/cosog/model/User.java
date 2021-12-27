@@ -47,6 +47,8 @@ public class User implements java.io.Serializable {
 	private Integer userType;
 	private Integer userQuickLogin;
 	private Integer userEnable;
+	private Integer receiveSMS;
+	private Integer receiveMail;
 	private String userOrgids;
 	private String userOrgNames;
 	private String userParentOrgids;
@@ -205,6 +207,24 @@ public class User implements java.io.Serializable {
 
 	public void setUserEnable(Integer userEnable) {
 		this.userEnable = userEnable;
+	}
+
+	@Column(name = "USER_RECEIVESMS", precision = 38, scale = 0)
+	public Integer getReceiveSMS() {
+		return receiveSMS;
+	}
+
+	public void setReceiveSMS(Integer receiveSMS) {
+		this.receiveSMS = receiveSMS;
+	}
+
+	@Column(name = "USER_RECEIVEMAIL", precision = 38, scale = 0)
+	public Integer getReceiveMail() {
+		return receiveMail;
+	}
+
+	public void setReceiveMail(Integer receiveMail) {
+		this.receiveMail = receiveMail;
 	}
 
 	public void setOrgName(String orgName) {
@@ -376,6 +396,4 @@ public class User implements java.io.Serializable {
 	public void setLoginIp(String loginIp) {
 		this.loginIp = loginIp;
 	}
-
-	
 }

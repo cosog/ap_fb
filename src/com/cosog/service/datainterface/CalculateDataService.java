@@ -130,7 +130,7 @@ public class CalculateDataService<T> extends BaseService<T> {
 			deviceTableName="tbl_pipelinedevice";
 		}
 		
-		String userSql="select u.user_id,u.user_phone,r.receivesms,u.user_in_email,r.receivemail "
+		String userSql="select u.user_id,u.user_phone,u.user_receivesms,u.user_in_email,u.user_receivemail "
 				+ " from tbl_user u,tbl_role r "
 				+ " where u.user_type=r.role_id and (u.user_orgid in (select org_id from tbl_org t start with org_id=( select t2.orgid from "+deviceTableName+" t2 where t2.wellname='"+wellName+"' and t2.devicetype="+deviceType+" ) connect by prior  org_parent=org_id) or u.user_orgid=0)";
 		List<?> list = this.findCallSql(userSql);

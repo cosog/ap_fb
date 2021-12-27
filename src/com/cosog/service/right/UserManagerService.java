@@ -88,6 +88,8 @@ public class UserManagerService<T> extends BaseService<T> {
 				+ " u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName,u.user_phone as userPhone,u.user_in_email as userInEmail,"
 				+ " to_char(u.user_regtime@'YYYY-MM-DD hh24:mi:ss') as userRegtime,"
 				+ " u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin@0@'否'@'是') as userQuickLoginName,"
+				+ " u.user_receivesms as receiveSMS,decode(u.user_receivesms@1@'是'@'否') as receiveSMSName,"
+				+ " u.user_receivemail as receiveMail,decode(u.user_receivemail@1@'是'@'否') as receiveMailName,"
 				+ " u.user_enable as userEnable,decode(u.user_enable@1@'激活'@'禁用') as userEnableName"
 				+ " from tbl_user u"
 				+ " left outer join  tbl_org o on u.user_orgid=o.org_id"
@@ -212,11 +214,11 @@ public class UserManagerService<T> extends BaseService<T> {
 	 * @return
 	 * @throws Exception
 	 */
-	public String loadUserType(int userRoleId) throws Exception {
+	public String loadUserType(User user) throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		String sql = "";
-		sql = " select t.role_id,t.role_name from tbl_role t,(select * from tbl_role where role_id="+userRoleId+") t2 "
-				+ " where t.role_code<>decode(t2.role_code,'systemRole',t.role_code||'0','systemRole') "
+		sql = " select t.role_id,t.role_name from tbl_role t"
+				+ " where t.role_level>=(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
 				+ " order by t.role_id";
 		try {
 			List<?> list = this.getSQLObjects(sql);
@@ -236,7 +238,6 @@ public class UserManagerService<T> extends BaseService<T> {
 				}
 			}
 			result_json.append("]");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -341,5 +342,42 @@ public class UserManagerService<T> extends BaseService<T> {
 	
 	public void saveSystemLog(User user) throws Exception {
 		this.getBaseDao().saveSystemLog(user);
+	}
+	
+	public String getUserOrgChangeUserList(Page pager,String orgId,String userName) throws Exception {
+		//String orgIds = this.getUserOrgIds(orgId);
+		StringBuffer result_json = new StringBuffer();
+		
+		String sql = "select t.user_no,t.user_name,t.user_id from TBL_USER t where t.user_orgid in("+orgId+")" ;
+		if(StringManagerUtils.isNotNull(userName)){
+			sql+=" and t.user_name like '%"+userName+"%'";
+		}	
+		sql+= " order by t.user_no";
+		String columns = "["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"用户名称\",\"dataIndex\":\"userName\",width:120 ,children:[] },"
+				+ "{ \"header\":\"用户账号\",\"dataIndex\":\"userID\",width:120 ,children:[] }"
+				+ "]";
+		List<?> list = this.findCallSql(sql);
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"columns\":"+columns+",\"totalRoot\":[");
+
+		for (Object o : list) {
+			Object[] obj = (Object[]) o;
+			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"userName\":\""+obj[1]+"\",");
+			result_json.append("\"userID\":\""+obj[1]+"\"},");
+		}
+		if (result_json.toString().endsWith(",")) {
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString();
+	}
+	
+	public void changeUserOrg(String selectedUserId,String selectedOrgId) throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		
+		String sql = "update tbl_user t set t.user_orgid="+selectedOrgId+" where t.user_no in ("+selectedUserId+")";
+		this.getBaseDao().updateOrDeleteBySql(sql);
 	}
 }

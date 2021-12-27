@@ -100,7 +100,7 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
                     width: 165,
                     labelAlign: 'right',
                     xtype: 'textfield'
-        		}, {
+        		},"-", {
                     xtype: 'button',
                     text: cosog.string.search,
                     pressed: true,
@@ -137,6 +137,18 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
                     handler: function () {
                     	delUserInfo();
                     }
+        		},"-", {
+        			xtype: 'button',
+        			text:'用户隶属迁移',
+        			iconCls: 'move',
+        			handler: function (v, o) {
+        				var window = Ext.create("AP.view.orgAndUser.UserOrgChangeWindow", {
+                            title: '用户隶属迁移'
+                        });
+                        window.show();
+                        Ext.create("AP.store.orgAndUser.UserOrgChangeUserListStore");
+                        Ext.create("AP.store.orgAndUser.UserOrgChangeOrgListStore");
+        			}
         		}]
         	}]
         });

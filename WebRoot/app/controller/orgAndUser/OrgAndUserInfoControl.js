@@ -309,6 +309,8 @@ SelectedUserDataAttrInfoGridPanel = function () {
     var userPwd = dataattr_row.data.userPwd;
     var userQuickLogin = dataattr_row.data.userQuickLogin;
     var userQuickLoginName = dataattr_row.data.userQuickLoginName;
+    var receiveSMS = dataattr_row.data.receiveSMS;
+    var receiveMail = dataattr_row.data.receiveMail;
     var userEnable = dataattr_row.data.userEnable;
     var userType = dataattr_row.data.userType;
     var userTypeName = dataattr_row.data.userTypeName;
@@ -327,6 +329,18 @@ SelectedUserDataAttrInfoGridPanel = function () {
     	Ext.getCmp('userQuickLoginRadio1_Id').setValue(true);
     }else{
     	Ext.getCmp('userQuickLoginRadio0_Id').setValue(true);
+    }
+    
+    if(receiveSMS==1){
+    	Ext.getCmp('userReceiveSMSRadio1_Id').setValue(true);
+    }else{
+    	Ext.getCmp('userReceiveSMSRadio0_Id').setValue(true);
+    }
+    
+    if(receiveMail==1){
+    	Ext.getCmp('userReceiveMailRadio1_Id').setValue(true);
+    }else{
+    	Ext.getCmp('userReceiveMailRadio0_Id').setValue(true);
     }
     
     if(userEnable==1){

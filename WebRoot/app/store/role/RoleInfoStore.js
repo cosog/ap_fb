@@ -93,7 +93,9 @@ Ext.define('AP.store.role.RoleInfoStore', {
                 var OrgInfoTreeGridViewPanel_Id = Ext.getCmp("RoleInfoGridPanelView_id");
                 OrgInfoTreeGridViewPanel_Id.add(SystemdataInfoGridPanel_panel);
             }
-
+            Ext.getCmp("currentUserRoleLevel_Id").setValue(get_rawData.currentLevel);
+            Ext.getCmp("currentUserRoleShowLevel_Id").setValue(get_rawData.currentShowLevel);
+            Ext.getCmp("currentUserRoleFlag_Id").setValue(get_rawData.currentFlag);
         },
         beforeload: function (store, options) {
             var RoleName_Id = Ext.getCmp('RoleName_Id');

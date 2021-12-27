@@ -20,11 +20,9 @@ public class Role implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer roleId;
-	private String roleCode;
 	private String roleName;
+	private Integer roleLevel;
 	private Integer roleFlag;
-	private Integer receiveSMS;
-	private Integer receiveMail;
 	private Integer showLevel;
 	private String remark;
 
@@ -35,15 +33,14 @@ public class Role implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public Role(Integer roleId, String roleCode, String roleName, Integer roleFlag, Integer receiveSMS,Integer receiveMail,Integer showLevel, String remark) {
+	public Role(Integer roleId,String roleName, Integer roleLevel, Integer roleFlag,
+			Integer showLevel, String remark) {
 		super();
 		this.roleId = roleId;
-		this.roleCode = roleCode;
 		this.roleName = roleName;
+		this.roleLevel = roleLevel;
 		this.roleFlag = roleFlag;
-		this.receiveSMS = receiveSMS;
-		this.receiveMail = receiveMail;
-		this.showLevel=showLevel;
+		this.showLevel = showLevel;
 		this.remark = remark;
 	}
 
@@ -58,15 +55,6 @@ public class Role implements java.io.Serializable {
 		this.roleId = roleId;
 	}
 
-	@Column(name = "ROLE_CODE", nullable = false, length = 20)
-	public String getRoleCode() {
-		return this.roleCode;
-	}
-
-	public void setRoleCode(String roleCode) {
-		this.roleCode = roleCode;
-	}
-
 	@Column(name = "ROLE_NAME", nullable = false, length = 40)
 	public String getRoleName() {
 		return this.roleName;
@@ -74,6 +62,15 @@ public class Role implements java.io.Serializable {
 
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
+	}
+
+	@Column(name = "ROLE_LEVEL", nullable = false, length = 10)
+	public Integer getRoleLevel() {
+		return roleLevel;
+	}
+
+	public void setRoleLevel(Integer roleLevel) {
+		this.roleLevel = roleLevel;
 	}
 
 	@Column(name = "ROLE_FLAG", nullable = false, length = 10)
@@ -92,24 +89,6 @@ public class Role implements java.io.Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-
-	@Column(name = "receiveSMS", nullable = false, length = 10)
-	public Integer getReceiveSMS() {
-		return receiveSMS;
-	}
-
-	public void setReceiveSMS(Integer receiveSMS) {
-		this.receiveSMS = receiveSMS;
-	}
-
-	@Column(name = "receiveMail", nullable = false, length = 10)
-	public Integer getReceiveMail() {
-		return receiveMail;
-	}
-
-	public void setReceiveMail(Integer receiveMail) {
-		this.receiveMail = receiveMail;
 	}
 
 	@Column(name = "showLevel", nullable = false, length = 10)

@@ -94,29 +94,40 @@ SelectroleDataAttrInfoGridPanel = function () {
     var dataattr_row = Ext.getCmp("RoleInfoGridPanel_Id").getSelectionModel().getSelection();
     var roleId = dataattr_row[0].data.roleId;
     var roleName = dataattr_row[0].data.roleName;
+    var roleLevel=dataattr_row[0].data.roleLevel;
     var roleFlag = dataattr_row[0].data.roleFlag;
     var roleFlagName = dataattr_row[0].data.roleFlagName;
-    var receiveSMS = dataattr_row[0].data.receiveSMS;
-    var receiveSMSName = dataattr_row[0].data.receiveSMSName;
-    var receiveMail = dataattr_row[0].data.receiveMail;
-    var receiveMailName = dataattr_row[0].data.receiveMailName;
-    var roleCode = dataattr_row[0].data.roleCode;
     var showLevel=dataattr_row[0].data.showLevel;
     var remark=dataattr_row[0].data.remark;
+    
+    var currentUserRoleLevel=Ext.getCmp("currentUserRoleLevel_Id").getValue();
+    var currentUserRoleShowLevel=Ext.getCmp("currentUserRoleShowLevel_Id").getValue();
+    var currentUserRoleFlag=Ext.getCmp("currentUserRoleFlag_Id").getValue();
+    
     Ext.getCmp('role_Id').setValue(roleId);
     Ext.getCmp('role_Name_Id').setValue(roleName);
-    Ext.getCmp('roleCode_Id').setValue(roleCode);
+    Ext.getCmp('roleLevel_Id').setValue(roleLevel);
     Ext.getCmp('roleFlag_Id').setValue(roleFlag);
-    Ext.getCmp('receiveSMS_Id').setValue(receiveSMS);
-    Ext.getCmp('receiveMail_Id').setValue(receiveMail);
     Ext.getCmp('roleFlagComboxfield_Id').setValue(roleFlag);
     Ext.getCmp('roleFlagComboxfield_Id').setRawValue(roleFlagName);
-    Ext.getCmp('receiveSMSComboxfield_Id').setValue(receiveSMS);
-    Ext.getCmp('receiveSMSComboxfield_Id').setRawValue(receiveSMSName);
-    Ext.getCmp('receiveMailComboxfield_Id').setValue(receiveMail);
-    Ext.getCmp('receiveMailComboxfield_Id').setRawValue(receiveMailName);
     Ext.getCmp('roleShowLevel_Id').setValue(showLevel);
     Ext.getCmp('roleRemark_Id').setValue(remark);
+    
+    if(currentUserRoleFlag==0){
+    	Ext.getCmp('roleFlagComboxfield_Id').disable();
+    }
+    
+    if(currentUserRoleShowLevel>=showLevel){
+    	Ext.getCmp('roleShowLevel_Id').disable();
+    }else{
+    	Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel);
+    }
+    
+    if(currentUserRoleLevel>=roleLevel){
+    	Ext.getCmp('roleLevel_Id').disable();
+    }else{
+        Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel);
+    }
 };
 
 function addroleInfo() {
@@ -124,6 +135,25 @@ function addroleInfo() {
         title: cosog.string.addRole
     });
     roleInfoWindow.show();
+    
+    var currentUserRoleLevel=Ext.getCmp("currentUserRoleLevel_Id").getValue();
+    var currentUserRoleShowLevel=Ext.getCmp("currentUserRoleShowLevel_Id").getValue();
+    var currentUserRoleFlag=Ext.getCmp("currentUserRoleFlag_Id").getValue();
+    
+    
+    Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel);
+    Ext.getCmp("roleLevel_Id").setValue(currentUserRoleLevel);
+    
+    Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel);
+    Ext.getCmp("roleShowLevel_Id").setValue(currentUserRoleShowLevel);
+    
+    if(currentUserRoleFlag==0){
+    	Ext.getCmp("roleFlag_Id").setValue(0);
+    	Ext.getCmp("roleFlagComboxfield_Id").setValue(0);
+    	Ext.getCmp("roleFlagComboxfield_Id").setRawValue('否');
+    	Ext.getCmp("roleFlagComboxfield_Id").disable();
+    }
+    
     Ext.getCmp("addFormrole_Id").show();
     Ext.getCmp("updateFormrole_Id").hide();
     return false;
