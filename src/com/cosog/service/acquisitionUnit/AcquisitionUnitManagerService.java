@@ -1276,8 +1276,8 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 									pipelineTree_json.append("\"id\":"+groupObj[0]+",");
 									pipelineTree_json.append("\"code\":\""+groupObj[1]+"\",");
 									pipelineTree_json.append("\"text\":\""+groupObj[2]+"\",");
-									pipelineTree_json.append("\"acq_cycle\":"+groupObj[3]+",");
-									pipelineTree_json.append("\"save_cycle\":"+groupObj[4]+",");
+									pipelineTree_json.append("\"acq_cycle\":\""+groupObj[3]+"\",");
+									pipelineTree_json.append("\"save_cycle\":\""+groupObj[4]+"\",");
 									pipelineTree_json.append("\"remark\":\""+groupObj[5]+"\",");
 									pipelineTree_json.append("\"protocol\":\""+groupObj[6]+"\",");
 									pipelineTree_json.append("\"type\":"+groupObj[7]+",");

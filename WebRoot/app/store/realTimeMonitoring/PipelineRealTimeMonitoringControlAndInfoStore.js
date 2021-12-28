@@ -152,7 +152,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			deviceAuxiliaryInfoGridPanel.reconfigure(deviceAuxiliaryInfoStore);
     		}
     		var total=deviceAuxiliaryInfoGridPanel.getStore().getCount();
-    		if(total>0){
+    		if(total>0&&Ext.getCmp("PipelineRealTimeMonitoringRightTabPanel").getActiveTab().id!="PipelineRealTimeMonitoringRightControlPanel"){
 //    			deviceAuxiliaryInfoGridPanel.getSelectionModel().select(0, true);
     			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0,0);
     		}

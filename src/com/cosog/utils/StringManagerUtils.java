@@ -968,7 +968,7 @@ public class StringManagerUtils {
 				"userNo", "userPhone", "userPwd", "userName","orgName","resName","jlxName","jslxName","ssjwName","sszcdyName", "userInEmail", "userId", "zjs", "ygbh", "blx","shzt","roleCode",
 				"dwbh", "yqcbh","hfbz", "rfidkh", "bmbh", "roleFlag","roleId","jlx","ssjw","sszcdy","jslx","qtlx","sfpfcl","ccjzt","bjb","yjgjb","ejgjb","sjgjb","mdzt","jbh",
 				"ygbh", "bjjb", "", "gklx", "jlbh", "bdbjlx", "bdbjjb", "ssgldw", "bz","dmx","dmy","showLevel","roleLevel","pxbh","signInId","slave","cycle","userQuickLogin","gtcjsj","jsbz","ExtendedDays",
-				"acqCycle","saveCycle" };
+				"acqCycle","saveCycle","user_id","user_name","userid","username" };
 		for (String str : arrays) {
 			if (value.equalsIgnoreCase(str)) {
 				flag = true;
@@ -1154,7 +1154,11 @@ public class StringManagerUtils {
 	 public static boolean stringToBoolean(String value){
 		 boolean result=false;
 		 try{
-			 result=Boolean.parseBoolean(value);
+			 if(StringManagerUtils.isNum(value)&&StringManagerUtils.stringToInteger(value)>0){
+				 result=true;
+			 }else{
+				 result=Boolean.parseBoolean(value);
+			 }
 		 }catch(Exception e){
 			 return false;
 		 }
@@ -2587,7 +2591,8 @@ public class StringManagerUtils {
 	    		//创建邮件对象
 	    		MimeMessage mimeMessage=new MimeMessage(session);
 	    		//邮件发送人
-	    		mimeMessage.setFrom(new InternetAddress(myEMailAccount));
+	    		String nick=javax.mail.internet.MimeUtility.encodeText("上海飞舟博源石油装备股份有限公司");
+	    		mimeMessage.setFrom(new InternetAddress(nick+"<"+myEMailAccount+">"));
 	    		//邮件接收人
 //	    		mimeMessage.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiveMailAccount));
 	    		for(int i=0;i<receivingAccount.size();i++){

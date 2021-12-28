@@ -9,6 +9,10 @@ Ext.define('AP.view.role.RoleInfoGridPanel', {
         Ext.apply(this, {
         	tbar: [{
                 xtype: "hidden",
+                id: 'currentUserRoleId_Id',
+                value: 0
+            },{
+                xtype: "hidden",
                 id: 'currentUserRoleLevel_Id',
                 value: 0
             },{

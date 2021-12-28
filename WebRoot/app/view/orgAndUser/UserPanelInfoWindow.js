@@ -115,22 +115,22 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                     listeners: {
                         blur: function (t, e) {
                             var value_ = t.getValue();
+                            var userNo=Ext.getCmp("userNo_Id").getValue();
                             // 检索动态列表头及内容信息
                             Ext.Ajax.request({
                                 method: 'POST',
                                 params: {
-                                    userId: t.value
+                                    userId: t.value,
+                                    userNo: userNo
                                 },
                                 url: context + '/userManagerController/judgeUserExistOrNot',
                                 success: function (response, opts) {
-                                    // 处理后json
                                     var obj = Ext.decode(response.responseText);
                                     var msg_ = obj.msg;
                                     if (msg_ == "1") {
                                         Ext.Msg.alert(cosog.string.ts, "<font color='red'>【" + cosog.string.userId + ":" + value_ + "】</font>" + cosog.string.exist + "！");
                                         t.setValue("");
                                     }
-                                    // ==end
                                 },
                                 failure: function (response, opts) {
                                     Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
@@ -148,6 +148,7 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                     labelWidth: 100,
                     allowBlank: false,
                     msgTarget: 'side',
+                    tpl:'aaaa',
                     blankText: cosog.string.required
             },{
                     id: "userPwdAgain_Id",

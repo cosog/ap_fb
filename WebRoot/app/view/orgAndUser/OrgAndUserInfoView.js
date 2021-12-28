@@ -10,8 +10,7 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
 //        var UserPanelInfoStore = Ext.create("AP.store.orgAndUser.UserPanelInfoStore");
         Ext.apply(me, {
         	items: [{
-        		region:'west',
-        		width:'40%',
+        		region:'center',
         		layout: "fit",
         		title:'组织列表',
         		header:false,
@@ -87,10 +86,13 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
                     }
                 }]
         	},{
-        		region:'center',
+        		region:'east',
+        		width:'65%',
         		id:'OrgAndUserUserInfoPanel_Id',
         		title:'用户列表',
         		header:false,
+        		split: true,
+                collapsible: true,
         		layout: "fit",
         		tbar: [{
                     id: 'UserName_Id',
@@ -217,10 +219,12 @@ createUserGridColumn = function(columnInfo) {
 		myColumns += "{header:'" + attr.header + "',lockable:true,align:'center',sortable:true"+width_+flex_+hidden_+lock_;
 		if (attr.dataIndex=='id'){
 			 myColumns +=",xtype: 'rownumberer'" ;
-		}else if(attr.dataIndex=='userRegtime'){
+		}else if (attr.dataIndex.toUpperCase()=='userName'.toUpperCase()) {
+            myColumns += ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceCurrentUserName(value,o,p,e);}";
+        }else if(attr.dataIndex=='userRegtime'){
 			myColumns +=",dataIndex:'"+attr.dataIndex+"',renderer:Ext.util.Format.dateRenderer('Y-m-d H:i:s')";
 		}else {
-			myColumns +=",dataIndex:'"+attr.dataIndex+"'";
+			myColumns +=  ",dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
 		}
 		myColumns += "}";
 		if (i < myArr.length - 1) {
@@ -229,4 +233,12 @@ createUserGridColumn = function(columnInfo) {
 	}
 	myColumns +="]";
 	return myColumns;
-}
+};
+
+adviceCurrentUserName = function(val,o,p,e) {
+ 	var showVal=val;
+ 	if(p.data.userNo==user_){
+ 		showVal="*"+val;
+ 	}
+ 	return '<span data-qtip="'+val+'" data-dismissDelay=10000>'+showVal+'</span>';
+};

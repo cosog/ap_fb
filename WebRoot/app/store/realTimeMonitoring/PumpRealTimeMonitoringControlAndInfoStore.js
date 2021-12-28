@@ -157,7 +157,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			deviceAuxiliaryInfoGridPanel.reconfigure(deviceAuxiliaryInfoStore);
     		}
     		var total=deviceAuxiliaryInfoGridPanel.getStore().getCount();
-    		if(total>0){
+    		if(total>0&&Ext.getCmp("PumpRealTimeMonitoringRightTabPanel").getActiveTab().id!="PumpRealTimeMonitoringRightControlPanel"){
 //    			deviceAuxiliaryInfoGridPanel.getSelectionModel().select(0, true);
     			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0,0);
     		}
@@ -243,7 +243,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
-//    			        		hand=false;
     			        		text="设置";
     			        		e.tdStyle ="vertical-align:middle;";
     			        		if(resolutionMode==1&&itemMeaning.length==2){
@@ -280,7 +279,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                            controlValue:itemMeaning[0][0]
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -290,10 +290,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -325,7 +325,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                            controlValue:itemMeaning[1][0]
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -335,10 +336,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -381,7 +382,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                            controlValue:1
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -391,10 +393,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -422,10 +424,11 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                        	wellName: wellName,
         		                                        	deviceType: 0,
         		                                            controlType:itemcode,
-        		                                            controlValue:2
+        		                                            controlValue:0
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -435,10 +438,10 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -512,18 +515,12 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                                 data: data
         		                                             });
         		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
-//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
         		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
         		                                         }else{
-//        		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
-//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-//        		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
-//        		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
         		                                         }
         		                                         
         		                                         DeviceControlCheckPassWindow.show();
         		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-//        		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
 //        		                                     }
 //        		                                 });
         		                            }

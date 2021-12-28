@@ -80,44 +80,67 @@ public class UserManagerService<T> extends BaseService<T> {
 	 * @throws IOException 
 	 */
 	
-	public String doUserShow(Page pager, Map map,String orgIds) throws IOException, SQLException {
+	public String doUserShow(Page pager, Map map,String orgIds,User user) throws IOException, SQLException {
 		StringBuffer sqlwhere = new StringBuffer();
-		String columnsString=	service.showTableHeadersColumns("userMange");
+		StringBuffer result_json = new StringBuffer();
+		String columns=	service.showTableHeadersColumns("userMange");
 		String userName = (String) map.get("userName");
 		String sql="select u.user_no as  userNo,u.user_name as userName,u.user_orgid as userOrgid,o.org_name as orgName,u.user_id as userId,"
 				+ " u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName,u.user_phone as userPhone,u.user_in_email as userInEmail,"
-				+ " to_char(u.user_regtime@'YYYY-MM-DD hh24:mi:ss') as userRegtime,"
-				+ " u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin@0@'否'@'是') as userQuickLoginName,"
-				+ " u.user_receivesms as receiveSMS,decode(u.user_receivesms@1@'是'@'否') as receiveSMSName,"
-				+ " u.user_receivemail as receiveMail,decode(u.user_receivemail@1@'是'@'否') as receiveMailName,"
-				+ " u.user_enable as userEnable,decode(u.user_enable@1@'激活'@'禁用') as userEnableName"
+				+ " to_char(u.user_regtime,'YYYY-MM-DD hh24:mi:ss') as userRegtime,"
+				+ " u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin,0,'否','是') as userQuickLoginName,"
+				+ " u.user_receivesms as receiveSMS,decode(u.user_receivesms,1,'是','否') as receiveSMSName,"
+				+ " u.user_receivemail as receiveMail,decode(u.user_receivemail,1,'是','否') as receiveMailName,"
+				+ " u.user_enable as userEnable,decode(u.user_enable,1,'激活','禁用') as userEnableName"
 				+ " from tbl_user u"
 				+ " left outer join  tbl_org o on u.user_orgid=o.org_id"
 				+ " left outer join tbl_role r on u.user_type=r.role_id"
-				+ " where u.user_orgid in (" + orgIds + ")";
+				+ " where u.user_orgid in (" + orgIds + ")"
+				+ " and ("
+				+ " r.role_level>(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
+				+ " or u.user_no=(select t2.user_no from tbl_user t2 where  t2.user_no="+user.getUserNo()+")"
+				+ ")";
 		if (!"".equals(userName) && null != userName && userName.length() > 0) {
 			sql+=" and u.user_name like '%" + userName + "%'";
 		}
 		sql+=" order by u.user_no";
+		List<?> list = this.findCallSql(sql);
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()
+//		+",\"currentId\":"+user.getUserNo()
+//		+",\"currentLevel\":"+currentLevel
+//		+",\"currentShowLevel\":"+currentShowLevel
+//		+",\"currentFlag\":"+currentFlag
+		+",\"columns\":"+columns+",\"totalRoot\":[");
 		
-//		sqlwhere.append("select userNo,userName,userOrgid,userId,userPwd,userType,userTypeName,userPhone,userInEmail,userRegtime,orgName,userQuickLogin,userQuickLoginName   from (");
-//		sqlwhere.append("select u.user_no as  userNo,u.user_name as userName,u.user_orgid as userOrgid,u.user_id as userId,");
-//		sqlwhere.append("u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName ,");
-//		sqlwhere.append("u.user_phone as userPhone,u.user_in_email as userInEmail,");
-//		sqlwhere.append("to_char(u.user_regtime,'YYYY-MM-DD hh24:mi:ss') as userRegtime,");
-//		sqlwhere.append("u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin,0,'否','是') as userQuickLoginName,");
-//		sqlwhere.append("o.org_name as orgName  from tbl_user u left outer join  tbl_org o on u.user_orgid=o.org_id  left outer join tbl_role r on u.user_type=r.role_id ");
-//		sqlwhere.append("where  1=1 ");
-//		String userName = (String) map.get("userName");
-//		if (!"".equals(userName) && null != userName && userName.length() > 0) {
-//			sqlwhere.append(" and u.user_name like '%" + userName + "%'");
-//		}
-//		sqlwhere.append(" and u.user_orgid in (" + orgIds + ")");
-//		sqlwhere.append("   order by u.user_no )");
-//		String getResult = "";
-//		sql = sqlwhere.toString();
+		for (Object o : list) {
+			Object[] obj = (Object[]) o;
+			result_json.append("{\"userNo\":"+obj[0]+",");
+			result_json.append("\"userName\":\""+obj[1]+"\",");
+			result_json.append("\"userOrgid\":\""+obj[2]+"\",");
+			result_json.append("\"orgName\":\""+obj[3]+"\",");
+			result_json.append("\"userId\":\""+obj[4]+"\",");
+			result_json.append("\"userPwd\":\""+obj[5]+"\",");
+			result_json.append("\"userType\":\""+obj[6]+"\",");
+			result_json.append("\"userTypeName\":\""+obj[7]+"\",");
+			result_json.append("\"userPhone\":\""+obj[8]+"\",");
+			result_json.append("\"userInEmail\":\""+obj[9]+"\",");
+			result_json.append("\"userRegtime\":\""+obj[10]+"\",");
+			result_json.append("\"userQuickLogin\":\""+obj[11]+"\",");
+			result_json.append("\"userQuickLoginName\":\""+obj[12]+"\",");
+			result_json.append("\"receiveSMS\":\""+obj[13]+"\",");
+			result_json.append("\"receiveSMSName\":\""+obj[14]+"\",");
+			result_json.append("\"receiveMail\":\""+obj[15]+"\",");
+			result_json.append("\"receiveMailName\":\""+obj[16]+"\",");
+			result_json.append("\"userEnable\":\""+obj[17]+"\",");
+			result_json.append("\"userEnableName\":\""+obj[18]+"\"},");
+		}
+		if (result_json.toString().endsWith(",")) {
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString().replaceAll("null", "");
 		
-		return this.findPageBySqlEntity(sql.toString(),columnsString,  "",pager);
+//		return this.findPageBySqlEntity(sql.toString(),columnsString,  "",pager);
 
 	}
 
@@ -218,7 +241,7 @@ public class UserManagerService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		String sql = "";
 		sql = " select t.role_id,t.role_name from tbl_role t"
-				+ " where t.role_level>=(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
+				+ " where t.role_level>(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
 				+ " order by t.role_id";
 		try {
 			List<?> list = this.getSQLObjects(sql);
@@ -243,11 +266,14 @@ public class UserManagerService<T> extends BaseService<T> {
 		}
 		return result_json.toString();
 	}
-	public boolean judgeUserExistsOrNot(String userId) {
+	public boolean judgeUserExistsOrNot(String userId,String userNo) {
 		boolean flag = false;
 		if (StringManagerUtils.isNotNull(userId)) {
-			String queryString = "SELECT u.userId FROM User u where u.userId='"
-					+ userId + "' order by u.userNo ";
+			String queryString = "SELECT u.userId FROM User u where u.userId='"+ userId + "' ";
+			if(StringManagerUtils.isNotNull(userNo)){//当前是更新用户
+				queryString+=" and u.userNo<>"+userNo;
+			}
+			queryString+= "order by u.userNo ";
 			List<User> list = getBaseDao().find(queryString);
 			if (list.size() > 0) {
 				flag = true;
@@ -344,11 +370,16 @@ public class UserManagerService<T> extends BaseService<T> {
 		this.getBaseDao().saveSystemLog(user);
 	}
 	
-	public String getUserOrgChangeUserList(Page pager,String orgId,String userName) throws Exception {
+	public String getUserOrgChangeUserList(Page pager,String orgIds,String userName,User user) throws Exception {
 		//String orgIds = this.getUserOrgIds(orgId);
 		StringBuffer result_json = new StringBuffer();
 		
-		String sql = "select t.user_no,t.user_name,t.user_id from TBL_USER t where t.user_orgid in("+orgId+")" ;
+		String sql = "select t.user_no,t.user_name,t.user_id from tbl_user t,tbl_role r"
+				+ " where t.user_type=r.role_id and t.user_orgid in (" + orgIds + ")"
+				+ " and ("
+				+ " r.role_level>(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
+				+ " or t.user_no=(select t2.user_no from tbl_user t2 where  t2.user_no="+user.getUserNo()+")"
+				+ ")";
 		if(StringManagerUtils.isNotNull(userName)){
 			sql+=" and t.user_name like '%"+userName+"%'";
 		}	

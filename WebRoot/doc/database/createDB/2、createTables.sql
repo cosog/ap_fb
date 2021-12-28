@@ -407,11 +407,9 @@ create index INDEX_MODULE_TYPE on TBL_MODULE (MD_TYPE)
 create table TBL_ROLE
 (
   role_id     NUMBER(10) not null,
-  role_code   VARCHAR2(50) not null,
   role_name   VARCHAR2(40) not null,
+  role_level NUMBER(3) default 1,
   role_flag   NUMBER(10),
-  receivesms  NUMBER(10) default 0,
-  receivemail NUMBER(10) default 0,
   showlevel   NUMBER(10) default 0,
   remark      VARCHAR2(2000)
 )
@@ -425,8 +423,6 @@ tablespace AP_FB_DATA
 /
 alter table TBL_ROLE
   add constraint PK_ROLE_ID primary key (ROLE_ID)
-/
-create index IDX_ROLE_CODE on TBL_ROLE (ROLE_CODE)
 /
 
 /*==============================================================*/
@@ -642,7 +638,10 @@ create table TBL_USER
   user_isleader   CHAR(1) default '0',
   user_regtime    DATE,
   user_style      VARCHAR2(20) default 'basic',
-  user_quicklogin NUMBER(1) default 0
+  user_quicklogin NUMBER(1) default 0,
+  user_enable      NUMBER(1) default 1,
+  user_receivesms  NUMBER(10) default 0,
+  user_receivemail NUMBER(10) default 0
 )
 tablespace AP_FB_DATA
   storage

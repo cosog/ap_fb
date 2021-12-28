@@ -274,6 +274,8 @@ function addUserInfo() {
 	    Ext.getCmp("addFormUser_Id").show();
 	    Ext.getCmp("updateFormUser_Id").hide();
 	    Ext.getCmp('userOrgid_Id').setValue(selectedOrgId);
+	    Ext.getCmp("userPwd_Id").setValue("123456");
+	    Ext.getCmp("userPwdAgain_Id").setValue("123456");
 	}else{
 		Ext.MessageBox.alert("信息","请先添加组织");
 	}
@@ -359,6 +361,11 @@ SelectedUserDataAttrInfoGridPanel = function () {
     var traininguserRegtime = new Date(Date.parse(userRegtime.replace(/-/g, "/")));
     userRegTimeInput.format = 'Y-m-d H:i:s';
     userRegTimeInput.setValue(traininguserRegtime);
+    if(parseInt(user_)==parseInt(userNo)){//如果是当前用户，不能修改自己的角色和激活状态
+    	Ext.getCmp('userType_Id1').setReadOnly(true);
+    	Ext.getCmp('userEnableRadio1_Id').setReadOnly(true);
+    	Ext.getCmp('userEnableRadio0_Id').setReadOnly(true);
+    }
 };
 
 function delUserInfo() {

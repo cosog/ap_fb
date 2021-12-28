@@ -30,29 +30,28 @@ public class WebSocketByJavax {
     //连接时执行
     @OnOpen
     public void onOpen(@PathParam("userId") String userId,Session session) throws IOException{
-        this.userId = userId+"_"+new Date().getTime();
-        this.session=session;
         synchronized(clients){
+        	this.userId = userId+"_"+new Date().getTime();
+            this.session=session;
         	clients.put(this.userId,this);
             addOnlineCount();
+            logger.debug("新连接：{}",this.userId);
+            System.out.println("接收到客户端连接:"+this.userId);
+            System.out.println("当前线上用户数量:"+clients.size()+","+this.getOnlineCount());
         }
-        logger.debug("新连接：{}",this.userId);
-        System.out.println("接收到客户端连接:"+this.userId);
-        System.out.println("当前线上用户数量:"+clients.size()+","+this.getOnlineCount());
-//        session.getBasicRemote().sendText("收到 "+this.userId+" 的连接.");
     }
     
     //关闭时执行
     @SuppressWarnings("static-access")
 	@OnClose
     public void onClose(){
-        logger.debug("连接：{} 关闭",this.userId);
         synchronized(clients){
+        	logger.debug("连接：{} 关闭",this.userId);
         	clients.remove(userId);
             subOnlineCount();
+            System.out.println("用户"+userId+"已退出！");
+            System.out.println("剩余在线用户"+clients.size()+","+this.getOnlineCount());
         }
-        System.out.println("用户"+userId+"已退出！");
-        System.out.println("剩余在线用户"+clients.size()+","+this.getOnlineCount());
     }
     
     //收到消息时执行
@@ -74,7 +73,9 @@ public class WebSocketByJavax {
     public void sendMessageTo(String To,String message) throws IOException {
         for (WebSocketByJavax item : clients.values()) { 
             if (item.userId.equals(To) ) 
-                item.session.getAsyncRemote().sendText(message);
+            	synchronized(item.session){
+            		item.session.getAsyncRemote().sendText(message);//getBasicRemote
+            	}
         }
     }
     
@@ -91,14 +92,18 @@ public class WebSocketByJavax {
         for (WebSocketByJavax item : clients.values()) { 
             String[] clientInfo=item.userId.split("_");
             if(clientInfo!=null && clientInfo.length==3&&userAccount.equals(clientInfo[1])){
-            	item.session.getAsyncRemote().sendText(message);
+            	synchronized(item.session){
+            		item.session.getAsyncRemote().sendText(message);
+            	}
             }
         }
     }
     
     public void sendMessageAll(String message) throws IOException {
         for (WebSocketByJavax item : clients.values()) {
-            item.session.getAsyncRemote().sendText(message);
+        	synchronized(item.session){
+        		item.session.getAsyncRemote().sendText(message);
+        	}
         }
     }
     
