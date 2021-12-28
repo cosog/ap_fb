@@ -3,6 +3,7 @@ package com.cosog.controller.right;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,9 +118,16 @@ public class UserManagerController extends BaseController {
 		String result = "{success:true,msg:false}";
 		try {
 			log.debug("userTitle" + user.getUserTitle());
+			String emailContent="账号:"+user.getUserId()+"<br/>密码:"+user.getUserPwd();
+			String emailTopic="创建用户";
+			List<String> receivingEMailAccount=new ArrayList<String>();
 //			user.setUserPwd(UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd()));
 			user.setUserPwd(StringManagerUtils.stringToMD5(user.getUserPwd()));
 			this.userService.addUser(user);
+			if(StringManagerUtils.isMailLegal(user.getUserInEmail())){
+				receivingEMailAccount.add(user.getUserInEmail());
+				StringManagerUtils.sendEMail(emailTopic, emailContent, receivingEMailAccount);
+			}
 			
 //			HttpSession session=request.getSession();
 //			User userLogin = (User) session.getAttribute("userLogin");
@@ -199,6 +207,10 @@ public class UserManagerController extends BaseController {
 	public String doUserEdit(@ModelAttribute User user) {
 		try {
 			log.debug("edit user success==" + user.getUserNo());
+			String emailContent="账号:"+user.getUserId()+"<br/>密码:"+user.getUserPwd();
+			String emailTopic="创建修改";
+			List<String> receivingEMailAccount=new ArrayList<String>();
+			
 			String userOldPass = ParamUtils.getParameter(request, "userPass");
 			if (!userOldPass.equals(user.getUserPwd())) {
 //				String newPass = UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd());
@@ -209,9 +221,15 @@ public class UserManagerController extends BaseController {
 			HttpSession session=request.getSession();
 			User prttentuser = (User) session.getAttribute("userLogin");
 			this.userService.modifyUser(user);
-			if(user.getUserName().equals(prttentuser.getUserName())&&user.getUserPwd().equals(prttentuser.getUserPwd())){
+			if(user.getUserNo()==prttentuser.getUserNo()){
 				prttentuser.setUserOrgid(user.getUserOrgid());
 			}
+			
+			if(StringManagerUtils.isMailLegal(user.getUserInEmail())){
+				receivingEMailAccount.add(user.getUserInEmail());
+				StringManagerUtils.sendEMail(emailTopic, emailContent, receivingEMailAccount);
+			}
+			
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
 			response.setHeader("Cache-Control", "no-cache");
 			PrintWriter pw = response.getWriter();
@@ -241,8 +259,8 @@ public class UserManagerController extends BaseController {
 		int pageSize = Integer.parseInt((limit == null || limit == "0") ? "20" : limit);
 		String userName = ParamUtils.getParameter(request, "userName");
 		orgId = ParamUtils.getParameter(request, "orgId");
+		User user = (User) session.getAttribute("userLogin");
 		if(!StringManagerUtils.isNotNull(orgId)){
-			User user = (User) session.getAttribute("userLogin");
 			orgId = "" + user.getUserorgids();
 		}
 		int offset = (intPage - 1) * pageSize;
@@ -252,7 +270,7 @@ public class UserManagerController extends BaseController {
 		map.put("userName", userName);
 		this.pager = new Page("pagerForm", request);
 		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
-		String json = userService.doUserShow(pager, map,orgId);
+		String json = userService.doUserShow(pager, map,orgId,user);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
@@ -270,7 +288,8 @@ public class UserManagerController extends BaseController {
 	@RequestMapping("/judgeUserExistOrNot")
 	public String judgeUserExistOrNot() throws IOException {
 		String userId = ParamUtils.getParameter(request, "userId");
-		boolean flag = this.userService.judgeUserExistsOrNot(userId);
+		String userNo = ParamUtils.getParameter(request, "userNo");
+		boolean flag = this.userService.judgeUserExistsOrNot(userId,userNo);
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		String json = "";
@@ -356,7 +375,7 @@ public class UserManagerController extends BaseController {
 				orgId = "" + user.getUserorgids();
 			}
 		}
-		String json = this.userService.getUserOrgChangeUserList(pager,orgId, userName);
+		String json = this.userService.getUserOrgChangeUserList(pager,orgId, userName,user);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();

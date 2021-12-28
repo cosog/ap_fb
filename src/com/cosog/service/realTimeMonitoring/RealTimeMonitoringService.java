@@ -894,6 +894,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 											}else{
 												controlItemMeaningList.add("[]");
 											}
+										}else{
+											controlItemMeaningList.add("[['true','开'],['false','关']]");
 										}
 									}
 									break;

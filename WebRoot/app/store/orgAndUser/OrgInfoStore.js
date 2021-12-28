@@ -45,10 +45,21 @@ Ext.define('AP.store.orgAndUser.OrgInfoStore', {
                     store: store,
                     columns: newColumns,
                     listeners: {
-                        selectionchange: function (sm, selections) {
+                        selectionchange: function (sm, selected) {
+                        	if(selected.length>0){
+                        		if(selected[0].data.text=='组织根节点'&&parseInt(selected[0].data.orgParent)==0){
+                        			Ext.getCmp("editOrgLableClassBtn_Id").disable();
+                                	Ext.getCmp("delOrgLableClassBtn_Id").disable();
+                        		}else{
+                        			Ext.getCmp("editOrgLableClassBtn_Id").enable();
+                                	Ext.getCmp("delOrgLableClassBtn_Id").enable();
+                        		}
+                        	}
                         },
-                        itemdblclick: function () {
-                            modifyOrgInfo();
+                        itemdblclick: function (grid, record, item, index, e, eOpts) {
+                        	if(!(record.data.text=='组织根节点'&&parseInt(record.data.orgParent)==0)){
+                        		modifyOrgInfo();
+                    		}
                         },
                         itemclick: function (view,record,item,ndex,e,eOpts) {
                         	var gridPanel = Ext.getCmp("UserInfoGridPanel_Id");

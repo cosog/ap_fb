@@ -100,9 +100,9 @@ SelectroleDataAttrInfoGridPanel = function () {
     var showLevel=dataattr_row[0].data.showLevel;
     var remark=dataattr_row[0].data.remark;
     
-    var currentUserRoleLevel=Ext.getCmp("currentUserRoleLevel_Id").getValue();
-    var currentUserRoleShowLevel=Ext.getCmp("currentUserRoleShowLevel_Id").getValue();
-    var currentUserRoleFlag=Ext.getCmp("currentUserRoleFlag_Id").getValue();
+    var currentUserRoleLevel=parseInt(Ext.getCmp("currentUserRoleLevel_Id").getValue());
+    var currentUserRoleShowLevel=parseInt(Ext.getCmp("currentUserRoleShowLevel_Id").getValue());
+    var currentUserRoleFlag=parseInt(Ext.getCmp("currentUserRoleFlag_Id").getValue());
     
     Ext.getCmp('role_Id').setValue(roleId);
     Ext.getCmp('role_Name_Id').setValue(roleName);
@@ -114,19 +114,19 @@ SelectroleDataAttrInfoGridPanel = function () {
     Ext.getCmp('roleRemark_Id').setValue(remark);
     
     if(currentUserRoleFlag==0){
-    	Ext.getCmp('roleFlagComboxfield_Id').disable();
+    	Ext.getCmp('roleFlagComboxfield_Id').setReadOnly(true);
     }
     
     if(currentUserRoleShowLevel>=showLevel){
-    	Ext.getCmp('roleShowLevel_Id').disable();
+    	Ext.getCmp('roleShowLevel_Id').setReadOnly(true);
     }else{
-    	Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel);
+    	Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel+1);
     }
     
     if(currentUserRoleLevel>=roleLevel){
-    	Ext.getCmp('roleLevel_Id').disable();
+    	Ext.getCmp('roleLevel_Id').setReadOnly(true);
     }else{
-        Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel);
+        Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel+1);
     }
 };
 
@@ -136,16 +136,16 @@ function addroleInfo() {
     });
     roleInfoWindow.show();
     
-    var currentUserRoleLevel=Ext.getCmp("currentUserRoleLevel_Id").getValue();
-    var currentUserRoleShowLevel=Ext.getCmp("currentUserRoleShowLevel_Id").getValue();
-    var currentUserRoleFlag=Ext.getCmp("currentUserRoleFlag_Id").getValue();
+    var currentUserRoleLevel=parseInt(Ext.getCmp("currentUserRoleLevel_Id").getValue());
+    var currentUserRoleShowLevel=parseInt(Ext.getCmp("currentUserRoleShowLevel_Id").getValue());
+    var currentUserRoleFlag=parseInt(Ext.getCmp("currentUserRoleFlag_Id").getValue());
     
     
-    Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel);
-    Ext.getCmp("roleLevel_Id").setValue(currentUserRoleLevel);
+    Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel+1);
+    Ext.getCmp("roleLevel_Id").setValue(currentUserRoleLevel+1);
     
-    Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel);
-    Ext.getCmp("roleShowLevel_Id").setValue(currentUserRoleShowLevel);
+    Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel+1);
+    Ext.getCmp("roleShowLevel_Id").setValue(currentUserRoleShowLevel+1);
     
     if(currentUserRoleFlag==0){
     	Ext.getCmp("roleFlag_Id").setValue(0);
@@ -221,14 +221,16 @@ var grantRolePermission = function () {//授予角色模块权限
     var _record;
     var roleCode="";
     var roleId="";
+    var roleLevel="";
     if(Ext.getCmp("RoleInfoGridPanel_Id")!=undefined){
     	var _record = Ext.getCmp("RoleInfoGridPanel_Id").getSelectionModel().getSelection();
         if(_record.length>0){
         	roleCode=_record[0].data.roleCode;
         	roleId=_record[0].data.roleId;
+        	roleLevel=_record[0].data.roleLevel;
         }
     }
-    if(roleCode=="systemRole"){
+    if(parseInt(roleLevel)==1){//如果是超级管理员，授予所有模块权限
     	_record = rightmodule_panel.store.data.items;
     }else{
     	_record = rightmodule_panel.getChecked();

@@ -20,7 +20,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
         var RoleTypeCombox = new Ext.form.ComboBox({
             id: 'roleFlagComboxfield_Id',
             value: 0,
-            fieldLabel: '控制权限<font color=red>*</font>',
+            fieldLabel: '设备控制权限<font color=red>*</font>',
             typeAhead : true,
             allowBlank: false,
             autoSelect:true,

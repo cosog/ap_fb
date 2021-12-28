@@ -88,28 +88,35 @@ private CommonDataService service;
 	public String getRoleList(Map map,Page pager,User user) {
 		String roleName = (String) map.get("roleName");
 		StringBuffer result_json = new StringBuffer();
+		String currentId="";
 		String currentLevel="";
 		String currentShowLevel="";
 		String currentFlag="";
-		String currentUserLevel="select t3.role_level,t3.showLevel,t3.role_flag from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo();
+		String currentRoleLevel="select t3.role_id,t3.role_level,t3.showLevel,t3.role_flag from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo();
 		String sql="select role_id as roleId,role_name as roleName,role_level as roleLevel,role_flag as roleFlag,decode(t.role_flag,1,'是','否') as roleFlagName,showLevel,remark"
 				+ " from  tbl_role t"
-				+ " where t.role_level>=(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")";
+				+ " where t.role_level>(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
+						+ " or t.role_id=(select t3.role_id from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")";
 		if (StringManagerUtils.isNotNull(roleName)) {
 			sql+=" and t.role_Name like '%" + roleName + "%' ";
 		}
 		sql+=" order by t.role_id ";
-		String json = "";
 		String columns=service.showTableHeadersColumns("roleManage");
 		List<?> list = this.findCallSql(sql);
-		List<?> currentUserLevelList = this.findCallSql(currentUserLevel);
+		List<?> currentUserLevelList = this.findCallSql(currentRoleLevel);
 		if(currentUserLevelList.size()>0){
 			Object[] obj = (Object[]) currentUserLevelList.get(0);
-			currentLevel=obj[0]+"";
-			currentShowLevel=obj[1]+"";
-			currentFlag=obj[2]+"";
+			currentId=obj[0]+"";
+			currentLevel=obj[1]+"";
+			currentShowLevel=obj[2]+"";
+			currentFlag=obj[3]+"";
 		}
-		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"currentLevel\":"+currentLevel+",\"currentShowLevel\":"+currentShowLevel+",\"currentFlag\":"+currentFlag+",\"columns\":"+columns+",\"totalRoot\":[");
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()
+		+",\"currentId\":"+currentId
+		+",\"currentLevel\":"+currentLevel
+		+",\"currentShowLevel\":"+currentShowLevel
+		+",\"currentFlag\":"+currentFlag
+		+",\"columns\":"+columns+",\"totalRoot\":[");
 		
 		for (Object o : list) {
 			Object[] obj = (Object[]) o;

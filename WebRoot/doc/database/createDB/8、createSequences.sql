@@ -1,7 +1,7 @@
 create sequence HIBERNATE_SEQUENCE
 minvalue 1
 maxvalue 999999999999999999999999999
-start with 128175
+start with 128675
 increment by 1
 cache 20;
 /
@@ -89,7 +89,7 @@ cache 20;
 create sequence SEQ_MODULE
 minvalue 1
 maxvalue 999999999999999999999999
-start with 2138
+start with 2158
 increment by 1
 cache 20;
 /
@@ -257,7 +257,7 @@ cache 20;
 create sequence SEQ_ROLE_MODULE
 minvalue 1
 maxvalue 9999999999999999999999999
-start with 43
+start with 83
 increment by 1
 cache 20;
 /
