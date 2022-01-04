@@ -32,6 +32,7 @@ import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.service.realTimeMonitoring.RealTimeMonitoringService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.AcquisitionItemColumnsMap;
 import com.cosog.utils.Config;
 import com.cosog.utils.Constants;
 import com.cosog.utils.EquipmentDriveMap;
@@ -354,7 +355,19 @@ public class RealTimeMonitoringController extends BaseController {
 	public boolean DeviceControlOperation_Mdubus(String protocolName,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
 		boolean result=true;
 		try {
-//			String json="";
+			int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+			String columnsKey="pumpDeviceAcquisitionItemColumns";
+			int DeviceType=0;
+			if((StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300) || StringManagerUtils.stringToInteger(deviceType)==1){
+				columnsKey="pipelineDeviceAcquisitionItemColumns";
+				DeviceType=1;
+			}
+			Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+			if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+				EquipmentDriverServerTask.loadAcquisitionItemColumns(DeviceType);
+			}
+			Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+			
 			HttpSession session=request.getSession();
 			User user = (User) session.getAttribute("userLogin");
 			String url=Config.getInstance().configFile.getDriverConfig().getWriteAddr();
@@ -378,7 +391,8 @@ public class RealTimeMonitoringController extends BaseController {
 			String title="";
 			float ratio=0;
 			for(int i=0;i<protocol.getItems().size();i++){
-				if(itemCode.equalsIgnoreCase("addr"+protocol.getItems().get(i).getAddr())){
+				String col=dataMappingMode==0?("addr"+protocol.getItems().get(i).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(i).getTitle()));
+				if(itemCode.equalsIgnoreCase(col)){
 					addr=protocol.getItems().get(i).getAddr();
 					dataType=protocol.getItems().get(i).getIFDataType();
 					title=protocol.getItems().get(i).getTitle();

@@ -7,7 +7,6 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
     initComponent: function () {
         var me = this;
         var orgStore = Ext.create("AP.store.orgAndUser.OrgInfoStore");
-//        var UserPanelInfoStore = Ext.create("AP.store.orgAndUser.UserPanelInfoStore");
         Ext.apply(me, {
         	items: [{
         		region:'center',

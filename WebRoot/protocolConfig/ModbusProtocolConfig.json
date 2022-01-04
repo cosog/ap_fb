@@ -1133,6 +1133,26 @@
             ]
         },
         {
+            "Name": "泵产品协议test2",
+            "Code": "泵产品协议test2",
+            "DeviceType": 0,
+            "Sort": 2,
+            "Items": [
+                {
+                    "Title": "A相电流",
+                    "Addr": 140,
+                    "StoreDataType": "uint16",
+                    "IFDataType": "float32",
+                    "Quantity": 1,
+                    "Ratio": 0.01,
+                    "RWType": "r",
+                    "Unit": "A",
+                    "ResolutionMode": 2,
+                    "AcqMode": "active"
+                }
+            ]
+        },
+        {
             "Name": "飞舟管产品协议",
             "Code": "飞舟管产品协议",
             "DeviceType": 1,

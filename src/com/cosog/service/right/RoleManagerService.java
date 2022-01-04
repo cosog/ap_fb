@@ -65,6 +65,11 @@ private CommonDataService service;
 		String queryString = "SELECT u FROM Role u order by u.roleId ";
 		return getBaseDao().find(queryString);
 	}
+	
+	public List<T> loadRolesById(Class<T> clazz,int roleId) {
+		String queryString = "SELECT u FROM Role u where roleId= "+roleId;
+		return getBaseDao().find(queryString);
+	}
 
 	public List<T> queryRoles(Class<T> clazz, String roleName) {
 		if (roleName == null || "".equals(roleName))

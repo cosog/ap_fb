@@ -453,7 +453,13 @@ function initDeviceHistoryCurveChartFn(series, tickInterval, divId, title, subti
                         }
                     }
                 },
-                shadow: true
+                shadow: true,
+                events: {
+                	legendItemClick: function(e){
+//                		alert("第"+this.index+"个图例被点击，是否可见："+!this.visible);
+//                		return true;
+                	}
+                }
             }
         },
         legend: {
@@ -779,3 +785,32 @@ function ShowHistoryQueryDeviceTypeStatPieChat(title,divid, name, data,colors) {
 				}]
 		});
 };
+
+function getDateAndTime(dateStr,h,m,s){
+	if(!isNotVal(dateStr)){
+		return '';
+	}
+	if(!isNotVal(h)){
+		h=0
+	}
+	if(!isNotVal(m)){
+		m=0
+	}
+	if(!isNotVal(s)){
+		s=0
+	}
+	var hStr=h+'';
+	var mStr=m+'';
+	var sStr=s+'';
+	if(hStr.length==1){
+		hStr='0'+hStr;
+	}
+	if(mStr.length==1){
+		mStr='0'+mStr;
+	}if(sStr.length==1){
+		sStr='0'+sStr;
+	}
+	return dateStr+' '+hStr+":"+mStr+':'+sStr;
+	
+	
+}

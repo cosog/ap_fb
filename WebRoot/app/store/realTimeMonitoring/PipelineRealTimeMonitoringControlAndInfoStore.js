@@ -218,7 +218,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			        	dataIndex: 'operation',
     			        	align:'center',
 //    			        	flex:8,
-    			        	width:92,
+    			        	width:93,
     			        	renderer :function(value,e,o){
     			        		var id = e.record.id;
     			        		var item=o.data.item;
@@ -250,7 +250,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            ui: 'footer',
         		                            align:'center',
         		                            height: 25,
-        		                            width: 80,
+        		                            width: 85,
         		                            items: [{
         		                            	xtype: 'button',
         		                            	height: 25,
@@ -352,7 +352,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            style: 'margin:0;padding:0',
         		                            ui: 'footer',
         		                            height: 25,
-        		                            width: 80,
+        		                            width: 85,
         		                            items: [{
         		                            	xtype: 'button',
         		                            	height: 25,

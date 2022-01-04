@@ -643,6 +643,8 @@ public class ConfigFile {
 	    private int defaultGraghSize;
 	    
 	    private int productionUnit;
+	    
+	    private int dataMappingMode;
 
 		private String serialnumber;
 
@@ -699,6 +701,12 @@ public class ConfigFile {
 		}
 		public void setProductionUnit(int productionUnit) {
 			this.productionUnit = productionUnit;
+		}
+		public int getDataMappingMode() {
+			return dataMappingMode;
+		}
+		public void setDataMappingMode(int dataMappingMode) {
+			this.dataMappingMode = dataMappingMode;
 		}
 	}
 }

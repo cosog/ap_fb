@@ -35,7 +35,6 @@ import com.cosog.utils.Config2;
 import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.StringManagerUtils;
 import com.cosog.websocket.config.WebSocketByJavax;
-import com.cosog.websocket.handler.SpringWebSocketHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -156,20 +155,14 @@ public class ResourceMonitoringTask {
 				+ "\"tableSpaceUsedPercentAlarmLevel\":"+tableSpaceInfo.getAlarmLevel()+""
 				+ "}";
 		try {
-			infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(sendData));
-			infoHandler2().sendMessageToBy("ApWebSocketClient", sendData);
-		} catch (IOException e) {
+			infoHandler().sendMessageToBy("ApWebSocketClient", sendData);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Bean
-    public static SpringWebSocketHandler infoHandler() {
-        return new SpringWebSocketHandler();
-    }
-	
-	@Bean
-    public static WebSocketByJavax infoHandler2() {
+    public static WebSocketByJavax infoHandler() {
         return new WebSocketByJavax();
     }
 	

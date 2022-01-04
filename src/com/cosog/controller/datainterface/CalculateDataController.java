@@ -45,7 +45,6 @@ import com.cosog.utils.OracleJdbcUtis;
 import com.cosog.utils.ParamUtils;
 import com.cosog.utils.StringManagerUtils;
 import com.cosog.websocket.config.WebSocketByJavax;
-import com.cosog.websocket.handler.SpringWebSocketHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -67,11 +66,6 @@ public class CalculateDataController extends BaseController{
 	CalculateDataService<?> calculateDataService;
 	@Autowired
 	private CommonDataService commonDataService;
-	
-	@Bean//这个注解会从Spring容器拿出Bean
-    public SpringWebSocketHandler infoHandler() {
-        return new SpringWebSocketHandler();
-    }	
 	@Bean//这个注解会从Spring容器拿出Bean
     public static WebSocketByJavax infoHandler2() {
         return new WebSocketByJavax();

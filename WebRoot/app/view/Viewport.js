@@ -151,7 +151,12 @@ function websocketOnOpen(openEvt) {
 
 function websocketOnMessage(evt) {
 	var activeId = Ext.getCmp("frame_center_ids").getActiveTab().id;
-	var data=Ext.JSON.decode(evt.data);
+	var receiveData=evt.data;
+	if(evt.data.indexOf("}{")>=0){
+		evt.data.replace("}{", "}@@{");
+		receiveData=evt.data.split("@@")[0];
+	}
+	var data=Ext.JSON.decode(receiveData);
 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
 	var orgIdArr=leftOrg_Id.split(",");
 	if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringData".toUpperCase()){//接收到推送的泵设备实时监控数据
@@ -175,11 +180,13 @@ function websocketOnMessage(evt) {
 							for(var j=0;j<data.CellInfo.length;j++){
 								var cellValue=record.get(data.CellInfo[j].column.toUpperCase());
 								var cellValue2=record.get(data.CellInfo[j].column.toLowerCase());
+								var cellValue3=record.get(data.CellInfo[j].column);
 								if(cellValue!=undefined){
 									record.set(data.CellInfo[j].column.toUpperCase(),data.CellInfo[j].value);
-								}
-								if(cellValue2!=undefined){
+								}else if(cellValue2!=undefined){
 									record.set(data.CellInfo[j].column.toLowerCase(),data.CellInfo[j].value);
+								}else if(cellValue==undefined && cellValue2==undefined && cellValue3!=undefined){
+									record.set(data.CellInfo[j].column,data.CellInfo[j].value);
 								}
 							}
 							record.commit();
@@ -303,11 +310,13 @@ function websocketOnMessage(evt) {
 							for(var j=0;j<data.CellInfo.length;j++){
 								var cellValue=record.get(data.CellInfo[j].column.toUpperCase());
 								var cellValue2=record.get(data.CellInfo[j].column.toLowerCase());
+								var cellValue3=record.get(data.CellInfo[j].column);
 								if(cellValue!=undefined){
 									record.set(data.CellInfo[j].column.toUpperCase(),data.CellInfo[j].value);
-								}
-								if(cellValue2!=undefined){
+								}else if(cellValue2!=undefined){
 									record.set(data.CellInfo[j].column.toLowerCase(),data.CellInfo[j].value);
+								}else if(cellValue==undefined && cellValue2==undefined && cellValue3!=undefined){
+									record.set(data.CellInfo[j].column,data.CellInfo[j].value);
 								}
 							}
 							record.commit();

@@ -73,7 +73,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 value:1,
                 anchor: '100%',
                 msgTarget: 'side'
-            },RoleTypeCombox, {
+            },{
             	xtype: 'numberfield',
             	id: "roleShowLevel_Id",
                 name: 'role.showLevel',
@@ -82,7 +82,7 @@ Ext.define("AP.view.role.RoleInfoWindow", {
                 minValue: 1,
                 anchor: '100%',
                 msgTarget: 'side'
-            }, {
+            },RoleTypeCombox, {
                 fieldLabel: '角色描述',
                 id: 'roleRemark_Id',
                 anchor: '100',

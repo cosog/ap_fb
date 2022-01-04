@@ -17,6 +17,8 @@ import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.AcquisitionItemColumnsMap;
+import com.cosog.utils.Config;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
 import com.cosog.utils.Page;
@@ -285,6 +287,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	
 	public String getDeviceHistoryData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -309,14 +312,21 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpHistoryQuery";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			hisTableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineHistoryQuery";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
 		
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
@@ -328,8 +338,14 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(ddicColumns[i].toUpperCase().contains("ADDR")){
-				ddicColumnsList.add(ddicColumns[i]);
+			if(dataMappingMode==0){
+				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
+			}else{
+				if(StringManagerUtils.existOrNotByValue(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
@@ -337,7 +353,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			String itemStr="";
 			if(protocol!=null){
 				for(int j=0;j<protocol.getItems().size();j++){
-					if(ddicColumnsList.get(i).equalsIgnoreCase("addr"+protocol.getItems().get(j).getAddr())){
+					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
 						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
 							isMatch=true;
 							itemStr=",decode(t2."+ddicColumnsList.get(i);
@@ -365,7 +382,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
 				+ " where  t.orgid in ("+orgId+") "
-				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1 and t.wellName='"+deviceName+"'"
+				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.wellName='"+deviceName+"'"
 				+ "  order by t2.acqtime desc";
 		
 		int maxvalue=pager.getLimit()+pager.getStart();
@@ -405,6 +422,13 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	
 	public String getDeviceHistoryExportData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
 		ModbusProtocolConfig.Protocol protocol=null;
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -423,23 +447,40 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpHistoryQuery";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			hisTableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineHistoryQuery";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String columns = ddic.getTableHeader();
 		
 		String sql="select t2.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
 				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
+		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(ddicColumns[i].toUpperCase().contains("ADDR")){
-				ddicColumnsList.add(ddicColumns[i]);
+			if(dataMappingMode==0){
+				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
+			}else{
+				if(StringManagerUtils.existOrNotByValue(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
@@ -447,7 +488,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			String itemStr="";
 			if(protocol!=null){
 				for(int j=0;j<protocol.getItems().size();j++){
-					if(ddicColumnsList.get(i).equalsIgnoreCase("addr"+protocol.getItems().get(j).getAddr())){
+					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
 						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
 							isMatch=true;
 							itemStr=",decode(t2."+ddicColumnsList.get(i);
@@ -506,6 +548,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -514,10 +557,18 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			hisTableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
 		String itemsSql="select t.wellname,t3.protocol, "
 				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
 				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort, "
@@ -578,8 +629,6 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							&& (StringManagerUtils.existOrNot(itemsArr, protocol.getItems().get(j).getTitle(), false))){
 						for(int k=0;k<itemsArr.length;k++){
 							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
-								String column="ADDR"+protocol.getItems().get(j).getAddr();
-								String columnName=protocol.getItems().get(j).getTitle();
 								protocolItems.add(protocol.getItems().get(j));
 								break;
 							}
@@ -589,7 +638,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				
 				String sql="select t.id,t.wellname,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'), t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
 				for(int j=0;j<protocolItems.size();j++){
-					sql+=",t2.ADDR"+protocolItems.get(j).getAddr();
+					String col=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
+					sql+=",t2."+col;
 				}
 				sql+= " from "+deviceTableName+" t "
 						+ " left outer join "+hisTableName+" t2 on t2.wellid=t.id"
@@ -604,7 +654,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 						String value=obj[j+6]+"";
 						String rawValue=obj[j+6]+"";
 						String addr=protocolItems.get(j).getAddr()+"";
-						String column="ADDR"+addr;
+						String column=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
 						String columnDataType=protocolItems.get(j).getIFDataType();
 						String resolutionMode=protocolItems.get(j).getResolutionMode()+"";
 						String bitIndex="";
@@ -693,11 +743,6 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 									break;
 								}
 							}
-							columnName=protocolItems.get(j).getTitle();
-							addr=protocolItems.get(j).getAddr()+"";
-							column="ADDR"+addr;
-							columnDataType=protocolItems.get(j).getIFDataType();
-							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
 							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
 							protocolItemResolutionDataList.add(protocolItemResolutionData);
 						} 
@@ -821,12 +866,21 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer itemsBuff = new StringBuffer();
 		StringBuffer curveColorBuff = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
 		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
 				+ " and  t.wellname='"+deviceName+"' ";
 		
@@ -859,7 +913,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							Object[] itemObj=(Object[]) curveItemList.get(j);
 							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
-									itemColumnList.add("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
+									String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
+									itemColumnList.add(col);
 									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
 										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");
 									}else{

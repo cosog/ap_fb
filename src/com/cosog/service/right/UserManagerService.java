@@ -103,7 +103,7 @@ public class UserManagerService<T> extends BaseService<T> {
 		if (!"".equals(userName) && null != userName && userName.length() > 0) {
 			sql+=" and u.user_name like '%" + userName + "%'";
 		}
-		sql+=" order by u.user_no";
+		sql+=" order by r.role_level,user_no,u.user_no";
 		List<?> list = this.findCallSql(sql);
 		result_json.append("{\"success\":true,\"totalCount\":"+list.size()
 //		+",\"currentId\":"+user.getUserNo()
@@ -383,7 +383,7 @@ public class UserManagerService<T> extends BaseService<T> {
 		if(StringManagerUtils.isNotNull(userName)){
 			sql+=" and t.user_name like '%"+userName+"%'";
 		}	
-		sql+= " order by t.user_no";
+		sql+= " order by r.role_level,t.user_no";
 		String columns = "["
 				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
 				+ "{ \"header\":\"用户名称\",\"dataIndex\":\"userName\",width:120 ,children:[] },"
@@ -396,7 +396,7 @@ public class UserManagerService<T> extends BaseService<T> {
 			Object[] obj = (Object[]) o;
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"userName\":\""+obj[1]+"\",");
-			result_json.append("\"userID\":\""+obj[1]+"\"},");
+			result_json.append("\"userID\":\""+obj[2]+"\"},");
 		}
 		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
