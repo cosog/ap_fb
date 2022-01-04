@@ -190,16 +190,15 @@ public class HistoryQueryController extends BaseController  {
 			deviceTableName="tbl_pipelinedevice";
 		}
 		if(StringManagerUtils.isNotNull(deviceName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' "+" ) ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' "+" ) ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-//				startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);

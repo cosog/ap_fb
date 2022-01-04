@@ -287,6 +287,7 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
             	xtype: 'fieldcontainer',
                 fieldLabel : '状态<font color=red>*</font>',
                 defaultType: 'radiofield',
+                id: 'userEnableRadioGroup_Id',
                 anchor: '100%',
                 defaults: {
                     flex: 1

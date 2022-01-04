@@ -124,6 +124,7 @@ public class UserManagerController extends BaseController {
 //			user.setUserPwd(UnixPwdCrypt.crypt("dogVSgod", user.getUserPwd()));
 			user.setUserPwd(StringManagerUtils.stringToMD5(user.getUserPwd()));
 			this.userService.addUser(user);
+			result = "{success:true,msg:true}";
 			if(StringManagerUtils.isMailLegal(user.getUserInEmail())){
 				receivingEMailAccount.add(user.getUserInEmail());
 				StringManagerUtils.sendEMail(emailTopic, emailContent, receivingEMailAccount);
@@ -220,7 +221,12 @@ public class UserManagerController extends BaseController {
 //			this.userService.modifyUser(user);
 			HttpSession session=request.getSession();
 			User prttentuser = (User) session.getAttribute("userLogin");
+			if(user.getUserNo()==prttentuser.getUserNo()){
+				user.setUserType(prttentuser.getUserType());
+				user.setUserEnable(prttentuser.getUserEnable());
+			}
 			this.userService.modifyUser(user);
+			String result = "{success:true,msg:true}";
 			if(user.getUserNo()==prttentuser.getUserNo()){
 				prttentuser.setUserOrgid(user.getUserOrgid());
 			}
@@ -233,7 +239,7 @@ public class UserManagerController extends BaseController {
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
 			response.setHeader("Cache-Control", "no-cache");
 			PrintWriter pw = response.getWriter();
-			String result = "{success:true,msg:true}";
+			result = "{success:true,msg:true}";
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
 			response.getWriter().print(result);
 			pw.flush();

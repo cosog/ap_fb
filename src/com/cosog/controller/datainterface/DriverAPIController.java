@@ -47,6 +47,7 @@ import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.datainterface.CalculateDataService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.AcquisitionItemColumnsMap;
 import com.cosog.utils.AlarmInfoMap;
 import com.cosog.utils.Config;
 import com.cosog.utils.Config2;
@@ -58,7 +59,6 @@ import com.cosog.utils.ParamUtils;
 import com.cosog.utils.ProtocolItemResolutionData;
 import com.cosog.utils.StringManagerUtils;
 import com.cosog.websocket.config.WebSocketByJavax;
-import com.cosog.websocket.handler.SpringWebSocketHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -81,11 +81,7 @@ public class DriverAPIController extends BaseController{
 	@Autowired
 	private CommonDataService commonDataService;
 	@Bean
-    public static SpringWebSocketHandler infoHandler() {
-        return new SpringWebSocketHandler();
-    }
-	@Bean
-    public static WebSocketByJavax infoHandler2() {
+    public static WebSocketByJavax infoHandler() {
         return new WebSocketByJavax();
     }
 	
@@ -336,8 +332,6 @@ public class DriverAPIController extends BaseController{
 			String deviceType="";
 			String realtimeTable="";
 			String historyTable="";
-			
-			
 			//判断设备类型
 			String deviceTypeSql="select t.devicetype"
 					+ " from tbl_pumpdevice t   "
@@ -515,8 +509,7 @@ public class DriverAPIController extends BaseController{
 					webSocketSendData.append("\"commAlarmLevel\":"+commAlarmLevel);
 					webSocketSendData.append("}");
 					if(StringManagerUtils.isNotNull(webSocketSendData.toString())){
-						infoHandler().sendMessageToUserByModule("ApWebSocketClient", new TextMessage(webSocketSendData.toString()));
-						infoHandler2().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
+						infoHandler().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 					}
 				}
 			}
@@ -586,6 +579,7 @@ public class DriverAPIController extends BaseController{
 	public String DataProcessing(AcqGroup acqGroup,String wellName,String deviceType,String protocolName) throws Exception{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		List<String> websocketClientUserList=new ArrayList<>();
 		for (WebSocketByJavax item : WebSocketByJavax.clients.values()) { 
@@ -611,19 +605,30 @@ public class DriverAPIController extends BaseController{
 		String historyTable="tbl_pumpacqdata_hist";
 		String rawDataTable="tbl_pumpacqrawdata";
 		String functionCode="pumpDeviceRealTimeMonitoringData";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
+		int DeviceType=0;
 		if(StringManagerUtils.stringToInteger(deviceType)>=100 && StringManagerUtils.stringToInteger(deviceType)<200){
+			DeviceType=0;
 			deviceTableName="tbl_pumpdevice";
 			realtimeTable="tbl_pumpacqdata_latest";
 			historyTable="tbl_pumpacqdata_hist";
 			rawDataTable="tbl_pumpacqrawdata";
 			functionCode="pumpDeviceRealTimeMonitoringData";
+			columnsKey="pumpDeviceAcquisitionItemColumns";
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=200 && StringManagerUtils.stringToInteger(deviceType)<300){
+			DeviceType=1;
 			deviceTableName="tbl_pipelinedevice";
 			realtimeTable="tbl_pipelineacqdata_latest";
 			historyTable="tbl_pipelineacqdata_hist";
 			rawDataTable="tbl_pipelineacqrawdata";
 			functionCode="pipelineDeviceRealTimeMonitoringData";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(DeviceType);
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		if(acqGroup!=null){
 			boolean ifAddDay=false;
 			String sql="select t.wellname ,to_char(t2.acqTime,'yyyy-mm-dd hh24:mi:ss'),"
@@ -728,7 +733,8 @@ public class DriverAPIController extends BaseController{
 					for(int i=0;acqGroup.getAddr()!=null && acqGroup.getValue()!=null  &&i<acqGroup.getAddr().size();i++){
 						for(int j=0;acqGroup.getValue().get(i)!=null && j<protocol.getItems().size();j++){
 							if(acqGroup.getAddr().get(i)==protocol.getItems().get(j).getAddr()){
-								String columnName="ADDR"+protocol.getItems().get(j).getAddr();
+								
+								String columnName=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
 								String value=StringManagerUtils.objectListToString(acqGroup.getValue().get(i), protocol.getItems().get(j).getIFDataType());
 								String rawValue=value;
 								String addr=protocol.getItems().get(j).getAddr()+"";
@@ -1066,7 +1072,7 @@ public class DriverAPIController extends BaseController{
 							webSocketSendData.append("]");
 							webSocketSendData.append(",\"CellInfo\":"+info_json);
 							webSocketSendData.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle)+"}");
-							infoHandler2().sendMessageToUser(websocketClientUser, webSocketSendData.toString());
+							infoHandler().sendMessageToUser(websocketClientUser, webSocketSendData.toString());
 						}
 					}
 				}

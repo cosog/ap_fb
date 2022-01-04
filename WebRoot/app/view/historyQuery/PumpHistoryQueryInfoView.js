@@ -111,7 +111,8 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         },pumpDeviceCombo,'-', {
                             xtype: 'button',
                             text: cosog.string.exportExcel,
-                            pressed: true,
+                            iconCls: 'export',
+//                            pressed: true,
                             hidden:false,
                             handler: function (v, o) {
                             	var orgId = Ext.getCmp('leftOrg_Id').getValue();
@@ -216,9 +217,39 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         id: 'PumpHistoryQueryStartDate_Id',
                         listeners: {
                         	select: function (combo, record, index) {
-                        		Ext.getCmp("PumpHistoryQueryDataGridPanel_Id").getStore().loadPage(1);
+//                        		Ext.getCmp("PumpHistoryQueryDataGridPanel_Id").getStore().loadPage(1);
                             }
                         }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PumpHistoryQueryStartTime_Hour_Id',
+                        fieldLabel: '时',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 23,
+                        value:'',
+                        msgTarget: 'side'
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PumpHistoryQueryStartTime_Minute_Id',
+                        fieldLabel: '分',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'side'
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PumpHistoryQueryStartTime_Second_Id',
+                        fieldLabel: '秒',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'side'
                     },{
                         xtype: 'datefield',
                         anchor: '100%',
@@ -230,13 +261,55 @@ Ext.define("AP.view.historyQuery.PumpHistoryQueryInfoView", {
                         id: 'PumpHistoryQueryEndDate_Id',
                         listeners: {
                         	select: function (combo, record, index) {
-                        		Ext.getCmp("PumpHistoryQueryDataGridPanel_Id").getStore().loadPage(1);
+//                        		Ext.getCmp("PumpHistoryQueryDataGridPanel_Id").getStore().loadPage(1);
                             }
+                        }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PumpHistoryQueryEndTime_Hour_Id',
+                        fieldLabel: '时',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 23,
+                        value:'',
+                        msgTarget: 'side'
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PumpHistoryQueryEndTime_Minute_Id',
+                        fieldLabel: '分',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'side'
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PumpHistoryQueryEndTime_Second_Id',
+                        fieldLabel: '秒',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'side'
+                    },'-',{
+                        xtype: 'button',
+                        text: cosog.string.search,
+//                        pressed: true,
+                        iconCls: 'search',
+                        handler: function () {
+                        	var gridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
+                        	if (isNotVal(gridPanel)) {
+                        		gridPanel.getStore().load();
+                        	}
                         }
                     },'-', {
                         xtype: 'button',
                         text: cosog.string.exportExcel,
-                        pressed: true,
+                        iconCls: 'export',
+//                        pressed: true,
                         hidden:false,
                         handler: function (v, o) {
                         	var orgId = Ext.getCmp('leftOrg_Id').getValue();

@@ -50,8 +50,12 @@ Ext.define('AP.store.orgAndUser.UserOrgChangeUserListStore', {
                         sortable: false,
                         locked: false,
                         dataIndex: 'userName',
-                        renderer: function (value) {
-                            return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? "" : value) + "</span>";
+                        renderer: function (value,o,p,e) {
+                        	var showVal=value;
+                         	if(p.data.id==user_){
+                         		showVal="*"+value;
+                         	}
+                        	return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (showVal == undefined ? "" : showVal) + "</span>";
                         }
                     }, {
                         text: '用户账号',

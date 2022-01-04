@@ -47,7 +47,7 @@ Ext.define('AP.store.orgAndUser.OrgInfoStore', {
                     listeners: {
                         selectionchange: function (sm, selected) {
                         	if(selected.length>0){
-                        		if(selected[0].data.text=='组织根节点'&&parseInt(selected[0].data.orgParent)==0){
+                        		if((selected[0].data.text=='组织根节点'&&parseInt(selected[0].data.orgParent)==0) || parseInt(selected[0].data.orgId)==parseInt(userOrg_Id)){
                         			Ext.getCmp("editOrgLableClassBtn_Id").disable();
                                 	Ext.getCmp("delOrgLableClassBtn_Id").disable();
                         		}else{
@@ -57,7 +57,7 @@ Ext.define('AP.store.orgAndUser.OrgInfoStore', {
                         	}
                         },
                         itemdblclick: function (grid, record, item, index, e, eOpts) {
-                        	if(!(record.data.text=='组织根节点'&&parseInt(record.data.orgParent)==0)){
+                        	if(!( (record.data.text=='组织根节点'&&parseInt(record.data.orgParent)==0) || parseInt(record.data.orgId)==parseInt(userOrg_Id)   )){
                         		modifyOrgInfo();
                     		}
                         },

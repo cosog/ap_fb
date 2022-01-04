@@ -25,6 +25,7 @@ import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.task.EquipmentDriverServerTask;
+import com.cosog.utils.AcquisitionItemColumnsMap;
 import com.cosog.utils.Config;
 import com.cosog.utils.ConfigFile;
 import com.cosog.utils.DataModelMap;
@@ -257,6 +258,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	
 	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -283,13 +285,21 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpRealTimeOverview";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_pipelineacqdata_latest";
 			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineRealTimeOverview";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		
@@ -300,8 +310,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(ddicColumns[i].toUpperCase().contains("ADDR")){
-				ddicColumnsList.add(ddicColumns[i]);
+			if(dataMappingMode==0){
+				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
+			}else{
+				if(StringManagerUtils.existOrNotByValue(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
@@ -309,7 +325,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			String itemStr="";
 			if(protocol!=null){
 				for(int j=0;j<protocol.getItems().size();j++){
-					if(ddicColumnsList.get(i).equalsIgnoreCase("addr"+protocol.getItems().get(j).getAddr())){
+					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
 						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
 							isMatch=true;
 							itemStr=",decode(t2."+ddicColumnsList.get(i);
@@ -383,6 +400,13 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	
 	public String getDeviceRealTimeOverviewExportData(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		if(alarmShowStyle==null){
+			EquipmentDriverServerTask.initAlarmStyle();
+			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
+		}
 		
 		ModbusProtocolConfig.Protocol protocol=null;
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
@@ -403,14 +427,24 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpRealTimeOverview";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		DataDictionary ddic = null;
 		List<String> ddicColumnsList=new ArrayList<String>();
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_pipelineacqdata_latest";
 			deviceTableName="tbl_pipelinedevice";
 			ddicName="pipelineRealTimeOverview";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
+		String columns = ddic.getTableHeader();
+		
 		String sql="select t.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
@@ -418,8 +452,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(ddicColumns[i].toUpperCase().contains("ADDR")){
-				ddicColumnsList.add(ddicColumns[i]);
+			if(dataMappingMode==0){
+				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
+			}else{
+				if(StringManagerUtils.existOrNotByValue(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
+					ddicColumnsList.add(ddicColumns[i]);
+				}
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
@@ -427,7 +467,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			String itemStr="";
 			if(protocol!=null){
 				for(int j=0;j<protocol.getItems().size();j++){
-					if(ddicColumnsList.get(i).equalsIgnoreCase("addr"+protocol.getItems().get(j).getAddr())){
+					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
 						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
 							isMatch=true;
 							itemStr=",decode(t2."+ddicColumnsList.get(i);
@@ -495,6 +536,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -503,10 +545,18 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		}
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(StringManagerUtils.stringToInteger(deviceType)!=0){
 			tableName="tbl_pipelineacqdata_latest";
 			deviceTableName="tbl_pipelinedevice";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
 		String itemsSql="select t.wellname,t3.protocol, "
 				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
 				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort,"
@@ -565,7 +615,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							&& (StringManagerUtils.existOrNot(itemsArr, protocol.getItems().get(j).getTitle(), false))){
 						for(int k=0;k<itemsArr.length;k++){
 							if(protocol.getItems().get(j).getTitle().equalsIgnoreCase(itemsArr[k])){
-								String columnName=protocol.getItems().get(j).getTitle();
 								protocolItems.add(protocol.getItems().get(j));
 								break;
 							}
@@ -575,7 +624,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				
 				String sql="select t.id,t.wellname,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'), t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
 				for(int j=0;j<protocolItems.size();j++){
-					sql+=",t2.ADDR"+protocolItems.get(j).getAddr();
+					String col=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
+					sql+=",t2."+col;
 				}
 				sql+= " from "+deviceTableName+" t "
 						+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
@@ -590,12 +640,13 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 						String value=obj[j+6]+"";
 						String rawValue=value;
 						String addr=protocolItems.get(j).getAddr()+"";
-						String column="ADDR"+addr;
+						String column=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
 						String columnDataType=protocolItems.get(j).getIFDataType();
 						String resolutionMode=protocolItems.get(j).getResolutionMode()+"";
 						String bitIndex="";
 						String unit=protocolItems.get(j).getUnit();
 						int sort=9999;
+						
 						if(protocolItems.get(j).getResolutionMode()==1||protocolItems.get(j).getResolutionMode()==2){//如果是枚举量
 							for(int l=0;l<itemsArr.length;l++){
 								if(itemsArr[l].equalsIgnoreCase(protocolItems.get(j).getTitle())){
@@ -638,7 +689,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 									if(StringManagerUtils.isNotNull(value)){
 										for(int m=0;valueArr!=null&&m<valueArr.length;m++){
 											if(m==protocolItems.get(j).getMeaning().get(l).getValue()){
-												
 												bitIndex=m+"";
 												if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
 													value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
@@ -679,11 +729,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 									break;
 								}
 							}
-							columnName=protocolItems.get(j).getTitle();
-							addr=protocolItems.get(j).getAddr()+"";
-							column="ADDR"+addr;
-							columnDataType=protocolItems.get(j).getIFDataType();
-							resolutionMode=protocolItems.get(j).getResolutionMode()+"";
+							
 							ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
 							protocolItemResolutionDataList.add(protocolItemResolutionData);
 						} 
@@ -810,12 +856,21 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	
 	public String getDeviceControlandInfoData(String wellName,String deviceType,int userId)throws Exception {
 		StringBuffer result_json = new StringBuffer();
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		String deviceTableName="tbl_pumpdevice";
 		String infoTableName="tbl_pumpdeviceaddinfo";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			deviceTableName="tbl_pipelinedevice";
 			infoTableName="tbl_pipelinedeviceaddinfo";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
 		String protocolItemsSql="select t.wellname,t3.protocol, "
@@ -875,7 +930,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 									if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())
 											||"w".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())){
 										controlItems.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle());
-										controlColumns.add("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr());
+										String col=dataMappingMode==0?("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle()));
+										controlColumns.add(col);
 										controlItemResolutionMode.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode());
 										if(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode()==2){//数据量
 											controlItemMeaningList.add("[]");
@@ -926,14 +982,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			Object[] obj=(Object[]) deviceAddInfoList.get(i);
 			deviceInfoDataList.append("{\"name\":\""+obj[1]+"\","
 					+ "\"value\":\""+obj[2]+"\"},");
-			
-//			
-//			deviceInfoDataList.append("{\"title\":\"出厂编号\",\"name\":\"factorynumber\",\"value\":\""+obj[1]+"\"},");
-//			deviceInfoDataList.append("{\"title\":\"规格型号\",\"name\":\"model\",\"value\":\""+obj[2]+"\"},");
-//			deviceInfoDataList.append("{\"title\":\"生产日期\",\"name\":\"productiondate\",\"value\":\""+obj[3]+"\"},");
-//			deviceInfoDataList.append("{\"title\":\"发货日期\",\"name\":\"deliverydate\",\"value\":\""+obj[4]+"\"},");
-//			deviceInfoDataList.append("{\"title\":\"投产日期\",\"name\":\"commissioningdate\",\"value\":\""+obj[5]+"\"},");
-//			deviceInfoDataList.append("{\"title\":\"控制柜型号\",\"name\":\"controlcabinetmodel\",\"value\":\""+obj[6]+"\"}");
 		}
 		
 		if(deviceInfoDataList.toString().endsWith(",")){
@@ -1094,12 +1142,25 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer itemsBuff = new StringBuffer();
 		StringBuffer curveColorBuff = new StringBuffer();
+		
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
+		
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
+		
 		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
 				+ " and  t.wellname='"+deviceName+"' ";
 		
@@ -1132,7 +1193,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							Object[] itemObj=(Object[]) curveItemList.get(j);
 							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
-									itemColumnList.add("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
+									String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
+									itemColumnList.add(col);
 									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
 										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");
 									}else{

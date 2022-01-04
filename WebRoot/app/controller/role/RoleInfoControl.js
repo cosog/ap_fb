@@ -90,7 +90,7 @@ function UpdateroleDataInfoSubmitBtnForm() {
 };
 
 // 复值
-SelectroleDataAttrInfoGridPanel = function () {
+SelectRoleDataAttrInfoGridPanel = function () {
     var dataattr_row = Ext.getCmp("RoleInfoGridPanel_Id").getSelectionModel().getSelection();
     var roleId = dataattr_row[0].data.roleId;
     var roleName = dataattr_row[0].data.roleName;
@@ -114,17 +114,20 @@ SelectroleDataAttrInfoGridPanel = function () {
     Ext.getCmp('roleRemark_Id').setValue(remark);
     
     if(currentUserRoleFlag==0){
-    	Ext.getCmp('roleFlagComboxfield_Id').setReadOnly(true);
+//    	Ext.getCmp('roleFlagComboxfield_Id').setReadOnly(true);
+    	Ext.getCmp('roleFlagComboxfield_Id').disable();
     }
     
     if(currentUserRoleShowLevel>=showLevel){
-    	Ext.getCmp('roleShowLevel_Id').setReadOnly(true);
+//    	Ext.getCmp('roleShowLevel_Id').setReadOnly(true);
+    	Ext.getCmp('roleShowLevel_Id').disable();
     }else{
     	Ext.getCmp("roleShowLevel_Id").setMinValue(currentUserRoleShowLevel+1);
     }
     
     if(currentUserRoleLevel>=roleLevel){
-    	Ext.getCmp('roleLevel_Id').setReadOnly(true);
+//    	Ext.getCmp('roleLevel_Id').setReadOnly(true);
+    	Ext.getCmp('roleLevel_Id').disable();
     }else{
         Ext.getCmp("roleLevel_Id").setMinValue(currentUserRoleLevel+1);
     }
@@ -169,8 +172,8 @@ function delroleInfo() {
     var delUrl = context + '/roleManagerController/doRoleBulkDelete'
     if (_record.length>0) {
         // 提示是否删除数据
-    	var roleCode=_record[0].data.roleCode;
-    	if(roleCode!="systemRole"){
+    	var roleId=_record[0].data.roleId;
+    	if(parseInt(roleId)>1){
     		Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
             Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
             Ext.Msg.confirm(cosog.string.yesdel, cosog.string.yesdeldata, function (btn) {
@@ -188,31 +191,21 @@ function delroleInfo() {
 }
 
 function modifyroleInfo() {
-	var roleCode="";
-    if(Ext.getCmp("RoleInfoGridPanel_Id")!=undefined){
-    	var _record = Ext.getCmp("RoleInfoGridPanel_Id").getSelectionModel().getSelection();
-        if(_record.length>0){
-        	roleCode=_record[0].data.roleCode;
-        }
-    }
-    if(roleCode!="systemRole"){
-    	var role_panel = Ext.getCmp("RoleInfoGridPanel_Id");
-        var role_model = role_panel.getSelectionModel();
-        var _record = role_model.getSelection();
-        if (_record.length>0) {
-        	var roleUpdateInfoWindow = Ext.create("AP.view.role.RoleInfoWindow", {
-                title: cosog.string.editRole
-            });
-            roleUpdateInfoWindow.show();
-            Ext.getCmp("addFormrole_Id").hide();
-            Ext.getCmp("updateFormrole_Id").show();
-            SelectroleDataAttrInfoGridPanel();
-        }else {
-            Ext.Msg.alert(cosog.string.deleteCommand, cosog.string.checkOne);
-        }
+	var role_panel = Ext.getCmp("RoleInfoGridPanel_Id");
+    var role_model = role_panel.getSelectionModel();
+    var _record = role_model.getSelection();
+    if (_record.length>0) {
+    	var roleUpdateInfoWindow = Ext.create("AP.view.role.RoleInfoWindow", {
+            title: cosog.string.editRole
+        });
+        roleUpdateInfoWindow.show();
+        Ext.getCmp("addFormrole_Id").hide();
+        Ext.getCmp("updateFormrole_Id").show();
+        SelectRoleDataAttrInfoGridPanel();
+    }else {
+        Ext.Msg.alert(cosog.string.deleteCommand, cosog.string.checkOne);
     }
     return false;
-
 }
 
 var grantRolePermission = function () {//授予角色模块权限

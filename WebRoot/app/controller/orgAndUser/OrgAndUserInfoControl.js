@@ -115,18 +115,36 @@ SelectOrgDataAttrInfoGridPanel = function () {
 };
 // open win
 function addOrgInfo() {
-        var win_Obj = Ext.getCmp("org_addwin_Id")
-        if (win_Obj != undefined) {
-            win_Obj.destroy();
-        }
-        var orgInfoWindow = Ext.create("AP.view.orgAndUser.OrgInfoWindow", {
-            title: cosog.string.addOrg
-        });
-        orgInfoWindow.show();
-        Ext.getCmp("addFormOrg_Id").show();
-        Ext.getCmp("updateFormOrg_Id").hide();
-        return false;
-    }
+	var selectedOrgName="";
+	var selectedOrgId="";
+	var orgTreeStore = Ext.getCmp("OrgInfoTreeGridView_Id").getStore();
+	var count=orgTreeStore.getCount();
+	var orgTreeSelection = Ext.getCmp("OrgInfoTreeGridView_Id").getSelectionModel().getSelection();
+	if (orgTreeSelection.length > 0) {
+		selectedOrgName=orgTreeSelection[0].data.text;
+		selectedOrgId=orgTreeSelection[0].data.orgId;
+	} else {
+		if(count>0){
+			selectedOrgName=orgTreeStore.getAt(0).data.text;
+			selectedOrgId=orgTreeStore.getAt(0).data.orgId;
+		}
+	}
+	var win_Obj = Ext.getCmp("org_addwin_Id")
+	if (win_Obj != undefined) {
+		win_Obj.destroy();
+	}
+	var orgInfoWindow = Ext.create("AP.view.orgAndUser.OrgInfoWindow", {
+		title: cosog.string.addOrg
+	});
+	orgInfoWindow.show();
+	Ext.getCmp("addFormOrg_Id").show();
+	Ext.getCmp("updateFormOrg_Id").hide();
+	
+	Ext.getCmp("orgName_Parent_Id").setValue(selectedOrgId);
+	Ext.getCmp("orgName_Parent_Id1").setValue(selectedOrgId);
+	Ext.getCmp("orgName_Parent_Id1").setRawValue(selectedOrgName);
+	return false;
+}
     // del to action
 function delOrgInfo() {
     var org_panel = Ext.getCmp("OrgInfoTreeGridView_Id");
@@ -362,9 +380,14 @@ SelectedUserDataAttrInfoGridPanel = function () {
     userRegTimeInput.format = 'Y-m-d H:i:s';
     userRegTimeInput.setValue(traininguserRegtime);
     if(parseInt(user_)==parseInt(userNo)){//如果是当前用户，不能修改自己的角色和激活状态
-    	Ext.getCmp('userType_Id1').setReadOnly(true);
-    	Ext.getCmp('userEnableRadio1_Id').setReadOnly(true);
-    	Ext.getCmp('userEnableRadio0_Id').setReadOnly(true);
+//    	Ext.getCmp('userType_Id1').setReadOnly(true);
+//    	Ext.getCmp('userEnableRadio1_Id').setReadOnly(true);
+//    	Ext.getCmp('userEnableRadio0_Id').setReadOnly(true);
+    	
+    	Ext.getCmp('userType_Id1').disable();
+    	Ext.getCmp('userEnableRadioGroup_Id').disable();
+//    	Ext.getCmp('userEnableRadio1_Id').disable();
+//    	Ext.getCmp('userEnableRadio0_Id').disable();
     }
 };
 
@@ -372,14 +395,53 @@ function delUserInfo() {
     var user_panel = Ext.getCmp("UserInfoGridPanel_Id");
     var user_model = user_panel.getSelectionModel();
     var _record = user_model.getSelection();
-    var delUrl = context + '/userManagerController/doUserBulkDelete'
     if (_record.length>0) {
         // 提示是否删除数据
         Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
         Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
         Ext.Msg.confirm(cosog.string.yesdel, cosog.string.yesdeldata, function (btn) {
             if (btn == "yes") {
-                ExtDel_ObjectInfo("UserInfoGridPanel_Id", _record,"userNo", delUrl);
+//                ExtDel_ObjectInfo("UserInfoGridPanel_Id", _record,"userNo", delUrl);
+                
+//                grid_id, row, data_id, action_name
+                var deletejson = [];
+                var noDelete=[];
+            	Ext.Array.each(_record, function(name, index, countriesItSelf) {
+            		if(_record[index].get("userNo")>0 && parseInt(_record[index].get("userNo"))!=parseInt(user_)){
+            			deletejson.push(_record[index].get("userNo"));
+            		}else if(_record[index].get("userNo")>0 && parseInt(_record[index].get("userNo"))==parseInt(user_)){
+            			noDelete.push(_record[index].get("userNo"));
+            		}		
+            	});
+            	if(deletejson.length>0){
+            		var delparamsId = "" + deletejson.join(",");
+            		Ext.Ajax.request({
+            			url : context + '/userManagerController/doUserBulkDelete',
+            			method : "POST",
+            			params : {
+            				paramsId : delparamsId
+            			},
+            			success : function(response) {
+            				var result = Ext.JSON.decode(response.responseText);
+            				if (result.flag == true) {
+            					Ext.Msg.alert('提示', "【<font color=blue>成功删除</font>】"+ deletejson.length + "条数据信息。");
+            				}
+            				if (result.flag == false) {
+            					Ext.Msg.alert('提示', "<font color=red>SORRY！删除失败。</font>");
+            				}
+            				Ext.getCmp("UserInfoGridPanel_Id").getStore().load();
+            			},
+            			failure : function() {
+            				Ext.Msg.alert("提示", "【<font color=red>异常抛出 </font>】：请与管理员联系！");
+            			}
+            		});
+            	}else if(noDelete.length>0){
+            		Ext.Msg.alert('提示', "<font color=red>不能删除当前登录用户。</font>");
+            	}else{
+            		Ext.Msg.alert('提示', "<font color=red>所选属性无效，删除失败。</font>");
+            	}
+                
+                
             }
         });
     } else {
