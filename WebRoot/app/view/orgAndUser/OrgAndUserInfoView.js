@@ -44,7 +44,6 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
                 },'-', {
                     xtype: 'button',
                     text: cosog.string.search,
-                    pressed: true,
                     iconCls: 'search',
                     handler: function () {
                     	var gridPanel = Ext.getCmp("OrgInfoTreeGridView_Id");
@@ -86,7 +85,7 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
                 }]
         	},{
         		region:'east',
-        		width:'65%',
+        		width:'60%',
         		id:'OrgAndUserUserInfoPanel_Id',
         		title:'用户列表',
         		header:false,
@@ -104,7 +103,6 @@ Ext.define("AP.view.orgAndUser.OrgAndUserInfoView", {
         		},"-", {
                     xtype: 'button',
                     text: cosog.string.search,
-                    pressed: true,
                     iconCls: 'search',
                     handler: function () {
                     	var gridPanel = Ext.getCmp("UserInfoGridPanel_Id");

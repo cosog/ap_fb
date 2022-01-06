@@ -70,15 +70,15 @@ public class LogQueryController extends BaseController{
 		}
 		
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from viw_deviceoperationlog t ";
+			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd hh24:mi:ss') from viw_deviceoperationlog t ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);
@@ -123,15 +123,15 @@ public class LogQueryController extends BaseController{
 		
 		
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from viw_deviceoperationlog t ";
+			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd hh24:mi:ss') from viw_deviceoperationlog t ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);
@@ -169,15 +169,15 @@ public class LogQueryController extends BaseController{
 		}
 		
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from tbl_systemlog t ";
+			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd hh24:mi:ss') from tbl_systemlog t ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);
@@ -216,15 +216,15 @@ public class LogQueryController extends BaseController{
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd') from tbl_systemlog t ";
+			String sql = " select to_char(max(t.createtime),'yyyy-mm-dd hh24:mi:ss') from tbl_systemlog t ";
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);

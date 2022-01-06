@@ -111,7 +111,7 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         },pipelineDeviceCombo,'-', {
                             xtype: 'button',
                             text: cosog.string.exportExcel,
-                            pressed: true,
+                            iconCls: 'export',
                             hidden:false,
                             handler: function (v, o) {
                             	var orgId = Ext.getCmp('leftOrg_Id').getValue();
@@ -216,7 +216,69 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         id: 'PipelineHistoryQueryStartDate_Id',
                         listeners: {
                         	select: function (combo, record, index) {
-                        		Ext.getCmp("PipelineHistoryQueryDataGridPanel_Id").getStore().loadPage(1);
+                            }
+                        }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PipelineHistoryQueryStartTime_Hour_Id',
+                        fieldLabel: '时',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 23,
+                        value:'',
+                        msgTarget: 'none',
+                        regex:/^(2[0-3]|[0-1]?\d|\*|-|\/)$/,
+                        listeners: {
+                        	blur: function (field, event, eOpts) {
+                        		var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                        		var flag=r.test(field.value);
+                        		if(!flag){
+                        			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                        			field.focus(true, 100);
+                        		}
+                            }
+                        }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PipelineHistoryQueryStartTime_Minute_Id',
+                        fieldLabel: '分',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'none',
+                        regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                        listeners: {
+                        	blur: function (field, event, eOpts) {
+                        		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                        		var flag=r.test(field.value);
+                        		if(!flag){
+                        			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                        			field.focus(true, 100);
+                        		}
+                            }
+                        }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PipelineHistoryQueryStartTime_Second_Id',
+                        fieldLabel: '秒',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'none',
+                        regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                        listeners: {
+                        	blur: function (field, event, eOpts) {
+                        		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                        		var flag=r.test(field.value);
+                        		if(!flag){
+                        			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                        			field.focus(true, 100);
+                        		}
                             }
                         }
                     },{
@@ -233,12 +295,166 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         		Ext.getCmp("PipelineHistoryQueryDataGridPanel_Id").getStore().loadPage(1);
                             }
                         }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PipelineHistoryQueryEndTime_Hour_Id',
+                        fieldLabel: '时',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 23,
+                        value:'',
+                        msgTarget: 'none',
+                        regex:/^(2[0-3]|[0-1]?\d|\*|-|\/)$/,
+                        listeners: {
+                        	blur: function (field, event, eOpts) {
+                        		var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                        		var flag=r.test(field.value);
+                        		if(!flag){
+                        			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                        			field.focus(true, 100);
+                        		}
+                            }
+                        }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PipelineHistoryQueryEndTime_Minute_Id',
+                        fieldLabel: '分',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'none',
+                        regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                        listeners: {
+                        	blur: function (field, event, eOpts) {
+                        		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                        		var flag=r.test(field.value);
+                        		if(!flag){
+                        			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                        			field.focus(true, 100);
+                        		}
+                            }
+                        }
+                    },{
+                    	xtype: 'numberfield',
+                    	id: 'PipelineHistoryQueryEndTime_Second_Id',
+                        fieldLabel: '秒',
+                        labelWidth: 15,
+                        width: 60,
+                        minValue: 0,
+                        maxValue: 59,
+                        value:'',
+                        msgTarget: 'none',
+                        regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                        listeners: {
+                        	blur: function (field, event, eOpts) {
+                        		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                        		var flag=r.test(field.value);
+                        		if(!flag){
+                        			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                        			field.focus(true, 100);
+                        		}
+                            }
+                        }
+                    },'-',{
+                        xtype: 'button',
+                        text: cosog.string.search,
+//                        pressed: true,
+                        iconCls: 'search',
+                        handler: function () {
+                        	var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                        	var r2 = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                        	var startTime_Hour=Ext.getCmp('PipelineHistoryQueryStartTime_Hour_Id').getValue();
+                        	if(!r.test(startTime_Hour)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryStartTime_Hour_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var startTime_Minute=Ext.getCmp('PipelineHistoryQueryStartTime_Minute_Id').getValue();
+                        	if(!r2.test(startTime_Minute)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryStartTime_Minute_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var startTime_Second=Ext.getCmp('PipelineHistoryQueryStartTime_Second_Id').getValue();
+                        	if(!r2.test(startTime_Second)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryStartTime_Second_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	
+                        	var endTime_Hour=Ext.getCmp('PipelineHistoryQueryEndTime_Hour_Id').getValue();
+                        	if(!r.test(endTime_Hour)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryEndTime_Hour_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var endTime_Minute=Ext.getCmp('PipelineHistoryQueryEndTime_Minute_Id').getValue();
+                        	if(!r2.test(endTime_Minute)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryEndTime_Minute_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var endTime_Second=Ext.getCmp('PipelineHistoryQueryEndTime_Second_Id').getValue();
+                        	if(!r2.test(endTime_Second)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryEndTime_Second_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	
+                        	
+                        	var gridPanel = Ext.getCmp("PipelineHistoryQueryDataGridPanel_Id");
+                        	if (isNotVal(gridPanel)) {
+                        		gridPanel.getStore().loadPage(1);
+                        	}
+                        }
                     },'-', {
                         xtype: 'button',
                         text: cosog.string.exportExcel,
-                        pressed: true,
+                        iconCls: 'export',
                         hidden:false,
                         handler: function (v, o) {
+                        	var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                        	var r2 = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                        	var startTime_Hour=Ext.getCmp('PipelineHistoryQueryStartTime_Hour_Id').getValue();
+                        	if(!r.test(startTime_Hour)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryStartTime_Hour_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var startTime_Minute=Ext.getCmp('PipelineHistoryQueryStartTime_Minute_Id').getValue();
+                        	if(!r2.test(startTime_Minute)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryStartTime_Minute_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var startTime_Second=Ext.getCmp('PipelineHistoryQueryStartTime_Second_Id').getValue();
+                        	if(!r2.test(startTime_Second)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryStartTime_Second_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	
+                        	var endTime_Hour=Ext.getCmp('PipelineHistoryQueryEndTime_Hour_Id').getValue();
+                        	if(!r.test(endTime_Hour)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryEndTime_Hour_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var endTime_Minute=Ext.getCmp('PipelineHistoryQueryEndTime_Minute_Id').getValue();
+                        	if(!r2.test(endTime_Minute)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryEndTime_Minute_Id').focus(true, 100);
+                        		return;
+                        	}
+                        	var endTime_Second=Ext.getCmp('PipelineHistoryQueryEndTime_Second_Id').getValue();
+                        	if(!r2.test(endTime_Second)){
+                        		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                        		Ext.getCmp('PipelineHistoryQueryEndTime_Second_Id').focus(true, 100);
+                        		return;
+                        	}
                         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                         	var deviceName='';
                         	var selectRow= Ext.getCmp("PipelineHistoryQueryInfoDeviceListSelectRow_Id").getValue();
@@ -251,7 +467,7 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                        	 	var fileName='管设备'+deviceName+'历史数据';
                        	 	var title='管设备'+deviceName+'历史数据';
                        	 	var columnStr=Ext.getCmp("PipelineHistoryQueryDataColumnStr_Id").getValue();
-                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDate,fileName,title,columnStr);
+                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),fileName,title,columnStr);
                         }
                     }],
                     items: [{

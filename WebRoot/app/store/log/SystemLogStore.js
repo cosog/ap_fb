@@ -38,7 +38,7 @@ Ext.define('AP.store.log.SystemLogStore', {
                     autoLoad: true,
                     bbar: bbar,
                     columnLines: true,
-                    forceFit: true,
+                    forceFit: false,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
@@ -57,11 +57,17 @@ Ext.define('AP.store.log.SystemLogStore', {
             
             var startDate=Ext.getCmp('SystemLogQueryStartDate_Id');
             if(startDate.rawValue==''||null==startDate.rawValue){
-            	startDate.setValue(get_rawData.start_date);
+            	startDate.setValue(get_rawData.start_date.split(' ')[0]);
+            	Ext.getCmp('SystemLogQueryStartTime_Hour_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[0]);
+            	Ext.getCmp('SystemLogQueryStartTime_Minute_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[1]);
+            	Ext.getCmp('SystemLogQueryStartTime_Second_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[2]);
             }
             var endDate=Ext.getCmp('SystemLogQueryEndDate_Id');
             if(endDate.rawValue==''||null==endDate.rawValue){
-            	endDate.setValue(get_rawData.end_date);
+            	endDate.setValue(get_rawData.end_date.split(' ')[0]);
+            	Ext.getCmp('SystemLogQueryEndTime_Hour_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[0]);
+            	Ext.getCmp('SystemLogQueryEndTime_Minute_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[1]);
+            	Ext.getCmp('SystemLogQueryEndTime_Second_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[2]);
             }
         },
         beforeload: function (store, options) {
@@ -74,11 +80,17 @@ Ext.define('AP.store.log.SystemLogStore', {
         		orgId='';
         	}
         	var startDate=Ext.getCmp('SystemLogQueryStartDate_Id').rawValue;
+        	var startTime_Hour=Ext.getCmp('SystemLogQueryStartTime_Hour_Id').getValue();
+        	var startTime_Minute=Ext.getCmp('SystemLogQueryStartTime_Minute_Id').getValue();
+        	var startTime_Second=Ext.getCmp('SystemLogQueryStartTime_Second_Id').getValue();
             var endDate=Ext.getCmp('SystemLogQueryEndDate_Id').rawValue;
+            var endTime_Hour=Ext.getCmp('SystemLogQueryEndTime_Hour_Id').getValue();
+        	var endTime_Minute=Ext.getCmp('SystemLogQueryEndTime_Minute_Id').getValue();
+        	var endTime_Second=Ext.getCmp('SystemLogQueryEndTime_Second_Id').getValue();
             var new_params = {
                     orgId: orgId,
-                    startDate:startDate,
-                    endDate:endDate
+                    startDate:getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),
+                    endDate:getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second)
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

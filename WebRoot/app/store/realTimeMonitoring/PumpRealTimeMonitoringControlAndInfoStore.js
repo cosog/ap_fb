@@ -83,7 +83,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		}
         	
     		//辅件设备
-    		
     		var deviceAuxiliaryInfoDataStr="{\"items\":[";
         	for(var i=0;i<auxiliaryDeviceList.length;i++){
         		deviceAuxiliaryInfoDataStr+="{\"id\":"+auxiliaryDeviceList[i].id+","
@@ -109,11 +108,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
 			        }
 			    }
 			});
-        	
         	var deviceAuxiliaryInfoGridPanel=Ext.getCmp("PumpRealTimeMonitoringAuxiliaryDeviceInfoDataGridPanel_Id");
-        	
-        	
-        	
     		if(!isNotVal(deviceAuxiliaryInfoGridPanel)){
     			deviceAuxiliaryInfoGridPanel=Ext.create('Ext.grid.Panel', {
     				id:'PumpRealTimeMonitoringAuxiliaryDeviceInfoDataGridPanel_Id',
@@ -158,11 +153,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     		}
     		var total=deviceAuxiliaryInfoGridPanel.getStore().getCount();
     		if(total>0&&Ext.getCmp("PumpRealTimeMonitoringRightTabPanel").getActiveTab().id!="PumpRealTimeMonitoringRightControlPanel"){
-//    			deviceAuxiliaryInfoGridPanel.getSelectionModel().select(0, true);
     			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0,0);
     		}
-    		
-    		
     		
         	//控制
         	var controlDataStr="{\"items\":[";
@@ -199,8 +191,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     				columnLines: true,
     				forceFit: false,
     				store: controlStore,
-    			    columns: [
-    			        { 
+    			    columns: [{ 
     			        	header: '操作项',  
     			        	dataIndex: 'item',
     			        	align:'left',
@@ -209,17 +200,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		e.tdStyle ="vertical-align:middle;";
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
-    			        },
-//    			        { 
-//    			        	header: '变量', 
-//    			        	dataIndex: 'value',
-//    			        	align:'center',
-//    			        	flex:3,
-//    			        	renderer:function(value){
-//    			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
-//    			        	}
-//    			        },
-    			        { 	header: '操作', 
+    			        },{ 	
+    			        	header: '操作', 
     			        	dataIndex: 'operation',
     			        	align:'center',
 //    			        	flex:8,
@@ -240,7 +222,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
     			        		}else{
     			        			hand=true;
     			        		}
-    			        		hand=false;
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
@@ -481,8 +462,6 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                         var DeviceControlCheckPassWindow = Ext.create("AP.view.realTimeMonitoring.DeviceControlCheckPassWindow", {
         		                                             title: '控制'
         		                                         });
-        		                                         
-        		                                         
         		                                     	 var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
         		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
@@ -518,8 +497,8 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
         		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
         		                                         }else{
+        		                                        	 
         		                                         }
-        		                                         
         		                                         DeviceControlCheckPassWindow.show();
         		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
 //        		                                     }

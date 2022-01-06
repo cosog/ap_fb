@@ -37,7 +37,7 @@ public class LogQueryService<T> extends BaseService<T>  {
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from viw_deviceoperationlog t where 1=1"
 				+ " and t.orgid in ("+orgId+")"
-				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
 		if(StringManagerUtils.isNotNull(deviceType)){
 			sql+=" and t.devicetype="+deviceType;
 		}
@@ -62,7 +62,7 @@ public class LogQueryService<T> extends BaseService<T>  {
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from viw_deviceoperationlog t where 1=1"
 				+ " and t.orgid in ("+orgId+")"
-				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
 		if(StringManagerUtils.isNotNull(deviceType)){
 			sql+=" and t.devicetype="+deviceType;
 		}
@@ -86,7 +86,7 @@ public class LogQueryService<T> extends BaseService<T>  {
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from viw_systemlog t where t.orgid in ("+orgId+") "
-				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
 		
 		if(StringManagerUtils.isNotNull(operationType)){
 //			sql+=" and t.action="+operationType;
@@ -107,7 +107,7 @@ public class LogQueryService<T> extends BaseService<T>  {
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from viw_systemlog t where t.orgid in ("+orgId+") "
-				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
+				+ " and t.createtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
 		
 		if(StringManagerUtils.isNotNull(operationType)){
 //			sql+=" and t.action="+operationType;

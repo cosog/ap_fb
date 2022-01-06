@@ -1050,6 +1050,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 							service.updateSql(groupSql);
 							service.updateSql(alatmUnitSql);
 						}
+						Collections.sort(modbusProtocolConfig.getProtocol().get(i).getItems());
 						break;
 					}
 				}
@@ -1098,6 +1099,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 						}
 						protocol.getItems().add(item);
 					}
+					Collections.sort(protocol.getItems());
 					modbusProtocolConfig.getProtocol().add(protocol);
 				}
 			}
@@ -1592,6 +1594,20 @@ public class AcquisitionUnitManagerController extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	@RequestMapping("/getDatabaseColumnMappingTable")
+	public String getDatabaseColumnMappingTable() throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		String json = this.acquisitionUnitManagerService.getDatabaseColumnMappingTable(deviceType);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
 		return null;
 	}
 

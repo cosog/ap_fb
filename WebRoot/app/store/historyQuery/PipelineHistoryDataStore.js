@@ -77,11 +77,17 @@ Ext.define('AP.store.historyQuery.PipelineHistoryDataStore', {
             
             var startDate=Ext.getCmp('PipelineHistoryQueryStartDate_Id');
             if(startDate.rawValue==''||null==startDate.rawValue){
-            	startDate.setValue(get_rawData.start_date);
+            	startDate.setValue(get_rawData.start_date.split(' ')[0]);
+            	Ext.getCmp('PipelineHistoryQueryStartTime_Hour_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[0]);
+            	Ext.getCmp('PipelineHistoryQueryStartTime_Minute_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[1]);
+            	Ext.getCmp('PipelineHistoryQueryStartTime_Second_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[2]);
             }
             var endDate=Ext.getCmp('PipelineHistoryQueryEndDate_Id');
             if(endDate.rawValue==''||null==endDate.rawValue){
-            	endDate.setValue(get_rawData.end_date);
+            	endDate.setValue(get_rawData.end_date.split(' ')[0]);
+            	Ext.getCmp('PipelineHistoryQueryEndTime_Hour_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[0]);
+            	Ext.getCmp('PipelineHistoryQueryEndTime_Minute_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[1]);
+            	Ext.getCmp('PipelineHistoryQueryEndTime_Second_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[2]);
             }
             
             deviceHistoryQueryCurve(1);
@@ -94,13 +100,20 @@ Ext.define('AP.store.historyQuery.PipelineHistoryDataStore', {
         		deviceName = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	}
         	var startDate=Ext.getCmp('PipelineHistoryQueryStartDate_Id').rawValue;
+        	var startTime_Hour=Ext.getCmp('PipelineHistoryQueryStartTime_Hour_Id').getValue();
+        	var startTime_Minute=Ext.getCmp('PipelineHistoryQueryStartTime_Minute_Id').getValue();
+        	var startTime_Second=Ext.getCmp('PipelineHistoryQueryStartTime_Second_Id').getValue();
+
             var endDate=Ext.getCmp('PipelineHistoryQueryEndDate_Id').rawValue;
+            var endTime_Hour=Ext.getCmp('PipelineHistoryQueryEndTime_Hour_Id').getValue();
+        	var endTime_Minute=Ext.getCmp('PipelineHistoryQueryEndTime_Minute_Id').getValue();
+        	var endTime_Second=Ext.getCmp('PipelineHistoryQueryEndTime_Second_Id').getValue();
             var new_params = {
             		orgId: orgId,
             		deviceType:1,
                     deviceName:deviceName,
-                    startDate:startDate,
-                    endDate:endDate
+                    startDate:getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),
+                    endDate:getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second)
                 };
             Ext.apply(store.proxy.extraParams, new_params);
         },

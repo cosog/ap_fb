@@ -37,7 +37,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmUnitConfigInfoView', {
         			}
         		},"-",{
                 	xtype: 'button',
-        			pressed: true,
         			text: cosog.string.save,
         			iconCls: 'save',
         			handler: function (v, o) {
@@ -102,20 +101,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmUnitConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolAlarmUnitConfigNumItemsHandsontableHelper!=null && protocolAlarmUnitConfigNumItemsHandsontableHelper.hot!=undefined){
-//                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
-//                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id");
-//                            		if(isNotVal(gridPanel)){
-//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                            			if(selectedItem.data.classes==0){
-//                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-//                                    			CreateProtocolAlarmUnitNumItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
-//                                    		}
-//                                    	}else if(selectedItem.data.classes==1){
-//                                    		CreateProtocolAlarmUnitNumItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
-//                                    	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
-//                                    		CreateProtocolAlarmUnitNumItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
-//                                    	}
-//                            		}
                             		protocolAlarmUnitConfigNumItemsHandsontableHelper.hot.refreshDimensions();
                             	}
                             }

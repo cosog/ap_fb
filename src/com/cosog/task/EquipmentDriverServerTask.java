@@ -49,7 +49,7 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -105,12 +105,15 @@ public class EquipmentDriverServerTask {
 		initPumpDriverAcquisitionInfoConfig(null,"");
 		initPipelineDriverAcquisitionInfoConfig(null,"");
 		initSMSDevice(null,"");
+		
+		boolean sendMsg=false;
 		do{
 			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
 			type = new TypeToken<DriverProbeResponse>() {}.getType();
 			DriverProbeResponse driverProbeResponse=gson.fromJson(responseData, type);
 			String Ver="";
 			if(driverProbeResponse!=null){
+				sendMsg=false;
 				if(!driverProbeResponse.getHttpServerInitStatus()){
 					initServerConfig();
 				}
@@ -130,7 +133,10 @@ public class EquipmentDriverServerTask {
 				}
 				Ver=driverProbeResponse.getVer();
 			}else{
-				StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+				if(!sendMsg){
+					StringManagerUtils.sendPostMethod(allOfflineUrl, "","utf-8");
+					sendMsg=true;
+				}
 			}
 			Thread.sleep(1000*1);
 		}while(true);
@@ -199,8 +205,10 @@ public class EquipmentDriverServerTask {
 		if(modbusProtocolConfig==null){
 			modbusProtocolConfig=new ModbusProtocolConfig();
 			modbusProtocolConfig.setProtocol(new ArrayList<ModbusProtocolConfig.Protocol>());
-		}else if(modbusProtocolConfig.getProtocol()==null){
+		}else if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()==null){
 			modbusProtocolConfig.setProtocol(new ArrayList<ModbusProtocolConfig.Protocol>());
+		}else if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null&&modbusProtocolConfig.getProtocol().size()>0){
+			Collections.sort(modbusProtocolConfig.getProtocol());
 		}
 		equipmentDriveMap.put("modbusProtocolConfig", modbusProtocolConfig);
 		

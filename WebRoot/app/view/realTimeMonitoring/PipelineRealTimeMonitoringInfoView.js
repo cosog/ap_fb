@@ -107,7 +107,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                          },pipelineDeviceCombo,'-', {
                              xtype: 'button',
                              text: cosog.string.exportExcel,
-                             pressed: true,
+                             iconCls: 'export',
                              hidden:false,
                              handler: function (v, o) {
                             	 var orgId = Ext.getCmp('leftOrg_Id').getValue();
@@ -124,7 +124,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                          	xtype: 'button',
                             text:'查看历史',
                             tooltip:'点击按钮或者双击表格，查看历史数据',
-                            pressed: true,
+//                            pressed: true,
                             handler: function (v, o) {
                             	var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
                         		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");

@@ -47,10 +47,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from "+tableName+" t where t.orgid in ("+orgId+") "
-				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
-//		if(StringManagerUtils.isNotNull(deviceType)){
-//			sql+=" and t.devicetype="+deviceType;
-//		}
+				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
 		}
@@ -88,10 +85,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from "+tableName+" t where t.orgid in ("+orgId+") "
-				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd')+1";
-//		if(StringManagerUtils.isNotNull(deviceType)){
-//			sql+=" and t.devicetype="+deviceType;
-//		}
+				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
 		if(StringManagerUtils.isNotNull(deviceName)){
 			sql+=" and t.wellName='"+deviceName+"'";
 		}

@@ -7845,4 +7845,31 @@ function foreachAndSearchOrgChildId(rec) {
 	};
 	recursionOrgChildId(rec);
 	return rtnArr.join(",");
-}
+};
+
+function getDateAndTime(dateStr,h,m,s){
+	if(!isNotVal(dateStr)){
+		return '';
+	}
+	if(!isNotVal(h)){
+		h=0
+	}
+	if(!isNotVal(m)){
+		m=0
+	}
+	if(!isNotVal(s)){
+		s=0
+	}
+	var hStr=h+'';
+	var mStr=m+'';
+	var sStr=s+'';
+	if(hStr.length==1){
+		hStr='0'+hStr;
+	}
+	if(mStr.length==1){
+		mStr='0'+mStr;
+	}if(sStr.length==1){
+		sStr='0'+sStr;
+	}
+	return dateStr+' '+hStr+":"+mStr+':'+sStr;
+};

@@ -153,13 +153,45 @@ function websocketOnMessage(evt) {
 	var activeId = Ext.getCmp("frame_center_ids").getActiveTab().id;
 	var receiveData=evt.data;
 	if(evt.data.indexOf("}{")>=0){
-		evt.data.replace("}{", "}@@{");
-		receiveData=evt.data.split("@@")[0];
+		var dataStr=evt.data.replace("}{", "}@@@@{");
+		receiveData=dataStr.split("@@@@")[0];
 	}
 	var data=Ext.JSON.decode(receiveData);
 	var leftOrg_Id = Ext.getCmp('leftOrg_Id').getValue();
 	var orgIdArr=leftOrg_Id.split(",");
-	if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringData".toUpperCase()){//接收到推送的泵设备实时监控数据
+	if(data.functionCode.toUpperCase()=="adExitAndDeviceOffline".toUpperCase()){//ad退出，所有设备离线
+		var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
+		var activeId = tabPanel.getActiveTab().id;
+		if(activeId=="PumpRealTimeMonitoringInfoPanel_Id"){
+			var statTabActiveId = Ext.getCmp("PumpRealTimeMonitoringStatTabPanel").getActiveTab().id;
+			if(statTabActiveId=="PumpRealTimeMonitoringStatGraphPanel_Id"){
+				loadAndInitCommStatusStat(true);
+			}else if(statTabActiveId=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+				loadAndInitDeviceTypeStat(true);
+			}
+			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setValue('');
+			Ext.getCmp('RealTimeMonitoringPumpDeviceListComb_Id').setRawValue('');
+			var gridPanel = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getSelectionModel().deselectAll(true);
+				gridPanel.getStore().load();
+			}
+		}else if(activeId=="PipelineRealTimeMonitoringInfoPanel_Id"){
+			var statTabActiveId = Ext.getCmp("PipelineRealTimeMonitoringStatTabPanel").getActiveTab().id;
+			if(statTabActiveId=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
+				loadAndInitCommStatusStat(true);
+			}else if(statTabActiveId=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+				loadAndInitDeviceTypeStat(true);
+			}
+			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setValue('');
+			Ext.getCmp('RealTimeMonitoringPipelineDeviceListComb_Id').setRawValue('');
+			var gridPanel = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
+			if (isNotVal(gridPanel)) {
+				gridPanel.getSelectionModel().deselectAll(true);
+				gridPanel.getStore().load();
+			}
+		}
+	}else if(data.functionCode.toUpperCase()=="pumpDeviceRealTimeMonitoringData".toUpperCase()){//接收到推送的泵设备实时监控数据
 		if(activeId.toUpperCase()=="DeviceRealTimeMonitoring".toUpperCase()){
 			var tabPanel = Ext.getCmp("RealTimeMonitoringTabPanel");
 			var activeId = tabPanel.getActiveTab().id;

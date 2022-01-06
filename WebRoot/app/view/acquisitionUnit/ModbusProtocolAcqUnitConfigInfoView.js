@@ -31,7 +31,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqUnitConfigInfoView', {
         			}
         		},"-",{
                 	xtype: 'button',
-        			pressed: true,
         			text: cosog.string.save,
         			iconCls: 'save',
         			handler: function (v, o) {
