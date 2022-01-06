@@ -87,8 +87,8 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
             	xtype : "combobox",
 				fieldLabel : '报警级别',
 				id : 'PipelineSwitchingValueAlarmLevelComb_Id',
-				labelWidth: 60,
-                width: 170,
+				labelWidth: 55,
+                width: 135,
                 labelAlign: 'left',
 				triggerAction : 'all',
 				displayField: "boxval",
@@ -115,7 +115,7 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
 				fieldLabel : '是否发送短信',
 				id : 'PipelineSwitchingValueAlarmIsSendMessageComb_Id',
 				labelWidth: 80,
-                width: 190,
+                width: 160,
                 labelAlign: 'left',
 				triggerAction : 'all',
 				displayField: "boxval",
@@ -140,38 +140,208 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
             },'-',{
                 xtype: 'datefield',
                 anchor: '100%',
-//                hidden: true,
                 fieldLabel: '区间',
                 labelWidth: 30,
-                width: 130,
+                width: 125,
                 format: 'Y-m-d ',
                 value: '',
                 id: 'PipelineSwitchingValueAlarmQueryStartDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                    }
+                }
+            },{
+            	xtype: 'numberfield',
+            	id: 'PipelineSwitchingValueAlarmQueryStartTime_Hour_Id',
+                fieldLabel: '时',
+                labelWidth: 15,
+                width: 60,
+                minValue: 0,
+                maxValue: 23,
+                value:'',
+                msgTarget: 'none',
+                regex:/^(2[0-3]|[0-1]?\d|\*|-|\/)$/,
+                listeners: {
+                	blur: function (field, event, eOpts) {
+                		var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                		var flag=r.test(field.value);
+                		if(!flag){
+                			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                			field.focus(true, 100);
+                		}
+                    }
+                }
+            },{
+            	xtype: 'numberfield',
+            	id: 'PipelineSwitchingValueAlarmQueryStartTime_Minute_Id',
+                fieldLabel: '分',
+                labelWidth: 15,
+                width: 60,
+                minValue: 0,
+                maxValue: 59,
+                value:'',
+                msgTarget: 'none',
+                regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                listeners: {
+                	blur: function (field, event, eOpts) {
+                		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                		var flag=r.test(field.value);
+                		if(!flag){
+                			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                			field.focus(true, 100);
+                		}
+                    }
+                }
+            },{
+            	xtype: 'numberfield',
+            	id: 'PipelineSwitchingValueAlarmQueryStartTime_Second_Id',
+                fieldLabel: '秒',
+                labelWidth: 15,
+                width: 60,
+                minValue: 0,
+                maxValue: 59,
+                value:'',
+                msgTarget: 'none',
+                regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                listeners: {
+                	blur: function (field, event, eOpts) {
+                		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                		var flag=r.test(field.value);
+                		if(!flag){
+                			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                			field.focus(true, 100);
+                		}
                     }
                 }
             },{
                 xtype: 'datefield',
                 anchor: '100%',
-//                hidden: true,
                 fieldLabel: '至',
                 labelWidth: 15,
-                width: 115,
+                width: 110,
                 format: 'Y-m-d ',
                 value: '',
-//                value: new Date(),
                 id: 'PipelineSwitchingValueAlarmQueryEndDate_Id',
                 listeners: {
                 	select: function (combo, record, index) {
-                		Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id").getStore().loadPage(1);
+                    }
+                }
+            },{
+            	xtype: 'numberfield',
+            	id: 'PipelineSwitchingValueAlarmQueryEndTime_Hour_Id',
+                fieldLabel: '时',
+                labelWidth: 15,
+                width: 60,
+                minValue: 0,
+                maxValue: 23,
+                value:'',
+                msgTarget: 'none',
+                regex:/^(2[0-3]|[0-1]?\d|\*|-|\/)$/,
+                listeners: {
+                	blur: function (field, event, eOpts) {
+                		var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                		var flag=r.test(field.value);
+                		if(!flag){
+                			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                			field.focus(true, 100);
+                		}
+                    }
+                }
+            },{
+            	xtype: 'numberfield',
+            	id: 'PipelineSwitchingValueAlarmQueryEndTime_Minute_Id',
+                fieldLabel: '分',
+                labelWidth: 15,
+                width: 60,
+                minValue: 0,
+                maxValue: 59,
+                value:'',
+                msgTarget: 'none',
+                regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                listeners: {
+                	blur: function (field, event, eOpts) {
+                		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                		var flag=r.test(field.value);
+                		if(!flag){
+                			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                			field.focus(true, 100);
+                		}
+                    }
+                }
+            },{
+            	xtype: 'numberfield',
+            	id: 'PipelineSwitchingValueAlarmQueryEndTime_Second_Id',
+                fieldLabel: '秒',
+                labelWidth: 15,
+                width: 60,
+                minValue: 0,
+                maxValue: 59,
+                value:'',
+                msgTarget: 'none',
+                regex:/^[1-5]?\d([\/-][1-5]?\d)?$/,
+                listeners: {
+                	blur: function (field, event, eOpts) {
+                		var r = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                		var flag=r.test(field.value);
+                		if(!flag){
+                			Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                			field.focus(true, 100);
+                		}
                     }
                 }
             },'-',{
                 xtype: 'button',
+                text: cosog.string.search,
+                iconCls: 'search',
+                handler: function () {
+                	var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                	var r2 = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                	var startTime_Hour=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Hour_Id').getValue();
+                	if(!r.test(startTime_Hour)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Hour_Id').focus(true, 100);
+                		return;
+                	}
+                	var startTime_Minute=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Minute_Id').getValue();
+                	if(!r2.test(startTime_Minute)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Minute_Id').focus(true, 100);
+                		return;
+                	}
+                	var startTime_Second=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Second_Id').getValue();
+                	if(!r2.test(startTime_Second)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Second_Id').focus(true, 100);
+                		return;
+                	}
+                	
+                	var endTime_Hour=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Hour_Id').getValue();
+                	if(!r.test(endTime_Hour)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Hour_Id').focus(true, 100);
+                		return;
+                	}
+                	var endTime_Minute=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Minute_Id').getValue();
+                	if(!r2.test(endTime_Minute)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Minute_Id').focus(true, 100);
+                		return;
+                	}
+                	var endTime_Second=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Second_Id').getValue();
+                	if(!r2.test(endTime_Second)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Second_Id').focus(true, 100);
+                		return;
+                	}
+                	var gridPanel = Ext.getCmp("PipelineSwitchingValueAlarmGridPanel_Id");
+                	if (isNotVal(gridPanel)) {
+                		gridPanel.getStore().loadPage(1);
+                	}
+                }
+            },'-',{
+                xtype: 'button',
                 text: '导出设备列表',
-                pressed: true,
+                iconCls: 'export',
                 hidden:false,
                 handler: function (v, o) {
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
@@ -189,9 +359,48 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
             },'-', {
                 xtype: 'button',
                 text: '导出报警数据',
-                pressed: true,
+                iconCls: 'export',
                 hidden:false,
                 handler: function (v, o) {
+                	var r = /^(2[0-3]|[0-1]?\d|\*|-|\/)$/;
+                	var r2 = /^[1-5]?\d([\/-][1-5]?\d)?$/;
+                	var startTime_Hour=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Hour_Id').getValue();
+                	if(!r.test(startTime_Hour)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Hour_Id').focus(true, 100);
+                		return;
+                	}
+                	var startTime_Minute=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Minute_Id').getValue();
+                	if(!r2.test(startTime_Minute)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Minute_Id').focus(true, 100);
+                		return;
+                	}
+                	var startTime_Second=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Second_Id').getValue();
+                	if(!r2.test(startTime_Second)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryStartTime_Second_Id').focus(true, 100);
+                		return;
+                	}
+                	
+                	var endTime_Hour=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Hour_Id').getValue();
+                	if(!r.test(endTime_Hour)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>小时为0~23之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Hour_Id').focus(true, 100);
+                		return;
+                	}
+                	var endTime_Minute=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Minute_Id').getValue();
+                	if(!r2.test(endTime_Minute)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>分钟为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Minute_Id').focus(true, 100);
+                		return;
+                	}
+                	var endTime_Second=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Second_Id').getValue();
+                	if(!r2.test(endTime_Second)){
+                		Ext.Msg.alert('消息', "<font color=red>数值无效！</font>秒为0~59之间的整数。");
+                		Ext.getCmp('PipelineSwitchingValueAlarmQueryEndTime_Second_Id').focus(true, 100);
+                		return;
+                	}
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                 	var deviceType=1;
                 	var deviceName  = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
@@ -199,12 +408,12 @@ Ext.define('AP.view.alarmQuery.PipelineSwitchingValueAlarmInfoView', {
                 	var isSendMessage=Ext.getCmp('PipelineSwitchingValueAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PipelineSwitchingValueAlarmQueryStartDate_Id').rawValue;
                     var endDate=Ext.getCmp('PipelineSwitchingValueAlarmQueryEndDate_Id').rawValue;
-               	 	var alarmType=2;
+               	 	var alarmType=3;
                	 	
                	 	var fileName='管设备开关量报警数据';
                	 	var title='管设备开关量报警数据';
                	 	var columnStr=Ext.getCmp("PipelineSwitchingValueAlarmDetailsColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,startDate,endDate,alarmType,isSendMessage,alarmLevel,fileName,title,columnStr);
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,isSendMessage,alarmLevel,fileName,title,columnStr);
                 }
             }],
     		items: [{

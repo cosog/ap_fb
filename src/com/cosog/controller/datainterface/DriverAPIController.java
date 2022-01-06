@@ -88,18 +88,21 @@ public class DriverAPIController extends BaseController{
 	
 	@RequestMapping("/acq/allDeviceOffline")
 	public String AllDeviceOffline() throws Exception {
+		StringBuffer webSocketSendData = new StringBuffer();
+		String functionCode="adExitAndDeviceOffline";
+		String time=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 		String updatePumpRealData="update tbl_pumpacqdata_latest t "
-				+ "set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0 "
+				+ "set t.acqTime=to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0 "
 				+ "where t.CommStatus=1";
 		String updatePumpHistData="update tbl_pumpacqdata_hist t "
-				+ " set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0"
+				+ " set t.acqTime=to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0"
 				+ " where t.CommStatus=1 and t.acqtime=( select max(t2.acqtime) from tbl_pumpacqdata_hist t2 where t2.wellid=t.wellid ) ";
 		
 		String updatePipelineRealData="update tbl_pipelineacqdata_latest t "
-				+ "set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0 "
+				+ "set t.acqTime=to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0 "
 				+ "where t.CommStatus=1";
 		String updatePipelineHistData="update tbl_pipelineacqdata_hist t "
-				+ " set t.acqTime=to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0"
+				+ " set t.acqTime=to_date('"+time+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus=0"
 				+ " where t.CommStatus=1 and t.acqtime=( select max(t2.acqtime) from tbl_pipelineacqdata_hist t2 where t2.wellid=t.wellid ) ";
 		
 		int result=commonDataService.getBaseDao().updateOrDeleteBySql(updatePumpRealData);
@@ -115,6 +118,13 @@ public class DriverAPIController extends BaseController{
 				commStatusList.get(i).setCommStatus(0);
 			}
 			dataModelMap.put("DeviceCommStatus", commStatusList);
+		}
+		
+		webSocketSendData.append("{\"functionCode\":\""+functionCode+"\",");
+		webSocketSendData.append("\"time\":\""+time+"\"");
+		webSocketSendData.append("}");
+		if(StringManagerUtils.isNotNull(webSocketSendData.toString())){
+			infoHandler().sendMessageToBy("ApWebSocketClient", webSocketSendData.toString());
 		}
 		
 		String json = "{success:true,flag:true}";

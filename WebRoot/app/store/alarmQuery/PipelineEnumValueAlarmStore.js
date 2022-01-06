@@ -39,7 +39,7 @@ Ext.define('AP.store.alarmQuery.PipelineEnumValueAlarmStore', {
                     autoLoad: true,
                     bbar: bbar,
                     columnLines: true,
-                    forceFit: true,
+                    forceFit: false,
                     viewConfig: {
                     	emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>"
                     },
@@ -58,11 +58,17 @@ Ext.define('AP.store.alarmQuery.PipelineEnumValueAlarmStore', {
             
             var startDate=Ext.getCmp('PipelineEnumValueAlarmQueryStartDate_Id');
             if(startDate.rawValue==''||null==startDate.rawValue){
-            	startDate.setValue(get_rawData.start_date);
+            	startDate.setValue(get_rawData.start_date.split(' ')[0]);
+            	Ext.getCmp('PipelineEnumValueAlarmQueryStartTime_Hour_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[0]);
+            	Ext.getCmp('PipelineEnumValueAlarmQueryStartTime_Minute_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[1]);
+            	Ext.getCmp('PipelineEnumValueAlarmQueryStartTime_Second_Id').setValue(get_rawData.start_date.split(' ')[1].split(':')[2]);
             }
             var endDate=Ext.getCmp('PipelineEnumValueAlarmQueryEndDate_Id');
             if(endDate.rawValue==''||null==endDate.rawValue){
-            	endDate.setValue(get_rawData.end_date);
+            	endDate.setValue(get_rawData.end_date.split(' ')[0]);
+            	Ext.getCmp('PipelineEnumValueAlarmQueryEndTime_Hour_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[0]);
+            	Ext.getCmp('PipelineEnumValueAlarmQueryEndTime_Minute_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[1]);
+            	Ext.getCmp('PipelineEnumValueAlarmQueryEndTime_Second_Id').setValue(get_rawData.end_date.split(' ')[1].split(':')[2]);
             }
         },
         beforeload: function (store, options) {
@@ -72,15 +78,21 @@ Ext.define('AP.store.alarmQuery.PipelineEnumValueAlarmStore', {
         	var alarmLevel=Ext.getCmp('PipelineEnumValueAlarmLevelComb_Id').getValue();
         	var isSendMessage=Ext.getCmp('PipelineEnumValueAlarmIsSendMessageComb_Id').getValue();
         	var startDate=Ext.getCmp('PipelineEnumValueAlarmQueryStartDate_Id').rawValue;
+        	var startTime_Hour=Ext.getCmp('PipelineEnumValueAlarmQueryStartTime_Hour_Id').getValue();
+        	var startTime_Minute=Ext.getCmp('PipelineEnumValueAlarmQueryStartTime_Minute_Id').getValue();
+        	var startTime_Second=Ext.getCmp('PipelineEnumValueAlarmQueryStartTime_Second_Id').getValue();
             var endDate=Ext.getCmp('PipelineEnumValueAlarmQueryEndDate_Id').rawValue;
+            var endTime_Hour=Ext.getCmp('PipelineEnumValueAlarmQueryEndTime_Hour_Id').getValue();
+        	var endTime_Minute=Ext.getCmp('PipelineEnumValueAlarmQueryEndTime_Minute_Id').getValue();
+        	var endTime_Second=Ext.getCmp('PipelineEnumValueAlarmQueryEndTime_Second_Id').getValue();
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
                     isSendMessage:isSendMessage,
-                    startDate:startDate,
-                    endDate:endDate,
+                    startDate:getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),
+                    endDate:getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),
                     alarmType:2
                 };
             Ext.apply(store.proxy.extraParams, new_params);

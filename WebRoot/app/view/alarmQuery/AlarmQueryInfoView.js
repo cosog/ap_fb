@@ -159,6 +159,7 @@ function createAlarmQueryColumn(columnInfo) {
     for (var i = 0; i < myArr.length; i++) {
         var attr = myArr[i];
         var width_ = "";
+        var flex_ = "";
         var lock_ = "";
         var hidden_ = "";
         if (attr.hidden == true) {
@@ -170,7 +171,10 @@ function createAlarmQueryColumn(columnInfo) {
         if (isNotVal(attr.width)) {
             width_ = ",width:" + attr.width;
         }
-        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_+hidden_ + lock_;
+        if (isNotVal(attr.flex)) {
+        	flex_ = ",flex:" + attr.flex;
+        }
+        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_+flex_+hidden_ + lock_;
         if (attr.dataIndex.toUpperCase() == 'id'.toUpperCase()) {
             myColumns += ",xtype: 'rownumberer',sortable : false,locked:false";
         }

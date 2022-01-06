@@ -61,6 +61,7 @@ function createDeviceOperationLogColumn(columnInfo) {
     for (var i = 0; i < myArr.length; i++) {
         var attr = myArr[i];
         var width_ = "";
+        var flex_ = "";
         var lock_ = "";
         var hidden_ = "";
         if (attr.hidden == true) {
@@ -72,7 +73,10 @@ function createDeviceOperationLogColumn(columnInfo) {
         if (isNotVal(attr.width)) {
             width_ = ",width:" + attr.width;
         }
-        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_;
+        if (isNotVal(attr.flex)) {
+        	flex_ = ",flex:" + attr.flex;
+        }
+        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_+flex_;
         if (attr.dataIndex.toUpperCase() == 'id'.toUpperCase()) {
             myColumns += ",xtype: 'rownumberer',sortable : false,locked:false";
         }
@@ -108,6 +112,7 @@ function createSystemLogColumn(columnInfo) {
     for (var i = 0; i < myArr.length; i++) {
         var attr = myArr[i];
         var width_ = "";
+        var flex_ = "";
         var lock_ = "";
         var hidden_ = "";
         if (attr.hidden == true) {
@@ -119,7 +124,10 @@ function createSystemLogColumn(columnInfo) {
         if (isNotVal(attr.width)) {
             width_ = ",width:" + attr.width;
         }
-        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_;
+        if (isNotVal(attr.flex)) {
+        	flex_ = ",flex:" + attr.flex;
+        }
+        myColumns += "{text:'" + attr.header + "',lockable:true,align:'center' "+width_+flex_;
         if (attr.dataIndex.toUpperCase() == 'id'.toUpperCase()) {
             myColumns += ",xtype: 'rownumberer',sortable : false,locked:false";
         }

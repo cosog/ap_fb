@@ -31,11 +31,20 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
         			}
         		},"-",{
                 	xtype: 'button',
-        			pressed: true,
         			text: cosog.string.save,
         			iconCls: 'save',
         			handler: function (v, o) {
         				SaveModbusProtocolAddrMappingConfigTreeData();
+        			}
+                },"-",{
+                	xtype: 'button',
+        			text: '存储字段表',
+        			handler: function (v, o) {
+        				var window = Ext.create("AP.view.acquisitionUnit.DatabaseColumnMappingWindow", {
+                            title: '存储字段表'
+                        });
+                        window.show();
+//                        Ext.create("AP.store.acquisitionUnit.DatabaseColumnMappingStore");
         			}
                 }],
                 layout: "border",

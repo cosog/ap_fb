@@ -346,7 +346,7 @@ function deviceHistoryQueryCurve(deviceType){
 		                        return Highcharts.numberFormat(this.value, 0);
 		                    }
 		                },
-			            allowDecimals: false,    // 刻度值是否为小数
+			            allowDecimals: true,    // 刻度值是否为小数
 //			            minorTickInterval: '',   // 不显示次刻度线
 		                opposite:opposite
 		          };
@@ -786,31 +786,3 @@ function ShowHistoryQueryDeviceTypeStatPieChat(title,divid, name, data,colors) {
 		});
 };
 
-function getDateAndTime(dateStr,h,m,s){
-	if(!isNotVal(dateStr)){
-		return '';
-	}
-	if(!isNotVal(h)){
-		h=0
-	}
-	if(!isNotVal(m)){
-		m=0
-	}
-	if(!isNotVal(s)){
-		s=0
-	}
-	var hStr=h+'';
-	var mStr=m+'';
-	var sStr=s+'';
-	if(hStr.length==1){
-		hStr='0'+hStr;
-	}
-	if(mStr.length==1){
-		mStr='0'+mStr;
-	}if(sStr.length==1){
-		sStr='0'+sStr;
-	}
-	return dateStr+' '+hStr+":"+mStr+':'+sStr;
-	
-	
-}

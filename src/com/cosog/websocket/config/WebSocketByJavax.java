@@ -80,7 +80,8 @@ public class WebSocketByJavax {
             	if (item.userId.equals(To) ) {
             		synchronized(item.session){
                 		try{
-                			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
+                			new SendMessageThread(item.session,message).start();
+//                			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
                 		}catch(Exception e){
                 			e.printStackTrace();
                 		}
@@ -96,7 +97,8 @@ public class WebSocketByJavax {
             	if (item.userId.contains(To) ) {
             		synchronized(item.session){
                 		try{
-                			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
+                			new SendMessageThread(item.session,message).start();
+//                			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
                 		}catch(Exception e){
                 			e.printStackTrace();
                 		}
@@ -113,14 +115,14 @@ public class WebSocketByJavax {
             	if(clientInfo!=null && clientInfo.length==3&&userAccount.equals(clientInfo[1])){
                 	synchronized(item.session){
                 		try{
-                			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
+                			new SendMessageThread(item.session,message).start();
+//                			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
                 		}catch(Exception e){
                 			e.printStackTrace();
                 		}
                 	}
                 }
             }
-            
         }
     }
     
@@ -129,7 +131,8 @@ public class WebSocketByJavax {
         	 if(item.session!=null&&item.session.isOpen()){
         		 synchronized(item.session){
         			 try{
-             			item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
+        				 new SendMessageThread(item.session,message).start();
+//        				 item.session.getBasicRemote().sendText(message);//getBasicRemote同步发送 getAsyncRemote异步发送
              		}catch(Exception e){
              			e.printStackTrace();
              		}
@@ -152,5 +155,25 @@ public class WebSocketByJavax {
 
     public static synchronized Map<String, WebSocketByJavax> getClients() {
         return clients;
+    }
+    
+    public static class SendMessageThread extends Thread{
+    	private Session session; 
+    	private String message;
+		public SendMessageThread(Session session, String message) {
+			super();
+			this.session = session;
+			this.message = message;
+		}
+		public void run(){
+			try {
+				if(session.isOpen()){
+					session.getBasicRemote().sendText(message);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
     }
 }

@@ -75,16 +75,15 @@ public class AlarmQueryController extends BaseController{
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from "+tableName+" t where  t.alarmType="+alarmType;
+			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where  t.alarmType="+alarmType;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-//				startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);
@@ -132,15 +131,15 @@ public class AlarmQueryController extends BaseController{
 			}
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd') from "+tableName+" t where  t.alarmType="+alarmType;
+			String sql = " select to_char(max(t.alarmtime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where  t.alarmType="+alarmType;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		pager.setStart_date(startDate);

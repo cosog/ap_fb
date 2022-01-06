@@ -164,6 +164,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				Collections.sort(protocolConfig.getItems());
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					boolean checked=false;
 					String sort="";
@@ -274,6 +275,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				Collections.sort(protocolConfig.getItems());
 				int index=1;
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					boolean checked=false;
@@ -549,6 +551,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				Collections.sort(protocolConfig.getItems());
 				int index=1;
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					if(protocolConfig.getItems().get(j).getResolutionMode()==2){
@@ -637,6 +640,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+				Collections.sort(protocolConfig.getItems());
 				int index=1;
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(itemResolutionMode)
@@ -724,6 +728,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
 				int index=1;
+				Collections.sort(protocolConfig.getItems());
 				for(int j=0;j<protocolConfig.getItems().size();j++){
 					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(itemResolutionMode)
 							&& protocolConfig.getItems().get(j).getAddr()==StringManagerUtils.stringToInteger(itemAddr)){
@@ -893,6 +898,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 				ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 				if(protocolName.equalsIgnoreCase(protocolConfig.getName())){
+					Collections.sort(protocolConfig.getItems());
 					for(int j=0;j<protocolConfig.getItems().size();j++){
 						if(StringManagerUtils.existOrNot(itemsList, protocolConfig.getItems().get(j).getTitle(),false)){
 //							if(RWType.equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())){}
@@ -1897,6 +1903,29 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		}
 		result_json.append("]}");
 		return result_json.toString();
+	}
+	
+	public String getDatabaseColumnMappingTable(String deviceType) {
+		StringBuffer result_json = new StringBuffer();
+		String sql="select t.id,t.name,t.mappingcolumn from tbl_datamapping t where t.protocoltype="+deviceType+" order by t.id";
+		String columns="["
+				+ "{ \"header\":\"序号\",\"dataIndex\":\"id\",width:50 ,children:[] },"
+				+ "{ \"header\":\"名称\",\"dataIndex\":\"itemName\" ,children:[] },"
+				+ "{ \"header\":\"字段\",\"dataIndex\":\"itemColumn\",children:[] }"
+				+ "]";
+		List<?> list=this.findCallSql(sql);
+		result_json.append("{\"success\":true,\"totalCount\":" + list.size() + ",\"columns\":"+columns+",\"totalRoot\":[");
+		for (int i = 0; i < list.size(); i++) {
+			Object[] obj = (Object[]) list.get(i);
+			result_json.append("{\"id\":\""+obj[0]+"\",");
+			result_json.append("\"itemName\":\""+obj[1]+"\",");
+			result_json.append("\"itemColumn\":\""+obj[2]+"\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
+		return result_json.toString().replaceAll("null", "");
 	}
 	
 	public void doAcquisitionGroupAdd(AcquisitionGroup acquisitionGroup) throws Exception {

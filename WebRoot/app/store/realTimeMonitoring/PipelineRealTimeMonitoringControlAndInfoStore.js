@@ -153,7 +153,6 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     		}
     		var total=deviceAuxiliaryInfoGridPanel.getStore().getCount();
     		if(total>0&&Ext.getCmp("PipelineRealTimeMonitoringRightTabPanel").getActiveTab().id!="PipelineRealTimeMonitoringRightControlPanel"){
-//    			deviceAuxiliaryInfoGridPanel.getSelectionModel().select(0, true);
     			deviceAuxiliaryInfoGridPanel.plugins[0].toggleRow(0,0);
     		}
         	
@@ -163,9 +162,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		controlDataStr+="{\"item\":\""+deviceControlList[i].title+"\",\"itemcode\":\""+deviceControlList[i].name
         		+"\",\"resolutionMode\":"+deviceControlList[i].resolutionMode
         		+",\"itemMeaning\":"+deviceControlList[i].itemMeaning
-        		+",\"value\":\""+deviceControlList[i].value
-        		+"\",\"operation\":true,\"isControl\":"+isControl
-        		+",\"showType\":1,\"commStatus\":"+commStatus+"},";
+        		+",\"value\":\""+deviceControlList[i].value+"\",\"operation\":true,\"isControl\":"+isControl+",\"showType\":1,\"commStatus\":"+commStatus+"},";
         	}
         	if(stringEndWith(controlDataStr,",")){
     			controlDataStr = controlDataStr.substring(0, controlDataStr.length - 1);
@@ -194,8 +191,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     				columnLines: true,
     				forceFit: false,
     				store: controlStore,
-    			    columns: [
-    			        { 
+    			    columns: [{ 
     			        	header: '操作项',  
     			        	dataIndex: 'item',
     			        	align:'left',
@@ -204,17 +200,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			        		e.tdStyle ="vertical-align:middle;";
     			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
     			        	}
-    			        },
-//    			        { 
-//    			        	header: '变量', 
-//    			        	dataIndex: 'value',
-//    			        	align:'center',
-//    			        	flex:3,
-//    			        	renderer:function(value){
-//    			        		return "<span data-qtip=\""+(value==undefined?"":value)+"\">"+(value==undefined?"":value)+"</span>";
-//    			        	}
-//    			        },
-    			        { 	header: '操作', 
+    			        },{ 	
+    			        	header: '操作', 
     			        	dataIndex: 'operation',
     			        	align:'center',
 //    			        	flex:8,
@@ -238,7 +225,6 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			        		if(!o.data.operation){
     			        			hidden=true;
     			        		}
-//    			        		hand=false;
     			        		text="设置";
     			        		e.tdStyle ="vertical-align:middle;";
     			        		if(resolutionMode==1&&itemMeaning.length==2){
@@ -275,7 +261,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                            controlValue:itemMeaning[0][0]
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -285,10 +272,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -320,7 +307,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                            controlValue:itemMeaning[1][0]
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -330,10 +318,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -376,7 +364,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                            controlValue:1
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -386,10 +375,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -420,7 +409,8 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                            controlValue:2
         		                                        },
         		                                        success: function (response, action) {
-        		                                        	if (action.result.flag == false) {
+        		                                        	var data = Ext.decode(response.responseText);
+        		                                        	if (data.success==true && data.flag==false) {
         		                                                Ext.MessageBox.show({
         		                                                    title: cosog.string.ts,
         		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
@@ -430,10 +420,10 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                                        window.location.href = context + "/login/toLogin";
         		                                                    }
         		                                                });
-        		                                            } else if (action.result.flag == true && action.result.error == false) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
-        		                                            }  else if (action.result.flag == true && action.result.error == true) {
-        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + action.result.msg + "</font>");
+        		                                            } else if (data.flag == true && data.error == false) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+        		                                            }  else if (data.flag == true && data.error == true) {
+        		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
         		                                            } 
         		                                        },
         		                                        failure: function () {
@@ -472,8 +462,6 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                         var DeviceControlCheckPassWindow = Ext.create("AP.view.realTimeMonitoring.DeviceControlCheckPassWindow", {
         		                                             title: '控制'
         		                                         });
-        		                                         
-        		                                         
         		                                     	 var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
         		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(1);
@@ -507,18 +495,12 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                                 data: data
         		                                             });
         		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setStore(controlTypeStore);
-//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").setRawValue(o.data.value);
         		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").show();
         		                                         }else{
-//        		                                        	 Ext.getCmp("DeviceControlValue_Id").show();
-//        		                                        	 Ext.getCmp("DeviceControlValueCombo_Id").hide();
-//        		                                        	 Ext.getCmp("DeviceControlValue_Id").setFieldLabel(o.data.item);
-//        		                                        	 Ext.getCmp("DeviceControlValue_Id").setValue(o.data.value);
+        		                                        	 
         		                                         }
-        		                                         
         		                                         DeviceControlCheckPassWindow.show();
         		                                         Ext.getCmp("DeviceControlValue_Id").setValue("");
-//        		                                         Ext.getCmp("checkPassFromPassword_id").setValue("");
 //        		                                     }
 //        		                                 });
         		                            }
