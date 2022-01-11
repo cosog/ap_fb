@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.ModbusProtocolConfig;
+import com.cosog.model.gridmodel.GraphicSetData;
+import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.service.base.BaseService;
 import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
@@ -25,6 +27,7 @@ import com.cosog.utils.Page;
 import com.cosog.utils.ProtocolItemResolutionData;
 import com.cosog.utils.StringManagerUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 @Service("historyQueryService")
 public class HistoryQueryService<T> extends BaseService<T>  {
@@ -171,7 +174,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ "{ \"header\":\"设备类型\",\"dataIndex\":\"deviceTypeName\",flex:6,children:[] }"
 				+ "]";
 		
-		String sql="select t2.id,t.wellname,t2.commstatus,"
+		String sql="select t.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
 				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'),c1.itemname as devicetypename ";
@@ -862,17 +865,19 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
-	public String getHistoryQueryCurveData(String deviceName,String deviceType,String startDate,String endDate)throws Exception {
+	public String getHistoryQueryCurveData(String deviceId,String deviceName,String deviceType,String startDate,String endDate)throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer itemsBuff = new StringBuffer();
 		StringBuffer curveColorBuff = new StringBuffer();
 		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
+		String graphicSetTableName="tbl_pumpdevicegraphicset";
 		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(StringManagerUtils.stringToInteger(deviceType)==1){
 			tableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
+			graphicSetTableName="tbl_pipelinedevicegraphicset";
 			columnsKey="pipelineDeviceAcquisitionItemColumns";
 		}
 		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
@@ -882,18 +887,20 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		
 		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
-				+ " and  t.wellname='"+deviceName+"' ";
-		
+				+ " and  t.id="+deviceId;
+		String graphicSetSql="select t.graphicstyle from "+graphicSetTableName+" t where t.wellid="+deviceId;
 		String curveItemsSql="select t6.itemname,t6.bitindex,t6.historycurvecolor "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+deviceName+"' and t6.historycurve>=0 "
+				+ " and t.id="+deviceId+" and t6.historycurve>=0 "
 				+ " order by t6.historycurve,t6.sort,t6.id";
 		List<?> protocolList = this.findCallSql(protocolSql);
+		List<?> graphicSetList = this.findCallSql(graphicSetSql);
 		List<?> curveItemList = this.findCallSql(curveItemsSql);
 		String protocolName="";
 		String unit="";
 		String dataType="";
+		String graphicSet="{}";
 		int resolutionMode=0;
 		List<String> itemNameList=new ArrayList<String>();
 		List<String> itemColumnList=new ArrayList<String>();
@@ -931,6 +938,10 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			}
 		}
 		
+		if(graphicSetList.size()>0){
+			graphicSet=graphicSetList.get(0).toString().replaceAll(" ", "").replaceAll("\r\n", "").replaceAll("\n", "");
+		}
+		
 		itemsBuff.append("[");
 		for(int i=0;i<itemNameList.size();i++){
 			itemsBuff.append("\""+itemNameList.get(i)+"\",");
@@ -949,7 +960,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		curveColorBuff.append("]");
 		
-		result_json.append("{\"deviceName\":\""+deviceName+"\",\"startDate\":\""+startDate+"\",\"endDate\":\""+endDate+"\",\"curveItems\":"+itemsBuff+",\"curveColors\":"+curveColorBuff+",\"list\":[");
+		result_json.append("{\"deviceName\":\""+deviceName+"\",\"startDate\":\""+startDate+"\",\"endDate\":\""+endDate+"\",\"curveItems\":"+itemsBuff+",\"curveColors\":"+curveColorBuff+",\"graphicSet\":"+graphicSet+",\"list\":[");
 		if(itemColumnList.size()>0){
 			String columns="";
 			for(int i=0;i<itemColumnList.size();i++){
@@ -958,8 +969,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			String sql="select to_char(t.acqtime,'yyyy-mm-dd hh24:mi:ss') as acqtime"+columns
 					+ " from "+tableName +" t,"+deviceTableName+" t2 "
 					+ " where t.wellid=t2.id "
-					+ " and t.acqtime between to_date('"+startDate+"','yyyy-mm-dd')  and to_date('"+endDate+"','yyyy-mm-dd')+1"
-					+ " and t2.wellname='"+deviceName+"' ";
+					+ " and t.acqtime between to_date('"+startDate+"','yyyy-mm-dd hh24:mi:ss')  and to_date('"+endDate+"','yyyy-mm-dd hh24:mi:ss')"
+					+ " and t2.id="+deviceId;
 			int total=this.getTotalCountRows(sql);
 			int rarefy=total/500+1;
 			sql+= " order by t.acqtime";
@@ -985,7 +996,124 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			}
 		}
 		result_json.append("]}");
-//		System.out.println(result_json.toString());
 		return result_json.toString();
+	}
+	
+	public String getHistoryQueryCurveSetData(String deviceId,String deviceType)throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		Gson gson = new Gson();
+		java.lang.reflect.Type type=null;
+		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		String deviceTableName="tbl_pumpdevice";
+		String graphicSetTableName="tbl_pumpdevicegraphicset";
+		String columnsKey="pumpDeviceAcquisitionItemColumns";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			deviceTableName="tbl_pipelinedevice";
+			graphicSetTableName="tbl_pipelinedevicegraphicset";
+			columnsKey="pipelineDeviceAcquisitionItemColumns";
+		}
+		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
+		if(acquisitionItemColumnsMap==null||acquisitionItemColumnsMap.size()==0||acquisitionItemColumnsMap.get(columnsKey)==null){
+			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
+		}
+		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
+		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
+				+ " and  t.id="+deviceId;
+		String graphicSetSql="select t.graphicstyle from tbl_pumpdevicegraphicset t where t.wellid="+deviceId;
+		String curveItemsSql="select t6.itemname,t6.bitindex,t6.historycurvecolor "
+				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
+				+ " and t.id="+deviceId+" and t6.historycurve>=0 "
+				+ " order by t6.historycurve,t6.sort,t6.id";
+		List<?> protocolList = this.findCallSql(protocolSql);
+		List<?> graphicSetList = this.findCallSql(graphicSetSql);
+		List<?> curveItemList = this.findCallSql(curveItemsSql);
+		String protocolName="";
+		String unit="";
+		String dataType="";
+		GraphicSetData graphicSetData=null;
+		int resolutionMode=0;
+		List<String> itemNameList=new ArrayList<String>();
+		List<String> itemColumnList=new ArrayList<String>();
+		List<String> curveColorList=new ArrayList<String>();
+		if(protocolList.size()>0){
+			protocolName=protocolList.get(0)+"";
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			if(modbusProtocolConfig!=null&&modbusProtocolConfig.getProtocol()!=null){
+				for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+					if(protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
+						for(int j=0;j<curveItemList.size();j++){
+							Object[] itemObj=(Object[]) curveItemList.get(j);
+							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
+								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
+									String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
+									itemColumnList.add(col);
+									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
+										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");
+									}else{
+										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle());
+									}
+									curveColorList.add((itemObj[2]+"").replaceAll("null", ""));
+									break;
+								}
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		if(graphicSetList.size()>0){
+			String graphicSet=graphicSetList.get(0).toString().replaceAll(" ", "").replaceAll("\r\n", "").replaceAll("\n", "");
+			type = new TypeToken<GraphicSetData>() {}.getType();
+			graphicSetData=gson.fromJson(graphicSet, type);
+		}
+		
+		result_json.append("{\"success\":true,\"totalCount\":"+itemNameList.size()+",\"totalRoot\":[");
+		for(int i=0;i<itemNameList.size();i++){
+			result_json.append("{\"curveName\":\"" + itemNameList.get(i) + "\",");
+			if(graphicSetData!=null && graphicSetData.getHistory()!=null && graphicSetData.getHistory().size()>i){
+				result_json.append("\"yAxisMaxValue\":\"" + graphicSetData.getHistory().get(i).getyAxisMaxValue() + "\",");
+				result_json.append("\"yAxisMinValue\":\"" + graphicSetData.getHistory().get(i).getyAxisMinValue() + "\"},");
+			}else{
+				result_json.append("\"yAxisMaxValue\":\"\",");
+				result_json.append("\"yAxisMinValue\":\"\"},");
+			}
+		}
+		if (result_json.toString().endsWith(",")) {
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		
+		result_json.append("]}");
+		return result_json.toString();
+	}
+	
+	public int setHistoryDataGraphicInfo(String deviceId,String deviceType,String graphicSetData)throws Exception {
+		int result=0;
+		if(StringManagerUtils.stringToInteger(deviceId)>0){
+			String deviceTableName="tbl_pumpdevice";
+			String graphicSetTableName="tbl_pumpdevicegraphicset";
+			if(StringManagerUtils.stringToInteger(deviceType)==1){
+				deviceTableName="tbl_pipelinedevice";
+				graphicSetTableName="tbl_pipelinedevicegraphicset";
+			}
+			String sql="select t.wellid from "+graphicSetTableName+" t where t.wellid="+deviceId;
+			String updateSql="";
+			List<?> list = this.findCallSql(sql);
+			if(list.size()>0){
+				updateSql="update "+graphicSetTableName+" t set t.graphicstyle='"+graphicSetData+"' where t.wellid="+deviceId;
+			}else{
+				updateSql="insert into "+graphicSetTableName+" (wellid,graphicstyle) values("+deviceId+",'"+graphicSetData+"')";
+			}
+			result=this.getBaseDao().updateOrDeleteBySql(updateSql);
+		}
+		return result;
 	}
 }

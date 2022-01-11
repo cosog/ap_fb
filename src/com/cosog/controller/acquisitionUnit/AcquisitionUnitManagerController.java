@@ -983,7 +983,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 									modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setResolutionMode(resolutionMode);
 									modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setAcqMode(acqMode);
 									
-									if(modbusDriverSaveData.getDataConfig().get(j).getMeaning()!=null && modbusDriverSaveData.getDataConfig().get(j).getMeaning().size()>0){
+									if(modbusDriverSaveData.getDataConfig().get(j).getMeaning()!=null){
 										modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setMeaning(new ArrayList<ItemsMeaning>());
 										for(int m=0;m<modbusDriverSaveData.getDataConfig().get(j).getMeaning().size();m++){
 											ItemsMeaning itemsMeaning=new ItemsMeaning();
@@ -994,6 +994,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 										if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning()!=null&&modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning().size()>0){
 											Collections.sort(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getMeaning());
 										}
+									}else{
+										modbusProtocolConfig.getProtocol().get(i).getItems().get(k).setMeaning(new ArrayList<ItemsMeaning>());
 									}
 									break;
 								}

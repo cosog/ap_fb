@@ -229,7 +229,38 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                 handler: function (v, o) {
                     diaphragmPumpDeviceInfoHandsontableHelper.saveData();
                 }
-            },"-", {
+            },"-",{
+    			xtype: 'button',
+                text: '批量添加',
+                iconCls: 'batchAdd',
+                hidden: false,
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.BatchAddDeviceWindow", {
+                        title: '隔膜泵批量添加'
+                    });
+                    window.show();
+                    Ext.getCmp("batchAddDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认");
+                    Ext.getCmp("batchAddDeviceType_Id").setValue(101);
+                    Ext.getCmp("batchAddDeviceOrg_Id").setValue(selectedOrgId);
+                    return false;
+    			}
+    		},'-', {
     			xtype: 'button',
     			text:'设备隶属迁移',
     			iconCls: 'move',
@@ -673,42 +704,6 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
         	var invalidData1=[];
         	var invalidData2=[];
         	var invalidDataInfo="";
-//        	if(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
-//            	for(var i=0;i<diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
-//            		var orgName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
-//            		var diveceName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
-//            		if(isNotVal(diveceName)){
-//            			var orgCount=isExist(orgArr,orgName);
-//                		if(orgCount>1){//所选组织下具有多个同名组织
-//                			invalidData1.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-//                			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-//                		}else if(orgCount===1){//所选组织下无重复组织
-//                			saveData.updatelist.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-//                		}else{//不具备所填写组织权限
-//                			invalidData2.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-//                			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-//                		}
-//            		}
-//            	}
-//            }
-//        	if(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
-//            	for(var i=0;i<diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
-//            		var orgName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
-//            		var diveceName=diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
-//            		if(isNotVal(diveceName)){
-//            			var orgCount=isExist(orgArr,orgName);
-//                		if(orgCount>1){//所选组织下具有多个同名组织
-//                			invalidData1.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-//                			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-//                		}else if(orgCount===1){//所选组织下无重复组织
-//                			saveData.insertlist.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-//                		}else{//不具备所填写组织权限
-//                			invalidData2.push(diaphragmPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-//                			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-//                		}
-//            		}
-//            	}
-//            }
         	Ext.Ajax.request({
                 method: 'POST',
                 url: context + '/wellInformationManagerController/saveWellHandsontableData',

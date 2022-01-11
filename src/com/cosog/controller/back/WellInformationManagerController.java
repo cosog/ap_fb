@@ -293,6 +293,33 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getBatchAddDeviceTableInfo")
+	public String getBatchAddDeviceTableInfo() throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int recordCount =StringManagerUtils.stringToInteger(ParamUtils.getParameter(request, "recordCount"));
+		int intPage = Integer.parseInt((page == null || page == "0") ? "1" : page);
+		int pageSize = Integer.parseInt((limit == null || limit == "0") ? "20" : limit);
+		int offset = (intPage - 1) * pageSize + 1;
+		deviceType= ParamUtils.getParameter(request, "deviceType");
+		orgId=ParamUtils.getParameter(request, "orgId");
+		map.put(PagingConstants.PAGE_NO, intPage);
+		map.put(PagingConstants.PAGE_SIZE, pageSize);
+		map.put(PagingConstants.OFFSET, offset);
+		map.put("wellInformationName", wellInformationName);
+		map.put("deviceType", deviceType);
+		map.put("orgId", orgId);
+		log.debug("intPage==" + intPage + " pageSize===" + pageSize);
+		this.pager = new Page("pagerForm", request);
+		String json = this.wellInformationManagerService.getBatchAddDeviceTableInfo(deviceType,recordCount);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/getDeviceInformationData")
 	public String getDeviceInformationData() throws IOException {
 		String recordId = ParamUtils.getParameter(request, "recordId");
@@ -580,6 +607,41 @@ public class WellInformationManagerController extends BaseController {
 		
 		EquipmentDriverServerTask.LoadDeviceCommStatus();
 		String json ="{success:true}";
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		log.warn("jh json is ==" + json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@SuppressWarnings("static-access")
+	@RequestMapping("/batchAddDevice")
+	public String batchAddDevice() throws Exception {
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
+		String orgId = ParamUtils.getParameter(request, "orgId");
+		String isCheckout = ParamUtils.getParameter(request, "isCheckout");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		int collisionCount=0;
+		int overlayCount=0;
+		
+		Gson gson = new Gson();
+		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
+		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
+		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
+			this.wellInformationManagerService.batchAddPumpDevice(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),isCheckout,user);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
+			this.wellInformationManagerService.savePipelineDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
+			this.wellInformationManagerService.saveSMSDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+		}
+		
+		EquipmentDriverServerTask.LoadDeviceCommStatus();
+		String json ="{\"success\":true,\"collisionCount\":"+collisionCount+",\"overlayCount\":"+overlayCount+"}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();

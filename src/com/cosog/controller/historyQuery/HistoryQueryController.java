@@ -310,7 +310,8 @@ public class HistoryQueryController extends BaseController  {
 		String json = "";
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
-		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
@@ -321,25 +322,61 @@ public class HistoryQueryController extends BaseController  {
 			tableName="tbl_pipelineacqdata_hist";
 		}
 		if(!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' ) ";
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where t.wellId="+deviceId;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
 			} else {
-				endDate = StringManagerUtils.getCurrentTime();
+				endDate = StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 			}
 			if(!StringManagerUtils.isNotNull(startDate)){
-//				startDate=StringManagerUtils.addDay(StringManagerUtils.stringToDate(endDate),-10);
-				startDate=endDate;
+				startDate=endDate.split(" ")[0]+" 00:00:00";
 			}
 		}
 		
 		
 		this.pager = new Page("pagerForm", request);
-		json = historyQueryService.getHistoryQueryCurveData(deviceName,deviceType,startDate,endDate);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
+		json = historyQueryService.getHistoryQueryCurveData(deviceId,deviceName,deviceType,startDate,endDate);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/getHistoryQueryCurveSetData")
+	public String getHistoryQueryCurveSetData() throws Exception {
+		String json = "";
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("userLogin");
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		this.pager = new Page("pagerForm", request);
+		json = historyQueryService.getHistoryQueryCurveSetData(deviceId,deviceType);
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/setHistoryDataGraphicInfo")
+	public String setHistoryDataGraphicInfo() throws Exception {
+		String json = "{success:false}";
+		HttpSession session=request.getSession();
+		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
+		deviceType = ParamUtils.getParameter(request, "deviceType");
+		String graphicSetData = ParamUtils.getParameter(request, "graphicSetData");
+		this.pager = new Page("pagerForm", request);
+		int result = historyQueryService.setHistoryDataGraphicInfo(deviceId,deviceType,graphicSetData);
+		json = "{success:true}";
+		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
 		pw.print(json);

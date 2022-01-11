@@ -1087,6 +1087,145 @@ public class BaseDao extends HibernateDaoSupport {
 	}
 	
 	@SuppressWarnings("resource")
+	public Boolean batchAddPumpDevice(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,String isCheckout,User user) throws SQLException {
+		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
+		CallableStatement cs=null;
+		PreparedStatement ps=null;
+		List<String> initWellList=new ArrayList<String>();
+		List<String> updateWellList=new ArrayList<String>();
+		List<String> addWellList=new ArrayList<String>();
+		List<String> deleteWellList=new ArrayList<String>();
+		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+		if(equipmentDriveMap.size()==0){
+			EquipmentDriverServerTask.loadProtocolConfig();
+		}
+		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
+		try {
+			cs = conn.prepareCall("{call prd_save_pumpdevice(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			if(wellHandsontableChangedData.getUpdatelist()!=null){
+				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
+					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
+						
+						cs.setString(1, orgId);
+						cs.setString(2, wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+						cs.setString(3, deviceType+"");
+						cs.setString(4, wellHandsontableChangedData.getUpdatelist().get(i).getApplicationScenariosName());
+						cs.setString(5, wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName());
+						cs.setString(6, wellHandsontableChangedData.getUpdatelist().get(i).getAlarmInstanceName());
+						cs.setString(7, wellHandsontableChangedData.getUpdatelist().get(i).getSignInId());
+						cs.setString(8, wellHandsontableChangedData.getUpdatelist().get(i).getSlave());
+						
+						cs.setString(9, wellHandsontableChangedData.getUpdatelist().get(i).getVideoUrl());
+						cs.setString(10, wellHandsontableChangedData.getUpdatelist().get(i).getSortNum());
+						cs.setInt(11,license.getNumber());
+						cs.setInt(12, StringManagerUtils.stringToInteger(isCheckout));
+						cs.registerOutParameter(13, Types.INTEGER);
+						cs.registerOutParameter(14,Types.VARCHAR);
+						cs.executeUpdate();
+						int result=cs.getInt(13);
+						String resultStr=cs.getString(14);
+						
+						if(result==0){
+							addWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+						}else if(result==1){
+							updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+						}
+						
+						if((result==0||result==1)
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName()) 
+								){
+							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+						}
+					}
+				}
+			}
+			if(wellHandsontableChangedData.getInsertlist()!=null){
+				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
+					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
+						
+						cs.setString(1, orgId);
+						cs.setString(2, wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+						cs.setString(3, deviceType+"");
+						cs.setString(4, wellHandsontableChangedData.getInsertlist().get(i).getApplicationScenariosName());
+						cs.setString(5, wellHandsontableChangedData.getInsertlist().get(i).getInstanceName());
+						cs.setString(6, wellHandsontableChangedData.getInsertlist().get(i).getAlarmInstanceName());
+						cs.setString(7, wellHandsontableChangedData.getInsertlist().get(i).getSignInId());
+						cs.setString(8, wellHandsontableChangedData.getInsertlist().get(i).getSlave());
+						
+						cs.setString(9, wellHandsontableChangedData.getInsertlist().get(i).getVideoUrl());
+						cs.setString(10, wellHandsontableChangedData.getInsertlist().get(i).getSortNum());
+						cs.setInt(11,license.getNumber());
+						cs.setInt(12, StringManagerUtils.stringToInteger(isCheckout));
+						cs.registerOutParameter(13, Types.INTEGER);
+						cs.registerOutParameter(14,Types.VARCHAR);
+						cs.executeUpdate();
+						int result=cs.getInt(13);
+						String resultStr=cs.getString(14);
+						if(result==0){
+							addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+						}else if(result==1){
+							updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+						}
+						
+						if((result==0||result==1)
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
+								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName()) 
+								){
+							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+						}
+					}
+				}
+			}
+			if(wellHandsontableChangedData.getDelidslist()!=null&&wellHandsontableChangedData.getDelidslist().size()>0){
+				String delIds="";
+				String delSql="";
+				String queryDeleteWellSql="";
+				for(int i=0;i<wellHandsontableChangedData.getDelidslist().size();i++){
+					delIds+=wellHandsontableChangedData.getDelidslist().get(i);
+					if(i<wellHandsontableChangedData.getDelidslist().size()-1){
+						delIds+=",";
+					}
+				}
+				queryDeleteWellSql="select wellname from tbl_pumpdevice t "
+						+ " where t.devicetype="+deviceType+" "
+						+ " and t.id in ("+StringUtils.join(wellHandsontableChangedData.getDelidslist(), ",")+")"
+						+ " and t.orgid in("+orgId+")";
+				delSql="delete from tbl_pumpdevice t "
+						+ " where t.devicetype="+deviceType+" "
+						+ " and t.id in ("+StringUtils.join(wellHandsontableChangedData.getDelidslist(), ",")+") "
+						+ " and t.orgid in("+orgId+")";
+				List<?> list = this.findCallSql(queryDeleteWellSql);
+				for(int i=0;i<list.size();i++){
+					deleteWellList.add(list.get(i)+"");
+				}
+				ps=conn.prepareStatement(delSql);
+				int result=ps.executeUpdate();
+			}
+			saveDeviceOperationLog(updateWellList,addWellList,deleteWellList,deviceType,user);
+			
+			if(initWellList.size()>0){
+				EquipmentDriverServerTask.initPumpDriverAcquisitionInfoConfig(initWellList,"update");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			if(ps!=null){
+				ps.close();
+			}
+			if(cs!=null){
+				cs.close();
+			}
+			conn.close();
+		}
+		return true;
+	}
+	
+	@SuppressWarnings("resource")
 	public Boolean savePipelineDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
