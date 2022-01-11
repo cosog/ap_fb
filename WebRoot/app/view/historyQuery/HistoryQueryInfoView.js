@@ -265,32 +265,56 @@ function deviceHistoryQueryCurve(deviceType){
 	var selectRowId="PumpHistoryQueryInfoDeviceListSelectRow_Id";
 	var gridPanelId="PumpHistoryQueryDeviceListGridPanel_Id";
 	var startDateId="PumpHistoryQueryStartDate_Id";
+	var startHourId="PumpHistoryQueryStartTime_Hour_Id";
+	var startMinuteId="PumpHistoryQueryStartTime_Minute_Id";
+	var startSecondId="PumpHistoryQueryStartTime_Second_Id";
+	
 	var endDateId="PumpHistoryQueryEndDate_Id";
+	var endHourId="PumpHistoryQueryEndTime_Hour_Id";
+	var endMinuteId="PumpHistoryQueryEndTime_Minute_Id";
+	var endSecondId="PumpHistoryQueryEndTime_Second_Id";
+	
 	var divId="pumpHistoryQueryCurveDiv_Id";
 	
 	if(deviceType==1){
 		selectRowId="PipelineHistoryQueryInfoDeviceListSelectRow_Id";
 		gridPanelId="PipelineHistoryQueryDeviceListGridPanel_Id";
 		startDateId="PipelineHistoryQueryStartDate_Id";
+		startHourId="PipelineHistoryQueryStartTime_Hour_Id";
+		startMinuteId="PipelineHistoryQueryStartTime_Minute_Id";
+		startSecondId="PipelineHistoryQueryStartTime_Second_Id";
 		endDateId="PipelineHistoryQueryEndDate_Id";
+		endHourId="PipelineHistoryQueryEndTime_Hour_Id";
+		endMinuteId="PipelineHistoryQueryEndTime_Minute_Id";
+		endSecondId="PipelineHistoryQueryEndTime_Second_Id";
 		divId="pipelineHistoryQueryCurveDiv_Id";
 	}
 	
 	
 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
 	var deviceName='';
+	var deviceId=0;
 	var selectRow= Ext.getCmp(selectRowId).getValue();
 	if(selectRow>=0){
 		deviceName = Ext.getCmp(gridPanelId).getSelectionModel().getSelection()[0].data.wellName;
+		deviceId=Ext.getCmp(gridPanelId).getSelectionModel().getSelection()[0].data.id;
 	}
 	var startDate=Ext.getCmp(startDateId).rawValue;
+	var startTime_Hour=Ext.getCmp(startHourId).getValue();
+	var startTime_Minute=Ext.getCmp(startMinuteId).getValue();
+	var startTime_Second=Ext.getCmp(startSecondId).getValue();
     var endDate=Ext.getCmp(endDateId).rawValue;
+    var endTime_Hour=Ext.getCmp(endHourId).getValue();
+	var endTime_Minute=Ext.getCmp(endMinuteId).getValue();
+	var endTime_Second=Ext.getCmp(endSecondId).getValue();
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/historyQueryController/getHistoryQueryCurveData',
 		success:function(response) {
 			var result =  Ext.JSON.decode(response.responseText);
 		    var data = result.list;
+		    var graphicSet=result.graphicSet;
+		    
 		    var defaultColors=["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
 		    var tickInterval = 1;
 		    tickInterval = Math.floor(data.length / 10) + 1;
@@ -315,13 +339,21 @@ function deviceHistoryQueryCurve(deviceType){
 		    var series = "[";
 		    var yAxis= [];
 		    for (var i = 0; i < legendName.length; i++) {
-		        series += "{\"name\":\"" + legendName[i] + "\"," 
-		        +"\"yAxis\":"+i+",";
+		        var maxValue=null;
+		        var minValue=null;
+		        var allPositive=true;//全部是非负数
+		        var allNegative=true;//全部是负值
+		    	series += "{\"name\":\"" + legendName[i] + "\",marker:{enabled: false},"+"\"yAxis\":"+i+",";
 		        series += "\"data\":[";
 		        for (var j = 0; j < data.length; j++) {
 		        	series += "[" + Date.parse(data[j].acqTime.replace(/-/g, '/')) + "," + data[j].data[i] + "]";
 		            if (j != data.length - 1) {
 		                series += ",";
+		            }
+		            if(parseFloat(data[j].data[i])<0){
+		            	allPositive=false;
+		            }else if(parseFloat(data[j].data[i])>=0){
+		            	allNegative=false;
 		            }
 		        }
 		        series += "]}";
@@ -332,22 +364,34 @@ function deviceHistoryQueryCurve(deviceType){
 		        if(i>0){
 		        	opposite=true;
 		        }
+		        if(allPositive){
+		        	minValue=0;
+		        }else{
+		        	maxValue=0;
+		        }
+		        if(JSON.stringify(graphicSet) != "{}"&&isNotVal(graphicSet.History) && graphicSet.History.length>i ){
+			    	if(isNotVal(graphicSet.History[i].yAxisMaxValue)){
+			    		maxValue=parseFloat(graphicSet.History[i].yAxisMaxValue);
+			    	}
+			    	if(isNotVal(graphicSet.History[i].yAxisMinValue)){
+			    		minValue=parseFloat(graphicSet.History[i].yAxisMinValue);
+			    	}
+			    }
+		        
 		        var singleAxis={
-		                lineWidth: 1,
-		                title: {
+		        		max:maxValue,
+		        		min:minValue,
+		        		title: {
 		                    text: legendName[i],
 		                    style: {
-//		                        color: '#000000',
-//		                        fontWeight: 'bold'
+		                        color: color[i],
 		                    }
 		                },
 		                labels: {
-		                    formatter: function () {
-		                        return Highcharts.numberFormat(this.value, 0);
+		                	style: {
+		                        color: color[i],
 		                    }
 		                },
-			            allowDecimals: true,    // 刻度值是否为小数
-//			            minorTickInterval: '',   // 不显示次刻度线
 		                opposite:opposite
 		          };
 		        yAxis.push(singleAxis);
@@ -365,15 +409,17 @@ function deviceHistoryQueryCurve(deviceType){
 		},
 		params: {
 			deviceName:deviceName,
-			startDate:startDate,
-            endDate:endDate,
+			deviceId:deviceId,
+			startDate:getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),
+            endDate:getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),
 			deviceType:deviceType
         }
 	});
 };
 
 function initDeviceHistoryCurveChartFn(series, tickInterval, divId, title, subtitle, xtitle, yAxis, color,legend,timeFormat) {
-    Highcharts.setOptions({
+	var dafaultMenuItem = Highcharts.getOptions().exporting.buttons.contextButton.menuItems;
+	Highcharts.setOptions({
         global: {
             useUTC: false
         }
@@ -436,11 +482,25 @@ function initDeviceHistoryCurveChartFn(series, tickInterval, divId, title, subti
         exporting: {
             enabled: true,
             filename: 'class-booking-chart',
-            url: context + '/exportHighcharsPicController/export'
+            url: context + '/exportHighcharsPicController/export',
+            buttons: {
+            	contextButton: {
+            		menuItems:[dafaultMenuItem[0],dafaultMenuItem[1],dafaultMenuItem[2],dafaultMenuItem[3],dafaultMenuItem[4],dafaultMenuItem[5],dafaultMenuItem[6],dafaultMenuItem[7],
+            			,dafaultMenuItem[2],{
+            				text: '图形设置',
+            				onclick: function() {
+            					var window = Ext.create("AP.view.historyQuery.HistoryCurveSetWindow", {
+                                    title: '历史曲线设置'
+                                });
+                                window.show();
+            				}
+            			}]
+            	}
+            }
         },
         plotOptions: {
             spline: {
-                lineWidth: 1,
+//                lineWidth: 1,
                 fillOpacity: 0.3,
                 marker: {
                     enabled: true,
@@ -785,4 +845,3 @@ function ShowHistoryQueryDeviceTypeStatPieChat(title,divid, name, data,colors) {
 				}]
 		});
 };
-

@@ -285,6 +285,10 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().savePumpDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
+	public void batchAddPumpDevice(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,String isCheckout,User user) throws Exception {
+		getBaseDao().batchAddPumpDevice(wellHandsontableChangedData,orgId,deviceType,isCheckout,user);
+	}
+	
 	public void savePipelineDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
 		getBaseDao().savePipelineDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
@@ -1325,6 +1329,91 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("}");
 		}
 		
+		json=result_json.toString().replaceAll("null", "");
+		return json;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public String getBatchAddDeviceTableInfo(String deviceTypeStr,int recordCount) {
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer instanceDropdownData = new StringBuffer();
+		StringBuffer alarmInstanceDropdownData = new StringBuffer();
+		StringBuffer applicationScenariosDropdownData = new StringBuffer();
+		String ddicName="pumpDeviceManager";
+		int protocolType=0;
+		int deviceType=StringManagerUtils.stringToInteger(deviceTypeStr);
+		if(deviceType>=200&&deviceType<300){
+			ddicName="pipelineDeviceManager";
+			protocolType=1;
+		}
+		
+		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype="+protocolType+" order by t.sort";
+		String alarmInstanceSql="select t.name from tbl_protocolalarminstance t where t.devicetype="+protocolType+" order by t.sort";
+		String applicationScenariosSql="select c.itemname from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' order by c.itemvalue";
+		String columns=service.showTableHeadersColumns(ddicName);
+		instanceDropdownData.append("[");
+		alarmInstanceDropdownData.append("[");
+		applicationScenariosDropdownData.append("[");
+
+		List<?> instanceList = this.findCallSql(instanceSql);
+		List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
+		List<?> applicationScenariosList = this.findCallSql(applicationScenariosSql);
+		
+		if(instanceList.size()>0){
+			instanceDropdownData.append("\"\",");
+			for(int i=0;i<instanceList.size();i++){
+				instanceDropdownData.append("'"+instanceList.get(i)+"',");
+			}
+			if(instanceDropdownData.toString().endsWith(",")){
+				instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+			}
+		}
+		
+		
+		if(alarmInstanceList.size()>0){
+			alarmInstanceDropdownData.append("\"\",");
+			for(int i=0;i<alarmInstanceList.size();i++){
+				alarmInstanceDropdownData.append("'"+alarmInstanceList.get(i)+"',");
+			}
+			if(alarmInstanceDropdownData.toString().endsWith(",")){
+				alarmInstanceDropdownData.deleteCharAt(alarmInstanceDropdownData.length() - 1);
+			}
+		}
+		
+		
+		for(int i=0;i<applicationScenariosList.size();i++){
+			applicationScenariosDropdownData.append("'"+applicationScenariosList.get(i)+"',");
+		}
+		if(applicationScenariosDropdownData.toString().endsWith(",")){
+			applicationScenariosDropdownData.deleteCharAt(applicationScenariosDropdownData.length() - 1);
+		}
+		instanceDropdownData.append("]");
+		alarmInstanceDropdownData.append("]");
+		applicationScenariosDropdownData.append("]");
+		
+		String json = "";
+		result_json.append("{\"success\":true,\"totalCount\":"+recordCount+","
+				+ "\"instanceDropdownData\":"+instanceDropdownData.toString()+","
+				+ "\"alarmInstanceDropdownData\":"+alarmInstanceDropdownData.toString()+","
+				+ "\"applicationScenariosDropdownData\":"+applicationScenariosDropdownData.toString()+","
+				+ "\"columns\":"+columns+",\"totalRoot\":[");
+		for(int i=1;i<=recordCount;i++){
+			result_json.append("{},");
+//			result_json.append("{\"id\":\""+i+"\",");
+//			result_json.append("\"orgName\":\"\",");
+//			result_json.append("\"wellName\":\"\",");
+//			result_json.append("\"applicationScenariosName\":\"\",");
+//			result_json.append("\"instanceName\":\"\",");
+//			result_json.append("\"alarmInstanceName\":\"\",");
+//			result_json.append("\"signInId\":\"\",");
+//			result_json.append("\"slave\":\"\",");
+//			result_json.append("\"videoUrl\":\"\",");
+//			result_json.append("\"sortNum\":\"\"},");
+		}
+		if(result_json.toString().endsWith(",")){
+			result_json.deleteCharAt(result_json.length() - 1);
+		}
+		result_json.append("]}");
 		json=result_json.toString().replaceAll("null", "");
 		return json;
 	}

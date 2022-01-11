@@ -191,6 +191,10 @@
 	background-image: url(../images/icon/add.png) !important;
 }
 
+.batchAdd {
+	background-image: url(../images/icon/add_batch.png) !important;
+}
+
 .cancel {
 	background-image: url(../images/icon/cancel.png) !important;
 }
