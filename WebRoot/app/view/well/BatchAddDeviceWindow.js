@@ -1,6 +1,7 @@
 var batchAddDeviceHandsontableHelper=null;
 Ext.define("AP.view.well.BatchAddDeviceWindow", {
     extend: 'Ext.window.Window',
+    id:'BatchAddDeviceWindow_Id',
     alias: 'widget.batchAddDeviceWindow',
     layout: 'fit',
     title:'设备批量添加',
@@ -274,25 +275,58 @@ var BatchAddDeviceHandsontableHelper = {
                     for (var j = 0; j < batchAddDeviceHandsontableHelper.columns.length; j++) {
                         data += batchAddDeviceHandsontableHelper.columns[j].data + ":'" + batchAddData[i][j] + "'";
                         if (j < batchAddDeviceHandsontableHelper.columns.length - 1) {
-                            data += ","
+                            data += ",";
                         }
                     }
-                    data += "}"
-                    saveDate.updatelist.push(Ext.JSON.decode(data));
+                    data += "}";
+                    var record=Ext.JSON.decode(data);
+                    record.id=i;
+                    saveDate.updatelist.push(record);
             	}
             }
         	Ext.Ajax.request({
                 method: 'POST',
                 url: context + '/wellInformationManagerController/batchAddDevice',
                 success: function (response) {
-                    rdata = Ext.JSON.decode(response.responseText);
-                    if (rdata.success) {
+                    Ext.getCmp("BatchAddDeviceWindow_Id").close();
+                    if(parseInt(deviceType)==101){
+                		CreateAndLoadDiaphragmPumpDeviceInfoTable();
+                	}else if(parseInt(deviceType)==102){
+                		CreateAndLoadScrewPumpDeviceInfoTable();
+                	}else if(parseInt(deviceType)==103){
+                		CreateAndLoadLinearMotorPumpDeviceInfoTable();
+                	}else if(parseInt(deviceType)==104){
+                		CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
+                	}else if(parseInt(deviceType)==105){
+                		CreateAndLoadJetPumpDeviceInfoTable();
+                	}
+                	rdata = Ext.JSON.decode(response.responseText);
+                	if (rdata.success&&rdata.collisionCount==0&&rdata.overlayCount==0) {
                     	Ext.MessageBox.alert("信息", "保存成功");
                         //保存以后重置全局容器
                         batchAddDeviceHandsontableHelper.clearContainer();
+                    }else if(rdata.success&&(rdata.collisionCount>0 || rdata.overlayCount>0)){
+                    	var window = Ext.create("AP.view.well.BatchAddDeviceCollisionDataWindow", {
+                            title: '异常数据处理'
+                        });
+                        Ext.getCmp("batchAddCollisionDeviceType_Id").setValue(deviceType);
+                        Ext.getCmp("batchAddCollisionDeviceOrg_Id").setValue(orgId);
+                        if(rdata.collisionCount==0){
+                        	Ext.getCmp("BatchAddDeviceCollisionDataPanel_Id").hide();
+                        	Ext.getCmp("BatchAddDeviceOverlayDataPanel_Id").setHeight('100%');
+                        }else if(rdata.overlayCount==0){
+                        	Ext.getCmp("BatchAddDeviceOverlayDataPanel_Id").hide();
+                        	Ext.getCmp("BatchAddDeviceCollisionDataPanel_Id").setHeight('100%');
+                        }
+                        window.show();
+                        if(rdata.collisionCount>0){
+                        	CreateAndLoadBatchAddDeviceCollisionDataTable(rdata);
+                        }
+                        if(rdata.overlayCount>0){
+                        	CreateAndLoadBatchAddDeviceOverlayDataTable(rdata);
+                        }
                     } else {
                         Ext.MessageBox.alert("信息", "数据保存失败");
-
                     }
                 },
                 failure: function () {

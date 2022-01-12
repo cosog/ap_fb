@@ -229,7 +229,38 @@ Ext.define('AP.view.well.ElectricSubmersiblePumpDeviceInfoPanel', {
                 handler: function (v, o) {
                     electricSubmersiblePumpDeviceInfoHandsontableHelper.saveData();
                 }
-            },"-", {
+            },"-",{
+    			xtype: 'button',
+                text: '批量添加',
+                iconCls: 'batchAdd',
+                hidden: false,
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.BatchAddDeviceWindow", {
+                        title: '电潜泵批量添加'
+                    });
+                    window.show();
+                    Ext.getCmp("batchAddDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认");
+                    Ext.getCmp("batchAddDeviceType_Id").setValue(104);
+                    Ext.getCmp("batchAddDeviceOrg_Id").setValue(selectedOrgId);
+                    return false;
+    			}
+    		},"-", {
     			xtype: 'button',
     			text:'设备隶属迁移',
     			iconCls: 'move',

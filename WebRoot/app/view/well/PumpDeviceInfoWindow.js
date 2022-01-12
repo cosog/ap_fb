@@ -1,65 +1,22 @@
 Ext.define("AP.view.well.PumpDeviceInfoWindow", {
     extend: 'Ext.window.Window',
     alias: 'widget.pumpDeviceInfoWindow',
+    id: 'PumpDeviceInfoWindow_Id',
     layout: 'fit',
     iframe: true,
-    id: 'PumpDeviceInfoWindow_Id',
     closeAction: 'destroy',
-    width: 330,
-    constrain: true,
+    width: 300,
     shadow: 'sides',
     resizable: false,
     collapsible: true,
+    constrain: true,
     maximizable: false,
-    layout: 'fit',
     plain: true,
     bodyStyle: 'padding:5px;background-color:#D9E5F3;',
     modal: true,
     border: false,
     initComponent: function () {
         var me = this;
-//        /**下拉机构树*/
-//        var OrgTreeStore=Ext.create('Ext.data.TreeStore', {
-//            fields: ['orgId', 'text', 'leaf'],
-//            autoLoad: false,
-//            proxy: {
-//                type: 'ajax',
-//                url: context + '/orgManagerController/loadOrgComboxTreeData',
-//                reader: 'json'
-//            },
-//            root: {
-//                expanded: true,
-//                text: 'orgName'
-//            },
-//            listeners: {
-//            	beforeload: function (store, options) {
-//                	var orgId = Ext.getCmp('leftOrg_Id').getValue();
-//                    var new_params = {
-////                    	orgId:orgId
-//                    };
-//                    Ext.apply(store.proxy.extraParams, new_params);
-//                }
-//            }
-//        });
-//        var orgTreePicker=Ext.create('AP.view.well.TreePicker',{//Ext.ux.TreePicker AP.view.well.TreePicker
-//        	id:'pumpDeviceOrgTreePicker_Id',
-//        	anchor: '95%',
-//        	fieldLabel: '单位名称',
-//            emptyText: cosog.string.chooseOrg,
-//            blankText: cosog.string.chooseOrg,
-//            displayField: 'text',
-//            autoScroll:true,
-//            allowBlank: false,
-//            forceSelection : true,// 只能选择下拉框里面的内容
-//            rootVisible: false,
-//            store:OrgTreeStore,
-//            listeners: {
-//                select: function (picker,record,eOpts) {
-//                	Ext.getCmp("pumpDeviceOrg_Id").setValue(record.data.id);
-//                }
-//            }
-//        });
-        
         /**采控实例*/
         var acqInstanceStore = new Ext.data.SimpleStore({
         	fields: [{
@@ -186,14 +143,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                 xtype: 'label',
                 id: 'pumpDeviceWinOgLabel_Id',
                 html: ''
-            },
-//            {
-//                xtype: 'displayfield',
-//                id: 'pumpDeviceWinOgLabel_Id',
-//                fieldLabel: '信息',
-//                value: '10'
-//            },
-            {
+            },{
                 xtype: "hidden",
                 fieldLabel: '设备编号',
                 id: 'pumpDevice_Id',
@@ -218,14 +168,42 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                 id: 'pumpDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
-                name: "pumpDeviceInformation.wellName"
+                name: "pumpDeviceInformation.wellName",
+                listeners: {
+                	blur: function (t, e) {
+                        var orgId=Ext.getCmp("pumpDeviceOrg_Id").getValue();
+                		Ext.Ajax.request({
+                            method: 'POST',
+                            params: {
+                            	orgId:orgId,
+                            	deviceName: t.value,
+                                deviceType:101
+                            },
+                            url: context + '/wellInformationManagerController/judgeDeviceExistOrNot',
+                            success: function (response, opts) {
+                                var obj = Ext.decode(response.responseText);
+                                var msg_ = obj.msg;
+                                if (msg_ == "1") {
+                                	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【该组织下已存在设备:"+t.value+"】</font>,请确认！", function(btn, text){
+                                	    if (btn == 'ok'){
+                                	    	t.focus(true, 100);
+                                	    }
+                                	});
+                                }
+                            },
+                            failure: function (response, opts) {
+                                Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                            }
+                        });
+                    }
+                }
             }, {
             	xtype : "combobox",
 				fieldLabel : '应用场景<font color=red>*</font>',
 				id : 'pumpDeviceApplicationScenariosComb_Id',
 				anchor : '95%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:'',
 			    allowBlank: false,

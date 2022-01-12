@@ -1087,7 +1087,7 @@ public class BaseDao extends HibernateDaoSupport {
 	}
 	
 	@SuppressWarnings("resource")
-	public Boolean batchAddPumpDevice(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,String isCheckout,User user) throws SQLException {
+	public List<WellHandsontableChangedData.Updatelist> batchAddPumpDevice(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,String isCheckout,User user) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
 		PreparedStatement ps=null;
@@ -1095,6 +1095,7 @@ public class BaseDao extends HibernateDaoSupport {
 		List<String> updateWellList=new ArrayList<String>();
 		List<String> addWellList=new ArrayList<String>();
 		List<String> deleteWellList=new ArrayList<String>();
+		List<WellHandsontableChangedData.Updatelist> collisionList=new ArrayList<WellHandsontableChangedData.Updatelist>();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
 			EquipmentDriverServerTask.loadProtocolConfig();
@@ -1122,22 +1123,24 @@ public class BaseDao extends HibernateDaoSupport {
 						cs.registerOutParameter(13, Types.INTEGER);
 						cs.registerOutParameter(14,Types.VARCHAR);
 						cs.executeUpdate();
-						int result=cs.getInt(13);
-						String resultStr=cs.getString(14);
-						
-						if(result==0){
-							addWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-						}else if(result==1){
-							updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-						}
-						
-						if((result==0||result==1)
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName()) 
-								){
-							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+						int saveSign=cs.getInt(13);
+						String saveResultStr=cs.getString(14);
+						if(saveSign==0||saveSign==1){//保存成功
+							if(saveSign==0){//添加
+								addWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+							}else if(saveSign==1){//更新
+								updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+							}
+							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
+									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
+									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
+									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName()) ){
+								initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
+							}
+						}else{//保存失败，数据冲突或者超出限制
+							wellHandsontableChangedData.getUpdatelist().get(i).setSaveSign(saveSign);
+							wellHandsontableChangedData.getUpdatelist().get(i).setSaveStr(saveResultStr);
+							collisionList.add(wellHandsontableChangedData.getUpdatelist().get(i));
 						}
 					}
 				}
@@ -1162,21 +1165,25 @@ public class BaseDao extends HibernateDaoSupport {
 						cs.registerOutParameter(13, Types.INTEGER);
 						cs.registerOutParameter(14,Types.VARCHAR);
 						cs.executeUpdate();
-						int result=cs.getInt(13);
-						String resultStr=cs.getString(14);
-						if(result==0){
-							addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-						}else if(result==1){
-							updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-						}
+						int saveSign=cs.getInt(13);
+						String saveResultStr=cs.getString(14);
 						
-						if((result==0||result==1)
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
-								&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName()) 
-								){
-							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+						if(saveSign==0||saveSign==1){//保存成功
+							if(saveSign==0){//添加
+								addWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+							}else if(saveSign==1){//更新
+								updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+							}
+							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
+									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
+									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
+									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName()) ){
+								initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
+							}
+						}else{//保存失败，数据冲突或者超出限制
+							wellHandsontableChangedData.getInsertlist().get(i).setSaveSign(saveSign);
+							wellHandsontableChangedData.getInsertlist().get(i).setSaveStr(saveResultStr);
+							collisionList.add(wellHandsontableChangedData.getInsertlist().get(i));
 						}
 					}
 				}
@@ -1222,7 +1229,7 @@ public class BaseDao extends HibernateDaoSupport {
 			}
 			conn.close();
 		}
-		return true;
+		return collisionList;
 	}
 	
 	@SuppressWarnings("resource")

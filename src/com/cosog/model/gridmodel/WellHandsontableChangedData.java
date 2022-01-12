@@ -50,6 +50,10 @@ public class WellHandsontableChangedData {
 	    private String videoUrl="";
 	    
 	    private String sortNum="";
+	    
+	    private int saveSign;
+	    
+	    private String saveStr;
 
 		public String getId() {
 			return id;
@@ -129,6 +133,22 @@ public class WellHandsontableChangedData {
 
 		public void setApplicationScenariosName(String applicationScenariosName) {
 			this.applicationScenariosName = applicationScenariosName;
+		}
+
+		public int getSaveSign() {
+			return saveSign;
+		}
+
+		public void setSaveSign(int saveSign) {
+			this.saveSign = saveSign;
+		}
+
+		public String getSaveStr() {
+			return saveStr;
+		}
+
+		public void setSaveStr(String saveStr) {
+			this.saveStr = saveStr;
 		}
 	    
 	}

@@ -628,12 +628,12 @@ public class WellInformationManagerController extends BaseController {
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		int collisionCount=0;
 		int overlayCount=0;
-		
+		String json="";
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
 		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
-			this.wellInformationManagerService.batchAddPumpDevice(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),isCheckout,user);
+			json=this.wellInformationManagerService.batchAddPumpDevice(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),isCheckout,user);
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
 			this.wellInformationManagerService.savePipelineDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
@@ -641,7 +641,6 @@ public class WellInformationManagerController extends BaseController {
 		}
 		
 		EquipmentDriverServerTask.LoadDeviceCommStatus();
-		String json ="{\"success\":true,\"collisionCount\":"+collisionCount+",\"overlayCount\":"+overlayCount+"}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -887,7 +886,26 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 
-	
+	@RequestMapping("/judgeDeviceExistOrNot")
+	public String judgeDeviceExistOrNot() throws IOException {
+		orgId=ParamUtils.getParameter(request, "orgId");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		boolean flag = this.wellInformationManagerService.judgeDeviceExistOrNot(orgId,deviceName,deviceType);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 
 	public String getLimit() {
 		return limit;
