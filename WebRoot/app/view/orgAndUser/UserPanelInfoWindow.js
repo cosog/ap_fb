@@ -1,9 +1,9 @@
 Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
     extend: 'Ext.window.Window',
     alias: 'widget.userPanelInfoWindow',
+    id: 'user_addwin_Id',
     layout: 'fit',
     iframe: true,
-    id: 'user_addwin_Id',
     closeAction: 'destroy',
     width: 300,
     shadow: 'sides',

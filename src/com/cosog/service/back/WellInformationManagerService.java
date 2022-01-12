@@ -285,8 +285,105 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().savePumpDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
-	public void batchAddPumpDevice(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,String isCheckout,User user) throws Exception {
-		getBaseDao().batchAddPumpDevice(wellHandsontableChangedData,orgId,deviceType,isCheckout,user);
+	public String batchAddPumpDevice(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,String isCheckout,User user) throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer  collisionBuff = new StringBuffer();
+		StringBuffer overlayBuff = new StringBuffer();
+		StringBuffer instanceDropdownData = new StringBuffer();
+		StringBuffer alarmInstanceDropdownData = new StringBuffer();
+		StringBuffer applicationScenariosDropdownData = new StringBuffer();
+		int collisionCount=0;
+		int overlayCount=0;
+		String ddicName="pumpDeviceManager";
+		String columns=service.showTableHeadersColumns(ddicName);
+		List<WellHandsontableChangedData.Updatelist> list=getBaseDao().batchAddPumpDevice(wellHandsontableChangedData,orgId,deviceType,isCheckout,user);
+		String instanceSql="select t.name from tbl_protocolinstance t where t.devicetype=0 order by t.sort";
+		String alarmInstanceSql="select t.name from tbl_protocolalarminstance t where t.devicetype=0 order by t.sort";
+		String applicationScenariosSql="select c.itemname from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' order by c.itemvalue";
+		instanceDropdownData.append("[");
+		alarmInstanceDropdownData.append("[");
+		applicationScenariosDropdownData.append("[");
+
+		List<?> instanceList = this.findCallSql(instanceSql);
+		List<?> alarmInstanceList = this.findCallSql(alarmInstanceSql);
+		List<?> applicationScenariosList = this.findCallSql(applicationScenariosSql);
+		
+		if(instanceList.size()>0){
+			instanceDropdownData.append("\"\",");
+			for(int i=0;i<instanceList.size();i++){
+				instanceDropdownData.append("'"+instanceList.get(i)+"',");
+			}
+			if(instanceDropdownData.toString().endsWith(",")){
+				instanceDropdownData.deleteCharAt(instanceDropdownData.length() - 1);
+			}
+		}
+		
+		
+		if(alarmInstanceList.size()>0){
+			alarmInstanceDropdownData.append("\"\",");
+			for(int i=0;i<alarmInstanceList.size();i++){
+				alarmInstanceDropdownData.append("'"+alarmInstanceList.get(i)+"',");
+			}
+			if(alarmInstanceDropdownData.toString().endsWith(",")){
+				alarmInstanceDropdownData.deleteCharAt(alarmInstanceDropdownData.length() - 1);
+			}
+		}
+		
+		
+		for(int i=0;i<applicationScenariosList.size();i++){
+			applicationScenariosDropdownData.append("'"+applicationScenariosList.get(i)+"',");
+		}
+		if(applicationScenariosDropdownData.toString().endsWith(",")){
+			applicationScenariosDropdownData.deleteCharAt(applicationScenariosDropdownData.length() - 1);
+		}
+		instanceDropdownData.append("]");
+		alarmInstanceDropdownData.append("]");
+		applicationScenariosDropdownData.append("]");
+		collisionBuff.append("[");
+		overlayBuff.append("[");
+		if(list!=null){
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getSaveSign()==-22){//冲突
+					collisionCount+=1;
+					collisionBuff.append("{\"id\":\""+list.get(i).getId()+"\",");
+					collisionBuff.append("\"wellName\":\""+list.get(i).getWellName()+"\",");
+					collisionBuff.append("\"applicationScenariosName\":\""+list.get(i).getApplicationScenariosName()+"\",");
+					collisionBuff.append("\"instanceName\":\""+list.get(i).getInstanceName()+"\",");
+					collisionBuff.append("\"alarmInstanceName\":\""+list.get(i).getAlarmInstanceName()+"\",");
+					collisionBuff.append("\"signInId\":\""+list.get(i).getSignInId()+"\",");
+					collisionBuff.append("\"slave\":\""+list.get(i).getSlave()+"\",");
+					collisionBuff.append("\"sortNum\":\""+list.get(i).getSortNum()+"\",");
+					collisionBuff.append("\"dataInfo\":\""+list.get(i).getSaveStr()+"\"},");
+				}else if(list.get(i).getSaveSign()==-33){//覆盖信息
+					overlayCount+=1;
+					overlayBuff.append("{\"id\":\""+list.get(i).getId()+"\",");
+					overlayBuff.append("\"wellName\":\""+list.get(i).getWellName()+"\",");
+					overlayBuff.append("\"applicationScenariosName\":\""+list.get(i).getApplicationScenariosName()+"\",");
+					overlayBuff.append("\"instanceName\":\""+list.get(i).getInstanceName()+"\",");
+					overlayBuff.append("\"alarmInstanceName\":\""+list.get(i).getAlarmInstanceName()+"\",");
+					overlayBuff.append("\"signInId\":\""+list.get(i).getSignInId()+"\",");
+					overlayBuff.append("\"slave\":\""+list.get(i).getSlave()+"\",");
+					overlayBuff.append("\"sortNum\":\""+list.get(i).getSortNum()+"\",");
+					overlayBuff.append("\"dataInfo\":\""+list.get(i).getSaveStr()+"\"},");
+				}
+			}
+			if (collisionBuff.toString().endsWith(",")) {
+				collisionBuff.deleteCharAt(collisionBuff.length() - 1);
+			}
+			if (overlayBuff.toString().endsWith(",")) {
+				overlayBuff.deleteCharAt(overlayBuff.length() - 1);
+			}
+		}
+		collisionBuff.append("]");
+		overlayBuff.append("]");
+		result_json.append("{\"success\":true,\"collisionCount\":"+collisionCount+",\"overlayCount\":"+overlayCount+","
+				+ "\"instanceDropdownData\":"+instanceDropdownData.toString()+","
+				+ "\"alarmInstanceDropdownData\":"+alarmInstanceDropdownData.toString()+","
+				+ "\"applicationScenariosDropdownData\":"+applicationScenariosDropdownData.toString()+","
+				+ "\"columns\":"+columns+",\"collisionList\":"+collisionBuff+",\"overlayList\":"+overlayBuff+"}");
+		
+		return result_json.toString().replaceAll("null", "");
+		
 	}
 	
 	public void savePipelineDeviceData(WellHandsontableChangedData wellHandsontableChangedData,String orgId,int deviceType,User user) throws Exception {
@@ -1399,16 +1496,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 				+ "\"columns\":"+columns+",\"totalRoot\":[");
 		for(int i=1;i<=recordCount;i++){
 			result_json.append("{},");
-//			result_json.append("{\"id\":\""+i+"\",");
-//			result_json.append("\"orgName\":\"\",");
-//			result_json.append("\"wellName\":\"\",");
-//			result_json.append("\"applicationScenariosName\":\"\",");
-//			result_json.append("\"instanceName\":\"\",");
-//			result_json.append("\"alarmInstanceName\":\"\",");
-//			result_json.append("\"signInId\":\"\",");
-//			result_json.append("\"slave\":\"\",");
-//			result_json.append("\"videoUrl\":\"\",");
-//			result_json.append("\"sortNum\":\"\"},");
 		}
 		if(result_json.toString().endsWith(",")){
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -1416,5 +1503,24 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		result_json.append("]}");
 		json=result_json.toString().replaceAll("null", "");
 		return json;
+	}
+	
+	public boolean judgeDeviceExistOrNot(String orgId,String deviceName,String deviceTypeStr) {
+		boolean flag = false;
+		int deviceType=StringManagerUtils.stringToInteger(deviceTypeStr);
+		String tableName="tbl_pumpdevice";
+		if(deviceType>=200&&deviceType<300){
+			tableName="tbl_pipelinedevice";
+		}else if(deviceType>=300){
+			tableName="tbl_smsdevice";
+		}
+		if (StringManagerUtils.isNotNull(deviceName)&&StringManagerUtils.isNotNull(orgId)) {
+			String sql = "select t.id from "+tableName+" t where t.wellname='"+deviceName+"' and t.orgid="+orgId;
+			List<?> list = this.findCallSql(sql);
+			if (list.size() > 0) {
+				flag = true;
+			}
+		}
+		return flag;
 	}
 }
