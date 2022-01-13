@@ -169,14 +169,45 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
                 id: 'pipelineDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
-                name: "pipelineDeviceInformation.wellName"
+                name: "pipelineDeviceInformation.wellName",
+                listeners: {
+                	blur: function (t, e) {
+                        if(t.value!=''){
+                        	var orgId=Ext.getCmp("pipelineDeviceOrg_Id").getValue();
+                        	var deviceType=Ext.getCmp("pipelineDeviceType_Id").getValue();
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	orgId:orgId,
+                                	deviceName: t.value,
+                                    deviceType:deviceType
+                                },
+                                url: context + '/wellInformationManagerController/judgeDeviceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【该组织下已存在设备:"+t.value+"】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             }, {
             	xtype : "combobox",
 				fieldLabel : '应用场景<font color=red>*</font>',
 				id : 'pipelineDeviceApplicationScenariosComb_Id',
 				anchor : '95%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:'',
 			    allowBlank: false,
@@ -220,14 +251,78 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
                 id: 'pipelineDeviceSignInId_Id',
                 anchor: '95%',
                 name: "pipelineDeviceInformation.signInId",
-                value: ''
+                value: '',
+                listeners: {
+                	blur: function (t, e) {
+                        var slave=Ext.getCmp("pipelineDeviceSlave_Id").getValue();
+                        var deviceType=Ext.getCmp("pipelineDeviceType_Id").getValue();
+                		if(t.value!=''&&slave!=''){
+                        	var orgId=Ext.getCmp("pipelineDeviceOrg_Id").getValue();
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	signinId: t.value,
+                                	slave:slave,
+                                    deviceType:deviceType
+                                },
+                                url: context + '/wellInformationManagerController/judgeDeviceExistOrNotBySigninIdAndSlave',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【注册包ID和设备从地址与其他设备冲突】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             }, {
          		xtype: "textfield",
          		fieldLabel: '设备从地址',
          		id: 'pipelineDeviceSlave_Id',
          		anchor: '95%',
          		name: "pipelineDeviceInformation.slave",
-         		value:'01'
+         		value:'01',
+         		listeners: {
+                	blur: function (t, e) {
+                        var signinId=Ext.getCmp("pipelineDeviceSignInId_Id").getValue();
+                        var deviceType=Ext.getCmp("pipelineDeviceType_Id").getValue();
+                		if(signinId!=''&&t.value!=''){
+                        	var orgId=Ext.getCmp("pipelineDeviceOrg_Id").getValue();
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	signinId: signinId,
+                                	slave:t.value,
+                                    deviceType:deviceType
+                                },
+                                url: context + '/wellInformationManagerController/judgeDeviceExistOrNotBySigninIdAndSlave',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【注册包ID和设备从地址与其他设备冲突】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             },{
             	xtype: 'numberfield',
             	id: "pipelineDeviceSortNum_Id",

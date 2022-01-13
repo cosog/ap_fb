@@ -229,7 +229,38 @@ Ext.define('AP.view.well.HeatingPipelineDeviceInfoPanel', {
                 handler: function (v, o) {
                     heatingPipelineDeviceInfoHandsontableHelper.saveData();
                 }
-            },'-',{
+            },"-",{
+    			xtype: 'button',
+                text: '批量添加',
+                iconCls: 'batchAdd',
+                hidden: false,
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.BatchAddDeviceWindow", {
+                        title: '加热管批量添加'
+                    });
+                	Ext.getCmp("batchAddDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认");
+                    Ext.getCmp("batchAddDeviceType_Id").setValue(201);
+                    Ext.getCmp("batchAddDeviceOrg_Id").setValue(selectedOrgId);
+                    window.show();
+                    return false;
+    			}
+    		},'-',{
     			xtype: 'button',
     			text:'设备隶属迁移',
     			iconCls: 'move',
@@ -446,44 +477,6 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 colHeaders: heatingPipelineDeviceInfoHandsontableHelper.colHeaders, //显示列头
                 columnSorting: true, //允许排序
                 allowInsertRow:false,
-//                contextMenu: {
-//                    items: {
-//                        "row_above": {
-//                            name: '向上插入一行',
-//                        },
-//                        "row_below": {
-//                            name: '向下插入一行',
-//                        },
-//                        "col_left": {
-//                            name: '向左插入一列',
-//                        },
-//                        "col_right": {
-//                            name: '向右插入一列',
-//                        },
-//                        "remove_row": {
-//                            name: '删除行',
-//                        },
-//                        "remove_col": {
-//                            name: '删除列',
-//                        },
-//                        "merge_cell": {
-//                            name: '合并单元格',
-//                        },
-//                        "copy": {
-//                            name: '复制',
-//                        },
-//                        "cut": {
-//                            name: '剪切',
-//                        },
-//                        "paste": {
-//                            name: '粘贴',
-//                            disabled: function () {
-//                            },
-//                            callback: function () {
-//                            }
-//                        }
-//                    }
-//                }, //右键菜单展示
                 sortIndicator: true,
                 manualColumnResize: true, //当值为true时，允许拖动，当为false时禁止拖动
                 manualRowResize: true, //当值为true时，允许拖动，当为false时禁止拖动
@@ -494,9 +487,6 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                     var cellProperties = {};
                     var visualRowIndex = this.instance.toVisualRow(row);
                     var visualColIndex = this.instance.toVisualColumn(col);
-//                    if(visualRowIndex < heatingPipelineDeviceInfoHandsontableHelper.dataLength){
-//                    	cellProperties.readOnly = true;
-//                    }
                     return cellProperties;
                 },
                 afterSelectionEnd : function (row,column,row2,column2, preventScrolling,selectionLayerLevel) {
@@ -665,15 +655,23 @@ var HeatingPipelineDeviceInfoHandsontableHelper = {
                 method: 'POST',
                 url: context + '/wellInformationManagerController/saveWellHandsontableData',
                 success: function (response) {
-                    rdata = Ext.JSON.decode(response.responseText);
+                	rdata = Ext.JSON.decode(response.responseText);
                     if (rdata.success) {
-                    	Ext.MessageBox.alert("信息", "保存成功");
+                    	var saveInfo='保存成功';
+                    	if(rdata.collisionCount>0){//数据冲突
+                    		saveInfo='保存成功'+rdata.successCount+'条记录,保存失败:<font color="red">'+rdata.collisionCount+'</font>条记录';
+                    		for(var i=0;i<rdata.list.length;i++){
+                    			saveInfo+='<br/><font color="red"> '+rdata.list[i]+'</font>';
+                    		}
+                    	}
+                    	Ext.MessageBox.alert("信息", saveInfo);
                         //保存以后重置全局容器
-                        heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
-                        CreateAndLoadHeatingPipelineDeviceInfoTable();
+                        if(rdata.successCount>0){
+                        	heatingPipelineDeviceInfoHandsontableHelper.clearContainer();
+                            CreateAndLoadHeatingPipelineDeviceInfoTable();
+                        }
                     } else {
                         Ext.MessageBox.alert("信息", "数据保存失败");
-
                     }
                 },
                 failure: function () {

@@ -171,30 +171,33 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                 name: "pumpDeviceInformation.wellName",
                 listeners: {
                 	blur: function (t, e) {
-                        var orgId=Ext.getCmp("pumpDeviceOrg_Id").getValue();
-                		Ext.Ajax.request({
-                            method: 'POST',
-                            params: {
-                            	orgId:orgId,
-                            	deviceName: t.value,
-                                deviceType:101
-                            },
-                            url: context + '/wellInformationManagerController/judgeDeviceExistOrNot',
-                            success: function (response, opts) {
-                                var obj = Ext.decode(response.responseText);
-                                var msg_ = obj.msg;
-                                if (msg_ == "1") {
-                                	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【该组织下已存在设备:"+t.value+"】</font>,请确认！", function(btn, text){
-                                	    if (btn == 'ok'){
-                                	    	t.focus(true, 100);
-                                	    }
-                                	});
+                        if(t.value!=''){
+                        	var orgId=Ext.getCmp("pumpDeviceOrg_Id").getValue();
+                        	var deviceType=Ext.getCmp("pumpDeviceType_Id").getValue();
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	orgId:orgId,
+                                	deviceName: t.value,
+                                    deviceType:deviceType
+                                },
+                                url: context + '/wellInformationManagerController/judgeDeviceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【该组织下已存在设备:"+t.value+"】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
                                 }
-                            },
-                            failure: function (response, opts) {
-                                Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }, {
@@ -247,14 +250,78 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                 id: 'pumpDeviceSignInId_Id',
                 anchor: '95%',
                 name: "pumpDeviceInformation.signInId",
-                value: ''
+                value: '',
+                listeners: {
+                	blur: function (t, e) {
+                        var slave=Ext.getCmp("pumpDeviceSlave_Id").getValue();
+                        var deviceType=Ext.getCmp("pumpDeviceType_Id").getValue();
+                		if(t.value!=''&&slave!=''){
+                        	var orgId=Ext.getCmp("pumpDeviceOrg_Id").getValue();
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	signinId: t.value,
+                                	slave:slave,
+                                    deviceType:deviceType
+                                },
+                                url: context + '/wellInformationManagerController/judgeDeviceExistOrNotBySigninIdAndSlave',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【注册包ID和设备从地址与其他设备冲突】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             }, {
          		xtype: "textfield",
          		fieldLabel: '设备从地址',
          		id: 'pumpDeviceSlave_Id',
          		anchor: '95%',
          		name: "pumpDeviceInformation.slave",
-         		value:'01'
+         		value:'01',
+         		listeners: {
+                	blur: function (t, e) {
+                        var signinId=Ext.getCmp("pumpDeviceSignInId_Id").getValue();
+                        var deviceType=Ext.getCmp("pumpDeviceType_Id").getValue();
+                		if(signinId!=''&&t.value!=''){
+                        	var orgId=Ext.getCmp("pumpDeviceOrg_Id").getValue();
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	signinId: signinId,
+                                	slave:t.value,
+                                    deviceType:deviceType
+                                },
+                                url: context + '/wellInformationManagerController/judgeDeviceExistOrNotBySigninIdAndSlave',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【注册包ID和设备从地址与其他设备冲突】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             },{
             	xtype: 'numberfield',
             	id: "pumpDeviceSortNum_Id",

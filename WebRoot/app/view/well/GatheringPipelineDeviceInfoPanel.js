@@ -229,7 +229,38 @@ Ext.define('AP.view.well.GatheringPipelineDeviceInfoPanel', {
                 handler: function (v, o) {
                     gatheringPipelineDeviceInfoHandsontableHelper.saveData();
                 }
-            },"-", {
+            },"-",{
+    			xtype: 'button',
+                text: '批量添加',
+                iconCls: 'batchAdd',
+                hidden: false,
+                handler: function (v, o) {
+                	var selectedOrgName="";
+                	var selectedOrgId="";
+                	var IframeViewStore = Ext.getCmp("IframeView_Id").getStore();
+            		var count=IframeViewStore.getCount();
+                	var IframeViewSelection = Ext.getCmp("IframeView_Id").getSelectionModel().getSelection();
+                	if (IframeViewSelection.length > 0) {
+                		selectedOrgName=foreachAndSearchOrgAbsolutePath(IframeViewStore.data.items,IframeViewSelection[0].data.orgId);
+                		selectedOrgId=IframeViewSelection[0].data.orgId;
+                		
+                	} else {
+                		if(count>0){
+                			selectedOrgName=IframeViewStore.getAt(0).data.text;
+                			selectedOrgId=IframeViewStore.getAt(0).data.orgId;
+                		}
+                	}
+                	
+                	var window = Ext.create("AP.view.well.BatchAddDeviceWindow", {
+                        title: '集输管批量添加'
+                    });
+                	Ext.getCmp("batchAddDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认");
+                    Ext.getCmp("batchAddDeviceType_Id").setValue(203);
+                    Ext.getCmp("batchAddDeviceOrg_Id").setValue(selectedOrgId);
+                    window.show();
+                    return false;
+    			}
+    		},"-", {
     			xtype: 'button',
     			text:'设备隶属迁移',
     			iconCls: 'move',
@@ -665,15 +696,23 @@ var GatheringPipelineDeviceInfoHandsontableHelper = {
                 method: 'POST',
                 url: context + '/wellInformationManagerController/saveWellHandsontableData',
                 success: function (response) {
-                    rdata = Ext.JSON.decode(response.responseText);
+                	rdata = Ext.JSON.decode(response.responseText);
                     if (rdata.success) {
-                    	Ext.MessageBox.alert("信息", "保存成功");
+                    	var saveInfo='保存成功';
+                    	if(rdata.collisionCount>0){//数据冲突
+                    		saveInfo='保存成功'+rdata.successCount+'条记录,保存失败:<font color="red">'+rdata.collisionCount+'</font>条记录';
+                    		for(var i=0;i<rdata.list.length;i++){
+                    			saveInfo+='<br/><font color="red"> '+rdata.list[i]+'</font>';
+                    		}
+                    	}
+                    	Ext.MessageBox.alert("信息", saveInfo);
                         //保存以后重置全局容器
-                        gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
-                        CreateAndLoadGatheringPipelineDeviceInfoTable();
+                        if(rdata.successCount>0){
+                        	gatheringPipelineDeviceInfoHandsontableHelper.clearContainer();
+                            CreateAndLoadGatheringPipelineDeviceInfoTable();
+                        }
                     } else {
                         Ext.MessageBox.alert("信息", "数据保存失败");
-
                     }
                 },
                 failure: function () {

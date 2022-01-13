@@ -169,13 +169,24 @@ Ext.define('AP.view.well.AuxiliaryDeviceInfoPanel', {
                 id: 'saveAuxiliaryDeviceDataBtn_Id',
                 disabled: false,
                 hidden: false,
-//                pressed: true,
                 text: cosog.string.save,
                 iconCls: 'save',
                 handler: function (v, o) {
                     auxiliaryDeviceInfoHandsontableHelper.saveData();
                 }
-            }],
+            },"-",{
+    			xtype: 'button',
+                text: '批量添加',
+                iconCls: 'batchAdd',
+                hidden: false,
+                handler: function (v, o) {
+                	var window = Ext.create("AP.view.well.BatchAddAuxiliaryDeviceWindow", {
+                        title: '辅件设备批量添加'
+                    });
+                    window.show();
+                    return false;
+    			}
+    		}],
             html: '<div class="AuxiliaryDeviceContainer" style="width:100%;height:100%;"><div class="con" id="AuxiliaryDeviceTableDiv_id"></div></div>',
             listeners: {
                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
