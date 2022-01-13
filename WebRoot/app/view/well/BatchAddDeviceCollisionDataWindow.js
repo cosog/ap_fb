@@ -99,6 +99,12 @@ Ext.define("AP.view.well.BatchAddDeviceCollisionDataWindow", {
                         		CreateAndLoadElectricSubmersiblePumpDeviceInfoTable();
                         	}else if(parseInt(deviceType)==105){
                         		CreateAndLoadJetPumpDeviceInfoTable();
+                        	}else if(parseInt(deviceType)==201){
+                        		CreateAndLoadHeatingPipelineDeviceInfoTable();
+                        	}else if(parseInt(deviceType)==202){
+                        		CreateAndLoadWaterGatheringPipelineDeviceInfoTable();
+                        	}else if(parseInt(deviceType)==203){
+                        		CreateAndLoadGatheringPipelineDeviceInfoTable();
                         	}
                         	rdata = Ext.JSON.decode(response.responseText);
                             if (rdata.success&&rdata.collisionCount==0&&rdata.overlayCount==0) {

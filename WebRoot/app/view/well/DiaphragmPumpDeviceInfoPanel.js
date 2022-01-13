@@ -254,10 +254,10 @@ Ext.define('AP.view.well.DiaphragmPumpDeviceInfoPanel', {
                 	var window = Ext.create("AP.view.well.BatchAddDeviceWindow", {
                         title: '隔膜泵批量添加'
                     });
-                    window.show();
                     Ext.getCmp("batchAddDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认");
                     Ext.getCmp("batchAddDeviceType_Id").setValue(101);
                     Ext.getCmp("batchAddDeviceOrg_Id").setValue(selectedOrgId);
+                    window.show();
                     return false;
     			}
     		},'-', {
@@ -693,34 +693,27 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                 	}
             	}
             }
-            
-
-        	var orgArr=leftOrg_Name.split(",");
-        	var saveData={};
-        	saveData.updatelist=[];
-        	saveData.insertlist=[];
-        	saveData.delidslist=diaphragmPumpDeviceInfoHandsontableHelper.delidslist;
-        	
-        	var invalidData1=[];
-        	var invalidData2=[];
-        	var invalidDataInfo="";
         	Ext.Ajax.request({
                 method: 'POST',
                 url: context + '/wellInformationManagerController/saveWellHandsontableData',
                 success: function (response) {
                     rdata = Ext.JSON.decode(response.responseText);
                     if (rdata.success) {
-                        if(invalidData1.length>0 || invalidData2.length>0){
-                    		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
-                    	}else{
-                    		Ext.MessageBox.alert("信息", "保存成功");
+                    	var saveInfo='保存成功';
+                    	if(rdata.collisionCount>0){//数据冲突
+                    		saveInfo='保存成功'+rdata.successCount+'条记录,保存失败:<font color="red">'+rdata.collisionCount+'</font>条记录';
+                    		for(var i=0;i<rdata.list.length;i++){
+                    			saveInfo+='<br/><font color="red"> '+rdata.list[i]+'</font>';
+                    		}
                     	}
+                    	Ext.MessageBox.alert("信息", saveInfo);
                         //保存以后重置全局容器
-                        diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
-                        CreateAndLoadDiaphragmPumpDeviceInfoTable();
+                        if(rdata.successCount>0){
+                        	diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
+                        	CreateAndLoadDiaphragmPumpDeviceInfoTable();
+                        }
                     } else {
                         Ext.MessageBox.alert("信息", "数据保存失败");
-
                     }
                 },
                 failure: function () {

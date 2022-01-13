@@ -42,6 +42,10 @@ public class AuxiliaryDeviceHandsontableChangedData {
 	    private String remark="";
 	    
 	    private String sort="";
+	    
+	    private int saveSign;
+	    
+	    private String saveStr;
 
 		public String getId() {
 			return id;
@@ -89,6 +93,22 @@ public class AuxiliaryDeviceHandsontableChangedData {
 
 		public void setSort(String sort) {
 			this.sort = sort;
+		}
+
+		public int getSaveSign() {
+			return saveSign;
+		}
+
+		public void setSaveSign(int saveSign) {
+			this.saveSign = saveSign;
+		}
+
+		public String getSaveStr() {
+			return saveStr;
+		}
+
+		public void setSaveStr(String saveStr) {
+			this.saveStr = saveStr;
 		}
 	}
 }

@@ -366,6 +366,21 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/getBatchAddAuxiliaryDeviceTableInfo")
+	public String getBatchAddAuxiliaryDeviceTableInfo() throws IOException {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int recordCount =StringManagerUtils.stringToInteger(ParamUtils.getParameter(request, "recordCount"));
+		this.pager = new Page("pagerForm", request);
+		String json = this.wellInformationManagerService.getBatchAddAuxiliaryDeviceTableInfo(recordCount);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	@RequestMapping("/exportAuxiliaryDeviceData")
 	public String exportAuxiliaryDeviceData() throws IOException {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -545,6 +560,7 @@ public class WellInformationManagerController extends BaseController {
 	@RequestMapping("/saveWellHandsontableData")
 	public String saveWellHandsontableData() throws Exception {
 		HttpSession session=request.getSession();
+		String json ="{success:true}";
 		User user = (User) session.getAttribute("userLogin");
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String deviceAuxiliaryData = ParamUtils.getParameter(request, "deviceAuxiliaryData").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
@@ -556,10 +572,10 @@ public class WellInformationManagerController extends BaseController {
 		WellHandsontableChangedData wellHandsontableChangedData=gson.fromJson(data, type);
 		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
 			deviceTableName="tbl_pumpdevice";
-			this.wellInformationManagerService.savePumpDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+			json=this.wellInformationManagerService.savePumpDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
 			deviceTableName="tbl_pipelinedevice";
-			this.wellInformationManagerService.savePipelineDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+			json=this.wellInformationManagerService.savePipelineDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
 			this.wellInformationManagerService.saveSMSDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		}
@@ -606,7 +622,6 @@ public class WellInformationManagerController extends BaseController {
 		}
 		
 		EquipmentDriverServerTask.LoadDeviceCommStatus();
-		String json ="{success:true}";
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -626,8 +641,6 @@ public class WellInformationManagerController extends BaseController {
 		String orgId = ParamUtils.getParameter(request, "orgId");
 		String isCheckout = ParamUtils.getParameter(request, "isCheckout");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		int collisionCount=0;
-		int overlayCount=0;
 		String json="";
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<WellHandsontableChangedData>() {}.getType();
@@ -635,7 +648,7 @@ public class WellInformationManagerController extends BaseController {
 		if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
 			json=this.wellInformationManagerService.batchAddPumpDevice(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),isCheckout,user);
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
-			this.wellInformationManagerService.savePipelineDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
+			json=this.wellInformationManagerService.batchAddPipelineDevice(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),isCheckout,user);
 		}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
 			this.wellInformationManagerService.saveSMSDeviceData(wellHandsontableChangedData,orgId,StringManagerUtils.stringToInteger(deviceType),user);
 		}
@@ -659,7 +672,6 @@ public class WellInformationManagerController extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("static-access")
 	@RequestMapping("/saveAuxiliaryDeviceHandsontableData")
 	public String saveAuxiliaryDeviceHandsontableData() throws Exception {
 		HttpSession session=request.getSession();
@@ -669,6 +681,25 @@ public class WellInformationManagerController extends BaseController {
 		AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData=gson.fromJson(data, type);
 		this.wellInformationManagerService.saveAuxiliaryDeviceHandsontableData(auxiliaryDeviceHandsontableChangedData);
 		String json ="{success:true}";
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		log.warn("jh json is ==" + json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/batchAddAuxiliaryDevice")
+	public String batchAddAuxiliaryDevice() throws Exception {
+		HttpSession session=request.getSession();
+		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
+		String isCheckout = ParamUtils.getParameter(request, "isCheckout");
+		Gson gson = new Gson();
+		java.lang.reflect.Type type = new TypeToken<AuxiliaryDeviceHandsontableChangedData>() {}.getType();
+		AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData=gson.fromJson(data, type);
+		String json=this.wellInformationManagerService.batchAddAuxiliaryDevice(auxiliaryDeviceHandsontableChangedData,isCheckout);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
@@ -892,6 +923,49 @@ public class WellInformationManagerController extends BaseController {
 		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		String deviceType = ParamUtils.getParameter(request, "deviceType");
 		boolean flag = this.wellInformationManagerService.judgeDeviceExistOrNot(orgId,deviceName,deviceType);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeDeviceExistOrNotBySigninIdAndSlave")
+	public String judgeDeviceExistOrNotBySigninIdAndSlave() throws IOException {
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		String signinId = ParamUtils.getParameter(request, "signinId");
+		String slave = ParamUtils.getParameter(request, "slave");
+		boolean flag = this.wellInformationManagerService.judgeDeviceExistOrNotBySigninIdAndSlave(deviceType,signinId,slave);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeAuxiliaryDeviceExistOrNot")
+	public String judgeAuxiliaryDeviceExistOrNot() throws IOException {
+		orgId=ParamUtils.getParameter(request, "orgId");
+		String name = ParamUtils.getParameter(request, "name");
+		String type = ParamUtils.getParameter(request, "type");
+		String model = ParamUtils.getParameter(request, "model");
+		boolean flag = this.wellInformationManagerService.judgeAuxiliaryDeviceExistOrNot(name,type,model);
 		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		String json = "";

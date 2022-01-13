@@ -254,10 +254,10 @@ Ext.define('AP.view.well.LinearMotorPumpDeviceInfoPanel', {
                 	var window = Ext.create("AP.view.well.BatchAddDeviceWindow", {
                         title: '直线电机泵批量添加'
                     });
-                    window.show();
                     Ext.getCmp("batchAddDeviceWinOgLabel_Id").setHtml("设备将添加到【<font color=red>"+selectedOrgName+"</font>】下,请确认");
                     Ext.getCmp("batchAddDeviceType_Id").setValue(103);
                     Ext.getCmp("batchAddDeviceOrg_Id").setValue(selectedOrgId);
+                    window.show();
                     return false;
     			}
     		},"-", {
@@ -692,70 +692,27 @@ var LinearMotorPumpDeviceInfoHandsontableHelper = {
                 	}
             	}
             }
-            
-
-        	var orgArr=leftOrg_Name.split(",");
-        	var saveData={};
-        	saveData.updatelist=[];
-        	saveData.insertlist=[];
-        	saveData.delidslist=linearMotorPumpDeviceInfoHandsontableHelper.delidslist;
-        	
-        	var invalidData1=[];
-        	var invalidData2=[];
-        	var invalidDataInfo="";
-//        	if(linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist!=undefined && linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist.length>0){
-//            	for(var i=0;i<linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist.length;i++){
-//            		var orgName=linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].orgName;
-//            		var diveceName=linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist[i].wellName;
-//            		if(isNotVal(diveceName)){
-//            			var orgCount=isExist(orgArr,orgName);
-//                		if(orgCount>1){//所选组织下具有多个同名组织
-//                			invalidData1.push(linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-//                			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-//                		}else if(orgCount===1){//所选组织下无重复组织
-//                			saveData.updatelist.push(linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-//                		}else{//不具备所填写组织权限
-//                			invalidData2.push(linearMotorPumpDeviceInfoHandsontableHelper.AllData.updatelist[i]);
-//                			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-//                		}
-//            		}
-//            	}
-//            }
-//        	if(linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist!=undefined && linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist.length>0){
-//            	for(var i=0;i<linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist.length;i++){
-//            		var orgName=linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].orgName;
-//            		var diveceName=linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist[i].wellName;
-//            		if(isNotVal(diveceName)){
-//            			var orgCount=isExist(orgArr,orgName);
-//                		if(orgCount>1){//所选组织下具有多个同名组织
-//                			invalidData1.push(linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-//                			invalidDataInfo+="设备<font color=red>"+diveceName+"</font>所填写单位不唯一,保存失败,<font color=red>"+orgArr[0]+"</font>下有<font color=red>"+orgCount+"</font>个<font color=red>"+orgName+"</font>,请选择对应单位后再进行操作;<br/>";
-//                		}else if(orgCount===1){//所选组织下无重复组织
-//                			saveData.insertlist.push(linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-//                		}else{//不具备所填写组织权限
-//                			invalidData2.push(linearMotorPumpDeviceInfoHandsontableHelper.AllData.insertlist[i]);
-//                			invalidDataInfo+="无权限修改设备<font color=red>"+diveceName+"</font>所填写单位("+orgName+")下的数据，请核对单位信息;<br/>";
-//                		}
-//            		}
-//            	}
-//            }
         	Ext.Ajax.request({
                 method: 'POST',
                 url: context + '/wellInformationManagerController/saveWellHandsontableData',
                 success: function (response) {
-                    rdata = Ext.JSON.decode(response.responseText);
+                	rdata = Ext.JSON.decode(response.responseText);
                     if (rdata.success) {
-                        if(invalidData1.length>0 || invalidData2.length>0){
-                    		Ext.MessageBox.alert("信息", invalidDataInfo+"其他数据保存成功！");
-                    	}else{
-                    		Ext.MessageBox.alert("信息", "保存成功");
+                    	var saveInfo='保存成功';
+                    	if(rdata.collisionCount>0){//数据冲突
+                    		saveInfo='保存成功'+rdata.successCount+'条记录,保存失败:<font color="red">'+rdata.collisionCount+'</font>条记录';
+                    		for(var i=0;i<rdata.list.length;i++){
+                    			saveInfo+='<br/><font color="red"> '+rdata.list[i]+'</font>';
+                    		}
                     	}
+                    	Ext.MessageBox.alert("信息", saveInfo);
                         //保存以后重置全局容器
-                        linearMotorPumpDeviceInfoHandsontableHelper.clearContainer();
-                        CreateAndLoadLinearMotorPumpDeviceInfoTable();
+                        if(rdata.successCount>0){
+                        	linearMotorPumpDeviceInfoHandsontableHelper.clearContainer();
+                            CreateAndLoadLinearMotorPumpDeviceInfoTable();
+                        }
                     } else {
                         Ext.MessageBox.alert("信息", "数据保存失败");
-
                     }
                 },
                 failure: function () {
