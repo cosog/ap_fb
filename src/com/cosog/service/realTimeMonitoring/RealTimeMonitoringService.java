@@ -532,7 +532,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 
-	public String getDeviceRealTimeMonitoringData(String deviceName,String deviceType,String userAccount) throws IOException, SQLException{
+	public String getDeviceRealTimeMonitoringData(String deviceId,String deviceName,String deviceType,String userAccount) throws IOException, SQLException{
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
@@ -563,14 +563,14 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+deviceName+"' "
+				+ " and t.id="+deviceId
 				+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_id='"+userAccount+"' )"
 				+ " group by t.wellname,t3.protocol";
 		String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
 				+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
 				+ " from "+deviceTableName+" t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
 				+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
-				+ " and t.wellname='"+deviceName+"' "
+				+ " and t.id="+deviceId
 				+ " order by t2.id";
 		List<?> itemsList = this.findCallSql(itemsSql);
 		List<?> alarmItemsList = this.findCallSql(alarmItemsSql);
@@ -629,7 +629,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				}
 				sql+= " from "+deviceTableName+" t "
 						+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
-						+ " where  t.wellName='"+deviceName+"'";
+						+ " where  t.id="+deviceId;
 				List<?> list = this.findCallSql(sql);
 				if(list.size()>0){
 					int row=1;
@@ -854,7 +854,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	}
 	
 	
-	public String getDeviceControlandInfoData(String wellName,String deviceType,int userId)throws Exception {
+	public String getDeviceControlandInfoData(String deviceId,String wellName,String deviceType,int userId)throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		String deviceTableName="tbl_pumpdevice";
@@ -878,16 +878,16 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.sort,t6.id,t6.bitindex ) sort "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+wellName+"' and t5.type=1"
+				+ " and t.id="+deviceId+" and t5.type=1"
 				+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_no="+userId+" )"
 				+ " group by t.wellname,t3.protocol";
 		String auxiliaryDeviceSql="select t3.id,t3.name,t3.model,t3.remark "
 				+ " from "+deviceTableName+" t,tbl_auxiliary2master t2,tbl_auxiliarydevice t3 "
-				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t.wellname='"+wellName+"' "
+				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t.id="+deviceId
 				+ " order by t3.sort,t3.name";
 		String deviceAddInfoSql = "select t2.id,t2.itemname,t2.itemvalue||decode(t2.itemunit,null,'','','','('||t2.itemunit||')') as itemvalue "
 				+ " from "+deviceTableName+" t,"+infoTableName+" t2 "
-				+ " where t.id=t2.wellid and t.wellname='"+wellName+"'"
+				+ " where t.id=t2.wellid and t.id="+deviceId
 				+ " order by t2.id";
 		
 		List<?> isControlList = this.findCallSql(isControlSql);
@@ -996,7 +996,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		for(int i=0;i<controlColumns.size();i++){
 			sql+=",t2."+controlColumns.get(i);
 		}
-		sql+= " from "+deviceTableName+" t,"+tableName+" t2 where t.id=t2.wellid and t.wellname='"+wellName+"'";
+		sql+= " from "+deviceTableName+" t,"+tableName+" t2 where t.id=t2.wellid and t.id="+deviceId;
 		
 		result_json.append("{ \"success\":true,\"isControl\":"+isControl+",");
 		List<?> list = this.findCallSql(sql);
@@ -1138,7 +1138,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public String getRealTimeMonitoringCurveData(String deviceName,String deviceType)throws Exception {
+	public String getRealTimeMonitoringCurveData(String deviceId,String deviceName,String deviceType)throws Exception {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer itemsBuff = new StringBuffer();
 		StringBuffer curveColorBuff = new StringBuffer();
@@ -1162,12 +1162,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		
 		String protocolSql="select upper(t3.protocol) from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id"
-				+ " and  t.wellname='"+deviceName+"' ";
+				+ " and  t.id="+deviceId;
 		
 		String curveItemsSql="select t6.itemname,t6.bitindex,t6.realtimecurvecolor "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+deviceName+"' and t6.realtimecurve>=0 "
+				+ " and t.id="+deviceId+" and t6.realtimecurve>=0 "
 				+ " order by t6.realtimecurve,t6.sort,t6.id";
 		List<?> protocolList = this.findCallSql(protocolSql);
 		List<?> curveItemList = this.findCallSql(curveItemsSql);
@@ -1239,7 +1239,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 					+ " from "+tableName +" t,"+deviceTableName+" t2 "
 					+ " where t.wellid=t2.id "
 					+ " and t.acqtime >to_date('"+StringManagerUtils.getCurrentTime("yyyy-MM-dd")+"','yyyy-mm-dd') "
-					+ " and t2.wellname='"+deviceName+"' ";
+					+ " and t2.id="+deviceId;
 			int total=this.getTotalCountRows(sql);
 			int rarefy=total/500+1;
 			sql+= " order by t.acqtime";
@@ -1269,8 +1269,8 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		return result_json.toString();
 	}
 	
-	public void saveDeviceControlLog(String wellName,String deviceType,String title,String value,User user) throws SQLException{
-		getBaseDao().saveDeviceControlLog(wellName,deviceType,title,value,user);
+	public void saveDeviceControlLog(String deviceId,String wellName,String deviceType,String title,String value,User user) throws SQLException{
+		getBaseDao().saveDeviceControlLog(deviceId,wellName,deviceType,title,value,user);
 	}
 	
 	public String getResourceProbeHistoryCurveData(String startDate,String endDate,String itemName,String itemCode) throws SQLException, IOException {

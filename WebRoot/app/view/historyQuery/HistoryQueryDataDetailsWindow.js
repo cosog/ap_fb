@@ -31,6 +31,11 @@ Ext.define("AP.view.historyQuery.HistoryQueryDataDetailsWindow", {
                 xtype: 'textfield',
                 value: '',
                 hidden: true
+            },{
+                id: 'HistoryQueryDataDetailsWindowDeviceId_Id',
+                xtype: 'textfield',
+                value: '0',
+                hidden: true
             }],
         	html: '<div id="HistoryQueryDataDetailsDiv_Id" style="width:100%;height:100%;"></div>',
             listeners: {
@@ -39,6 +44,7 @@ Ext.define("AP.view.historyQuery.HistoryQueryDataDetailsWindow", {
                 		deviceHistoryQueryDataHandsontableHelper.hot.refreshDimensions();
                 	}else{
                       var recordId=Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").getValue();
+                      var deviceId=Ext.getCmp("HistoryQueryDataDetailsWindowDeviceId_Id").getValue()
                       var deviceName=Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").getValue();
                       var deviceType=0;
                       var tabPanel = Ext.getCmp("HistoryQueryTabPanel");
@@ -46,7 +52,7 @@ Ext.define("AP.view.historyQuery.HistoryQueryDataDetailsWindow", {
               			if(activeId=="PipelineHistoryQueryInfoPanel_Id"){
               				deviceType=1;
               			}
-              			CreateDeviceHistoryQueryDataTable(recordId,deviceName,deviceType);
+              			CreateDeviceHistoryQueryDataTable(recordId,deviceId,deviceName,deviceType);
                 	}
                 },
                 beforeclose: function ( panel, eOpts) {
@@ -67,7 +73,7 @@ Ext.define("AP.view.historyQuery.HistoryQueryDataDetailsWindow", {
 });
 
 
-function CreateDeviceHistoryQueryDataTable(recordId,deviceName,deviceType){
+function CreateDeviceHistoryQueryDataTable(recordId,deviceId,deviceName,deviceType){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/historyQueryController/getDeviceHistoryDetailsData',
@@ -112,6 +118,7 @@ function CreateDeviceHistoryQueryDataTable(recordId,deviceName,deviceType){
 		params: {
 			recordId: recordId,
 			deviceType: deviceType,
+			deviceId: deviceId,
 			deviceName: deviceName
         }
 	});

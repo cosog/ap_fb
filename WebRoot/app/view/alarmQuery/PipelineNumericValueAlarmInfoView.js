@@ -402,6 +402,7 @@ Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
                 	}
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                 	var deviceType=1;
+                	var deviceId  = Ext.getCmp("PipelineNumericValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
                 	var deviceName  = Ext.getCmp("PipelineNumericValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
                 	var alarmLevel=Ext.getCmp('PipelineNumericValueAlarmLevelComb_Id').getValue();
                 	var isSendMessage=Ext.getCmp('PipelineNumericValueAlarmIsSendMessageComb_Id').getValue();
@@ -409,10 +410,10 @@ Ext.define('AP.view.alarmQuery.PipelineNumericValueAlarmInfoView', {
                     var endDate=Ext.getCmp('PipelineNumericValueAlarmQueryEndDate_Id').rawValue;
                	 	var alarmType=1;
                	 	
-               	 	var fileName='管设备数值量报警数据';
-               	 	var title='管设备数值量报警数据';
+               	 	var fileName='管设备'+deviceName+'数值量报警数据';
+               	 	var title='管设备'+deviceName+'数值量报警数据';
                	 	var columnStr=Ext.getCmp("PipelineNumericValueAlarmDetailsColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceId,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
             }],
     		items: [{

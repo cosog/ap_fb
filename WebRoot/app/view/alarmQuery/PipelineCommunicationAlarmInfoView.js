@@ -376,6 +376,7 @@ Ext.define('AP.view.alarmQuery.PipelineCommunicationAlarmInfoView', {
                 	}
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                 	var deviceType=1;
+                	var deviceId  =   Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
                 	var deviceName  = Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
                 	var isSendMessage=Ext.getCmp('PipelineCommunicationAlarmIsSendMessageComb_Id').getValue();
                 	var startDate=Ext.getCmp('PipelineCommunicationAlarmQueryStartDate_Id').rawValue;
@@ -383,10 +384,10 @@ Ext.define('AP.view.alarmQuery.PipelineCommunicationAlarmInfoView', {
                	 	var alarmType=0;
                	 	var alarmLevel='';
                	 	
-               	 	var fileName='管设备通信报警数据';
-               	 	var title='管设备通信报警数据';
+               	 	var fileName='管设备'+deviceName+'通信报警数据';
+               	 	var title='管设备'+deviceName+'通信报警数据';
                	 	var columnStr=Ext.getCmp("PipelineCommunicationAlarmDetailsColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceId,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
             }],
             items: [{

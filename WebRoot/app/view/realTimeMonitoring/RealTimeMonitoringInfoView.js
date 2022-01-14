@@ -844,8 +844,10 @@ function deviceRealtimeMonitoringCurve(deviceType){
 	
 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
 	var deviceName='';
+	var deviceId=0;
 	var selectRow= Ext.getCmp(selectRowId).getValue();
 	if(selectRow>=0){
+		deviceId=Ext.getCmp(gridPanelId).getSelectionModel().getSelection()[0].data.id;
 		deviceName = Ext.getCmp(gridPanelId).getSelectionModel().getSelection()[0].data.wellName;
 	}
 	Ext.Ajax.request({
@@ -954,6 +956,7 @@ function deviceRealtimeMonitoringCurve(deviceType){
 		},
 		params: {
 			deviceName:deviceName,
+			deviceId:deviceId,
 			deviceType:deviceType
         }
 	});

@@ -76,12 +76,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigAddrMaooingPropertiesHandsontableHelper!=null && protocolConfigAddrMaooingPropertiesHandsontableHelper.hot!=undefined){
-//                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
-//                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
-//                            		if(isNotVal(gridPanel)){
-//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                            			CreateProtocolConfigAddrMappingPropertiesInfoTable(selectedItem.data);
-//                            		}
                             		protocolConfigAddrMaooingPropertiesHandsontableHelper.hot.refreshDimensions();
                             	}
                             }
@@ -105,18 +99,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigAddrMappingItemsHandsontableHelper!=null && protocolConfigAddrMappingItemsHandsontableHelper.hot!=undefined){
-//                            		var selectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
-//                            		var gridPanel=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id");
-//                            		if(isNotVal(gridPanel)){
-//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                            			if(selectedItem.data.classes==0){
-//                                    		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-//                                    			CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
-//                                    		}
-//                                    	}else if(selectedItem.data.classes==1){
-//                                    		CreateModbusProtocolAddrMappingItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
-//                                    	}
-//                            		}
                             		protocolConfigAddrMappingItemsHandsontableHelper.hot.refreshDimensions();
                             	}
                             }
@@ -497,9 +479,7 @@ function SaveModbusProtocolAddrMappingConfigTreeData(){
 						item.Ratio=parseFloat(driverConfigItemsData[i][8]);
 						item.ResolutionMode=driverConfigItemsData[i][9];
 						item.AcqMode=driverConfigItemsData[i][10];
-						if(i==AddrMappingItemsSelectRow 
-//								&& (driverConfigItemsData[i][9]=='开关量' || driverConfigItemsData[i][9]=='枚举量') 
-							){
+						if(i==AddrMappingItemsSelectRow){
 							item.Meaning=[];
 							var itemsMeaningData=protocolAddrMappingItemsMeaningConfigHandsontableHelper.hot.getData();
 							for(var j=0;j<itemsMeaningData.length;j++){

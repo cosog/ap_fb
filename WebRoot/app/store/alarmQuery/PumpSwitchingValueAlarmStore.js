@@ -74,6 +74,7 @@ Ext.define('AP.store.alarmQuery.PumpSwitchingValueAlarmStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=0;
+        	var deviceId  = Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	var deviceName  = Ext.getCmp("PumpSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var alarmLevel=Ext.getCmp('PumpSwitchingValueAlarmLevelComb_Id').getValue();
         	var isSendMessage=Ext.getCmp('PumpSwitchingValueAlarmIsSendMessageComb_Id').getValue();
@@ -88,6 +89,7 @@ Ext.define('AP.store.alarmQuery.PumpSwitchingValueAlarmStore', {
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
+                    deviceId:deviceId,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
                     isSendMessage:isSendMessage,

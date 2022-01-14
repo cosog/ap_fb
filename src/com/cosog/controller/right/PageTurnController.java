@@ -61,6 +61,7 @@ public class PageTurnController extends BaseController {
 		session.setAttribute("configFile", gson.toJson(configFile));
 		session.setAttribute("viewInformation", gson.toJson(configFile.getViewInformation()));
 		session.setAttribute("viewProjectName", configFile.getViewInformation().getTitle());
+		session.setAttribute("showLogo", configFile.getOthers().getShowLogo());
 		return "Login";
 	}
 	@RequestMapping("/toTouchLogin")
@@ -76,6 +77,7 @@ public class PageTurnController extends BaseController {
 		session.setAttribute("configFile", gson.toJson(configFile));
 		session.setAttribute("viewInformation", gson.toJson(configFile.getViewInformation()));
 		session.setAttribute("viewProjectName", configFile.getViewInformation().getTitle());
+		session.setAttribute("showLogo", configFile.getOthers().getShowLogo());
 		return "app/main";
 	}
 	@RequestMapping("/toTouchMain")

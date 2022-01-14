@@ -7,6 +7,7 @@
 	String path = request.getContextPath();
    	String browserLang=(String)request.getAttribute("browserLang");
    	String viewProjectName=(String)session.getAttribute("viewProjectName");
+   	boolean showLogo=(boolean)session.getAttribute("showLogo");
    	request.setAttribute("browserLang",browserLang );
 %>
 <html>
@@ -14,10 +15,12 @@
 <!--<fmt:setBundle basename="config/messages"/>-->
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><%=viewProjectName%></title>
+<%if(showLogo){ %>
 <link rel="Bookmark" href="<%=path%>/images/logo/favicon.ico" />
 <link rel="icon" href="<%=path%>/images/logo/favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="<%=path%>/images/logo/favicon.ico" type="image/x-icon" />
 <link rel="Bookmark" href="favicon.ico" />
+<%} %>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -29,6 +32,7 @@
  var viewInformation = ${configFile}.viewInformation;
  
  var productionUnit = ${configFile}.others.productionUnit;
+ var showLogo = ${configFile}.others.showLogo;
  var userAccount="${userLogin.userId}";
  if (user_ == null || "" == (user_)) {
 	 window.location.href = "../login/toLogin";

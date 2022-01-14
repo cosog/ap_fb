@@ -288,7 +288,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getDeviceHistoryData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+	public String getDeviceHistoryData(String orgId,String deviceId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -385,7 +385,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
 				+ " where  t.orgid in ("+orgId+") "
-				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.wellName='"+deviceName+"'"
+				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.id="+deviceId+""
 				+ "  order by t2.acqtime desc";
 		
 		int maxvalue=pager.getLimit()+pager.getStart();
@@ -401,6 +401,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
 			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"deviceId\":\""+deviceId+"\",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
 			result_json.append("\"commStatus\":"+obj[2]+",");
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
@@ -423,7 +424,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getDeviceHistoryExportData(String orgId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
+	public String getDeviceHistoryExportData(String orgId,String deviceId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
@@ -518,7 +519,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
 				+ " where  t.orgid in ("+orgId+") "
-				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.wellName='"+deviceName+"'"
+				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.id="+deviceId
 				+ "  order by t2.acqtime desc";
 		String finalSql=sql;
 		List<?> list = this.findCallSql(finalSql);
@@ -547,7 +548,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		return result_json.toString().replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getDeviceHistoryDetailsData(String deviceName,String deviceType,String recordId,String userAccount) throws IOException, SQLException{
+	public String getDeviceHistoryDetailsData(String deviceId,String deviceName,String deviceType,String recordId,String userAccount) throws IOException, SQLException{
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
@@ -578,14 +579,14 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
-				+ " and t.wellname='"+deviceName+"' "
+				+ " and t.id="+deviceId
 				+ " and decode(t6.showlevel,null,9999,t6.showlevel)>=( select r.showlevel from tbl_role r,tbl_user u where u.user_type=r.role_id and u.user_id='"+userAccount+"' )"
 				+ " group by t.wellname,t3.protocol";
 		String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
 				+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
 				+ " from "+deviceTableName+" t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
 				+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
-				+ " and t.wellname='"+deviceName+"' "
+				+ " and t.id="+deviceId
 				+ " order by t2.id";
 		
 		List<?> itemsList = this.findCallSql(itemsSql);

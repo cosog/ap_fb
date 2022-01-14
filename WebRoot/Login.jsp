@@ -9,6 +9,7 @@
 	String name="";
 	String password="";
 	String viewProjectName=(String)session.getAttribute("viewProjectName");
+	boolean showLogo=(boolean)session.getAttribute("showLogo");
 	try{
 		Cookie[] cookies=request.getCookies();
 		System.out.println(cookies.length);
@@ -55,9 +56,11 @@
     <meta http-equiv="expires" content="0" />
     <title><%=viewProjectName%></title>
     <!-- 链接外部图标，如：中石油、中石化 -->
+    <%if(showLogo){ %>
 	<link rel="Bookmark" href="<%=path%>/images/logo/favicon.ico" />
 	<link rel="icon" href="<%=path%>/images/logo/favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="<%=path%>/images/logo/favicon.ico" type="image/x-icon" />
+	<%} %>
     <!-- 链接css -->
     <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/bootstrap-select.min.css" type="text/css" />

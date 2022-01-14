@@ -1638,12 +1638,13 @@ public class BaseDao extends HibernateDaoSupport {
 	}
 	
 	@SuppressWarnings("resource")
-	public Boolean saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws SQLException {
+	public List<AuxiliaryDeviceHandsontableChangedData.Updatelist> saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
 		PreparedStatement ps=null;
+		List<AuxiliaryDeviceHandsontableChangedData.Updatelist> collisionList=new ArrayList<AuxiliaryDeviceHandsontableChangedData.Updatelist>();
 		try {
-			cs = conn.prepareCall("{call prd_update_auxiliarydevice(?,?,?,?,?,?)}");
+			cs = conn.prepareCall("{call prd_update_auxiliarydevice(?,?,?,?,?,?,?,?)}");
 			if(auxiliaryDeviceHandsontableChangedData.getUpdatelist()!=null){
 				for(int i=0;i<auxiliaryDeviceHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getName())){
@@ -1653,7 +1654,14 @@ public class BaseDao extends HibernateDaoSupport {
 						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getModel());
 						cs.setString(5, auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getRemark());
 						cs.setString(6, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).getSort():"9999");
+						cs.registerOutParameter(7, Types.INTEGER);
+						cs.registerOutParameter(8,Types.VARCHAR);
 						cs.executeUpdate();
+						int saveSign=cs.getInt(7);
+						String saveResultStr=cs.getString(8);
+						auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).setSaveSign(saveSign);
+						auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i).setSaveStr(saveResultStr);
+						collisionList.add(auxiliaryDeviceHandsontableChangedData.getUpdatelist().get(i));
 					}
 				}
 			}
@@ -1666,7 +1674,14 @@ public class BaseDao extends HibernateDaoSupport {
 						cs.setString(4, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getModel());
 						cs.setString(5, auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getRemark());
 						cs.setString(6, StringManagerUtils.isInteger(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort())?auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).getSort():"9999");
+						cs.registerOutParameter(7, Types.INTEGER);
+						cs.registerOutParameter(8,Types.VARCHAR);
 						cs.executeUpdate();
+						int saveSign=cs.getInt(7);
+						String saveResultStr=cs.getString(8);
+						auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).setSaveSign(saveSign);
+						auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i).setSaveStr(saveResultStr);
+						collisionList.add(auxiliaryDeviceHandsontableChangedData.getInsertlist().get(i));
 					}
 				}
 			}
@@ -1686,7 +1701,7 @@ public class BaseDao extends HibernateDaoSupport {
 			}
 			conn.close();
 		}
-		return true;
+		return collisionList;
 	}
 	
 	@SuppressWarnings("resource")
@@ -1809,7 +1824,7 @@ public class BaseDao extends HibernateDaoSupport {
 	}
 	
 	
-	public boolean saveDeviceControlLog(String wellName,String deviceType,String title,String value,User user) throws SQLException{
+	public boolean saveDeviceControlLog(String deviceId,String wellName,String deviceType,String title,String value,User user) throws SQLException{
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
 		try {

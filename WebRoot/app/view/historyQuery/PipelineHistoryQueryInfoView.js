@@ -457,9 +457,11 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                         	}
                         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                         	var deviceName='';
+                        	var deviceId=0;
                         	var selectRow= Ext.getCmp("PipelineHistoryQueryInfoDeviceListSelectRow_Id").getValue();
                         	if(selectRow>=0){
                         		deviceName = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+                        		deviceId = Ext.getCmp("PipelineHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
                         	}
                         	var startDate=Ext.getCmp('PipelineHistoryQueryStartDate_Id').rawValue;
                             var endDate=Ext.getCmp('PipelineHistoryQueryEndDate_Id').rawValue;
@@ -467,7 +469,7 @@ Ext.define("AP.view.historyQuery.PipelineHistoryQueryInfoView", {
                        	 	var fileName='管设备'+deviceName+'历史数据';
                        	 	var title='管设备'+deviceName+'历史数据';
                        	 	var columnStr=Ext.getCmp("PipelineHistoryQueryDataColumnStr_Id").getValue();
-                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),fileName,title,columnStr);
+                       	 	exportHistoryQueryDataExcel(orgId,deviceType,deviceId,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),fileName,title,columnStr);
                         }
                     }],
                     items: [{

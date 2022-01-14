@@ -407,6 +407,7 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                 	}
                 	var orgId = Ext.getCmp('leftOrg_Id').getValue();
                 	var deviceType=0;
+                	var deviceId  =   Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
                 	var deviceName  = Ext.getCmp("PumpEnumValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
                 	var alarmLevel=Ext.getCmp('PumpEnumValueAlarmLevelComb_Id').getValue();
                 	var isSendMessage=Ext.getCmp('PumpEnumValueAlarmIsSendMessageComb_Id').getValue();
@@ -414,10 +415,10 @@ Ext.define('AP.view.alarmQuery.PumpEnumValueAlarmInfoView', {
                     var endDate=Ext.getCmp('PumpEnumValueAlarmQueryEndDate_Id').rawValue;
                	 	var alarmType=2;
                	 	
-               	 	var fileName='泵设备枚举量报警数据';
-               	 	var title='泵设备枚举量报警数据';
+               	 	var fileName='泵设备'+deviceName+'枚举量报警数据';
+               	 	var title='泵设备'+deviceName+'枚举量报警数据';
                	 	var columnStr=Ext.getCmp("PumpEnumValueAlarmDetailsColumnStr_Id").getValue();
-               	 	exportAlarmDataExcel(orgId,deviceType,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
+               	 	exportAlarmDataExcel(orgId,deviceType,deviceId,deviceName,getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second),alarmType,alarmLevel,isSendMessage,fileName,title,columnStr);
                 }
             }],
             items: [{

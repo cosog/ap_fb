@@ -37,6 +37,11 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
             defaultType: 'textfield',
             id: "WellControlCheckPass_form_id",
             items: [{
+                id: 'DeviceControlDeviceId_Id',//选择的设备Id
+                xtype: 'textfield',
+                value: '',
+                hidden: true
+            },{
                 id: 'DeviceControlWellName_Id',//选择的设备
                 xtype: 'textfield',
                 value: '',
@@ -97,9 +102,9 @@ Ext.define('AP.view.realTimeMonitoring.DeviceControlCheckPassWindow', {
                             waitMsg: cosog.string.updatewait,
                             waitTitle: 'Please Wait...',
                             params: {
+                            	deviceId:Ext.getCmp('DeviceControlDeviceId_Id').getValue(),
                             	wellName: Ext.getCmp('DeviceControlWellName_Id').getValue(),
                             	deviceType: Ext.getCmp('DeviceControlDeviceType_Id').getValue(),
-//                                password: Ext.getCmp('checkPassFromPassword_id').getValue(),
                                 controlType:Ext.getCmp('DeviceControlType_Id').getValue(),
                                 controlValue:controlValue
                             },

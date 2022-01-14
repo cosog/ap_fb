@@ -249,12 +249,14 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                            	tooltip:itemMeaning[0][1],
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		var deivceId  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
+        		                                        	deivceId:deivceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 0,
         		                                            controlType:itemcode,
@@ -295,12 +297,14 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                            	tooltip:itemMeaning[1][1],
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		var deivceId  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
+        		                                        	deivceId:deivceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 0,
         		                                            controlType:itemcode,
@@ -352,12 +356,14 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                            	tooltip:'开',
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		var deivceId  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
+        		                                        	deivceId:deivceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 0,
         		                                            controlType:itemcode,
@@ -397,12 +403,14 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                            	tooltip:'关',
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                            		var deivceId  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
+        		                                        	deivceId:deivceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 0,
         		                                            controlType:itemcode,
@@ -463,7 +471,9 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         		                                             title: '控制'
         		                                         });
         		                                     	 var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		                                     	 var deivceId  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
+        		                                     	 Ext.getCmp("DeviceControlDeviceId_Id").setValue(deivceId);
         		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(0);
         		                                         
         		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);
@@ -519,7 +529,9 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringControlAndInfoStor
         },
         beforeload: function (store, options) {
         	var wellName  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        	var deviceId  = Ext.getCmp("PumpRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	var new_params = {
+        			deviceId:deviceId,
         			wellName: wellName,
         			deviceType:0
                 };
