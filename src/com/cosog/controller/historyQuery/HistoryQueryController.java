@@ -40,8 +40,6 @@ public class HistoryQueryController extends BaseController  {
 	private DataitemsInfoService dataitemsInfoService;
 	private String limit;
 	private String msg = "";
-	private String wellName;
-	private String deviceName;
 	private String deviceType;
 	private String deviceTypeStatValue;
 	private String commStatusStatValue;
@@ -105,7 +103,7 @@ public class HistoryQueryController extends BaseController  {
 	public String getHistoryQueryDeviceList() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		commStatusStatValue = ParamUtils.getParameter(request, "commStatusStatValue");
 		deviceTypeStatValue = ParamUtils.getParameter(request, "deviceTypeStatValue");
@@ -134,7 +132,7 @@ public class HistoryQueryController extends BaseController  {
 	public String exportHistoryQueryDeviceListExcel() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
+		String deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		commStatusStatValue = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "commStatusStatValue"),"utf-8");
 		deviceTypeStatValue = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceTypeStatValue"),"utf-8");
@@ -169,7 +167,8 @@ public class HistoryQueryController extends BaseController  {
 	public String getDeviceHistoryData() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
@@ -189,8 +188,8 @@ public class HistoryQueryController extends BaseController  {
 			tableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 		}
-		if(StringManagerUtils.isNotNull(deviceName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' "+" ) ";
+		if(StringManagerUtils.isNotNull(deviceId)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where t.wellId= "+deviceId;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -203,7 +202,7 @@ public class HistoryQueryController extends BaseController  {
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
-		json = historyQueryService.getDeviceHistoryData(orgId,deviceName,deviceType,pager);
+		json = historyQueryService.getDeviceHistoryData(orgId,deviceId,deviceName,deviceType,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -219,7 +218,8 @@ public class HistoryQueryController extends BaseController  {
 	public String exportHistoryQueryDataExcel() throws Exception {
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
-		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
+		String deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
 		endDate = ParamUtils.getParameter(request, "endDate");
@@ -254,8 +254,8 @@ public class HistoryQueryController extends BaseController  {
 			tableName="tbl_pipelineacqdata_hist";
 			deviceTableName="tbl_pipelinedevice";
 		}
-		if(StringManagerUtils.isNotNull(deviceName)&&!StringManagerUtils.isNotNull(endDate)){
-			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where t.wellId=( select t2.id from "+deviceTableName+" t2 where t2.wellName='"+deviceName+"' "+" ) ";
+		if(StringManagerUtils.isNotNull(deviceId)&&!StringManagerUtils.isNotNull(endDate)){
+			String sql = " select to_char(max(t.acqTime),'yyyy-mm-dd hh24:mi:ss') from "+tableName+" t where t.wellId="+deviceId;
 			List list = this.service.reportDateJssj(sql);
 			if (list.size() > 0 &&list.get(0)!=null&&!list.get(0).toString().equals("null")) {
 				endDate = list.get(0).toString();
@@ -269,7 +269,7 @@ public class HistoryQueryController extends BaseController  {
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		
-		json = historyQueryService.getDeviceHistoryExportData(orgId,deviceName,deviceType,pager);
+		json = historyQueryService.getDeviceHistoryExportData(orgId,deviceId,deviceName,deviceType,pager);
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
@@ -287,11 +287,12 @@ public class HistoryQueryController extends BaseController  {
 		orgId = ParamUtils.getParameter(request, "orgId");
 		String recordId = ParamUtils.getParameter(request, "recordId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		this.pager = new Page("pagerForm", request);
 		User user = (User) session.getAttribute("userLogin");
 		if(user!=null){
-			json = historyQueryService.getDeviceHistoryDetailsData(deviceName,deviceType,recordId,user.getUserId());
+			json = historyQueryService.getDeviceHistoryDetailsData(deviceId,deviceName,deviceType,recordId,user.getUserId());
 		}
 		
 		//HttpServletResponse response = ServletActionContext.getResponse();
@@ -310,7 +311,7 @@ public class HistoryQueryController extends BaseController  {
 		String json = "";
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		startDate = ParamUtils.getParameter(request, "startDate");
@@ -351,7 +352,7 @@ public class HistoryQueryController extends BaseController  {
 		String json = "";
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
@@ -369,7 +370,7 @@ public class HistoryQueryController extends BaseController  {
 	public String setHistoryDataGraphicInfo() throws Exception {
 		String json = "{success:false}";
 		HttpSession session=request.getSession();
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		String graphicSetData = ParamUtils.getParameter(request, "graphicSetData");
@@ -396,18 +397,6 @@ public class HistoryQueryController extends BaseController  {
 	}
 	public void setMsg(String msg) {
 		this.msg = msg;
-	}
-	public String getWellName() {
-		return wellName;
-	}
-	public void setWellName(String wellName) {
-		this.wellName = wellName;
-	}
-	public String getDeviceName() {
-		return deviceName;
-	}
-	public void setDeviceName(String deviceName) {
-		this.deviceName = deviceName;
 	}
 	public String getDeviceType() {
 		return deviceType;

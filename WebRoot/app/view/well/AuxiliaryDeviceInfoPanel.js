@@ -425,15 +425,22 @@ var AuxiliaryDeviceInfoHandsontableHelper = {
                     method: 'POST',
                     url: context + '/wellInformationManagerController/saveAuxiliaryDeviceHandsontableData',
                     success: function (response) {
-                        rdata = Ext.JSON.decode(response.responseText);
+                    	rdata = Ext.JSON.decode(response.responseText);
                         if (rdata.success) {
-                            Ext.MessageBox.alert("信息", "保存成功");
-                            //保存以后重置全局容器
-                            auxiliaryDeviceInfoHandsontableHelper.clearContainer();
-                            CreateAndLoadAuxiliaryDeviceInfoTable();
+                        	var saveInfo='保存成功';
+                        	if(rdata.collisionCount>0){//数据冲突
+                        		saveInfo='保存成功'+rdata.successCount+'条记录,保存失败:<font color="red">'+rdata.collisionCount+'</font>条记录';
+                        		for(var i=0;i<rdata.list.length;i++){
+                        			saveInfo+='<br/><font color="red"> '+rdata.list[i]+'</font>';
+                        		}
+                        	}
+                        	Ext.MessageBox.alert("信息", saveInfo);
+                            if(rdata.successCount>0){
+                            	auxiliaryDeviceInfoHandsontableHelper.clearContainer();
+                                CreateAndLoadAuxiliaryDeviceInfoTable();
+                            }
                         } else {
                             Ext.MessageBox.alert("信息", "数据保存失败");
-
                         }
                     },
                     failure: function () {

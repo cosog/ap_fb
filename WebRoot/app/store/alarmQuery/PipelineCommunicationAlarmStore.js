@@ -74,6 +74,7 @@ Ext.define('AP.store.alarmQuery.PipelineCommunicationAlarmStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=1;
+        	var deviceId  = Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	var deviceName  = Ext.getCmp("PipelineCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var isSendMessage=Ext.getCmp('PipelineCommunicationAlarmIsSendMessageComb_Id').getValue();
         	var startDate=Ext.getCmp('PipelineCommunicationAlarmQueryStartDate_Id').rawValue;
@@ -86,6 +87,7 @@ Ext.define('AP.store.alarmQuery.PipelineCommunicationAlarmStore', {
         	var endTime_Second=Ext.getCmp('PipelineCommunicationAlarmQueryEndTime_Second_Id').getValue();
             var new_params = {
                     orgId: orgId,
+                    deviceId:deviceId,
                     deviceType:deviceType,
                     deviceName:deviceName,
                     isSendMessage:isSendMessage,

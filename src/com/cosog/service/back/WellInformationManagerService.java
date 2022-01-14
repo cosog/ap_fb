@@ -579,8 +579,28 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().saveOrUpdateObject(r);
 	}
 	
-	public void saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws Exception {
-		getBaseDao().saveAuxiliaryDeviceHandsontableData(auxiliaryDeviceHandsontableChangedData);
+	public String saveAuxiliaryDeviceHandsontableData(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData) throws Exception {
+		StringBuffer result_json = new StringBuffer();
+		StringBuffer collisionbuff = new StringBuffer();
+		List<AuxiliaryDeviceHandsontableChangedData.Updatelist> list=getBaseDao().saveAuxiliaryDeviceHandsontableData(auxiliaryDeviceHandsontableChangedData);
+		int successCount=0;
+		int collisionCount=0;
+		collisionbuff.append("[");
+		for(int i=0;i<list.size();i++){
+			if(list.get(i).getSaveSign()==-22||list.get(i).getSaveSign()==-33){
+				collisionCount++;
+				collisionbuff.append("\""+list.get(i).getSaveStr()+"\",");
+			}else if(list.get(i).getSaveSign()==0||list.get(i).getSaveSign()==1){
+				successCount++;
+			}
+		}
+		if(collisionbuff.toString().endsWith(",")){
+			collisionbuff.deleteCharAt(collisionbuff.length() - 1);
+		}
+		collisionbuff.append("]");
+		
+		result_json.append("{\"success\":true,\"successCount\":"+successCount+",\"collisionCount\":"+collisionCount+",\"list\":"+collisionbuff+"}");
+		return result_json.toString().replaceAll("null", "");
 	}
 	
 	public String batchAddAuxiliaryDevice(AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData,String isCheckout) throws Exception {

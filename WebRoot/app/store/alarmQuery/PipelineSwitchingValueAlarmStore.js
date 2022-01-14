@@ -74,6 +74,7 @@ Ext.define('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=1;
+        	var deviceId  = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	var deviceName  = Ext.getCmp("PipelineSwitchingValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var alarmLevel=Ext.getCmp('PipelineSwitchingValueAlarmLevelComb_Id').getValue();
         	var isSendMessage=Ext.getCmp('PipelineSwitchingValueAlarmIsSendMessageComb_Id').getValue();
@@ -88,6 +89,7 @@ Ext.define('AP.store.alarmQuery.PipelineSwitchingValueAlarmStore', {
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
+                    deviceId:deviceId,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
                     isSendMessage:isSendMessage,

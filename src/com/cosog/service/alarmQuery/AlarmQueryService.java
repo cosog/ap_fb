@@ -28,7 +28,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 	@Autowired
 	private DataitemsInfoService dataitemsInfoService;
 	
-	public String getAlarmData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
+	public String getAlarmData(String orgId,String deviceType,String deviceId,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		String ddicName="commStatusAlarm";
 		if(StringManagerUtils.stringToInteger(alarmType)==1){
 			ddicName="numericValueAlarm";
@@ -48,8 +48,8 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from "+tableName+" t where t.orgid in ("+orgId+") "
 				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
-		if(StringManagerUtils.isNotNull(deviceName)){
-			sql+=" and t.wellName='"+deviceName+"'";
+		if(StringManagerUtils.isNotNull(deviceId)){
+			sql+=" and t.wellid="+deviceId;
 		}
 		if(StringManagerUtils.isNotNull(alarmType)){
 			sql+=" and t.alarmType="+alarmType;
@@ -68,7 +68,7 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		return getResult.replaceAll("\"null\"", "\"\"");
 	}
 	
-	public String getAlarmExportData(String orgId,String deviceType,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
+	public String getAlarmExportData(String orgId,String deviceType,String deviceId,String deviceName,String alarmType,String alarmLevel,String isSendMessage,Page pager) throws IOException, SQLException{
 		String ddicName="commStatusAlarm";
 		if(StringManagerUtils.stringToInteger(alarmType)==1){
 			ddicName="numericValueAlarm";
@@ -86,8 +86,8 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 		String columns = ddic.getTableHeader();
 		String sql=ddic.getSql()+" from "+tableName+" t where t.orgid in ("+orgId+") "
 				+ " and t.alarmtime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss')";
-		if(StringManagerUtils.isNotNull(deviceName)){
-			sql+=" and t.wellName='"+deviceName+"'";
+		if(StringManagerUtils.isNotNull(deviceId)){
+			sql+=" and t.wellid="+deviceId;
 		}
 		if(StringManagerUtils.isNotNull(alarmType)){
 			sql+=" and t.alarmType="+alarmType;

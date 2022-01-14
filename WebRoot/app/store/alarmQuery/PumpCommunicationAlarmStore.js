@@ -75,6 +75,7 @@ Ext.define('AP.store.alarmQuery.PumpCommunicationAlarmStore', {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=0;
         	var deviceName  = Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        	var deviceId  = Ext.getCmp("PumpCommunicationAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	var isSendMessage=Ext.getCmp('PumpCommunicationAlarmIsSendMessageComb_Id').getValue();
         	var startDate=Ext.getCmp('PumpCommunicationAlarmQueryStartDate_Id').rawValue;
         	var startTime_Hour=Ext.getCmp('PumpCommunicationAlarmQueryStartTime_Hour_Id').getValue();
@@ -87,6 +88,7 @@ Ext.define('AP.store.alarmQuery.PumpCommunicationAlarmStore', {
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
+                    deviceId:deviceId,
                     deviceName:deviceName,
                     isSendMessage:isSendMessage,
                     startDate:getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),

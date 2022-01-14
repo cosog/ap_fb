@@ -679,8 +679,7 @@ public class WellInformationManagerController extends BaseController {
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<AuxiliaryDeviceHandsontableChangedData>() {}.getType();
 		AuxiliaryDeviceHandsontableChangedData auxiliaryDeviceHandsontableChangedData=gson.fromJson(data, type);
-		this.wellInformationManagerService.saveAuxiliaryDeviceHandsontableData(auxiliaryDeviceHandsontableChangedData);
-		String json ="{success:true}";
+		String json=this.wellInformationManagerService.saveAuxiliaryDeviceHandsontableData(auxiliaryDeviceHandsontableChangedData);
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();

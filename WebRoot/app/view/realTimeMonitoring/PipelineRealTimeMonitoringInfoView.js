@@ -265,12 +265,6 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                                 listeners: {
                                     resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                                     	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper!=null && pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot!=undefined){
-//                                    		var selectRow= Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").getValue();
-//                                    		var gridPanel=Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id");
-//                                    		if(isNotVal(gridPanel)){
-//                                    			var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                                    			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
-//                                    		}
                                     		pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.refreshDimensions();
                                     	}
                                     }
@@ -312,7 +306,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
             					}else if(newCard.id=="PipelineRealTimeMonitoringTableTabPanel_Id"){
                             		if(isNotVal(gridPanel)&&selectRow>=0){
                             			var selectedItem=gridPanel.getStore().getAt(selectRow);
-                            			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.wellName,1)
+                            			CreatePipelineDeviceRealTimeMonitoringDataTable(selectedItem.data.id,selectedItem.data.wellName,1)
                             		}
             					}
             				}
@@ -390,7 +384,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
     }
 });
 
-function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
+function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceId,deviceName,deviceType){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/realTimeMonitoringController/getDeviceRealTimeMonitoringData',
@@ -419,24 +413,6 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo=result.CellInfo;
 				pipelineDeviceRealTimeMonitoringDataHandsontableHelper.hot.loadData(result.totalRoot);
 			}
-			
-			//绘制第一个float型变量曲线columnDataType resolutionMode
-//			var item=Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").getValue();
-//			if(!isNotVal(item)){
-//				for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-//					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnDataType.indexOf('float')>=0){
-//						Ext.getCmp("PipelineRealTimeMonitoringSelectedCurve_Id").setValue(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName);
-//	                	item=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].columnName;
-//	                	break;
-//					}
-//				}
-//			}
-//			if(isNotVal(item)){
-//				pipelineRealTimeMonitoringCurve(item);
-//			}
-			
-			
-			
 			//添加单元格属性
 			for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
 				var row=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
@@ -451,6 +427,7 @@ function CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType){
 			Ext.MessageBox.alert("错误","与后台联系的时候出了问题");
 		},
 		params: {
+			deviceId:deviceId,
 			deviceName:deviceName,
 			deviceType:deviceType
         }

@@ -49,7 +49,8 @@ public class EquipmentDriverServerTask {
 		return instance;
 	}
 	
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@SuppressWarnings({ "static-access", "unused" })
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -215,6 +216,7 @@ public class EquipmentDriverServerTask {
 		System.out.println("驱动加载结束");
 	}
 	
+	@SuppressWarnings({ "static-access", "resource" })
 	public static int syncDataMappingTable(){
 		Connection conn = null;   
 		PreparedStatement pstmt = null;   
@@ -233,7 +235,15 @@ public class EquipmentDriverServerTask {
 		try {
 			String delSql="delete from tbl_datamapping t where t.mappingmode<>"+dataMappingMode;
 			pstmt = conn.prepareStatement(delSql);
-			pstmt.executeUpdate();
+			result=pstmt.executeUpdate();
+			if(result>0){//字段映射模式改变，删除历史数据
+				String delPumpHis="truncate table tbl_pumpacqdata_hist";
+				String delPipelineHis="truncate table tbl_pipelineacqdata_hist";
+				pstmt = conn.prepareStatement(delPumpHis);
+				result=pstmt.executeUpdate();
+				pstmt = conn.prepareStatement(delPipelineHis);
+				result=pstmt.executeUpdate();
+			}
 			
 			Map<String,String> mappingTableRecordMap=new LinkedHashMap<String,String>();
 			String sql="select t.name,t.mappingcolumn,t.protocoltype,t.mappingmode from tbl_datamapping t where t.protocoltype=0 order by t.id";
@@ -249,21 +259,6 @@ public class EquipmentDriverServerTask {
 					}
 				}
 				
-				//如数据库中不存在，添加记录
-				for(String key : pumpDeviceAcquisitionItemColumns.keySet()) {
-					if(!StringManagerUtils.existOrNot(mappingTableRecordMap,key,pumpDeviceAcquisitionItemColumns.get(key),false)){
-						String addSql="";
-						if(dataMappingMode==0){//以地址为准
-							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+pumpDeviceAcquisitionItemColumns.get(key)+"','"+key+"',0,"+dataMappingMode+")";
-						}else{
-							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+key+"','"+pumpDeviceAcquisitionItemColumns.get(key)+"',0,"+dataMappingMode+")";
-						}
-						pstmt = conn.prepareStatement(addSql);
-						pstmt.executeUpdate();
-						result++;
-					}
-					
-				}
 				//如驱动配置中不存在，删除记录
 				for(String key : mappingTableRecordMap.keySet()) {
 					if(!StringManagerUtils.existOrNot(pumpDeviceAcquisitionItemColumns,key,mappingTableRecordMap.get(key),false)){
@@ -274,6 +269,21 @@ public class EquipmentDriverServerTask {
 							deleteSql="delete from tbl_datamapping t where t.name='"+key+"' and t.mappingcolumn='"+mappingTableRecordMap.get(key)+"' and t.protocoltype=0";
 						}
 						pstmt = conn.prepareStatement(deleteSql);
+						pstmt.executeUpdate();
+						result++;
+					}
+				}
+				
+				//如数据库中不存在，添加记录
+				for(String key : pumpDeviceAcquisitionItemColumns.keySet()) {
+					if(!StringManagerUtils.existOrNot(mappingTableRecordMap,key,pumpDeviceAcquisitionItemColumns.get(key),false)){
+						String addSql="";
+						if(dataMappingMode==0){//以地址为准
+							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+pumpDeviceAcquisitionItemColumns.get(key)+"','"+key+"',0,"+dataMappingMode+")";
+						}else{
+							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+key+"','"+pumpDeviceAcquisitionItemColumns.get(key)+"',0,"+dataMappingMode+")";
+						}
+						pstmt = conn.prepareStatement(addSql);
 						pstmt.executeUpdate();
 						result++;
 					}
@@ -294,6 +304,20 @@ public class EquipmentDriverServerTask {
 						mappingTableRecordMap.put(rs.getString(1), rs.getString(2));//以名称为准
 					}
 				}
+				//如驱动配置中不存在，删除记录
+				for(String key : mappingTableRecordMap.keySet()) {
+					if(!StringManagerUtils.existOrNot(pipelineDeviceAcquisitionItemColumns,key,mappingTableRecordMap.get(key),false)){
+						String deleteSql="";
+						if(dataMappingMode==0){//以地址为准
+							deleteSql="delete from tbl_datamapping t where t.name='"+mappingTableRecordMap.get(key)+"' and t.mappingcolumn='"+key+"' and t.protocoltype=1";
+						}else{
+							deleteSql="delete from tbl_datamapping t where t.name='"+key+"' and t.mappingcolumn='"+mappingTableRecordMap.get(key)+"' and t.protocoltype=1";
+						}
+						pstmt = conn.prepareStatement(deleteSql);
+						pstmt.executeUpdate();
+						result++;
+					}
+				}
 				//如数据库中不存在，添加记录
 				for(String key : pipelineDeviceAcquisitionItemColumns.keySet()) {
 					if(!StringManagerUtils.existOrNot(mappingTableRecordMap,key,pipelineDeviceAcquisitionItemColumns.get(key),false)){
@@ -308,20 +332,6 @@ public class EquipmentDriverServerTask {
 						result++;
 					}
 					
-				}
-				//如驱动配置中不存在，删除记录
-				for(String key : mappingTableRecordMap.keySet()) {
-					if(!StringManagerUtils.existOrNot(pipelineDeviceAcquisitionItemColumns,key,mappingTableRecordMap.get(key),false)){
-						String deleteSql="";
-						if(dataMappingMode==0){//以地址为准
-							deleteSql="delete from tbl_datamapping t where t.name='"+mappingTableRecordMap.get(key)+"' and t.mappingcolumn='"+key+"' and t.protocoltype=1";
-						}else{
-							deleteSql="delete from tbl_datamapping t where t.name='"+key+"' and t.mappingcolumn='"+mappingTableRecordMap.get(key)+"' and t.protocoltype=1";
-						}
-						pstmt = conn.prepareStatement(deleteSql);
-						pstmt.executeUpdate();
-						result++;
-					}
 				}
 			}
 		} catch (SQLException e) {
@@ -560,16 +570,6 @@ public class EquipmentDriverServerTask {
 			while(rs.next()){
 				acquisitionItemDataBaseColumns.add(rs.getString(1));
 			}
-			//如数据库中不存在，添加字段
-			for(String key : acquisitionItemColumns.keySet()) {
-				if(!StringManagerUtils.existOrNot(acquisitionItemDataBaseColumns,dataMappingMode==0?key:acquisitionItemColumns.get(key),false)){
-					String addColumsSql="alter table "+tableName+" add "+(dataMappingMode==0?key:acquisitionItemColumns.get(key))+" VARCHAR2(50)";
-					pstmt = conn.prepareStatement(addColumsSql);
-					pstmt.executeUpdate();
-					System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"添加字段:"+(dataMappingMode==0?key:acquisitionItemColumns.get(key)));
-					result++;
-				}
-			}
 			//如驱动配置中不存在，删除字段
 			for(int i=0;i<acquisitionItemDataBaseColumns.size();i++){
 				if(dataMappingMode==0){
@@ -588,6 +588,16 @@ public class EquipmentDriverServerTask {
 						result++;
 						System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"删除字段:"+acquisitionItemDataBaseColumns.get(i));
 					}
+				}
+			}
+			//如数据库中不存在，添加字段
+			for(String key : acquisitionItemColumns.keySet()) {
+				if(!StringManagerUtils.existOrNot(acquisitionItemDataBaseColumns,dataMappingMode==0?key:acquisitionItemColumns.get(key),false)){
+					String addColumsSql="alter table "+tableName+" add "+(dataMappingMode==0?key:acquisitionItemColumns.get(key))+" VARCHAR2(50)";
+					pstmt = conn.prepareStatement(addColumsSql);
+					pstmt.executeUpdate();
+					System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"添加字段:"+(dataMappingMode==0?key:acquisitionItemColumns.get(key)));
+					result++;
 				}
 			}
 			System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"-"+tableName+"同步数据库字段");
@@ -620,9 +630,6 @@ public class EquipmentDriverServerTask {
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
 		
-		
-		
-		
 		Collections.sort(modbusProtocolConfig.getProtocol());
 		List<String> acquisitionItemColumns=new ArrayList<String>();
 		List<String> acquisitionItemsName=new ArrayList<String>();
@@ -645,6 +652,7 @@ public class EquipmentDriverServerTask {
 		List<String> dataDictionaryItems=new ArrayList<String>();
 		List<String> dataDictionaryItemsName=new ArrayList<String>();
 		List<String> dataDictionaryItemsId=new ArrayList<String>();
+		List<Integer> dataDictionaryItemsSortList=new ArrayList<Integer>();
 		String sql="select t1.dataitemid,t1.cname,t1.ename,t1.sorts "
 				+ " from tbl_dist_item t1 where t1.sysdataid=(select t2.sysdataid from tbl_dist_name t2 where t2.sysdataid='"+dataDictionaryId+"') "
 				+ " and UPPER(t1.cname) not in('序号','井名','通信状态','采集时间','设备类型')  "
@@ -664,11 +672,35 @@ public class EquipmentDriverServerTask {
 				dataDictionaryItemsId.add(rs.getString(1));
 				dataDictionaryItemsName.add(rs.getString(2));
 				dataDictionaryItems.add(rs.getString(3));
-				maxSortNum=rs.getInt(4);
+				dataDictionaryItemsSortList.add(rs.getInt(4));
+			}
+			
+			//删除协议中不存在的字典项
+			StringBuffer delItemIds = new StringBuffer();
+			for(int i=0;i<dataDictionaryItems.size();i++){
+				if(!StringManagerUtils.existOrNot(acquisitionItemColumns,dataDictionaryItems.get(i),false)){
+					delItemIds.append("'"+dataDictionaryItemsId.get(i)+"',");
+					dataDictionaryItemsSortList.set(i, 0);
+				}
+			}
+			if(delItemIds.toString().endsWith(",")){
+				delItemIds.deleteCharAt(delItemIds.length() - 1);
+			}
+			if(StringManagerUtils.isNotNull(delItemIds.toString())){
+				String delDataDict="delete from tbl_dist_item t where t.dataitemid in("+delItemIds.toString()+")";
+				pstmt = conn.prepareStatement(delDataDict);
+				pstmt.executeUpdate();
+				System.out.println("删除协议中不存在的字典项:"+delItemIds.toString());
+			}
+			for(int i=0;i<dataDictionaryItemsSortList.size();i++){
+				if(dataDictionaryItemsSortList.get(i)>maxSortNum){
+					maxSortNum=dataDictionaryItemsSortList.get(i);
+				}
 			}
 			if(maxSortNum<5){
 				maxSortNum=5;
 			}
+			
 			//如数字典中不存在，添加字典项
 			for(int i=0;i<acquisitionItemColumns.size();i++){
 				if(!StringManagerUtils.existOrNot(dataDictionaryItems,acquisitionItemColumns.get(i),false)){
@@ -697,22 +729,7 @@ public class EquipmentDriverServerTask {
 					}
 				}
 			}
-			//删除协议中不存在的字典项
-			StringBuffer delItemIds = new StringBuffer();
-			for(int i=0;i<dataDictionaryItems.size();i++){
-				if(!StringManagerUtils.existOrNot(acquisitionItemColumns,dataDictionaryItems.get(i),false)){
-					delItemIds.append("'"+dataDictionaryItemsId.get(i)+"',");
-				}
-			}
-			if(delItemIds.toString().endsWith(",")){
-				delItemIds.deleteCharAt(delItemIds.length() - 1);
-			}
-			if(StringManagerUtils.isNotNull(delItemIds.toString())){
-				String delDataDict="delete from tbl_dist_item t where t.dataitemid in("+delItemIds.toString()+")";
-				pstmt = conn.prepareStatement(delDataDict);
-				pstmt.executeUpdate();
-				System.out.println("删除协议中不存在的字典项:"+delItemIds.toString());
-			}
+			
 			
 			System.out.println("同步数据字典:"+dataDictionaryId);
 		} catch (SQLException e) {

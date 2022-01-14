@@ -36,8 +36,6 @@ public class AlarmQueryController extends BaseController{
 	
 	private String limit;
 	private String msg = "";
-	private String wellName;
-	private String deviceName;
 	private String deviceType;
 	private String operationType;
 	private String page;
@@ -54,7 +52,8 @@ public class AlarmQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		alarmType = ParamUtils.getParameter(request, "alarmType");
 		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
 		isSendMessage = ParamUtils.getParameter(request, "isSendMessage");
@@ -88,7 +87,7 @@ public class AlarmQueryController extends BaseController{
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
-		json = alarmQueryService.getAlarmData(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,pager);
+		json = alarmQueryService.getAlarmData(orgId,deviceType,deviceId,deviceName,alarmType,alarmLevel,isSendMessage,pager);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -105,7 +104,8 @@ public class AlarmQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
+		String deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		alarmType = ParamUtils.getParameter(request, "alarmType");
 		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
 		isSendMessage = ParamUtils.getParameter(request, "isSendMessage");
@@ -144,7 +144,7 @@ public class AlarmQueryController extends BaseController{
 		}
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
-		json = alarmQueryService.getAlarmExportData(orgId,deviceType,deviceName,alarmType,alarmLevel,isSendMessage,pager);
+		json = alarmQueryService.getAlarmExportData(orgId,deviceType,deviceId,deviceName,alarmType,alarmLevel,isSendMessage,pager);
 		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
@@ -160,7 +160,7 @@ public class AlarmQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceName = ParamUtils.getParameter(request, "deviceName");
 		alarmType = ParamUtils.getParameter(request, "alarmType");
 		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
 		isSendMessage = ParamUtils.getParameter(request, "isSendMessage");
@@ -190,7 +190,7 @@ public class AlarmQueryController extends BaseController{
 		String json = "";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
-		deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
+		String deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		alarmType = ParamUtils.getParameter(request, "alarmType");
 		alarmLevel = ParamUtils.getParameter(request, "alarmLevel");
 		isSendMessage = ParamUtils.getParameter(request, "isSendMessage");
@@ -231,18 +231,6 @@ public class AlarmQueryController extends BaseController{
 	}
 	public void setMsg(String msg) {
 		this.msg = msg;
-	}
-	public String getWellName() {
-		return wellName;
-	}
-	public void setWellName(String wellName) {
-		this.wellName = wellName;
-	}
-	public String getDeviceName() {
-		return deviceName;
-	}
-	public void setDeviceName(String deviceName) {
-		this.deviceName = deviceName;
 	}
 	public String getDeviceType() {
 		return deviceType;

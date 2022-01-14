@@ -194,6 +194,11 @@ public class StringManagerUtils {
                 chinese = conversionStr(chinese, "ISO8859-1", "GB2312");
                 chinese = chinese.substring(0, 1);
             }
+        }else{
+        	int asciiValue=Integer.valueOf(chinese.charAt(0));
+        	if(!((asciiValue>=48&&asciiValue<=57)||(asciiValue>=65&&asciiValue<=90)||(asciiValue>=97&&asciiValue<=122))){//如果是特殊字符
+        		chinese="";
+        	}
         }
 
         return chinese;

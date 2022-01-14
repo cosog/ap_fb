@@ -61,7 +61,6 @@ public class RealTimeMonitoringController extends BaseController {
 	private DataitemsInfoService dataitemsInfoService;
 	private String limit;
 	private String msg = "";
-	private String wellName;
 	private String deviceName;
 	private String deviceType;
 	private String deviceTypeStatValue;
@@ -253,12 +252,13 @@ public class RealTimeMonitoringController extends BaseController {
 		String json = "";
 		HttpSession session=request.getSession();
 		orgId = ParamUtils.getParameter(request, "orgId");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceName = ParamUtils.getParameter(request, "deviceName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
 		User user = (User) session.getAttribute("userLogin");
 		if(user!=null){
-			json = realTimeMonitoringService.getDeviceRealTimeMonitoringData(deviceName,deviceType,user.getUserId());
+			json = realTimeMonitoringService.getDeviceRealTimeMonitoringData(deviceId,deviceName,deviceType,user.getUserId());
 		}
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
@@ -275,10 +275,11 @@ public class RealTimeMonitoringController extends BaseController {
 		String json = "";
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
-		wellName = ParamUtils.getParameter(request, "wellName");
+		String deviceId=ParamUtils.getParameter(request, "deviceId");
+		String wellName = ParamUtils.getParameter(request, "wellName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		json = realTimeMonitoringService.getDeviceControlandInfoData(wellName,deviceType,user.getUserNo());
+		json = realTimeMonitoringService.getDeviceControlandInfoData(deviceId,wellName,deviceType,user.getUserNo());
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -296,7 +297,7 @@ public class RealTimeMonitoringController extends BaseController {
 		String json = "";
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
-		wellName = ParamUtils.getParameter(request, "wellName");
+		String wellName = ParamUtils.getParameter(request, "wellName");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
 		json = realTimeMonitoringService.loadCurveTypeComboxList(wellName,deviceType);
@@ -338,9 +339,10 @@ public class RealTimeMonitoringController extends BaseController {
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("userLogin");
 		String deviceName = ParamUtils.getParameter(request, "deviceName");
+		String deviceId = ParamUtils.getParameter(request, "deviceId");
 		deviceType = ParamUtils.getParameter(request, "deviceType");
 		this.pager = new Page("pagerForm", request);
-		json = realTimeMonitoringService.getRealTimeMonitoringCurveData(deviceName,deviceType);
+		json = realTimeMonitoringService.getRealTimeMonitoringCurveData(deviceId,deviceName,deviceType);
 		//HttpServletResponse response = ServletActionContext.getResponse();
 		response.setContentType("application/json;charset="
 				+ Constants.ENCODING_UTF8);
@@ -352,7 +354,7 @@ public class RealTimeMonitoringController extends BaseController {
 		return null;
 	}
 	
-	public boolean DeviceControlOperation_Mdubus(String protocolName,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
+	public boolean DeviceControlOperation_Mdubus(String protocolName,String deviceId,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
 		boolean result=true;
 		try {
 			int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
@@ -417,7 +419,7 @@ public class RealTimeMonitoringController extends BaseController {
 				if(!StringManagerUtils.isNotNull(responseStr)){
 					result=false;
 				}
-				realTimeMonitoringService.saveDeviceControlLog(wellName,deviceType,title,StringManagerUtils.objectToString(controlValue, dataType),user);
+				realTimeMonitoringService.saveDeviceControlLog(deviceId,wellName,deviceType,title,StringManagerUtils.objectToString(controlValue, dataType),user);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -433,6 +435,7 @@ public class RealTimeMonitoringController extends BaseController {
 		PrintWriter out = response.getWriter();
 		
 		String wellName = request.getParameter("wellName");
+		String deviceId = request.getParameter("deviceId");
 		String deviceType = request.getParameter("deviceType");
 		String password = request.getParameter("password");
 		String controlType = request.getParameter("controlType");
@@ -466,7 +469,7 @@ public class RealTimeMonitoringController extends BaseController {
 					if(StringManagerUtils.isNotNull(protocol) && StringManagerUtils.isNotNull(signinid)){
 						if(StringManagerUtils.isNotNull(slave)){
 //							jsonLogin=
-							if(DeviceControlOperation_Mdubus(protocol,wellName,realDeviceType,signinid,slave,controlType,controlValue)){
+							if(DeviceControlOperation_Mdubus(protocol,deviceId,wellName,realDeviceType,signinid,slave,controlType,controlValue)){
 								jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
 							}else{
 								jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>命令发送失败。</font>'}";
@@ -499,6 +502,7 @@ public class RealTimeMonitoringController extends BaseController {
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter out = response.getWriter();
 		
+		String deviceId = request.getParameter("deviceId");
 		String wellName = request.getParameter("wellName");
 		String deviceType = request.getParameter("deviceType");
 		String controlType = request.getParameter("controlType");
@@ -516,7 +520,7 @@ public class RealTimeMonitoringController extends BaseController {
 			if (StringManagerUtils.isNumber(controlValue)) {
 				String sql="select t3.protocol, t.signinid,to_number(t.slave),t.deviceType from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
 						+ " where t.instancecode=t2.code and t2.unitid=t3.id"
-						+ " and t.wellname='"+wellName+"' ";
+						+ " and t.id="+deviceId;
 				List list = this.service.findCallSql(sql);
 				if(list.size()>0){
 					Object[] obj=(Object[]) list.get(0);
@@ -527,7 +531,7 @@ public class RealTimeMonitoringController extends BaseController {
 					if(StringManagerUtils.isNotNull(protocol) && StringManagerUtils.isNotNull(signinid)){
 						if(StringManagerUtils.isNotNull(slave)){
 //							jsonLogin=
-							if(DeviceControlOperation_Mdubus(protocol,wellName,realDeviceType,signinid,slave,controlType,controlValue)){
+							if(DeviceControlOperation_Mdubus(protocol,deviceId,wellName,realDeviceType,signinid,slave,controlType,controlValue)){
 								jsonLogin = "{success:true,flag:true,error:true,msg:'<font color=blue>命令发送成功。</font>'}";
 							}else{
 								jsonLogin = "{success:true,flag:true,error:false,msg:'<font color=red>命令发送失败。</font>'}";
@@ -611,15 +615,6 @@ public class RealTimeMonitoringController extends BaseController {
 
 	public void setMsg(String msg) {
 		this.msg = msg;
-	}
-
-
-	public String getWellName() {
-		return wellName;
-	}
-
-	public void setWellName(String wellName) {
-		this.wellName = wellName;
 	}
 
 	public String getPage() {

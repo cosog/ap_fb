@@ -95,9 +95,11 @@ Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceName='';
+        	var deviceId=0;
         	var selectRow= Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").getValue();
         	if(selectRow>=0){
         		deviceName = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+        		deviceId = Ext.getCmp("PumpHistoryQueryDeviceListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	}
         	var startDate=Ext.getCmp('PumpHistoryQueryStartDate_Id').rawValue;
         	var startTime_Hour=Ext.getCmp('PumpHistoryQueryStartTime_Hour_Id').getValue();
@@ -112,6 +114,7 @@ Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
             var new_params = {
             		orgId: orgId,
             		deviceType:0,
+            		deviceId:deviceId,
                     deviceName:deviceName,
                     startDate:getDateAndTime(startDate,startTime_Hour,startTime_Minute,startTime_Second),
                     endDate:getDateAndTime(endDate,endTime_Hour,endTime_Minute,endTime_Second)

@@ -53,13 +53,14 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                     	select: function(grid, record, index, eOpts) {
                     		Ext.getCmp("PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id").setValue(index);
                     		var deviceName=record.data.wellName;
+                    		var deviceId=record.data.id;
                     		var deviceType=1;
                     		var tabPanel = Ext.getCmp("PipelineRealTimeMonitoringCurveAndTableTabPanel");
                     		var activeId = tabPanel.getActiveTab().id;
                     		if(activeId=="PipelineRealTimeMonitoringCurveTabPanel_Id"){
                     			deviceRealtimeMonitoringCurve(1);
                     		}else if(activeId=="PipelineRealTimeMonitoringTableTabPanel_Id"){
-                        		CreatePipelineDeviceRealTimeMonitoringDataTable(deviceName,deviceType);
+                        		CreatePipelineDeviceRealTimeMonitoringDataTable(deviceId,deviceName,deviceType);
                     		}
                     		Ext.create('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfoStore');
                     	},

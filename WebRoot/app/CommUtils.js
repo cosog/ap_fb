@@ -526,7 +526,8 @@ iconGtsj = function(value, e, o) {
 iconHistoryQueryDetailsData = function(value, e, o) {
 	var recordId=o.data.id;
 	var wellName=o.data.wellName;
-	var resultstring="<a href=\"javascript:void(0)\" style=\"text-decoration:none;\" onclick=callBackHistoryData(\""+recordId+"\",\""+wellName+"\")>详细...</a>";
+	var deivceId=o.data.deviceId;
+	var resultstring="<a href=\"javascript:void(0)\" style=\"text-decoration:none;\" onclick=callBackHistoryData(\""+recordId+"\",\""+deivceId+"\",\""+wellName+"\")>详细...</a>";
 	return resultstring;
 }
 
@@ -614,9 +615,10 @@ var callBackGraphical = function(type,id) {
     GraphicalOnclickWindow.show();
 }
 
-var callBackHistoryData = function(recordId,wellName) {
+var callBackHistoryData = function(recordId,deivceId,wellName) {
 	var HistoryQueryDataDetailsWindow = Ext.create("AP.view.historyQuery.HistoryQueryDataDetailsWindow");
 	Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").setValue(recordId);
+	Ext.getCmp("HistoryQueryDataDetailsWindowDeviceId_Id").setValue(deivceId);
 	Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").setValue(wellName);
 	HistoryQueryDataDetailsWindow.show();
 }

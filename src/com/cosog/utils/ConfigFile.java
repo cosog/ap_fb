@@ -645,6 +645,8 @@ public class ConfigFile {
 	    private int productionUnit;
 	    
 	    private int dataMappingMode;
+	    
+	    private boolean showLogo;
 
 		private String serialnumber;
 
@@ -707,6 +709,12 @@ public class ConfigFile {
 		}
 		public void setDataMappingMode(int dataMappingMode) {
 			this.dataMappingMode = dataMappingMode;
+		}
+		public boolean getShowLogo() {
+			return showLogo;
+		}
+		public void setShowLogo(boolean showLogo) {
+			this.showLogo = showLogo;
 		}
 	}
 }

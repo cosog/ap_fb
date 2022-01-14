@@ -27,14 +27,47 @@ Ext.define("AP.view.well.AuxiliaryDeviceInfoWindow", {
                 id: 'auxiliaryDeviceName_Id',
                 allowBlank: false,
                 anchor: '95%',
-                name: "auxiliaryDeviceInformation.name"
+                name: "auxiliaryDeviceInformation.name",
+                listeners: {
+                	blur: function (t, e) {
+                        var name=t.value;
+                        var type=Ext.getCmp("auxiliaryDeviceTypeComb_Id").getValue();
+                        var typeName=Ext.getCmp("auxiliaryDeviceTypeComb_Id").rawValue;
+                        var model=Ext.getCmp("auxiliaryDeviceModel_Id").getValue();
+                		if(name!=''&&typeName!=''&&model!=''){
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	name: name,
+                                	type:type,
+                                	model:model
+                                },
+                                url: context + '/wellInformationManagerController/judgeAuxiliaryDeviceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【设备已存在】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             }, {
             	xtype : "combobox",
 				fieldLabel : '类型<font color=red>*</font>',
 				id : 'auxiliaryDeviceTypeComb_Id',
 				anchor : '95%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:'',
 			    allowBlank: false,
@@ -51,7 +84,38 @@ Ext.define("AP.view.well.AuxiliaryDeviceInfoWindow", {
 				listeners : {
 					select:function(v,o){
 						Ext.getCmp("auxiliaryDeviceType_Id").setValue(this.value);
-					}
+					},
+					blur: function (t, e) {
+                        var name=Ext.getCmp("auxiliaryDeviceName_Id").getValue();
+                        var type=Ext.getCmp("auxiliaryDeviceTypeComb_Id").getValue();
+                        var typeName=Ext.getCmp("auxiliaryDeviceTypeComb_Id").rawValue;
+                        var model=Ext.getCmp("auxiliaryDeviceModel_Id").getValue();
+                		if(name!=''&&typeName!=''&&model!=''){
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	name: name,
+                                	type:type,
+                                	model:model
+                                },
+                                url: context + '/wellInformationManagerController/judgeAuxiliaryDeviceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【设备已存在】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
 				}
             },{
                 xtype: "hidden",
@@ -66,7 +130,40 @@ Ext.define("AP.view.well.AuxiliaryDeviceInfoWindow", {
                 id: 'auxiliaryDeviceModel_Id',
                 anchor: '95%',
                 name: "auxiliaryDeviceInformation.model",
-                value: ''
+                value: '',
+                listeners : {
+                	blur: function (t, e) {
+                        var name=Ext.getCmp("auxiliaryDeviceName_Id").getValue();
+                        var type=Ext.getCmp("auxiliaryDeviceTypeComb_Id").getValue();
+                        var typeName=Ext.getCmp("auxiliaryDeviceTypeComb_Id").rawValue;
+                        var model=Ext.getCmp("auxiliaryDeviceModel_Id").getValue();
+                		if(name!=''&&typeName!=''&&model!=''){
+                    		Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	name: name,
+                                	type:type,
+                                	model:model
+                                },
+                                url: context + '/wellInformationManagerController/judgeAuxiliaryDeviceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【设备已存在】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             }, {
          		xtype: "textareafield",
          		fieldLabel: '备注',

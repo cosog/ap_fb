@@ -707,7 +707,6 @@ var DiaphragmPumpDeviceInfoHandsontableHelper = {
                     		}
                     	}
                     	Ext.MessageBox.alert("信息", saveInfo);
-                        //保存以后重置全局容器
                         if(rdata.successCount>0){
                         	diaphragmPumpDeviceInfoHandsontableHelper.clearContainer();
                         	CreateAndLoadDiaphragmPumpDeviceInfoTable();

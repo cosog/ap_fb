@@ -74,6 +74,7 @@ Ext.define('AP.store.alarmQuery.PipelineEnumValueAlarmStore', {
         beforeload: function (store, options) {
         	var orgId = Ext.getCmp('leftOrg_Id').getValue();
         	var deviceType=1;
+        	var deviceId  = Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         	var deviceName  = Ext.getCmp("PipelineEnumValueAlarmOverviewGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
         	var alarmLevel=Ext.getCmp('PipelineEnumValueAlarmLevelComb_Id').getValue();
         	var isSendMessage=Ext.getCmp('PipelineEnumValueAlarmIsSendMessageComb_Id').getValue();
@@ -88,6 +89,7 @@ Ext.define('AP.store.alarmQuery.PipelineEnumValueAlarmStore', {
             var new_params = {
                     orgId: orgId,
                     deviceType:deviceType,
+                    deviceId:deviceId,
                     deviceName:deviceName,
                     alarmLevel:alarmLevel,
                     isSendMessage:isSendMessage,

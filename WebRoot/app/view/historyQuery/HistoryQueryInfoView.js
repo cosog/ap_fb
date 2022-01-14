@@ -214,7 +214,7 @@ function exportHistoryQueryDeviceListExcel(orgId,deviceType,deviceName,commStatu
     openExcelWindow(url + '?flag=true' + param);
 };
 
-function exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDate,fileName,title,columnStr) {
+function exportHistoryQueryDataExcel(orgId,deviceType,deviceId,deviceName,startDate,endDate,fileName,title,columnStr) {
     var url = context + '/historyQueryController/exportHistoryQueryDataExcel';
     var fields = "";
     var heads = "";
@@ -252,6 +252,7 @@ function exportHistoryQueryDataExcel(orgId,deviceType,deviceName,startDate,endDa
     var param = "&fields=" + fields + "&heads=" + URLencode(URLencode(heads)) 
     + "&orgId=" + orgId 
     + "&deviceType=" + deviceType 
+    + "&deviceId=" + deviceId 
     + "&deviceName=" + URLencode(URLencode(deviceName))
     + "&startDate=" + startDate
     + "&endDate=" + endDate
