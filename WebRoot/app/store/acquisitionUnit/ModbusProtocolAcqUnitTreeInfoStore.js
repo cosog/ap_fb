@@ -92,7 +92,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqUnitTreeInfoStore', {
                                                 		var acqUnitSaveData={};
                                                 		acqUnitSaveData.delidslist=[];
                                                 		acqUnitSaveData.delidslist.push(record.data.id);
-                                                		saveAcquisitionUnitConfigData(acqUnitSaveData,record.data.protocol);
+                                                		saveAcquisitionUnitConfigData(acqUnitSaveData,record.data.protocol,record.parentNode.data.deviceType);
                                                 	}else if(record.data.classes==3){
                                                 		var acqGroupSaveData={};
                                                 		acqGroupSaveData.delidslist=[];

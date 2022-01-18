@@ -86,6 +86,8 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolInstanceTreeInfoStore', {
                                     	
                                                 	if(record.data.classes==1){
                                                 		var configInfo={};
+                                                		configInfo.name=record.data.text;
+                                                		configInfo.deviceType=record.data.deviceType;
                                             			configInfo.delidslist=[];
                                             			configInfo.delidslist.push(record.data.id);
                                             			SaveModbusProtocolAcqInstanceData(configInfo);

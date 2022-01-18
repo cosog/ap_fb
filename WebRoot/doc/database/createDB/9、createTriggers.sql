@@ -86,6 +86,12 @@ BEGIN
 END;
 /
 
+create or replace trigger trg_b_datamapping_i   before  insert on tbl_datamapping FOR EACH ROW
+BEGIN
+  SELECT seq_datamapping.nextval INTO :new.id FROM dual;
+END;
+/
+
 CREATE OR REPLACE TRIGGER 
 trg_b_deviceoperationlog_i   before  insert on TBL_DEVICEOPERATIONLOG FOR EACH ROW
 BEGIN
@@ -180,6 +186,13 @@ BEGIN
 end;
 /
 
+CREATE OR REPLACE TRIGGER 
+trg_b_pipelinedevicegraphset_i   before  insert on tbl_pipelinedevicegraphicset FOR EACH ROW
+BEGIN
+  SELECT seq_pipelinedevicegraphicset.nextval INTO :new.id FROM dual;
+end;
+/
+
 CREATE OR REPLACE TRIGGER trg_b_protocolalarminstance_i   before  insert on tbl_protocolalarminstance FOR EACH ROW
 BEGIN
   SELECT seq_protocolalarminstance.nextval,'alarminstance' || seq_protocolalarminstance.nextval INTO :new.id, :new.code FROM dual;
@@ -257,6 +270,13 @@ end;
 create or replace trigger trg_b_pumpdeviceaddinfo_i   before  insert on tbl_pumpdeviceaddinfo FOR EACH ROW
 BEGIN
   SELECT seq_pumpdeviceaddinfo.nextval INTO :new.id FROM dual;
+end;
+/
+
+CREATE OR REPLACE TRIGGER 
+trg_b_pumpdevicegraphicset_i   before  insert on tbl_pumpdevicegraphicset FOR EACH ROW
+BEGIN
+  SELECT seq_pumpdevicegraphicset.nextval INTO :new.id FROM dual;
 end;
 /
 

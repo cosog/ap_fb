@@ -81,13 +81,6 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
                 id: 'formModbusProtocolInstance_Id',
                 anchor: '100%',
                 name: "protocolInstance.id"
-            }, {
-                id: 'formModbusProtocolInstanceName_Id',
-                name: "protocolInstance.name",
-                fieldLabel: '实例名称<font color=red>*</font>',
-                allowBlank: false,
-                anchor: '100%',
-                value: ''
             },{
 				xtype : "hidden",
 				id : 'modbusProtocolInstanceDeviceType_Id',
@@ -99,7 +92,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				id : 'modbusProtocolInstanceDeviceTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:0,
 			    allowBlank: false,
@@ -118,6 +111,43 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 						Ext.getCmp("modbusProtocolInstanceDeviceType_Id").setValue(this.value);
 					}
 				}
+            }, {
+                id: 'formModbusProtocolInstanceName_Id',
+                name: "protocolInstance.name",
+                fieldLabel: '实例名称<font color=red>*</font>',
+                allowBlank: false,
+                anchor: '100%',
+                value: '',
+                listeners: {
+                    blur: function (t, e) {
+                        var value_ = t.getValue();
+                        if(value_!=''){
+                        	var deviceType=Ext.getCmp("modbusProtocolInstanceDeviceType_Id").getValue();
+                        	Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	deviceType:deviceType,
+                                	instanceName: t.value
+                                },
+                                url: context + '/acquisitionUnitManagerController/judgeInstanceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【采控实例已存在】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             },{
 				xtype : "hidden",
 				id : 'modbusInstanceAcqUnit_Id',
@@ -134,7 +164,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				id : 'modbusInstanceAcqProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:'modbus-tcp',
 			    allowBlank: false,
@@ -164,7 +194,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolInstanceInfoWindow", {
 				id : 'modbusInstanceCtrlProtocolTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:'modbus-tcp',
 			    allowBlank: false,

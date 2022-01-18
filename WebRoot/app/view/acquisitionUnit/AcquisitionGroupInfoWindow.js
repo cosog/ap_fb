@@ -148,7 +148,39 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
                 fieldLabel: '组名称<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
-                value: ''
+                value: '',
+                listeners: {
+                    blur: function (t, e) {
+                        var value_ = t.getValue();
+                        if(value_!=''){
+                        	var protocolName=Ext.getCmp("formAcquisitionGroupProtocolComb_Id").rawValue;
+                        	var unitName=Ext.getCmp("formAcquisitionGroupAcqUnitComb_Id").rawValue;
+                        	Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	protocolName:protocolName,
+                                	unitName:unitName,
+                                	groupName: t.value
+                                },
+                                url: context + '/acquisitionUnitManagerController/judgeAcqGroupExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【采控单元已存在相同采集组】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             },{
 				xtype : "hidden",
 				id : 'formAcquisitionGroupType_Id',
@@ -160,7 +192,7 @@ Ext.define("AP.view.acquisitionUnit.AcquisitionGroupInfoWindow", {
 				id : 'formAcquisitionGroupTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:0,
 			    allowBlank: false,

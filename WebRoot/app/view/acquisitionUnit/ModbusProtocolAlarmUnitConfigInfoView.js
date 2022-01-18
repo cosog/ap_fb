@@ -125,24 +125,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmUnitConfigInfoView', {
                             listeners: {
                                 resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                                 	if(protocolAlarmUnitConfigSwitchItemsHandsontableHelper!=null && protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot!=undefined){
-//                                		var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
-//                                		var gridPanel=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id");
-//                                		var selectItemRow= Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsSelectRow_Id").getValue();
-//                                		var itemGridPanel=Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id");
-//                                		if(isNotVal(gridPanel)&&isNotVal(itemGridPanel)){
-//                                			var selectedUnit=gridPanel.getStore().getAt(selectRow);
-//                                			var selectedItem=itemGridPanel.getStore().getAt(selectItemRow);
-//                                			if(selectedUnit.data.classes==0){
-//                                    			if(isNotVal(selectedUnit.data.children) && selectedUnit.data.children.length>0){
-//                                    				CreateProtocolAlarmUnitSwitchItemsConfigInfoTable(selectedUnit.data.children[0].text,selectedUnit.data.children[0].classes,selectedUnit.data.children[0].code,selectedItem.data.addr);
-//                                    			}
-//                                    			
-//                                    		}else if(selectedUnit.data.classes==1){
-//                                    			CreateProtocolAlarmUnitSwitchItemsConfigInfoTable(selectedUnit.data.text,selectedUnit.data.classes,selectedUnit.data.code,selectedItem.data.addr);
-//                                        	}else if(selectedUnit.data.classes==2||selectedUnit.data.classes==3){
-//                                        		CreateProtocolAlarmUnitSwitchItemsConfigInfoTable(selectedUnit.data.protocol,selectedUnit.data.classes,selectedUnit.data.code,selectedItem.data.addr);
-//                                        	}
-//                                		}
                                 		protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot.refreshDimensions();
                                 	}
                                 }
