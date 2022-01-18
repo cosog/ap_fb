@@ -147,7 +147,7 @@ public class CalculateDataService<T> extends BaseService<T> {
 			}
 		}
 		if(isSendMail&&receivingEMailAccount.size()>0){
-			StringManagerUtils.sendEMail(("0".equalsIgnoreCase(deviceType)?"泵":"管")+"设备"+wellName+"报警", EMailContent, receivingEMailAccount);
+			StringManagerUtils.sendEMail(((StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200)?"泵":"管")+"设备"+wellName+"报警", EMailContent, receivingEMailAccount);
 		}
 	}
 }

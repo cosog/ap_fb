@@ -194,7 +194,7 @@ values (47, '0,0,0', 68, 2);
 /* 初始化tbl_user数据                                          */
 /*==============================================================*/
 insert into TBL_USER (USER_NO, USER_ID, USER_PWD, USER_NAME, USER_IN_EMAIL, USER_OUT_EMAIL, USER_PHONE, USER_MOBILE, USER_ADDRESS, USER_POSTCODE, USER_TITLE, USER_TYPE, USER_ORGID, USER_ISLEADER, USER_REGTIME, USER_STYLE, USER_QUICKLOGIN, USER_ENABLE, USER_RECEIVESMS, USER_RECEIVEMAIL)
-values (1, 'system', '91742dcf6ee79059583f6af36e37d9ff', '系统管理员', null, null, null, null, null, null, '5', 1, 0, '0', to_date('15-10-2013 17:21:16', 'dd-mm-yyyy hh24:mi:ss'), 'basic', 0, 1, 0, 0);
+values (1, 'system', '91742dcf6ee79059583f6af36e37d9ff', '超级管理员', null, null, null, null, null, null, '5', 1, 1, '0', to_date('15-10-2013 17:21:16', 'dd-mm-yyyy hh24:mi:ss'), 'basic', 0, 1, 0, 0);
 
 insert into TBL_USER (USER_NO, USER_ID, USER_PWD, USER_NAME, USER_IN_EMAIL, USER_OUT_EMAIL, USER_PHONE, USER_MOBILE, USER_ADDRESS, USER_POSTCODE, USER_TITLE, USER_TYPE, USER_ORGID, USER_ISLEADER, USER_REGTIME, USER_STYLE, USER_QUICKLOGIN, USER_ENABLE, USER_RECEIVESMS, USER_RECEIVEMAIL)
-values (2, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '管理员', null, null, null, null, null, null, '0', 2, 0, '0', to_date('30-11-2020 17:25:43', 'dd-mm-yyyy hh24:mi:ss'), 'basic', 0, 1, 0, 0);
+values (2, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', null, null, null, null, null, null, '0', 1, 1, '0', to_date('30-11-2020 17:25:43', 'dd-mm-yyyy hh24:mi:ss'), 'basic', 0, 1, 0, 0);

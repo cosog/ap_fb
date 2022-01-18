@@ -352,7 +352,8 @@ public class AcquisitionUnitManagerController extends BaseController {
 	public String doAcquisitionUnitBulkDelete() {
 		try {
 			String ids = ParamUtils.getParameter(request, "paramsId");
-			this.acquisitionUnitManagerService.doAcquisitionUnitBulkDelete(ids);
+			String deviceType = ParamUtils.getParameter(request, "deviceType");
+			this.acquisitionUnitManagerService.doAcquisitionUnitBulkDelete(ids,deviceType);
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
 			String result = "{success:true,flag:true}";
 			response.getWriter().print(result);
@@ -929,7 +930,10 @@ public class AcquisitionUnitManagerController extends BaseController {
 			for(int i=0;modbusDriverSaveData.getDelidslist()!=null&&i<modbusDriverSaveData.getDelidslist().size();i++){
 				for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
 					if(modbusDriverSaveData.getDelidslist().get(i).equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
+						EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByProtocolName(modbusProtocolConfig.getProtocol().get(j).getName(),modbusProtocolConfig.getProtocol().get(j).getDeviceType(),"delete");
+						EquipmentDriverServerTask.initInstanceConfigByProtocolName(modbusProtocolConfig.getProtocol().get(j).getName(),"delete");
 						EquipmentDriverServerTask.initProtocolConfig(modbusProtocolConfig.getProtocol().get(j).getName(),"delete");
+						this.acquisitionUnitManagerService.doDeleteProtocolAssociation(modbusProtocolConfig.getProtocol().get(j).getDeviceType(),modbusProtocolConfig.getProtocol().get(j).getName());
 						modbusProtocolConfig.getProtocol().remove(j);
 						break;
 					}
@@ -1120,14 +1124,16 @@ public class AcquisitionUnitManagerController extends BaseController {
 	public String saveAcquisitionUnitHandsontableData() throws Exception {
 		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "").replaceAll(" ", "").replaceAll("null", "");
 		String protocol = ParamUtils.getParameter(request, "protocol");
+		String deviceType=ParamUtils.getParameter(request, "deviceType");
 		Gson gson = new Gson();
 		java.lang.reflect.Type type = new TypeToken<AcquisitionUnitHandsontableChangeData>() {}.getType();
 		AcquisitionUnitHandsontableChangeData acquisitionUnitHandsontableChangeData=gson.fromJson(data, type);
 		if(acquisitionUnitHandsontableChangeData!=null){
 			if(acquisitionUnitHandsontableChangeData.getDelidslist()!=null){
 				for(int i=0;i<acquisitionUnitHandsontableChangeData.getDelidslist().size();i++){
-					this.acquisitionUnitManagerService.doAcquisitionUnitBulkDelete(acquisitionUnitHandsontableChangeData.getDelidslist().get(i));
+					EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByAcqUnitId(acquisitionUnitHandsontableChangeData.getDelidslist().get(i), "delete");
 					EquipmentDriverServerTask.initInstanceConfigByAcqUnitId(acquisitionUnitHandsontableChangeData.getDelidslist().get(i), "delete");
+					this.acquisitionUnitManagerService.doAcquisitionUnitBulkDelete(acquisitionUnitHandsontableChangeData.getDelidslist().get(i),deviceType);
 				}
 			}
 			if(acquisitionUnitHandsontableChangeData.getUpdatelist()!=null){
@@ -1397,8 +1403,11 @@ public class AcquisitionUnitManagerController extends BaseController {
 		if(modbusProtocolInstanceSaveData!=null){
 			if(modbusProtocolInstanceSaveData.getDelidslist()!=null){
 				for(int i=0;i<modbusProtocolInstanceSaveData.getDelidslist().size();i++){
-					this.acquisitionUnitManagerService.doModbusProtocolInstanceBulkDelete(modbusProtocolInstanceSaveData.getDelidslist().get(i));
+					List<String> deleteInstanceList=new ArrayList<String>();
+					deleteInstanceList.add(modbusProtocolInstanceSaveData.getName());
 					EquipmentDriverServerTask.initDriverAcquisitionInfoConfigByProtocolInstanceId(modbusProtocolInstanceSaveData.getDelidslist().get(i), "delete");
+					EquipmentDriverServerTask.initInstanceConfig(deleteInstanceList, "delete");
+					this.acquisitionUnitManagerService.doModbusProtocolInstanceBulkDelete(modbusProtocolInstanceSaveData.getDelidslist().get(i),modbusProtocolInstanceSaveData.getDeviceType());
 				}
 			}
 			
@@ -1600,6 +1609,127 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String json = this.acquisitionUnitManagerService.getDatabaseColumnMappingTable(deviceType);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeProtocolExistOrNot")
+	public String judgeProtocolExistOrNot() throws IOException {
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		boolean flag = this.acquisitionUnitManagerService.judgeProtocolExistOrNot(StringManagerUtils.stringToInteger(deviceType),protocolName);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeAcqUnitExistOrNot")
+	public String judgeAcqUnitExistOrNot() throws IOException {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String unitName = ParamUtils.getParameter(request, "unitName");
+		boolean flag = this.acquisitionUnitManagerService.judgeAcqUnitExistOrNot(protocolName,unitName);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeAcqGroupExistOrNot")
+	public String judgeAcqGroupExistOrNot() throws IOException {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String unitName = ParamUtils.getParameter(request, "unitName");
+		String groupName = ParamUtils.getParameter(request, "groupName");
+		boolean flag = this.acquisitionUnitManagerService.judgeAcqGroupExistOrNot(protocolName,unitName,groupName);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeAlarmUnitExistOrNot")
+	public String judgeAlarmUnitExistOrNot() throws IOException {
+		String protocolName = ParamUtils.getParameter(request, "protocolName");
+		String unitName = ParamUtils.getParameter(request, "unitName");
+		boolean flag = this.acquisitionUnitManagerService.judgeAlarmUnitExistOrNot(protocolName,unitName);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeInstanceExistOrNot")
+	public String judgeInstanceExistOrNot() throws IOException {
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		boolean flag = this.acquisitionUnitManagerService.judgeInstanceExistOrNot(StringManagerUtils.stringToInteger(deviceType),instanceName);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
+	@RequestMapping("/judgeAlarmInstanceExistOrNot")
+	public String judgeAlarmInstanceExistOrNot() throws IOException {
+		String deviceType = ParamUtils.getParameter(request, "deviceType");
+		String instanceName = ParamUtils.getParameter(request, "instanceName");
+		boolean flag = this.acquisitionUnitManagerService.judgeAlarmInstanceExistOrNot(StringManagerUtils.stringToInteger(deviceType),instanceName);
+		response.setContentType("application/json;charset=" + Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		String json = "";
+		if (flag) {
+			json = "{success:true,msg:'1'}";
+		} else {
+			json = "{success:true,msg:'0'}";
+		}
 		PrintWriter pw = response.getWriter();
 		pw.print(json);
 		pw.flush();

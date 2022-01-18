@@ -209,7 +209,7 @@ public class UserManagerController extends BaseController {
 		try {
 			log.debug("edit user success==" + user.getUserNo());
 			String emailContent="账号:"+user.getUserId()+"<br/>密码:"+user.getUserPwd();
-			String emailTopic="创建修改";
+			String emailTopic="用户修改";
 			List<String> receivingEMailAccount=new ArrayList<String>();
 			
 			String userOldPass = ParamUtils.getParameter(request, "userPass");

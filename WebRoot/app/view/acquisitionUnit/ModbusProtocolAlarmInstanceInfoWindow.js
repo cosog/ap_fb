@@ -82,13 +82,6 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
                 id: 'formModbusProtocolAlarmInstance_Id',
                 anchor: '100%',
                 name: "protocolAlarmInstance.id"
-            }, {
-                id: 'formModbusProtocolAlarmInstanceName_Id',
-                name: "protocolAlarmInstance.name",
-                fieldLabel: '实例名称<font color=red>*</font>',
-                allowBlank: false,
-                anchor: '100%',
-                value: ''
             },{
 				xtype : "hidden",
 				id : 'modbusProtocolAlarmInstanceDeviceType_Id',
@@ -100,7 +93,7 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
 				id : 'modbusProtocolAlarmInstanceDeviceTypeComb_Id',
 				anchor : '100%',
 				triggerAction : 'all',
-				selectOnFocus : true,
+				selectOnFocus : false,
 			    forceSelection : true,
 			    value:0,
 			    allowBlank: false,
@@ -119,6 +112,43 @@ Ext.define("AP.view.acquisitionUnit.ModbusProtocolAlarmInstanceInfoWindow", {
 						Ext.getCmp("modbusProtocolAlarmInstanceDeviceType_Id").setValue(this.value);
 					}
 				}
+            }, {
+                id: 'formModbusProtocolAlarmInstanceName_Id',
+                name: "protocolAlarmInstance.name",
+                fieldLabel: '实例名称<font color=red>*</font>',
+                allowBlank: false,
+                anchor: '100%',
+                value: '',
+                listeners: {
+                    blur: function (t, e) {
+                        var value_ = t.getValue();
+                        if(value_!=''){
+                        	var deviceType=Ext.getCmp("modbusProtocolAlarmInstanceDeviceType_Id").getValue();
+                        	Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	deviceType:deviceType,
+                                	instanceName: t.value
+                                },
+                                url: context + '/acquisitionUnitManagerController/judgeAlarmInstanceExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【报警实例已存在】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             },{
 				xtype : "hidden",
 				id : 'modbusInstanceAlarmUnit_Id',

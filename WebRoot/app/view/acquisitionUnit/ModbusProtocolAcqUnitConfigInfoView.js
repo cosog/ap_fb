@@ -474,7 +474,7 @@ function SaveModbusProtocolAcqUnitConfigTreeData(){
 			var acqUnitSaveData={};
 			acqUnitSaveData.updatelist=[];
 			acqUnitSaveData.updatelist.push(protocolProperties);
-			saveAcquisitionUnitConfigData(acqUnitSaveData,selectedItem.data.protocol);
+			saveAcquisitionUnitConfigData(acqUnitSaveData,selectedItem.data.protocol,selectedItem.parentNode.data.deviceType);
 		}
 		
 		if(selectedItem.data.classes==3){//选中的是采控单元组
@@ -513,7 +513,7 @@ function saveModbusProtocolConfigData(configInfo){
 	});
 }
 
-function saveAcquisitionUnitConfigData(acqUnitSaveData,protocol){
+function saveAcquisitionUnitConfigData(acqUnitSaveData,protocol,deviceType){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/saveAcquisitionUnitHandsontableData',
@@ -532,7 +532,8 @@ function saveAcquisitionUnitConfigData(acqUnitSaveData,protocol){
 		},
 		params: {
         	data: JSON.stringify(acqUnitSaveData),
-        	protocol: protocol
+        	protocol: protocol,
+        	deviceType:deviceType
         }
 	});
 }

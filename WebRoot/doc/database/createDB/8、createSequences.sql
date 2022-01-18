@@ -1,7 +1,7 @@
 create sequence HIBERNATE_SEQUENCE
 minvalue 1
 maxvalue 999999999999999999999999999
-start with 128675
+start with 131875
 increment by 1
 cache 20;
 /
@@ -74,6 +74,14 @@ create sequence SEQ_CODE
 minvalue 1
 maxvalue 9999999999999999999999999
 start with 1062
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_DATAMAPPING
+minvalue 1
+maxvalue 9999999999999999999999999
+start with 1
 increment by 1
 cache 20;
 /
@@ -158,6 +166,14 @@ increment by 1
 cache 20;
 /
 
+create sequence SEQ_PIPELINEDEVICEGRAPHICSET
+minvalue 1
+maxvalue 999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
 create sequence SEQ_PROTOCOLALARMINSTANCE
 minvalue 0
 maxvalue 9999999999999999999999999
@@ -231,6 +247,14 @@ cache 20;
 /
 
 create sequence SEQ_PUMPDEVICEADDINFO
+minvalue 1
+maxvalue 99999999999999999999999
+start with 1
+increment by 1
+cache 20;
+/
+
+create sequence SEQ_PUMPDEVICEGRAPHICSET
 minvalue 1
 maxvalue 99999999999999999999999
 start with 1

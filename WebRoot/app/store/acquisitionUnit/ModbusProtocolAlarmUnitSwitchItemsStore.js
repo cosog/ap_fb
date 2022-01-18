@@ -67,19 +67,25 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAlarmUnitSwitchItemsStore', {
             if(get_rawData.totalRoot.length>0){
             	gridPanel.getSelectionModel().deselectAll(true);
             	gridPanel.getSelectionModel().select(0, true);
+            }else{
+            	if(protocolAlarmUnitConfigSwitchItemsHandsontableHelper!=null && protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot!=undefined){
+            		protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot.loadData([]);
+            	}
             }
         },
         beforeload: function (store, options) {
-        	var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAddrMappingConfigSelectRow_Id").getValue();
+        	var ScadaDriverModbusConfigSelectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
         	
         	var protocolCode="";
         	if(ScadaDriverModbusConfigSelectRow!=''){
-        		var selectedProtocol=Ext.getCmp("ModbusProtocolAddrMappingConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
+        		var selectedProtocol=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id").getStore().getAt(ScadaDriverModbusConfigSelectRow);
         		if(selectedProtocol.data.classes==1){//选中的是协议
         			protocolCode=selectedProtocol.data.code;
         		}else if(selectedProtocol.data.classes==0 && isNotVal(selectedProtocol.data.children) && selectedProtocol.data.children.length>0){
         			protocolCode=selectedProtocol.data.children[0].code;
-        		}
+        		}else if(selectedProtocol.data.classes==2||selectedProtocol.data.classes==3){
+        			protocolCode=selectedProtocol.parentNode.data.code;
+            	}
         	}
             var new_params = {
             		protocolCode: protocolCode,

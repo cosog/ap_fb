@@ -1,4 +1,17 @@
 /*==============================================================*/
+/* View: viw_org                                         */
+/*==============================================================*/
+create or replace view viw_org as
+select t.org_id,t.org_code,t.org_name,t.org_memo,t.org_parent,t.org_seq,t.org_flag,t.org_realid,t.org_level,t.org_type,
+t.org_coordx,t.org_coordy,t.show_level,
+substr(sys_connect_by_path(t.org_name,'/'),2) as allpath
+from tbl_org t
+start with t.org_parent=0
+connect by   t.org_parent= prior t.org_id;
+/
+
+
+/*==============================================================*/
 /* View: viw_pumpdevice                                         */
 /*==============================================================*/
 create or replace view viw_pumpdevice as
@@ -63,9 +76,9 @@ left outer join tbl_protocolsmsinstance t2 on t.instancecode =t2.code;
 /* View: viw_pumpacqrawdata                             */
 /*==============================================================*/
 create or replace view viw_pumpacqrawdata as
-select t2.id,t2.wellid,t.devicetype,t.signinid,t.slave,t2.acqtime,t2.rawdata,t.orgid
-from tbl_pumpdevice t,tbl_pumpacqrawdata t2,tbl_code t3
-where t.id=t2.wellid
+select t2.id,t2.wellid,t.wellname,t.devicetype,t3.itemname as deviceTypeName,t.signinid,t.slave,t2.acqtime,t2.rawdata,t.orgid,t4.allpath
+from tbl_pumpdevice t,tbl_pumpacqrawdata t2,tbl_code t3,viw_org t4
+where t.id=t2.wellid and t.orgid=t4.org_id
 and t3.itemcode='DEVICETYPE' and t3.itemvalue=t.devicetype;
 /
 
@@ -109,9 +122,9 @@ t2.recoverytime,t.orgid
 /* View: viw_pipelineacqrawdata                             */
 /*==============================================================*/
 create or replace view viw_pipelineacqrawdata as
-select t2.id,t2.wellid,t.devicetype,t.signinid,t.slave,t2.acqtime,t2.rawdata,t.orgid
-from tbl_pipelinedevice t,tbl_pipelineacqrawdata t2,tbl_code t3
-where t.id=t2.wellid
+select t2.id,t2.wellid,t.wellname,t.devicetype,t3.itemname as deviceTypeName,t.signinid,t.slave,t2.acqtime,t2.rawdata,t.orgid,t4.allpath
+from tbl_pipelinedevice t,tbl_pipelineacqrawdata t2,tbl_code t3,viw_org t4
+where t.id=t2.wellid and t.orgid=t4.org_id
 and t3.itemcode='DEVICETYPE' and t3.itemvalue=t.devicetype;
 /
 

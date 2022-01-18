@@ -88,7 +88,37 @@ Ext.define("AP.view.acquisitionUnit.AlarmUnitInfoWindow", {
                 fieldLabel: '单元名称<font color=red>*</font>',
                 allowBlank: false,
                 anchor: '100%',
-                value: ''
+                value: '',
+                listeners: {
+                    blur: function (t, e) {
+                        var value_ = t.getValue();
+                        if(value_!=''){
+                        	var protocolName=Ext.getCmp("formAlarmUnitProtocol_Id").getValue();
+                        	Ext.Ajax.request({
+                                method: 'POST',
+                                params: {
+                                	protocolName:protocolName,
+                                	unitName: t.value
+                                },
+                                url: context + '/acquisitionUnitManagerController/judgeAlarmUnitExistOrNot',
+                                success: function (response, opts) {
+                                    var obj = Ext.decode(response.responseText);
+                                    var msg_ = obj.msg;
+                                    if (msg_ == "1") {
+                                    	Ext.Msg.alert(cosog.string.ts, "<font color='red'>【报警单元已存在】</font>,请确认！", function(btn, text){
+                                    	    if (btn == 'ok'){
+                                    	    	t.focus(true, 100);
+                                    	    }
+                                    	});
+                                    }
+                                },
+                                failure: function (response, opts) {
+                                    Ext.Msg.alert(cosog.string.tips, cosog.string.fail);
+                                }
+                            });
+                        }
+                    }
+                }
             }, {
                 id: 'formAlarmUnitCode_Id',
                 name: "alarmUnit.unitCode",

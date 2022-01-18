@@ -50,7 +50,7 @@ public class EquipmentDriverServerTask {
 	}
 	
 	@SuppressWarnings({ "static-access", "unused" })
-	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -962,14 +962,17 @@ public class EquipmentDriverServerTask {
 					+ "t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
 					+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,t4.type,"
 					+ "listagg(t5.itemname, ',') within group(order by t5.id ) key "
-					+ " from tbl_protocolinstance t,tbl_acq_unit_conf t2,tbl_acq_group2unit_conf t3,tbl_acq_group_conf t4,tbl_acq_item2group_conf t5  "
-					+ " where t.unitid=t2.id and t2.id=t3.unitid and t3.groupid=t4.id and t4.id=t5.groupid  ";
+					+ " from tbl_protocolinstance t "
+					+ " left outer join tbl_acq_unit_conf t2 on t.unitid=t2.id "
+					+ " left outer join tbl_acq_group2unit_conf t3 on t2.id=t3.unitid "
+					+ " left outer join tbl_acq_group_conf t4 on t3.groupid=t4.id "
+					+ " left outer join tbl_acq_item2group_conf t5 on t4.id=t5.groupid  "
+					+ " where 1=1 ";
 			if(StringManagerUtils.isNotNull(instances)){
 				sql+=" and t.name in("+instances+")";
 			}
 			sql+= "group by t.name,t.acqprotocoltype,t.ctrlprotocoltype,t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
 					+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,t4.type";
-			
 			Map<String,InitInstance> InstanceListMap=new HashMap<String,InitInstance>();
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			if(equipmentDriveMap.size()==0){
@@ -1007,33 +1010,37 @@ public class EquipmentDriverServerTask {
 						initInstance.setAcqGroup(new ArrayList<InitInstance.Group>());
 						initInstance.setCtrlGroup(new ArrayList<InitInstance.Group>());
 					}
-					InitInstance.Group group=new InitInstance.Group();
-					group.setInterval(rs.getInt(11));
-					group.setAddr(new ArrayList<Integer>());
-					String[] itemsArr=rs.getString(13).split(",");
-					for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-						if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(rs.getString(8))){
-							for(int j=0;j<itemsArr.length;j++){
-								for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
-									if(itemsArr[j].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle())){
-										if(!StringManagerUtils.existOrNot(group.getAddr(), modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr())){
-											group.getAddr().add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
-											if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getRWType())){
-												isCtrl=true;
+					if(StringManagerUtils.isNotNull(rs.getString(10))){
+						InitInstance.Group group=new InitInstance.Group();
+						group.setInterval(rs.getInt(11));
+						group.setAddr(new ArrayList<Integer>());
+						if(StringManagerUtils.isNotNull(rs.getString(13))){
+							String[] itemsArr=rs.getString(13).split(",");
+							for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+								if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(rs.getString(8))){
+									for(int j=0;j<itemsArr.length;j++){
+										for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
+											if(itemsArr[j].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle())){
+												if(!StringManagerUtils.existOrNot(group.getAddr(), modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr())){
+													group.getAddr().add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
+													if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getRWType())){
+														isCtrl=true;
+													}
+												}
+												break;
 											}
 										}
-										break;
 									}
+									Collections.sort(group.getAddr());
+									break;
 								}
 							}
-							Collections.sort(group.getAddr());
-							break;
 						}
-					}
-					if(rs.getInt(12)==1){//控制组
-						initInstance.getCtrlGroup().add(group);
-					}else{
-						initInstance.getAcqGroup().add(group);
+						if(rs.getInt(12)==1){//控制组
+							initInstance.getCtrlGroup().add(group);
+						}else{
+							initInstance.getAcqGroup().add(group);
+						}
 					}
 					InstanceListMap.put(rs.getString(1), initInstance);
 				}
@@ -1200,6 +1207,48 @@ public class EquipmentDriverServerTask {
 		return result;
 	}
 	
+	@SuppressWarnings("resource")
+	public static int initDriverAcquisitionInfoConfigByProtocolName(String protocolName,int deviceType,String method){
+		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		String sql="";
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null){
+        	return -1;
+        }
+		try {
+			if(deviceType==0){
+				sql="select t.wellname from tbl_pumpdevice t where t.instancecode in ( select t2.code from tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t2.unitid=t3.id and t3.protocol='"+protocolName+"' )";
+				pstmt = conn.prepareStatement(sql);
+				rs=pstmt.executeQuery();
+				while(rs.next()){
+					wellList.add(rs.getString(1));
+				}
+				if(wellList.size()>0){
+					initPumpDriverAcquisitionInfoConfig(wellList,method);
+				}
+			}else if(deviceType==1){
+				wellList=new ArrayList<String>();
+				sql="select t.wellname from tbl_pipelinedevice t where t.instancecode in ( select t2.code from tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t2.unitid=t3.id and t3.protocol='"+protocolName+"' )";
+				pstmt = conn.prepareStatement(sql);
+				rs=pstmt.executeQuery();
+				while(rs.next()){
+					wellList.add(rs.getString(1));
+				}
+				if(wellList.size()>0){
+					initPipelineDriverAcquisitionInfoConfig(wellList,method);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return 0;
+	}
+	
 	public static int initDriverAcquisitionInfoConfigByProtocolInstance(String instanceCode,String method){
 		List<String> wellList=new ArrayList<String>();
 		Connection conn = null;   
@@ -1248,7 +1297,7 @@ public class EquipmentDriverServerTask {
         	return -1;
         }
 		try {
-			String sql="select t.wellname from tbl_pumpdevice t,tbl_protocolinstance t2 where t.deviceType<>2 and t.instancecode=t2.code and t2.id="+instanceId;
+			String sql="select t.wellname from tbl_pumpdevice t,tbl_protocolinstance t2 where t.instancecode=t2.code and t2.id="+instanceId;
 			pstmt = conn.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()){
@@ -1259,7 +1308,46 @@ public class EquipmentDriverServerTask {
 			}
 			
 			wellList=new ArrayList<String>();
-			sql="select t.wellname from tbl_pipelinedevice t,tbl_protocolinstance t2 where t.deviceType<>2 and t.instancecode=t2.code and t2.id="+instanceId;
+			sql="select t.wellname from tbl_pipelinedevice t,tbl_protocolinstance t2 where t.instancecode=t2.code and t2.id="+instanceId;
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				wellList.add(rs.getString(1));
+			}
+			if(wellList.size()>0){
+				initPipelineDriverAcquisitionInfoConfig(wellList,method);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return 0;
+	}
+	
+	@SuppressWarnings("resource")
+	public static int initDriverAcquisitionInfoConfigByAcqUnitId(String unitId,String method){
+		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null){
+        	return -1;
+        }
+		try {
+			String sql="select t.wellname from tbl_pumpdevice t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id and t3.id="+unitId;
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				wellList.add(rs.getString(1));
+			}
+			if(wellList.size()>0){
+				initPumpDriverAcquisitionInfoConfig(wellList,method);
+			}
+			
+			wellList=new ArrayList<String>();
+			sql="select t.wellname from tbl_pipelinedevice t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t.instancecode=t2.code and t2.unitid=t3.id and t3.id="+unitId;
 			pstmt = conn.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()){

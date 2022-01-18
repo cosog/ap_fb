@@ -18,6 +18,7 @@ import com.cosog.model.AcquisitionUnitGroup;
 import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.ProtocolAlarmInstance;
 import com.cosog.model.ProtocolSMSInstance;
+import com.cosog.model.User;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
@@ -426,7 +427,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			ModbusProtocolConfig.Protocol protocolConfig=modbusProtocolConfig.getProtocol().get(i);
 			if(protocolCode.equalsIgnoreCase(protocolConfig.getCode())){
 				for(int j=0;j<protocolConfig.getItems().size();j++){
-					if(protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(resolutionMode)){
+					if((!"w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())) && protocolConfig.getItems().get(j).getResolutionMode()==StringManagerUtils.stringToInteger(resolutionMode)){
 						result_json.append("{\"id\":"+(j+1)+","
 								+ "\"protocolCode\":\""+protocolCode+"\","
 								+ "\"title\":\""+protocolConfig.getItems().get(j).getTitle()+"\","
@@ -554,7 +555,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 				Collections.sort(protocolConfig.getItems());
 				int index=1;
 				for(int j=0;j<protocolConfig.getItems().size();j++){
-					if(protocolConfig.getItems().get(j).getResolutionMode()==2){
+					if((!"w".equalsIgnoreCase(protocolConfig.getItems().get(j).getRWType())) && protocolConfig.getItems().get(j).getResolutionMode()==2){
 						String upperLimit="",lowerLimit="",hystersis="",delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
 						boolean checked=false;
 						for(int k=0;k<itemAddrsList.size();k++){
@@ -1928,6 +1929,87 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
+	public boolean judgeProtocolExistOrNot(int deviceType,String protocolName) {
+		boolean flag = false;
+		if (StringManagerUtils.isNotNull(protocolName)) {
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==deviceType && protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
+					flag = true;
+					break;
+				}
+			}
+		}
+		return flag;
+	}
+	
+	public boolean judgeAcqUnitExistOrNot(String protocolName,String unitName) {
+		boolean flag = false;
+		if (StringManagerUtils.isNotNull(protocolName)&&StringManagerUtils.isNotNull(unitName)) {
+			String sql = "select t.id from tbl_acq_unit_conf t where t.protocol='"+protocolName+"' and t.unit_name='"+unitName+"'";
+			List<?> list = this.findCallSql(sql);
+			if (list.size() > 0) {
+				flag = true;
+			}
+		}
+		return flag;
+	}
+	
+	public boolean judgeAcqGroupExistOrNot(String protocolName,String unitName,String groupName) {
+		boolean flag = false;
+		if (StringManagerUtils.isNotNull(protocolName)&&StringManagerUtils.isNotNull(unitName)) {
+			String sql = "select t.id from TBL_ACQ_GROUP_CONF t,tbl_acq_group2unit_conf t2,tbl_acq_unit_conf t3 "
+					+ " where t.id=t2.groupid and t2.unitid=t3.id "
+					+ " and t3.protocol='"+protocolName+"' and t3.unit_name='"+unitName+"' and t.group_name='"+groupName+"'";
+			List<?> list = this.findCallSql(sql);
+			if (list.size() > 0) {
+				flag = true;
+			}
+		}
+		return flag;
+	}
+	
+	public boolean judgeAlarmUnitExistOrNot(String protocolName,String unitName) {
+		boolean flag = false;
+		if (StringManagerUtils.isNotNull(protocolName)&&StringManagerUtils.isNotNull(unitName)) {
+			String sql = "select t.id from TBL_ALARM_UNIT_CONF t where t.protocol='"+protocolName+"' and t.unit_name='"+unitName+"'";
+			List<?> list = this.findCallSql(sql);
+			if (list.size() > 0) {
+				flag = true;
+			}
+		}
+		return flag;
+	}
+	
+	public boolean judgeInstanceExistOrNot(int deviceType,String instanceName) {
+		boolean flag = false;
+		if (StringManagerUtils.isNotNull(instanceName)) {
+			String sql = "select t.id from TBL_PROTOCOLINSTANCE t where t.devicetype="+deviceType+" and t.name='"+instanceName+"'";
+			List<?> list = this.findCallSql(sql);
+			if (list.size() > 0) {
+				flag = true;
+			}
+		}
+		return flag;
+	}
+	
+	public boolean judgeAlarmInstanceExistOrNot(int deviceType,String instanceName) {
+		boolean flag = false;
+		if (StringManagerUtils.isNotNull(instanceName)) {
+			String sql = "select t.id from TBL_PROTOCOLALARMINSTANCE t where t.devicetype="+deviceType+" and t.name='"+instanceName+"'";
+			List<?> list = this.findCallSql(sql);
+			if (list.size() > 0) {
+				flag = true;
+			}
+		}
+		return flag;
+	}
+	
 	public void doAcquisitionGroupAdd(AcquisitionGroup acquisitionGroup) throws Exception {
 		getBaseDao().addObject(acquisitionGroup);
 	}
@@ -1937,6 +2019,13 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 	}
 	
 	public void doAcquisitionGroupBulkDelete(final String ids) throws Exception {
+		int delorUpdateCount;
+		String sql="delete from TBL_ACQ_ITEM2GROUP_CONF t where t.groupid in ("+ids+")";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_acq_group2unit_conf t where t.groupid in("+ids+")";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
 		final String hql = "DELETE AcquisitionGroup u where u.id in (" + ids + ")";
 		super.bulkObjectDelete(hql);
 	}
@@ -1949,9 +2038,67 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		getBaseDao().updateObject(acquisitionUnit);
 	}
 	
-	public void doAcquisitionUnitBulkDelete(final String ids) throws Exception {
+	public void doAcquisitionUnitBulkDelete(final String ids,String deviceType) throws Exception {
+		int delorUpdateCount=0;
+		String tableName="tbl_pumpdevice";
+		if(StringManagerUtils.stringToInteger(deviceType)==1){
+			tableName="tbl_pipelinedevice";
+		}
+		String sql = "update "+tableName+" t set t.instancecode='' where t.instancecode in ( select t2.code from tbl_protocolinstance t2  where t2.unitid in ("+ids+") )";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from TBL_ACQ_ITEM2GROUP_CONF t where t.groupid in (select t2.id from tbl_acq_group_conf t2,tbl_acq_group2unit_conf t3 where t2.id=t3.groupid and t3.unitid in("+ids+"))";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_acq_group_conf t where t.id in ( select t2.groupid from tbl_acq_group2unit_conf t2 where t2.unitid in("+ids+") )";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_acq_group2unit_conf t where t.unitid in("+ids+")";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_protocolinstance t where t.unitid in("+ids+")";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
 		final String hql = "DELETE AcquisitionUnit u where u.id in (" + ids + ")";
 		super.bulkObjectDelete(hql);
+	}
+	
+	public void doDeleteProtocolAssociation(int deviceType,String protocolName) throws Exception {
+		int delorUpdateCount=0;
+		String tableName="tbl_pumpdevice";
+		if(deviceType==1){
+			tableName="tbl_pipelinedevice";
+		}
+		String sql = "update "+tableName+" t set t.instancecode='' where t.instancecode in ( select t2.code from tbl_protocolinstance t2,tbl_acq_unit_conf t3 where t2.unitid=t3.id and t3.protocol='"+protocolName+"' )";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from TBL_ACQ_ITEM2GROUP_CONF t where t.groupid in (select t2.id from tbl_acq_group_conf t2 where t2.protocol='"+protocolName+"')";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_acq_group_conf t where t.protocol ='"+protocolName+"'";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_acq_group2unit_conf t where t.unitid in (select t2.id from tbl_acq_unit_conf t2 where t2.protocol='"+protocolName+"')";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_protocolinstance t where t.unitid in (select t2.id from tbl_acq_unit_conf t2 where t2.protocol='"+protocolName+"')";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_acq_unit_conf t where t.protocol ='"+protocolName+"'";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		
+		sql = "update "+tableName+" t set t.alarminstancecode='' where t.alarminstancecode in ( select t2.code from tbl_protocolalarminstance t2,tbl_alarm_unit_conf t3 where t2.alarmunitid=t3.id and t3.protocol='"+protocolName+"' )";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_alarm_item2unit_conf t where t.unitid in( select id from tbl_alarm_unit_conf t2 where t2.protocol='"+protocolName+"' )";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_protocolalarminstance t where t.alarmunitid in( select id from tbl_alarm_unit_conf t2 where t2.protocol='"+protocolName+"' )";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
+		
+		sql="delete from tbl_alarm_unit_conf t where t.protocol ='"+protocolName+"'";
+		delorUpdateCount=this.getBaseDao().updateOrDeleteBySql(sql);
 	}
 	
 	public List<T> showAcquisitionGroupOwnItems(Class<AcquisitionGroupItem> class1, String groupCode) {
@@ -1990,7 +2137,14 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		getBaseDao().updateObject(protocolInstance);
 	}
 	
-	public void doModbusProtocolInstanceBulkDelete(final String ids) throws Exception {
+	public void doModbusProtocolInstanceBulkDelete(final String ids,int deviceType) throws Exception {
+		String tableName="tbl_pumpdevice";
+		if(deviceType==1){
+			tableName="tbl_pipelinedevice";
+		}
+		String sql = "update "+tableName+" t set t.instancecode='' where t.instancecode in ( select t2.code from TBL_PROTOCOLINSTANCE t2 where t2.id in ("+ids+") )";
+		this.getBaseDao().updateOrDeleteBySql(sql);
+		
 		final String hql = "DELETE ProtocolInstance u where u.id in (" + ids + ")";
 		super.bulkObjectDelete(hql);
 	}

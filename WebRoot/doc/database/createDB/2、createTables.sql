@@ -229,6 +229,34 @@ create index IDX_000_01_ZT on TBL_CODE (STATE)
 /
 
 /*==============================================================*/
+/* Table: TBL_DATAMAPPING                                    */
+/*==============================================================*/
+create table TBL_DATAMAPPING
+(
+  id              NUMBER(10) not null,
+  name            VARCHAR2(50) not null,
+  mappingcolumn   VARCHAR2(30) not null,
+  protocoltype    NUMBER(1) not null,
+  repetitiontimes NUMBER(2),
+  mappingmode     NUMBER(1)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_DATAMAPPING
+  add constraint PK_DATAMAPPING primary key (ID, NAME)
+/
+create index IDX_DATAMAPPING_NAME on TBL_DATAMAPPING (NAME)
+/
+create index IDX_DATAMAPPING_TYPE on TBL_DATAMAPPING (PROTOCOLTYPE)
+/
+
+/*==============================================================*/
 /* Table: TBL_DEVICEOPERATIONLOG                                    */
 /*==============================================================*/
 create table TBL_DEVICEOPERATIONLOG
@@ -812,6 +840,29 @@ create index IDX_PUMPDEVICEADDINFO_WELLID on TBL_PUMPDEVICEADDINFO (WELLID)
 /
 
 /*==============================================================*/
+/* Table: TBL_PUMPDEVICEGRAPHICSET                                    */
+/*==============================================================*/
+create table TBL_PUMPDEVICEGRAPHICSET
+(
+  id           NUMBER(10) not null,
+  wellid       NUMBER(10) not null,
+  graphicstyle VARCHAR2(4000)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PUMPDEVICEGRAPHICSET
+  add constraint PK_PUMPDEVICEGRAPHICSET primary key (ID)
+/
+create index IDX_PUMPDEVICEGRAPHICSET on TBL_PUMPDEVICEGRAPHICSET (WELLID)
+/
+
+/*==============================================================*/
 /* Table: TBL_PIPELINEDEVICEADDINFO                                    */
 /*==============================================================*/
 create table TBL_PIPELINEDEVICEADDINFO
@@ -834,6 +885,29 @@ alter table TBL_PIPELINEDEVICEADDINFO
   add constraint PK_PIPELINEDEVICEADDINFO primary key (ID)
 /
 create index IDX_PIPELINEADDINFO_WELLID on TBL_PIPELINEDEVICEADDINFO (WELLID)
+/
+
+/*==============================================================*/
+/* Table: TBL_PIPELINEDEVICEGRAPHICSET                                    */
+/*==============================================================*/
+create table TBL_PIPELINEDEVICEGRAPHICSET
+(
+  id           NUMBER(10) not null,
+  wellid       NUMBER(10) not null,
+  graphicstyle VARCHAR2(4000)
+)
+tablespace AP_FB_DATA
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  )
+/
+alter table TBL_PIPELINEDEVICEGRAPHICSET
+  add constraint PK_PIPELINEDEVICEGRAPHICSET primary key (ID)
+/
+create index IDX_PIPELINEDEVICEGRAPHICSET on TBL_PIPELINEDEVICEGRAPHICSET (WELLID)
 /
 
 /*==============================================================*/

@@ -86,8 +86,8 @@ driverConfig:
          http://39.99.42.182:19200/api/probe/host
 email:
    snedAccount:
-      account: zhaojinmeng1128@126.com
-      password: YAOLBHNROJWHYCVX
+      account: shfzby@126.com
+      password: CANDRMRCDLKHUKQX
       smtpHost: smtp.126.com
       smtpPort: 465
 others:
