@@ -365,10 +365,10 @@ function deviceHistoryQueryCurve(deviceType){
 		        if(i>0){
 		        	opposite=true;
 		        }
-		        if(allPositive){
-		        	minValue=0;
-		        }else{
+		        if(allNegative){
 		        	maxValue=0;
+		        }else if(allPositive){
+		        	minValue=0;
 		        }
 		        if(JSON.stringify(graphicSet) != "{}"&&isNotVal(graphicSet.History) && graphicSet.History.length>i ){
 			    	if(isNotVal(graphicSet.History[i].yAxisMaxValue)){

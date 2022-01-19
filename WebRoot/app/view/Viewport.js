@@ -610,7 +610,7 @@ function showHelpDocumentWinFn() {
 		tabPanel.add(Ext.create("AP.view.help.HelpDocPanel", {
             id: 'HelpDocPanel',
             closable: true,
-            iconCls: 'Help',
+            iconCls: 'help',
             closeAction: 'destroy',
             title: '帮助',
             listeners: {

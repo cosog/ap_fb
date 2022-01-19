@@ -532,13 +532,20 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
                 	td.style.fontFamily = 'SimHei';
                 }
 	            for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-                	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+                	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>=0){
                 		var row2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
         				var col2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
         				if(row==row2 && col==col2 ){
-        					td.style.fontWeight = 'bold';
-   			             	td.style.fontFamily = 'SimHei';
-        					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
+        					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+        						td.style.fontWeight = 'bold';
+       			             	td.style.fontFamily = 'SimHei';
+        					}
+   			             	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==0){
+			             		if(AlarmShowStyle.Details.Normal.Opacity!=0){
+			             			td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.Normal.BackgroundColor,AlarmShowStyle.Details.Normal.Opacity);
+			             		}
+			             		td.style.color='#'+AlarmShowStyle.Details.Normal.Color;
+			             	}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
         						if(AlarmShowStyle.Details.FirstLevel.Opacity!=0){
         							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
         						}

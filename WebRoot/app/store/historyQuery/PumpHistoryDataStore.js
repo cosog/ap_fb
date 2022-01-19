@@ -64,6 +64,7 @@ Ext.define('AP.store.historyQuery.PumpHistoryDataStore', {
                     	itemdblclick: function (view,record,item,index,e,eOpts) {
                     		var HistoryQueryDataDetailsWindow = Ext.create("AP.view.historyQuery.HistoryQueryDataDetailsWindow");
                     		Ext.getCmp("HistoryQueryDataDetailsWindowRecord_Id").setValue(record.data.id);
+                    		Ext.getCmp("HistoryQueryDataDetailsWindowDeviceId_Id").setValue(record.data.deviceId);
                     		Ext.getCmp("HistoryQueryDataDetailsWindowDeviceName_Id").setValue(record.data.wellName);
                     		HistoryQueryDataDetailsWindow.show();
 //                    		CreatePumpDeviceHistoryQueryDataTable(record.data.id,record.data.wellName);

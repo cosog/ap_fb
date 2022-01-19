@@ -227,7 +227,58 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
     			        		}
     			        		text="设置";
     			        		e.tdStyle ="vertical-align:middle;";
-    			        		if(resolutionMode==1&&itemMeaning.length==2){
+    			        		if(resolutionMode==1&&itemMeaning.length==1){
+    			        			Ext.defer(function () {
+        		                        Ext.widget('button', {
+        		                        	renderTo: id,
+        		                        	height: 25,
+    		                            	width: 38,
+    		                            	style: 'margin:1',
+    		                            	align:'center',
+    		                            	disabled:hand,
+    		                            	text: itemMeaning[0][1],
+    		                            	tooltip:itemMeaning[0][1],
+    		                            	handler: function () {
+    		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
+    		                            		var deviceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
+    		                            		Ext.Ajax.request({
+    		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
+    		                                        method: "POST",
+    		                                        waitMsg: cosog.string.updatewait,
+    		                                        waitTitle: 'Please Wait...',
+    		                                        params: {
+    		                                        	deviceId:deviceId,
+    		                                        	wellName: wellName,
+    		                                        	deviceType: 1,
+    		                                            controlType:itemcode,
+    		                                            controlValue:itemMeaning[0][0]
+    		                                        },
+    		                                        success: function (response, action) {
+    		                                        	var data = Ext.decode(response.responseText);
+    		                                        	if (data.success==true && data.flag==false) {
+    		                                                Ext.MessageBox.show({
+    		                                                    title: cosog.string.ts,
+    		                                                    msg: "<font color=red>" + cosog.string.sessionINvalid + "。</font>",
+    		                                                    icon: Ext.MessageBox.INFO,
+    		                                                    buttons: Ext.Msg.OK,
+    		                                                    fn: function () {
+    		                                                        window.location.href = context + "/login/toLogin";
+    		                                                    }
+    		                                                });
+    		                                            } else if (data.flag == true && data.error == false) {
+    		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+    		                                            }  else if (data.flag == true && data.error == true) {
+    		                                                Ext.Msg.alert(cosog.string.ts, "<font color=red>" + data.msg + "</font>");
+    		                                            } 
+    		                                        },
+    		                                        failure: function () {
+    		                                            Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + "</font>】：" + cosog.string.contactadmin + "！")
+    		                                        }
+    		                                	});   
+    		                            	}
+    		                            });
+        		                    }, 50);
+    			        		}else if(resolutionMode==1&&itemMeaning.length==2){
     			        			Ext.defer(function () {
         		                        Ext.widget('toolbar', {
         		                            renderTo: id,
@@ -249,14 +300,14 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	tooltip:itemMeaning[0][1],
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-        		                            		var deivceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
+        		                            		var deviceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
-        		                                        	deivceId:deivceId,
+        		                                        	deviceId:deviceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 1,
         		                                            controlType:itemcode,
@@ -297,14 +348,14 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	tooltip:itemMeaning[1][1],
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-        		                            		var deivceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
+        		                            		var deviceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
-        		                                        	deivceId:deivceId,
+        		                                        	deviceId:deviceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 1,
         		                                            controlType:itemcode,
@@ -356,14 +407,14 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	tooltip:'开',
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-        		                            		var deivceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
+        		                            		var deviceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
-        		                                        	deivceId:deivceId,
+        		                                        	deviceId:deviceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 1,
         		                                            controlType:itemcode,
@@ -403,14 +454,14 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                            	tooltip:'关',
         		                            	handler: function () {
         		                            		var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-        		                            		var deivceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
+        		                            		var deviceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                            		Ext.Ajax.request({
         		                            			url: context + '/realTimeMonitoringController/deviceControlOperationWhitoutPass',
         		                                        method: "POST",
         		                                        waitMsg: cosog.string.updatewait,
         		                                        waitTitle: 'Please Wait...',
         		                                        params: {
-        		                                        	deivceId:deivceId,
+        		                                        	deviceId:deviceId,
         		                                        	wellName: wellName,
         		                                        	deviceType: 1,
         		                                            controlType:itemcode,
@@ -471,9 +522,9 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringControlAndInfo
         		                                             title: '控制'
         		                                         });
         		                                     	 var wellName  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.wellName;
-        		                                     	 var deivceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
+        		                                     	 var deviceId  = Ext.getCmp("PipelineRealTimeMonitoringListGridPanel_Id").getSelectionModel().getSelection()[0].data.id;
         		                                     	 Ext.getCmp("DeviceControlWellName_Id").setValue(wellName);
-        		                                     	 Ext.getCmp("DeviceControlDeviceId_Id").setValue(deivceId);
+        		                                     	 Ext.getCmp("DeviceControlDeviceId_Id").setValue(deviceId);
         		                                     	 Ext.getCmp("DeviceControlDeviceType_Id").setValue(1);
         		                                         
         		                                     	 Ext.getCmp("DeviceControlType_Id").setValue(o.data.itemcode);

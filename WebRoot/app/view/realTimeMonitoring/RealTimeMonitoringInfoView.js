@@ -940,7 +940,7 @@ function deviceRealtimeMonitoringCurve(deviceType){
         		    
         		    if(allNegative){
     		        	maxValue=0;
-    		        }else{
+    		        }else if(allPositive){
     		        	minValue=0;
     		        }
         		    
