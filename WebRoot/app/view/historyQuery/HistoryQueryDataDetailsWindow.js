@@ -133,39 +133,6 @@ var DeviceHistoryQueryDataHandsontableHelper = {
 	        deviceHistoryQueryDataHandsontableHelper.columns=[];
 	        deviceHistoryQueryDataHandsontableHelper.CellInfo=[];
 	        
-	        deviceHistoryQueryDataHandsontableHelper.addFirstAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
-	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.FirstLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.FirstLevel.Color;
-	        	var Opacity=AlarmShowStyle.FirstLevel.Opacity;
-	     		
-	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
-	             td.style.color=Color;
-	        }
-	        
-	        deviceHistoryQueryDataHandsontableHelper.addSecondAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
-	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.SecondLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.SecondLevel.Color;
-	        	var Opacity=AlarmShowStyle.SecondLevel.Opacity;
-	     		
-	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
-	             td.style.color=Color;
-	        }
-	        
-	        deviceHistoryQueryDataHandsontableHelper.addThirdAlarmLevelColBg = function (instance, td, row, col, prop, value, cellProperties) {
-	        	var AlarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue()); 
-	        	var BackgroundColor='#'+AlarmShowStyle.ThirdLevel.BackgroundColor;
-	        	var Color='#'+AlarmShowStyle.ThirdLevel.Color;
-	        	var Opacity=AlarmShowStyle.ThirdLevel.Opacity;
-	     		
-	        	Handsontable.renderers.TextRenderer.apply(this, arguments);
-	             td.style.backgroundColor = BackgroundColor;   
-	             td.style.color=Color;
-	        }
-	        
 	        deviceHistoryQueryDataHandsontableHelper.addColBg = function (instance, td, row, col, prop, value, cellProperties) {
 	             Handsontable.renderers.TextRenderer.apply(this, arguments);
 	             td.style.backgroundColor = '#DC2828';   
@@ -213,25 +180,25 @@ var DeviceHistoryQueryDataHandsontableHelper = {
        			             	td.style.fontFamily = 'SimHei';
         					}
    			             	if(deviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==0){
-			             		if(AlarmShowStyle.Details.Normal.Opacity!=0){
-			             			td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.Normal.BackgroundColor,AlarmShowStyle.Details.Normal.Opacity);
+			             		if(AlarmShowStyle.Data.Normal.Opacity!=0){
+			             			td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.Normal.BackgroundColor,AlarmShowStyle.Data.Normal.Opacity);
 			             		}
-			             		td.style.color='#'+AlarmShowStyle.Details.Normal.Color;
+			             		td.style.color='#'+AlarmShowStyle.Data.Normal.Color;
 			             	}else if(deviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-        						if(AlarmShowStyle.Details.FirstLevel.Opacity!=0){
-        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        						if(AlarmShowStyle.Data.FirstLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.FirstLevel.BackgroundColor,AlarmShowStyle.Data.FirstLevel.Opacity);
         						}
-        						td.style.color='#'+AlarmShowStyle.Details.FirstLevel.Color;
+        						td.style.color='#'+AlarmShowStyle.Data.FirstLevel.Color;
         					}else if(deviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-        						if(AlarmShowStyle.Details.SecondLevel.Opacity!=0){
-        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						if(AlarmShowStyle.Data.SecondLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.SecondLevel.BackgroundColor,AlarmShowStyle.Data.SecondLevel.Opacity);
         						}
-        						td.style.color='#'+AlarmShowStyle.Details.SecondLevel.Color;
+        						td.style.color='#'+AlarmShowStyle.Data.SecondLevel.Color;
         					}else if(deviceHistoryQueryDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-        						if(AlarmShowStyle.Details.ThirdLevel.Opacity!=0){
-        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						if(AlarmShowStyle.Data.ThirdLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.ThirdLevel.BackgroundColor,AlarmShowStyle.Data.ThirdLevel.Opacity);
         						}
-        						td.style.color='#'+AlarmShowStyle.Details.ThirdLevel.Color;
+        						td.style.color='#'+AlarmShowStyle.Data.ThirdLevel.Color;
         					}
         				}
                 	}

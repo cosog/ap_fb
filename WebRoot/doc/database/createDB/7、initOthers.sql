@@ -89,37 +89,13 @@ insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECOD
 values (796, 'BJQJYS', '000000', null, null, '0', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (797, 'BJQJYS', 'ffffff', null, null, '100', null);
+values (797, 'BJQJYS', 'dc2828', null, null, '100', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (798, 'BJQJYS', 'ffffff', null, null, '200', null);
+values (798, 'BJQJYS', 'f09614', null, null, '200', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (799, 'BJQJYS', '000000', null, null, '300', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (962, 'BJQJYS2', '000000', null, null, '0', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (963, 'BJQJYS2', 'dc2828', null, null, '100', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (964, 'BJQJYS2', 'f09614', null, null, '200', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (965, 'BJQJYS2', 'fae600', null, null, '300', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (975, 'BJQJYS3', '000000', null, null, '0', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (976, 'BJQJYS3', 'dc2828', null, null, '100', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (977, 'BJQJYS3', 'f09614', null, null, '200', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (978, 'BJQJYS3', 'fae600', null, null, '300', null);
+values (799, 'BJQJYS', 'fae600', null, null, '300', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
 values (476, 'BJYS', '00ff00', null, null, '0', null);
@@ -137,58 +113,16 @@ insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECOD
 values (507, 'BJYS', '#808080', null, null, '400', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (966, 'BJYS2', '00ff00', null, null, '0', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (967, 'BJYS2', 'dc2828', null, null, '100', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (968, 'BJYS2', 'f09614', null, null, '200', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (969, 'BJYS2', 'fae600', null, null, '300', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (970, 'BJYS2', '#808080', null, null, '400', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (979, 'BJYS3', '00ff00', null, null, '0', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (980, 'BJYS3', 'dc2828', null, null, '100', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (981, 'BJYS3', 'f09614', null, null, '200', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (982, 'BJYS3', 'fae600', null, null, '300', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (983, 'BJYS3', '#808080', null, null, '400', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
 values (804, 'BJYSTMD', '0', null, null, '0', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (805, 'BJYSTMD', '1', null, null, '100', null);
+values (805, 'BJYSTMD', '0', null, null, '100', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (806, 'BJYSTMD', '1', null, null, '200', null);
+values (806, 'BJYSTMD', '0', null, null, '200', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (807, 'BJYSTMD', '1', null, null, '300', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (971, 'BJYSTMD2', '0', null, null, '0', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (972, 'BJYSTMD2', '0', null, null, '100', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (973, 'BJYSTMD2', '0', null, null, '200', null);
-
-insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
-values (974, 'BJYSTMD2', '0', null, null, '300', null);
+values (807, 'BJYSTMD', '0', null, null, '300', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
 values (984, 'BJYSTMD3', '0', null, null, '0', null);
@@ -366,6 +300,24 @@ values (884, 'SYSTEMACTION', '用户登录', null, null, '0', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
 values (885, 'SYSTEMACTION', '用户退出', null, null, '1', null);
+
+insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
+values (1064, 'TXBJQJYS', 'dc2828', null, null, '0', null);
+
+insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
+values (1065, 'TXBJQJYS', '00ff00', null, null, '1', null);
+
+insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
+values (1062, 'TXBJYS', 'dc2828', null, null, '0', null);
+
+insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
+values (1063, 'TXBJYS', '00ff00', null, null, '1', null);
+
+insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
+values (1066, 'TXBJYSTMD', '0', null, null, '0', null);
+
+insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
+values (1067, 'TXBJYSTMD', '0', null, null, '1', null);
 
 insert into TBL_CODE (ID, ITEMCODE, ITEMNAME, REMARK, STATE, ITEMVALUE, TABLECODE)
 values (1002, 'USER_TITLE', '中控室', null, null, '0', null);

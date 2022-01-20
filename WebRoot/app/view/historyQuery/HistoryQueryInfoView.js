@@ -604,8 +604,8 @@ function initHistoryQueryStatPieOrColChat(get_rawData) {
 	
 	var alarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
 	var colors=[];
-	colors.push('#'+alarmShowStyle.Statistics.Normal.BackgroundColor);
-	colors.push('#'+alarmShowStyle.Statistics.FirstLevel.BackgroundColor);
+	colors.push('#'+alarmShowStyle.Comm.online.BackgroundColor);
+	colors.push('#'+alarmShowStyle.Comm.offline.BackgroundColor);
 	
 	ShowHistoryQueryStatPieOrColChat(title,divid, "设备数占", pieData,colors);
 };

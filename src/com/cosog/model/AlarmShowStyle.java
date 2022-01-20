@@ -3,24 +3,16 @@ package com.cosog.model;
 public class AlarmShowStyle implements java.io.Serializable {
 	
 	public AlarmShowStyle() {
-		this.Overview=new AlarmLevelStyle();
-		this.Details=new AlarmLevelStyle();
-		this.Statistics=new AlarmLevelStyle();
+		this.Comm=new CommAlarmStyle();
+		this.Data=new AlarmLevelStyle();
 		
-		this.Overview.setNormal(new AlarmStyle());
-		this.Overview.setFirstLevel(new AlarmStyle());
-		this.Overview.setSecondLevel(new AlarmStyle());
-		this.Overview.setThirdLevel(new AlarmStyle());
+		this.Comm.setOnline(new AlarmStyle());
+		this.Comm.setOffline(new AlarmStyle());
 		
-		this.Details.setNormal(new AlarmStyle());
-		this.Details.setFirstLevel(new AlarmStyle());
-		this.Details.setSecondLevel(new AlarmStyle());
-		this.Details.setThirdLevel(new AlarmStyle());
-		
-		this.Statistics.setNormal(new AlarmStyle());
-		this.Statistics.setFirstLevel(new AlarmStyle());
-		this.Statistics.setSecondLevel(new AlarmStyle());
-		this.Statistics.setThirdLevel(new AlarmStyle());
+		this.Data.setNormal(new AlarmStyle());
+		this.Data.setFirstLevel(new AlarmStyle());
+		this.Data.setSecondLevel(new AlarmStyle());
+		this.Data.setThirdLevel(new AlarmStyle());
 	}
 
 	/**
@@ -28,13 +20,31 @@ public class AlarmShowStyle implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private AlarmLevelStyle Overview;
-
-	private AlarmLevelStyle Details;
+	private CommAlarmStyle Comm;
 	
-	private AlarmLevelStyle Statistics;
+	private AlarmLevelStyle Data;
 
-    
+	public static class CommAlarmStyle{
+    	private AlarmStyle online;
+
+        private AlarmStyle offline;
+
+		public AlarmStyle getOnline() {
+			return online;
+		}
+
+		public void setOnline(AlarmStyle online) {
+			this.online = online;
+		}
+
+		public AlarmStyle getOffline() {
+			return offline;
+		}
+
+		public void setOffline(AlarmStyle offline) {
+			this.offline = offline;
+		}
+    }
     
     public static class AlarmLevelStyle{
     	private AlarmStyle Normal;
@@ -122,27 +132,19 @@ public class AlarmShowStyle implements java.io.Serializable {
 		}
 	}
 
-	public AlarmLevelStyle getOverview() {
-		return Overview;
+	public AlarmLevelStyle getData() {
+		return Data;
 	}
 
-	public void setOverview(AlarmLevelStyle overview) {
-		Overview = overview;
+	public void setData(AlarmLevelStyle data) {
+		Data = data;
 	}
 
-	public AlarmLevelStyle getDetails() {
-		return Details;
+	public CommAlarmStyle getComm() {
+		return Comm;
 	}
 
-	public void setDetails(AlarmLevelStyle details) {
-		Details = details;
-	}
-
-	public AlarmLevelStyle getStatistics() {
-		return Statistics;
-	}
-
-	public void setStatistics(AlarmLevelStyle statistics) {
-		Statistics = statistics;
+	public void setComm(CommAlarmStyle comm) {
+		Comm = comm;
 	}
 }

@@ -73,7 +73,7 @@ cache 20;
 create sequence SEQ_CODE
 minvalue 1
 maxvalue 9999999999999999999999999
-start with 1062
+start with 1082
 increment by 1
 cache 20;
 /
