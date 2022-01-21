@@ -300,34 +300,15 @@ CREATE OR REPLACE PROCEDURE prd_save_alarmcolor (    overviewBackgroundColor0   
                                                         overviewOpacity2    in varchar2,
                                                         overviewOpacity3     in varchar2,
                                                         
-                                                        detailsBackgroundColor0   in varchar2,
-                                                        detailsBackgroundColor1     in varchar2,
-                                                        detailsBackgroundColor2    in varchar2,
-                                                        detailsBackgroundColor3     in varchar2,
-                                                        detailsColor0   in varchar2,
-                                                        detailsColor1     in varchar2,
-                                                        detailsColor2    in varchar2,
-                                                        detailsColor3     in varchar2,
-                                                        detailsOpacity0   in varchar2,
-                                                        detailsOpacity1     in varchar2,
-                                                        detailsOpacity2    in varchar2,
-                                                        detailsOpacity3     in varchar2,
-                                                        
-                                                        statBackgroundColor0   in varchar2,
-                                                        statBackgroundColor1     in varchar2,
-                                                        statBackgroundColor2    in varchar2,
-                                                        statBackgroundColor3     in varchar2,
-                                                        statColor0   in varchar2,
-                                                        statColor1     in varchar2,
-                                                        statColor2    in varchar2,
-                                                        statColor3     in varchar2,
-                                                        statOpacity0   in varchar2,
-                                                        statOpacity1     in varchar2,
-                                                        statOpacity2    in varchar2,
-                                                        statOpacity3     in varchar2) is
+                                                        onlineBackgroundColor   in varchar2,
+                                                        offlineBackgroundColor     in varchar2,
+                                                        onlineColor   in varchar2,
+                                                        offlineColor     in varchar2,
+                                                        onlineOpacity   in varchar2,
+                                                        offlineOpacity     in varchar2) is
   p_msg varchar2(30) := 'error';
 begin
-    --概览
+    --数据报警
     Update tbl_code t1 set t1.itemname=overviewBackgroundColor0 where t1.itemcode='BJYS' and t1.itemvalue=0;
     Update tbl_code t1 set t1.itemname=overviewBackgroundColor1 where t1.itemcode='BJYS' and t1.itemvalue=100;
     Update tbl_code t1 set t1.itemname=overviewBackgroundColor2 where t1.itemcode='BJYS' and t1.itemvalue=200;
@@ -343,36 +324,15 @@ begin
     Update tbl_code t1 set t1.itemname=overviewOpacity2 where t1.itemcode='BJYSTMD' and t1.itemvalue=200;
     Update tbl_code t1 set t1.itemname=overviewOpacity3 where t1.itemcode='BJYSTMD' and t1.itemvalue=300;
     
-    --实时/历史
-    Update tbl_code t1 set t1.itemname=detailsBackgroundColor0 where t1.itemcode='BJYS2' and t1.itemvalue=0;
-    Update tbl_code t1 set t1.itemname=detailsBackgroundColor1 where t1.itemcode='BJYS2' and t1.itemvalue=100;
-    Update tbl_code t1 set t1.itemname=detailsBackgroundColor2 where t1.itemcode='BJYS2' and t1.itemvalue=200;
-    Update tbl_code t1 set t1.itemname=detailsBackgroundColor3 where t1.itemcode='BJYS2' and t1.itemvalue=300;
+    --通信
+    Update tbl_code t1 set t1.itemname=onlineBackgroundColor where t1.itemcode='TXBJYS' and t1.itemvalue=1;
+    Update tbl_code t1 set t1.itemname=offlineBackgroundColor where t1.itemcode='TXBJYS' and t1.itemvalue=0;
 
-    Update tbl_code t1 set t1.itemname=detailsColor0 where t1.itemcode='BJQJYS2' and t1.itemvalue=0;
-    Update tbl_code t1 set t1.itemname=detailsColor1 where t1.itemcode='BJQJYS2' and t1.itemvalue=100;
-    Update tbl_code t1 set t1.itemname=detailsColor2 where t1.itemcode='BJQJYS2' and t1.itemvalue=200;
-    Update tbl_code t1 set t1.itemname=detailsColor3 where t1.itemcode='BJQJYS2' and t1.itemvalue=300;
+    Update tbl_code t1 set t1.itemname=onlineColor where t1.itemcode='TXBJQJYS' and t1.itemvalue=1;
+    Update tbl_code t1 set t1.itemname=offlineColor where t1.itemcode='TXBJQJYS' and t1.itemvalue=0;
 
-    Update tbl_code t1 set t1.itemname=detailsOpacity0 where t1.itemcode='BJYSTMD2' and t1.itemvalue=0;
-    Update tbl_code t1 set t1.itemname=detailsOpacity1 where t1.itemcode='BJYSTMD2' and t1.itemvalue=100;
-    Update tbl_code t1 set t1.itemname=detailsOpacity2 where t1.itemcode='BJYSTMD2' and t1.itemvalue=200;
-    Update tbl_code t1 set t1.itemname=detailsOpacity3 where t1.itemcode='BJYSTMD2' and t1.itemvalue=300;
-    --统计
-    Update tbl_code t1 set t1.itemname=statBackgroundColor0 where t1.itemcode='BJYS3' and t1.itemvalue=0;
-    Update tbl_code t1 set t1.itemname=statBackgroundColor1 where t1.itemcode='BJYS3' and t1.itemvalue=100;
-    Update tbl_code t1 set t1.itemname=statBackgroundColor2 where t1.itemcode='BJYS3' and t1.itemvalue=200;
-    Update tbl_code t1 set t1.itemname=statBackgroundColor3 where t1.itemcode='BJYS3' and t1.itemvalue=300;
-
-    Update tbl_code t1 set t1.itemname=statColor0 where t1.itemcode='BJQJYS3' and t1.itemvalue=0;
-    Update tbl_code t1 set t1.itemname=statColor1 where t1.itemcode='BJQJYS3' and t1.itemvalue=100;
-    Update tbl_code t1 set t1.itemname=statColor2 where t1.itemcode='BJQJYS3' and t1.itemvalue=200;
-    Update tbl_code t1 set t1.itemname=statColor3 where t1.itemcode='BJQJYS3' and t1.itemvalue=300;
-
-    Update tbl_code t1 set t1.itemname=statOpacity0 where t1.itemcode='BJYSTMD3' and t1.itemvalue=0;
-    Update tbl_code t1 set t1.itemname=statOpacity1 where t1.itemcode='BJYSTMD3' and t1.itemvalue=100;
-    Update tbl_code t1 set t1.itemname=statOpacity2 where t1.itemcode='BJYSTMD3' and t1.itemvalue=200;
-    Update tbl_code t1 set t1.itemname=statOpacity3 where t1.itemcode='BJYSTMD3' and t1.itemvalue=300;
+    Update tbl_code t1 set t1.itemname=onlineOpacity where t1.itemcode='TXBJYSTMD' and t1.itemvalue=1;
+    Update tbl_code t1 set t1.itemname=offlineOpacity where t1.itemcode='TXBJYSTMD' and t1.itemvalue=0;
     commit;
     p_msg := '修改成功';
 

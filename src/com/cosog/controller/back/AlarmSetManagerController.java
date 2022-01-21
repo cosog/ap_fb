@@ -202,6 +202,35 @@ public class AlarmSetManagerController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/setAlarmColor")
+	public String setAlarmColor() throws Exception {
+		Gson gson = new Gson();
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		String data = ParamUtils.getParameter(request, "data");
+		java.lang.reflect.Type type = new TypeToken<AlarmShowStyle>() {}.getType();
+		AlarmShowStyle alarmShowStyleSaveData=gson.fromJson(data, type);
+		String json="";
+		try {
+			if(alarmShowStyleSaveData!=null){
+				
+			}
+			alarmSetManagerService.setAlarmColor(alarmShowStyleSaveData);
+			EquipmentDriverServerTask.initAlarmStyle();
+			json="{success:true,msg:true}";
+		} catch (Exception e) {
+			json = "{success:true,msg:false}";
+			e.printStackTrace();
+		}
+//		HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("application/json;charset=utf-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		pw.print(json);
+		pw.flush();
+		pw.close();
+		return null;
+	}
+	
 	public WorkStatusAlarm getAlarm() {
 		return alarm;
 	}

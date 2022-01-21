@@ -52,9 +52,6 @@ values (26, 23, '模块配置', '模块配置', 'AP.view.module.ModuleInfoView', 'Module
 insert into tbl_module (MD_ID, MD_PARENTID, MD_NAME, MD_SHOWNAME, MD_URL, MD_CODE, MD_SEQ, MD_LEVEL, MD_FLAG, MD_ICON, MD_TYPE, MD_CONTROL)
 values (894, 23, '字典配置', '字典配置', 'AP.view.data.SystemdataInfoView', 'DataDictionary', 2090200, null, null, 'dictionary', 0, 'AP.controller.data.SystemdataInfoControl');
 
-insert into tbl_module (MD_ID, MD_PARENTID, MD_NAME, MD_SHOWNAME, MD_URL, MD_CODE, MD_SEQ, MD_LEVEL, MD_FLAG, MD_ICON, MD_TYPE, MD_CONTROL)
-values (47, 23, '报警颜色', '报警颜色配置', 'AP.view.alarmSet.AlarmSetInfoView', 'AlarmSet', 2090400, null, null, 'alarm', 0, 'AP.controller.alarmSet.AlarmSetInfoController');
-
 /*==============================================================*/
 /* 初始化tbl_role数据                                          */
 /*==============================================================*/
@@ -122,13 +119,7 @@ insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
 values (894, '0,0,0', 18, 1);
 
 insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
-values (47, '0,0,0', 19, 1);
-
-insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
 values (1998, '0,0,0', 46, 3);
-
-insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
-values (2018, '0,0,0', 47, 3);
 
 insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
 values (2058, '0,0,0', 48, 3);
@@ -186,9 +177,6 @@ values (26, '0,0,0', 66, 2);
 
 insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
 values (894, '0,0,0', 67, 2);
-
-insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
-values (47, '0,0,0', 68, 2);
 
 /*==============================================================*/
 /* 初始化tbl_user数据                                          */

@@ -365,10 +365,10 @@ function deviceHistoryQueryCurve(deviceType){
 		        if(i>0){
 		        	opposite=true;
 		        }
-		        if(allPositive){
-		        	minValue=0;
-		        }else{
+		        if(allNegative){
 		        	maxValue=0;
+		        }else if(allPositive){
+		        	minValue=0;
 		        }
 		        if(JSON.stringify(graphicSet) != "{}"&&isNotVal(graphicSet.History) && graphicSet.History.length>i ){
 			    	if(isNotVal(graphicSet.History[i].yAxisMaxValue)){
@@ -604,8 +604,8 @@ function initHistoryQueryStatPieOrColChat(get_rawData) {
 	
 	var alarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
 	var colors=[];
-	colors.push('#'+alarmShowStyle.Statistics.Normal.BackgroundColor);
-	colors.push('#'+alarmShowStyle.Statistics.FirstLevel.BackgroundColor);
+	colors.push('#'+alarmShowStyle.Comm.online.BackgroundColor);
+	colors.push('#'+alarmShowStyle.Comm.offline.BackgroundColor);
 	
 	ShowHistoryQueryStatPieOrColChat(title,divid, "设备数占", pieData,colors);
 };

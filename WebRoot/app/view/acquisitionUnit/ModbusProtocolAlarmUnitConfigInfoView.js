@@ -42,6 +42,17 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmUnitConfigInfoView', {
         			handler: function (v, o) {
         				SaveModbusProtocolAlarmUnitConfigTreeData();
         			}
+                },"-",{
+                	xtype: 'button',
+        			text: '报警颜色配置',
+        			iconCls: 'alarm',
+        			handler: function (v, o) {
+        				var window = Ext.create("AP.view.acquisitionUnit.AlarmColorSelectWindow", {
+        			        title: '报警颜色配置'
+        			    });
+        			    window.show();
+        			    getAlarmLevelSetColor();
+        			}
                 }],
                 layout: "border",
                 items: [{
@@ -72,12 +83,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAlarmUnitConfigInfoView', {
                         listeners: {
                             resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                             	if(protocolConfigAlarmUnitPropertiesHandsontableHelper!=null && protocolConfigAlarmUnitPropertiesHandsontableHelper.hot!=undefined){
-//                            		var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitConfigSelectRow_Id").getValue();
-//                            		var gridPanel=Ext.getCmp("ModbusProtocolAlarmUnitConfigTreeGridPanel_Id");
-//                            		if(isNotVal(gridPanel)){
-//                            			var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                            			CreateProtocolAlarmUnitConfigPropertiesInfoTable(selectedItem.data);
-//                            		}
                             		protocolConfigAlarmUnitPropertiesHandsontableHelper.hot.refreshDimensions();
                             	}
                             }

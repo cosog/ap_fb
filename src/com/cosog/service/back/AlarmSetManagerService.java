@@ -123,7 +123,16 @@ public class AlarmSetManagerService<T> extends BaseService<T> {
 	
 	public void setAlarmLevelColor(AlarmShowStyle alarmShowStyle){
 		try {
-			this.getBaseDao().setAlarmLevelColor(alarmShowStyle);
+			this.getBaseDao().setAlarmColor(alarmShowStyle);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setAlarmColor(AlarmShowStyle alarmShowStyle){
+		try {
+			this.getBaseDao().setAlarmColor(alarmShowStyle);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

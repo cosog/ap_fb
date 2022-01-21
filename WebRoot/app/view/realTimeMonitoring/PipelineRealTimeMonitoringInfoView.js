@@ -532,27 +532,34 @@ var PipelineDeviceRealTimeMonitoringDataHandsontableHelper = {
                 	td.style.fontFamily = 'SimHei';
                 }
 	            for(var i=0;i<pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo.length;i++){
-                	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+                	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>=0){
                 		var row2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].row;
         				var col2=pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].col*2+1;
         				if(row==row2 && col==col2 ){
-        					td.style.fontWeight = 'bold';
-   			             	td.style.fontFamily = 'SimHei';
-        					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
-        						if(AlarmShowStyle.Details.FirstLevel.Opacity!=0){
-        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.FirstLevel.BackgroundColor,AlarmShowStyle.Details.FirstLevel.Opacity);
+        					if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel>0){
+        						td.style.fontWeight = 'bold';
+       			             	td.style.fontFamily = 'SimHei';
+        					}
+   			             	if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==0){
+			             		if(AlarmShowStyle.Data.Normal.Opacity!=0){
+			             			td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.Normal.BackgroundColor,AlarmShowStyle.Data.Normal.Opacity);
+			             		}
+			             		td.style.color='#'+AlarmShowStyle.Data.Normal.Color;
+			             	}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==100){
+        						if(AlarmShowStyle.Data.FirstLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.FirstLevel.BackgroundColor,AlarmShowStyle.Data.FirstLevel.Opacity);
         						}
-        						td.style.color='#'+AlarmShowStyle.Details.FirstLevel.Color;
+        						td.style.color='#'+AlarmShowStyle.Data.FirstLevel.Color;
         					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==200){
-        						if(AlarmShowStyle.Details.SecondLevel.Opacity!=0){
-        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.SecondLevel.BackgroundColor,AlarmShowStyle.Details.SecondLevel.Opacity);
+        						if(AlarmShowStyle.Data.SecondLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.SecondLevel.BackgroundColor,AlarmShowStyle.Data.SecondLevel.Opacity);
         						}
-        						td.style.color='#'+AlarmShowStyle.Details.SecondLevel.Color;
+        						td.style.color='#'+AlarmShowStyle.Data.SecondLevel.Color;
         					}else if(pipelineDeviceRealTimeMonitoringDataHandsontableHelper.CellInfo[i].alarmLevel==300){
-        						if(AlarmShowStyle.Details.ThirdLevel.Opacity!=0){
-        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Details.ThirdLevel.BackgroundColor,AlarmShowStyle.Details.ThirdLevel.Opacity);
+        						if(AlarmShowStyle.Data.ThirdLevel.Opacity!=0){
+        							td.style.backgroundColor=color16ToRgba('#'+AlarmShowStyle.Data.ThirdLevel.BackgroundColor,AlarmShowStyle.Data.ThirdLevel.Opacity);
         						}
-        						td.style.color='#'+AlarmShowStyle.Details.ThirdLevel.Color;
+        						td.style.color='#'+AlarmShowStyle.Data.ThirdLevel.Color;
         					}
         				}
                 	}

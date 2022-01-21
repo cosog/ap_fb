@@ -14,3 +14,7 @@ drop procedure PRD_SAVE_PUMPDEVICE;
 drop procedure PRD_SAVE_RESOURCEMONITORING;
 drop procedure PRD_SAVE_SMSDEVICE;
 drop procedure PRD_SAVE_SYSTEMLOG;
+drop procedure PRD_UPDATE_AUXILIARYDEVICE;
+drop procedure PRD_UPDATE_PIPELINEDEVICE;
+drop procedure PRD_UPDATE_PUMPDEVICE;
+drop procedure PRD_UPDATE_SMSDEVICE;
