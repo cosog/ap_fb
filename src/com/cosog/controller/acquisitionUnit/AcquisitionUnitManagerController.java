@@ -1302,7 +1302,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 				try {
 					this.alarmUnitManagerService.doAlarmUnitEdit(alarmUnit);
 					
-					this.alarmUnitManagerService.deleteCurrentAlarmUnitOwnItems(modbusProtocolAlarmUnitSaveData.getId()+"",modbusProtocolAlarmUnitSaveData.getResolutionMode());
+					this.alarmUnitManagerService.deleteCurrentAlarmUnitOwnItems(modbusProtocolAlarmUnitSaveData);
 					if(modbusProtocolAlarmUnitSaveData.getAlarmItems()!=null){
 						for(int i=0;i<modbusProtocolAlarmUnitSaveData.getAlarmItems().size();i++){
 							if(StringManagerUtils.isNotNull(modbusProtocolAlarmUnitSaveData.getAlarmItems().get(i).getItemName())

@@ -265,22 +265,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
-		
-		ModbusProtocolConfig.Protocol protocol=null;
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
 			EquipmentDriverServerTask.loadProtocolConfig();
 			equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			
-			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
-				protocol=modbusProtocolConfig.getProtocol().get(i);
-				break;
-			}
-			
-		}
 		
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
@@ -321,31 +311,31 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
-			boolean isMatch=false;
-			String itemStr="";
-			if(protocol!=null){
-				for(int j=0;j<protocol.getItems().size();j++){
-					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
-					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
-						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
-							isMatch=true;
-							itemStr=",decode(t2."+ddicColumnsList.get(i);
-							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
-								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
-							}
-							
-							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
-						}
-						break;
-					}
-				}
-			}
-			if(isMatch){
-				sql+=itemStr;
-			}else{
-				sql+=",t2."+ddicColumnsList.get(i);
-			}
-			
+//			boolean isMatch=false;
+//			String itemStr="";
+//			if(protocol!=null){
+//				for(int j=0;j<protocol.getItems().size();j++){
+//					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+//					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
+//						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
+//							isMatch=true;
+//							itemStr=",decode(t2."+ddicColumnsList.get(i);
+//							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
+//								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
+//							}
+//							
+//							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
+//						}
+//						break;
+//					}
+//				}
+//			}
+//			if(isMatch){
+//				sql+=itemStr;
+//			}else{
+//				sql+=",t2."+ddicColumnsList.get(i);
+//			}
+			sql+=",t2."+ddicColumnsList.get(i);
 		}
 		sql+= " from "+deviceTableName+" t "
 				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
@@ -375,6 +365,29 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append("\"totalRoot\":[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
+			StringBuffer alarmInfo = new StringBuffer();
+			String protocolSql="select t3.protocol from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t.id="+obj[0];
+			String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
+					+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+					+ " from "+deviceTableName+" t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
+					+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
+					+ " and t.id="+obj[0]
+					+ " order by t2.id";
+			List<?> protocolList = this.findCallSql(protocolSql);
+			List<?> alarmItemsList = this.findCallSql(alarmItemsSql);
+			ModbusProtocolConfig.Protocol protocol=null;
+			if(protocolList.size()>0){
+				String protocolName=protocolList.get(0).toString();
+				for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
+					if(modbusProtocolConfig.getProtocol().get(j).getDeviceType()==StringManagerUtils.stringToInteger(deviceType) 
+							&& protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
+						protocol=modbusProtocolConfig.getProtocol().get(j);
+						break;
+					}
+				}
+			}
+			
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
 			result_json.append("\"commStatus\":"+obj[2]+",");
@@ -382,12 +395,83 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
 			result_json.append("\"deviceTypeName\":\""+obj[6]+"\",");
+			alarmInfo.append("[");
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[7+j]+"\",");
+				String rawValue=obj[7+j]+"";
+				String value=obj[7+j]+"";
+				ModbusProtocolConfig.Items item=null;
+				if(protocol!=null){
+					for(int k=0;k<protocol.getItems().size();k++){
+						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
+							item=protocol.getItems().get(k);
+							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
+								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
+										break;
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+				//判断报警
+				if(item!=null){
+					for(int k=0;k<alarmItemsList.size();k++){
+						Object[] alarmItemObj=(Object[]) alarmItemsList.get(k);
+						if(item.getTitle().equalsIgnoreCase(alarmItemObj[0]+"") && item.getAddr()==StringManagerUtils.stringToInteger(alarmItemObj[2]+"")){
+							int alarmType=StringManagerUtils.stringToInteger(alarmItemObj[3]+"");
+							if(alarmType==2){//数据量报警
+								alarmInfo.append("{\"item\":\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\","
+										+ "\"itemName\":\""+alarmItemObj[0]+"\","
+										+ "\"itemAddr\":\""+alarmItemObj[3]+"\","
+										+ "\"alarmType\":\""+alarmType+"\","
+										+ "\"upperLimit\":\""+StringManagerUtils.stringToFloat(alarmItemObj[6]+"")+"\","
+										+ "\"lowerLimit\":\""+StringManagerUtils.stringToFloat(alarmItemObj[7]+"")+"\","
+										+ "\"hystersis\":\""+StringManagerUtils.stringToFloat(alarmItemObj[8]+"")+"\","
+										+" \"alarmLevel\":"+StringManagerUtils.stringToInteger(alarmItemObj[10]+"")+"},");
+								break;
+							}else if(alarmType==1){//枚举量报警
+								String alarmValueMeaning="";
+								if(item.getMeaning()!=null && item.getMeaning().size()>0){
+									for(int l=0;l<item.getMeaning().size();l++){
+										if(StringManagerUtils.stringToInteger(alarmItemObj[5]+"")==item.getMeaning().get(l).getValue()){
+											alarmValueMeaning=item.getMeaning().get(l).getMeaning();
+											break;
+										}
+									}
+								}
+									
+								alarmInfo.append("{\"item\":\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\","
+										+ "\"itemName\":\""+alarmItemObj[0]+"\","
+										+ "\"itemAddr\":\""+alarmItemObj[3]+"\","
+										+ "\"alarmType\":\""+alarmType+"\","
+										+ "\"alarmValue\":\""+StringManagerUtils.stringToInteger(alarmItemObj[5]+"")+"\","
+										+ "\"alarmValueMeaning\":\""+alarmValueMeaning+"\","
+										+ "\"alarmLevel\":"+StringManagerUtils.stringToInteger(alarmItemObj[10]+"")+"},");
+							}else if(alarmType==0){//开关量报警
+//								if(StringManagerUtils.isNotNull(bitIndex)){
+//									if(bitIndex.equals(alarmItemObj[4]+"") && StringManagerUtils.stringToInteger(rawValue)==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+//										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+//									}
+//								}
+							}
+							
+						}
+					}
+				}
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+value+"\",");
 			}
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);
 			}
+			if(alarmInfo.toString().endsWith(",")){
+				alarmInfo.deleteCharAt(alarmInfo.length() - 1);
+			}
+			alarmInfo.append("]");
+			result_json.append(",\"alarmInfo\":"+alarmInfo+"");
 			result_json.append("},");
 		}
 		if(result_json.toString().endsWith(",")){
@@ -402,27 +486,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		StringBuffer result_json = new StringBuffer();
 		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
-		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
-		if(alarmShowStyle==null){
-			EquipmentDriverServerTask.initAlarmStyle();
-			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
-		}
-		
-		ModbusProtocolConfig.Protocol protocol=null;
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
 			EquipmentDriverServerTask.loadProtocolConfig();
 			equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		}
 		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			
-			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
-				protocol=modbusProtocolConfig.getProtocol().get(i);
-				break;
-			}
-			
-		}
 		
 		String tableName="tbl_pumpacqdata_latest";
 		String deviceTableName="tbl_pumpdevice";
@@ -443,7 +512,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
-		String columns = ddic.getTableHeader();
 		
 		String sql="select t.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
@@ -463,31 +531,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
-			boolean isMatch=false;
-			String itemStr="";
-			if(protocol!=null){
-				for(int j=0;j<protocol.getItems().size();j++){
-					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
-					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
-						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
-							isMatch=true;
-							itemStr=",decode(t2."+ddicColumnsList.get(i);
-							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
-								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
-							}
-							
-							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
-						}
-						break;
-					}
-				}
-			}
-			if(isMatch){
-				sql+=itemStr;
-			}else{
-				sql+=",t2."+ddicColumnsList.get(i);
-			}
-			
+			sql+=",t2."+ddicColumnsList.get(i);
 		}
 		sql+= " from "+deviceTableName+" t "
 				+ " left outer join "+tableName+" t2 on t2.wellid=t.id"
@@ -506,10 +550,26 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			sql+=" and c1.itemname='"+deviceTypeStatValue+"'";
 		}
 		sql+=" order by t.sortnum,t.wellname";
+		
 		List<?> list = this.findCallSql(sql);
 		result_json.append("[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
+			String protocolSql="select t3.protocol from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t.id="+obj[0];
+			List<?> protocolList = this.findCallSql(protocolSql);
+			ModbusProtocolConfig.Protocol protocol=null;
+			if(protocolList.size()>0){
+				String protocolName=protocolList.get(0).toString();
+				for(int j=0;j<modbusProtocolConfig.getProtocol().size();j++){
+					if(modbusProtocolConfig.getProtocol().get(j).getDeviceType()==StringManagerUtils.stringToInteger(deviceType) 
+							&& protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getName())){
+						protocol=modbusProtocolConfig.getProtocol().get(j);
+						break;
+					}
+				}
+			}
+			
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
 			result_json.append("\"commStatus\":"+obj[2]+",");
@@ -518,7 +578,24 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
 			result_json.append("\"deviceTypeName\":\""+obj[6]+"\",");
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[7+j]+"\",");
+				String value=obj[7+j]+"";
+				if(protocol!=null){
+					for(int k=0;k<protocol.getItems().size();k++){
+						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
+							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
+								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
+										break;
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+value+"\",");
 			}
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);

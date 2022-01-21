@@ -203,7 +203,7 @@ function createRealTimeMonitoringColumn(columnInfo) {
         if (attr.dataIndex.toUpperCase() == 'id'.toUpperCase()) {
             myColumns += ",xtype: 'rownumberer',sortable : false,locked:true";
         }
-        else if (attr.dataIndex.toUpperCase()=='wellName'.toUpperCase()) {
+        else if (attr.dataIndex.toUpperCase()=='wellName'.toUpperCase()||attr.dataIndex.toUpperCase()=='deviceType'.toUpperCase()||attr.dataIndex.toUpperCase()=='deviceTypeName'.toUpperCase()) {
             myColumns += ",sortable : false,locked:true,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
         }
         else if (attr.dataIndex.toUpperCase()=='commStatusName'.toUpperCase()) {
@@ -216,8 +216,8 @@ function createRealTimeMonitoringColumn(columnInfo) {
             myColumns += ",sortable : false,locked:false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceTimeFormat(value,o,p,e);}";
         } 
         else {
-            myColumns += hidden_ + lock_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
-            //        	myColumns += hidden_ + lock_ + width_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "'";
+//            myColumns += hidden_ + lock_ + ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value){return \"<span data-qtip=\"+(value==undefined?\"\":value)+\">\"+(value==undefined?\"\":value)+\"</span>\";}";
+            myColumns += ",sortable : false,dataIndex:'" + attr.dataIndex + "',renderer:function(value,o,p,e){return adviceRealtimeMonitoringDataColor(value,o,p,e);}";
         }
         myColumns += "}";
         if (i < myArr.length - 1) {
@@ -833,12 +833,14 @@ function deviceRealtimeMonitoringCurve(deviceType){
 	var contentId="pumpRealTimeMonitoringCurveContent";
 	var containerId="pumpRealTimeMonitoringCurveContainer";
 	var divPrefix="pumpRealTimeMonitoringCurveDiv";
+	var eastPanelId="PumpRealTimeMonitoringEastPanel_Id";
 	if(deviceType==1){
 		selectRowId="PipelineRealTimeMonitoringInfoDeviceListSelectRow_Id";
 		gridPanelId="PipelineRealTimeMonitoringListGridPanel_Id";
 		contentId="pipelineRealTimeMonitoringCurveContent";
 		containerId="pipelineRealTimeMonitoringCurveContainer";
 		divPrefix="pipelineRealTimeMonitoringCurveDiv";
+		eastPanelId="PipelineRealTimeMonitoringEastPanel_Id";
 	}
 	
 	
@@ -949,6 +951,19 @@ function deviceRealtimeMonitoringCurve(deviceType){
         		    var timeFormat='%H:%M';
         		    initDeviceRealtimeMonitoringStockChartFn(ser, tickInterval, divId, title, subtitle, xTitle, yTitle,color,false,true,false,timeFormat,maxValue,minValue);
                 }
+            }
+            
+            var eastPanel=Ext.getCmp(eastPanelId);
+			if(eastPanel.collapsed){
+            	var container=$('#'+containerId);
+    			if(container!=undefined && container.length>0){
+    				var containerChildren=container[0].children;
+    				if(containerChildren!=undefined && containerChildren.length>0){
+    					for(var i=0;i<containerChildren.length;i++){
+    						$("#"+containerChildren[i].id).hide(); 
+    					}
+    				}
+    			}
             }
 		},
 		failure:function(){

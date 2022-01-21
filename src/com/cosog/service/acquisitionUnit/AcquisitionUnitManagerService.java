@@ -21,6 +21,7 @@ import com.cosog.model.ProtocolSMSInstance;
 import com.cosog.model.User;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.model.drive.KafkaConfig;
+import com.cosog.model.drive.ModbusProtocolAlarmUnitSaveData;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.model.drive.ModbusProtocolConfig.Protocol;
 import com.cosog.service.base.BaseService;
@@ -2162,8 +2163,11 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		super.bulkObjectDelete(hql);
 	}
 	
-	public void deleteCurrentAlarmUnitOwnItems(final String unitId,final int resolutionMode) throws Exception {
-		final String hql = "DELETE AlarmUnitItem u where u.unitId ="+unitId+" and u.type="+resolutionMode;
+	public void deleteCurrentAlarmUnitOwnItems(ModbusProtocolAlarmUnitSaveData modbusProtocolAlarmUnitSaveData) throws Exception {
+		String hql = "DELETE AlarmUnitItem u where u.unitId ="+modbusProtocolAlarmUnitSaveData.getId()+" and u.type="+modbusProtocolAlarmUnitSaveData.getResolutionMode();
+		if(modbusProtocolAlarmUnitSaveData.getResolutionMode()==0 || modbusProtocolAlarmUnitSaveData.getResolutionMode()==1 &&StringManagerUtils.isNotNull(modbusProtocolAlarmUnitSaveData.getAlarmItemName())){
+			hql+=" and u.itemName='"+modbusProtocolAlarmUnitSaveData.getAlarmItemName()+"' and u.itemAddr="+modbusProtocolAlarmUnitSaveData.getAlarmItemAddr();
+		}
 		getBaseDao().bulkObjectDelete(hql);
 	}
 	

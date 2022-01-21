@@ -78,6 +78,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                 items: [{
                     region: 'center',
                     layout: 'border',
+                    id:'PipelineRealTimeMonitoringCenterPanel_Id',
                     items:[{
                     	region: 'center',
                     	title:'设备概览',
@@ -201,6 +202,7 @@ Ext.define("AP.view.realTimeMonitoring.PipelineRealTimeMonitoringInfoView", {
                 }, {
                 	region: 'east',
                     width: '78%',
+                    id:'PipelineRealTimeMonitoringEastPanel_Id',
                     autoScroll: true,
                     split: true,
                     collapsible: true,

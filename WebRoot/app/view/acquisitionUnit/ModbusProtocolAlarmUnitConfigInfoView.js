@@ -889,9 +889,25 @@ function SaveModbusProtocolAlarmUnitConfigTreeData(){
         	}else if(activeId=="ModbusProtocolAlarmUnitSwitchItemsConfigTableInfoPanel_Id"){
         		saveData.resolutionMode=0;
         		alarmItemsData = protocolAlarmUnitConfigSwitchItemsHandsontableHelper.hot.getData();
+        		
+        		var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsSelectRow_Id").getValue();
+				var gridStore=Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id").getStore();
+				if(gridStore.getCount()>0){
+					var selectedItem=gridStore.getAt(selectRow);
+					saveData.alarmItemName=selectedItem.data.title;
+					saveData.alarmItemAddr=selectedItem.data.addr;
+				}
         	}else if(activeId=="ModbusProtocolAlarmUnitEnumItemsConfigTableInfoPanel_Id"){
         		saveData.resolutionMode=1;
         		alarmItemsData = protocolAlarmUnitConfigEnumItemsHandsontableHelper.hot.getData();
+        		
+        		var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitEnumItemsSelectRow_Id").getValue();
+				var gridStore=Ext.getCmp("ModbusProtocolAlarmUnitEnumItemsGridPanel_Id").getStore();
+				if(gridStore.getCount()>0){
+					var selectedItem=gridStore.getAt(selectRow);
+					saveData.alarmItemName=selectedItem.data.title;
+					saveData.alarmItemAddr=selectedItem.data.addr;
+				}
         	}else if(activeId=="ModbusProtocolAlarmUnitCommStatusConfigTableInfoPanel_Id"){
         		saveData.resolutionMode=3;
         		alarmItemsData = protocolAlarmUnitConfigCommStatusItemsHandsontableHelper.hot.getData();
@@ -914,31 +930,37 @@ function SaveModbusProtocolAlarmUnitConfigTreeData(){
 						item.isSendMail=alarmItemsData[index][11];
 					}else if(saveData.resolutionMode==0){//开关量
 						var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsSelectRow_Id").getValue();
-						var selectedItem=Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id").getStore().getAt(selectRow);
-						item.bitIndex=alarmItemsData[index][2];
-						item.itemName=selectedItem.data.title;
-						item.itemAddr=selectedItem.data.addr;
-						if(alarmItemsData[index][4]=='开'){
-							item.value=1;
-						}if(alarmItemsData[index][4]=='关'){
-							item.value=0;
+						var gridStore=Ext.getCmp("ModbusProtocolAlarmUnitSwitchItemsGridPanel_Id").getStore();
+						if(gridStore.getCount()>0){
+							var selectedItem=gridStore.getAt(selectRow);
+							item.bitIndex=alarmItemsData[index][2];
+							item.itemName=selectedItem.data.title;
+							item.itemAddr=selectedItem.data.addr;
+							if(alarmItemsData[index][4]=='开'){
+								item.value=1;
+							}if(alarmItemsData[index][4]=='关'){
+								item.value=0;
+							}
+							item.delay=alarmItemsData[index][5];
+							item.alarmLevel=alarmItemsData[index][6];
+							item.alarmSign=alarmItemsData[index][7];
+							item.isSendMessage=alarmItemsData[index][8];
+							item.isSendMail=alarmItemsData[index][9];
 						}
-						item.delay=alarmItemsData[index][5];
-						item.alarmLevel=alarmItemsData[index][6];
-						item.alarmSign=alarmItemsData[index][7];
-						item.isSendMessage=alarmItemsData[index][8];
-						item.isSendMail=alarmItemsData[index][9];
 					}else if(saveData.resolutionMode==1){//枚举量
 						var selectRow= Ext.getCmp("ModbusProtocolAlarmUnitEnumItemsSelectRow_Id").getValue();
-						var selectedItem=Ext.getCmp("ModbusProtocolAlarmUnitEnumItemsGridPanel_Id").getStore().getAt(selectRow);
-						item.itemName=selectedItem.data.title;
-						item.itemAddr=selectedItem.data.addr;
-						item.value=alarmItemsData[index][2];
-						item.delay=alarmItemsData[index][4];
-						item.alarmLevel=alarmItemsData[index][5];
-						item.alarmSign=alarmItemsData[index][6];
-						item.isSendMessage=alarmItemsData[index][7];
-						item.isSendMail=alarmItemsData[index][8];
+						var gridStore=Ext.getCmp("ModbusProtocolAlarmUnitEnumItemsGridPanel_Id").getStore();
+						if(gridStore.getCount()>0){
+							var selectedItem=gridStore.getAt(selectRow);
+							item.itemName=selectedItem.data.title;
+							item.itemAddr=selectedItem.data.addr;
+							item.value=alarmItemsData[index][2];
+							item.delay=alarmItemsData[index][4];
+							item.alarmLevel=alarmItemsData[index][5];
+							item.alarmSign=alarmItemsData[index][6];
+							item.isSendMessage=alarmItemsData[index][7];
+							item.isSendMail=alarmItemsData[index][8];
+						}
 					}else if(saveData.resolutionMode==3){//通信状态
 						item.itemName=alarmItemsData[index][2];
 						item.delay=alarmItemsData[index][3];

@@ -12,6 +12,9 @@ public class ModbusProtocolAlarmUnitSaveData {
 	String protocol;
 	String remark;
 	
+	String alarmItemName;
+	int alarmItemAddr;
+	
 	private List<String> delidslist;
 	
 	private List<AlarmItems> alarmItems;
@@ -194,5 +197,21 @@ public class ModbusProtocolAlarmUnitSaveData {
 
 	public void setResolutionMode(int resolutionMode) {
 		this.resolutionMode = resolutionMode;
+	}
+
+	public String getAlarmItemName() {
+		return alarmItemName;
+	}
+
+	public void setAlarmItemName(String alarmItemName) {
+		this.alarmItemName = alarmItemName;
+	}
+
+	public int getAlarmItemAddr() {
+		return alarmItemAddr;
+	}
+
+	public void setAlarmItemAddr(int alarmItemAddr) {
+		this.alarmItemAddr = alarmItemAddr;
 	}
 }

@@ -78,6 +78,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                 items: [{
                     region: 'center',
                     layout: 'border',
+                    id:'PumpRealTimeMonitoringCenterPanel_Id',
                     items:[{
                     	region: 'center',
                     	title:'设备概览',
@@ -209,6 +210,7 @@ Ext.define("AP.view.realTimeMonitoring.PumpRealTimeMonitoringInfoView", {
                 }, {
                 	region: 'east',
                     width: '78%',
+                    id:'PumpRealTimeMonitoringEastPanel_Id',
                     autoScroll: true,
                     split: true,
                     collapsible: true,
