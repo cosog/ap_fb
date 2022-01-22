@@ -297,21 +297,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			EquipmentDriverServerTask.initAlarmStyle();
 			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		}
-		ModbusProtocolConfig.Protocol protocol=null;
-		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		if(equipmentDriveMap.size()==0){
-			EquipmentDriverServerTask.loadProtocolConfig();
-			equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		}
-		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			
-			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
-				protocol=modbusProtocolConfig.getProtocol().get(i);
-				break;
-			}
-			
-		}
+		
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpHistoryQuery";
@@ -330,6 +316,28 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			EquipmentDriverServerTask.loadAcquisitionItemColumns(StringManagerUtils.stringToInteger(deviceType));
 		}
 		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
+		
+		String protocolSql="select t3.protocol from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t.id="+deviceId;
+		List<?> protocolList = this.findCallSql(protocolSql);
+		ModbusProtocolConfig.Protocol protocol=null;
+		if(protocolList.size()>0){
+			String protocolName=protocolList.get(0).toString();
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType) 
+						&& protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
+					protocol=modbusProtocolConfig.getProtocol().get(i);
+					break;
+				}
+			}
+		}
+		
 		
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
 		String columns = ddic.getTableHeader();
@@ -352,32 +360,8 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
-			boolean isMatch=false;
-			String itemStr="";
-			if(protocol!=null){
-				for(int j=0;j<protocol.getItems().size();j++){
-					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
-					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
-						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
-							isMatch=true;
-							itemStr=",decode(t2."+ddicColumnsList.get(i);
-							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
-								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
-							}
-							
-							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
-						}
-						break;
-					}
-				}
-			}
-			if(isMatch){
-				sql+=itemStr;
-			}else{
-				sql+=",t2."+ddicColumnsList.get(i);
-			}
+			sql+=",t2."+ddicColumnsList.get(i);
 		}
-		
 		
 		sql+= " from "+deviceTableName+" t "
 				+ " left outer join "+hisTableName+" t2 on t2.wellid=t.id"
@@ -387,12 +371,19 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ " where  t.orgid in ("+orgId+") "
 				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.id="+deviceId+""
 				+ "  order by t2.acqtime desc";
+		String alarmItemsSql="select t2.itemname,t2.itemcode,t2.itemaddr,t2.type,t2.bitindex,t2.value, "
+				+ " t2.upperlimit,t2.lowerlimit,t2.hystersis,t2.delay,decode(t2.alarmsign,0,0,t2.alarmlevel) as alarmlevel "
+				+ " from "+deviceTableName+" t, tbl_alarm_item2unit_conf t2,tbl_alarm_unit_conf t3,tbl_protocolalarminstance t4 "
+				+ " where t.alarminstancecode=t4.code and t4.alarmunitid=t3.id and t3.id=t2.unitid "
+				+ " and t.id="+deviceId
+				+ " order by t2.id";
 		
 		int maxvalue=pager.getLimit()+pager.getStart();
 		String finalSql="select * from   ( select a.*,rownum as rn from ("+sql+" ) a where  rownum <="+maxvalue+") b where rn >"+pager.getStart();
 		
 		int totals=this.getTotalCountRows(sql);
 		List<?> list = this.findCallSql(finalSql);
+		List<?> alarmItemsList = this.findCallSql(alarmItemsSql);
 		result_json.append("{ \"success\":true,\"columns\":"+columns+",");
 		result_json.append("\"start_date\":\""+pager.getStart_date()+"\",");
 		result_json.append("\"end_date\":\""+pager.getEnd_date()+"\",");
@@ -400,6 +391,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		result_json.append("\"totalRoot\":[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
+			StringBuffer alarmInfo = new StringBuffer();
 			result_json.append("{\"id\":"+obj[0]+",");
 			result_json.append("\"deviceId\":\""+deviceId+"\",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
@@ -408,12 +400,77 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
 			result_json.append("\"details\":\"\",");
+			
+			alarmInfo.append("[");
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
+				String rawValue=obj[6+j]+"";
+				String value=obj[6+j]+"";
+				ModbusProtocolConfig.Items item=null;
+				if(protocol!=null){
+					for(int k=0;k<protocol.getItems().size();k++){
+						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
+							item=protocol.getItems().get(k);
+							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
+								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
+										break;
+									}
+								}
+							}
+							
+							break;
+						}
+					}
+				}
+				//判断报警
+				if(item!=null){
+					for(int k=0;k<alarmItemsList.size();k++){
+						Object[] alarmItemObj=(Object[]) alarmItemsList.get(k);
+						if(item.getTitle().equalsIgnoreCase(alarmItemObj[0]+"") && item.getAddr()==StringManagerUtils.stringToInteger(alarmItemObj[2]+"")){
+							int alarmType=StringManagerUtils.stringToInteger(alarmItemObj[3]+"");
+							if(alarmType==2 && StringManagerUtils.isNotNull(rawValue)){//数据量报警
+								float hystersis=StringManagerUtils.stringToFloat(alarmItemObj[8]+"");
+								if((StringManagerUtils.isNotNull(alarmItemObj[6]+"") && StringManagerUtils.stringToFloat(rawValue)>StringManagerUtils.stringToFloat(alarmItemObj[6]+"")+hystersis)
+										||(StringManagerUtils.isNotNull(alarmItemObj[7]+"") && StringManagerUtils.stringToFloat(rawValue)<StringManagerUtils.stringToFloat(alarmItemObj[7]+"")-hystersis)
+										){
+									int alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+									if(alarmLevel>0){
+										alarmInfo.append("{\"item\":\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\",\"alarmLevel\":"+alarmLevel+"},");
+									}
+								}
+								break;
+							}else if(alarmType==1){//枚举量报警
+								if(StringManagerUtils.stringToInteger(rawValue)==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+									int alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+									if(alarmLevel>0){
+										alarmInfo.append("{\"item\":\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\",\"alarmLevel\":"+alarmLevel+"},");
+									}
+								}
+							}else if(alarmType==0){//开关量报警
+//								if(StringManagerUtils.isNotNull(bitIndex)){
+//									if(bitIndex.equals(alarmItemObj[4]+"") && StringManagerUtils.stringToInteger(rawValue)==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
+//										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
+//									}
+//								}
+							}
+							
+						}
+					}
+				}
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+value+"\",");
 			}
+			
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);
 			}
+			if(alarmInfo.toString().endsWith(",")){
+				alarmInfo.deleteCharAt(alarmInfo.length() - 1);
+			}
+			alarmInfo.append("]");
+			result_json.append(",\"alarmInfo\":"+alarmInfo+"");
+			
 			result_json.append("},");
 		}
 		if(result_json.toString().endsWith(",")){
@@ -427,27 +484,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	public String getDeviceHistoryExportData(String orgId,String deviceId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
 		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
-		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
-		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
-		if(alarmShowStyle==null){
-			EquipmentDriverServerTask.initAlarmStyle();
-			alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
-		}
-		ModbusProtocolConfig.Protocol protocol=null;
-		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		if(equipmentDriveMap.size()==0){
-			EquipmentDriverServerTask.loadProtocolConfig();
-			equipmentDriveMap = EquipmentDriveMap.getMapObject();
-		}
-		ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
-		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
-			
-			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType)){
-				protocol=modbusProtocolConfig.getProtocol().get(i);
-				break;
-			}
-			
-		}
+		
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		String ddicName="pumpHistoryQuery";
@@ -467,14 +504,31 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		}
 		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		
+		String protocolSql="select t3.protocol from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 "
+				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t.id="+deviceId;
+		List<?> protocolList = this.findCallSql(protocolSql);
+		ModbusProtocolConfig.Protocol protocol=null;
+		if(protocolList.size()>0){
+			String protocolName=protocolList.get(0).toString();
+			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			if(equipmentDriveMap.size()==0){
+				EquipmentDriverServerTask.loadProtocolConfig();
+				equipmentDriveMap = EquipmentDriveMap.getMapObject();
+			}
+			ModbusProtocolConfig modbusProtocolConfig=(ModbusProtocolConfig) equipmentDriveMap.get("modbusProtocolConfig");
+			for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
+				if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==StringManagerUtils.stringToInteger(deviceType) 
+						&& protocolName.equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getName())){
+					protocol=modbusProtocolConfig.getProtocol().get(i);
+					break;
+				}
+			}
+		}
 		ddic  = dataitemsInfoService.findTableSqlWhereByListFaceId(ddicName);
-		String columns = ddic.getTableHeader();
-		
 		String sql="select t2.id,t.wellname,t2.commstatus,"
 				+ "decode(t2.commstatus,1,'在线','离线') as commStatusName,"
 				+ "decode(t5.alarmsign,0,0,null,0,t5.alarmlevel) as commAlarmLevel,"
 				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
-		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
 			if(dataMappingMode==0){
@@ -488,57 +542,55 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 			}
 		}
 		for(int i=0;i<ddicColumnsList.size();i++){
-			boolean isMatch=false;
-			String itemStr="";
-			if(protocol!=null){
-				for(int j=0;j<protocol.getItems().size();j++){
-					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
-					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
-						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
-							isMatch=true;
-							itemStr=",decode(t2."+ddicColumnsList.get(i);
-							for(int k=0;k<protocol.getItems().get(j).getMeaning().size();k++){
-								itemStr+=","+protocol.getItems().get(j).getMeaning().get(k).getValue()+",'"+protocol.getItems().get(j).getMeaning().get(k).getMeaning()+"'";
-							}
-							
-							itemStr+=",t2."+ddicColumnsList.get(i)+") as "+ddicColumnsList.get(i);
-						}
-						break;
-					}
-				}
-			}
-			if(isMatch){
-				sql+=itemStr;
-			}else{
-				sql+=",t2."+ddicColumnsList.get(i);
-			}
+			sql+=",t2."+ddicColumnsList.get(i);
 		}
+		
 		sql+= " from "+deviceTableName+" t "
 				+ " left outer join "+hisTableName+" t2 on t2.wellid=t.id"
 				+ " left outer join tbl_protocolalarminstance t3 on t.alarminstancecode=t3.code"
 				+ " left outer join tbl_alarm_unit_conf t4 on t3.alarmunitid=t4.id"
 				+ " left outer join tbl_alarm_item2unit_conf t5 on t4.id=t5.unitid and t5.type=3  and  decode(t2.commstatus,1,'在线','离线')=t5.itemname"
 				+ " where  t.orgid in ("+orgId+") "
-				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.id="+deviceId
+				+ " and t2.acqTime between to_date('"+pager.getStart_date()+"','yyyy-mm-dd hh24:mi:ss') and to_date('"+pager.getEnd_date()+"','yyyy-mm-dd hh24:mi:ss') and t.id="+deviceId+""
 				+ "  order by t2.acqtime desc";
-		String finalSql=sql;
-		List<?> list = this.findCallSql(finalSql);
+		List<?> list = this.findCallSql(sql);
 		result_json.append("[");
 		for(int i=0;i<list.size();i++){
 			Object[] obj=(Object[]) list.get(i);
 			result_json.append("{\"id\":"+obj[0]+",");
+			result_json.append("\"deviceId\":\""+deviceId+"\",");
 			result_json.append("\"wellName\":\""+obj[1]+"\",");
 			result_json.append("\"commStatus\":"+obj[2]+",");
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
 			result_json.append("\"details\":\"\",");
+			
 			for(int j=0;j<ddicColumnsList.size();j++){
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+obj[6+j]+"\",");
+				String value=obj[6+j]+"";
+				if(protocol!=null){
+					for(int k=0;k<protocol.getItems().size();k++){
+						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
+							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
+								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
+										break;
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+value+"\",");
 			}
+			
 			if(result_json.toString().endsWith(",")){
 				result_json.deleteCharAt(result_json.length() - 1);
 			}
+			
 			result_json.append("},");
 		}
 		if(result_json.toString().endsWith(",")){

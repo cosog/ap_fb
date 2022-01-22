@@ -2370,7 +2370,149 @@ color16ToRgba = function(sColor,Opacity){
 		 	return '<span data-qtip="'+tipval+'" data-dismissDelay=10000>'+val+'</span>';
 		}
 	}
+ adviceDataColor = function(val,o,p,e) {
+	 	var alarmInfo=p.data.alarmInfo;
+	 	if(val==undefined){
+	 		val='';
+	 	}
+	 	var tipval=val;
+	 	var alarmLevel=p.data.runAlarmLevel;
+	 	var alarmShowStyle=Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
+	 	var column=o.column.dataIndex;
+	 	var alarmLevel=0;
+	 	if(isNotVal(alarmInfo)&&alarmInfo.length>0){
+	 		for(var i=0;i<alarmInfo.length;i++){
+	 			if(column.toUpperCase()==alarmInfo[i].item.toUpperCase()){
+	 				var backgroundColor='#FFFFFF';
+	 			 	var color='#000000';
+	 			 	var opacity=1;
+	 			 	alarmLevel=alarmInfo[i].alarmLevel;
+	 			 	if (alarmLevel == 0) {
+	 			 		backgroundColor='#'+alarmShowStyle.Data.Normal.BackgroundColor;
+	 			 		color='#'+alarmShowStyle.Data.Normal.Color;
+	 			 		opacity=alarmShowStyle.Data.Normal.Opacity
+	 				}else if (alarmLevel == 100) {
+	 					backgroundColor='#'+alarmShowStyle.Data.FirstLevel.BackgroundColor;
+	 					color='#'+alarmShowStyle.Data.FirstLevel.Color;
+	 					opacity=alarmShowStyle.Data.FirstLevel.Opacity
+	 				}else if (alarmLevel == 200) {
+	 					backgroundColor='#'+alarmShowStyle.Data.SecondLevel.BackgroundColor;
+	 					color='#'+alarmShowStyle.Data.SecondLevel.Color;
+	 					opacity=alarmShowStyle.Data.SecondLevel.Opacity
+	 				}else if (alarmLevel == 300) {
+	 					backgroundColor='#'+alarmShowStyle.Data.ThirdLevel.BackgroundColor;
+	 					color='#'+alarmShowStyle.Data.ThirdLevel.Color;
+	 					opacity=alarmShowStyle.Data.ThirdLevel.Opacity
+	 				}
+	 			 	if(alarmLevel>0){
+	 			 		var rgba=color16ToRgba(backgroundColor,opacity);
+		 			 	o.style='background-color:'+rgba+';color:'+color+';';
+	 			 	}
+	 				break;
+	 			}
+	 		}
+	 	}
+	 	if(alarmLevel==0){
+	    	var backgroundColor = '#' + alarmShowStyle.Data.Normal.BackgroundColor;
+	    	var color = '#' + alarmShowStyle.Data.Normal.Color;
+	    	var opacity = alarmShowStyle.Data.Normal.Opacity;
+	    	var rgba = color16ToRgba(backgroundColor, opacity);
+            o.style = 'background-color:' + rgba + ';color:' + color + ';';
+	    }
+	 	return '<span data-qtip="'+tipval+'" data-dismissDelay=10000>'+val+'</span>';
+	}
  
+ adviceRealtimeMonitoringDataColor = function (val, o, p, e) {
+	    var alarmInfo = p.data.alarmInfo;
+	    var alarmLevel=0;
+	    var alarmShowStyle = Ext.JSON.decode(Ext.getCmp("AlarmShowStyle_Id").getValue());
+	    var column = o.column.dataIndex;
+	    if (isNotVal(alarmInfo) && alarmInfo.length > 0) {
+	        for (var i = 0; i < alarmInfo.length; i++) {
+	            if (column.toUpperCase() == alarmInfo[i].item.toUpperCase()) {
+	                if(alarmInfo[i].alarmType==2){//数据量报警
+	                	if(val!=undefined){
+	                		var backgroundColor = '#FFFFFF';
+	    	                var color = '#000000';
+	    	                var opacity = 1;
+	    	                alarmLevel=0;
+	    	                if(parseFloat(val)>(parseFloat(alarmInfo[i].upperLimit)+parseFloat(alarmInfo[i].hystersis))
+	    	                		|| parseFloat(val)<(parseFloat(alarmInfo[i].lowerLimit)-parseFloat(alarmInfo[i].hystersis))){
+	    	                	alarmLevel = alarmInfo[i].alarmLevel;
+	    	                }
+	    	                if (alarmLevel == 0) {
+	    	                    backgroundColor = '#' + alarmShowStyle.Data.Normal.BackgroundColor;
+	    	                    color = '#' + alarmShowStyle.Data.Normal.Color;
+	    	                    opacity = alarmShowStyle.Data.Normal.Opacity;
+	    	                } else if (alarmLevel == 100) {
+	    	                    backgroundColor = '#' + alarmShowStyle.Data.FirstLevel.BackgroundColor;
+	    	                    color = '#' + alarmShowStyle.Data.FirstLevel.Color;
+	    	                    opacity = alarmShowStyle.Data.FirstLevel.Opacity;
+	    	                } else if (alarmLevel == 200) {
+	    	                    backgroundColor = '#' + alarmShowStyle.Data.SecondLevel.BackgroundColor;
+	    	                    color = '#' + alarmShowStyle.Data.SecondLevel.Color;
+	    	                    opacity = alarmShowStyle.Data.SecondLevel.Opacity;
+	    	                } else if (alarmLevel == 300) {
+	    	                    backgroundColor = '#' + alarmShowStyle.Data.ThirdLevel.BackgroundColor;
+	    	                    color = '#' + alarmShowStyle.Data.ThirdLevel.Color;
+	    	                    opacity = alarmShowStyle.Data.ThirdLevel.Opacity;
+	    	                }
+	    	                if(alarmLevel>0){
+	    	 			 		var rgba=color16ToRgba(backgroundColor,opacity);
+	    		 			 	o.style='background-color:'+rgba+';color:'+color+';';
+	    	 			 	}
+	                	}
+	                	break;
+	                }else if(alarmInfo[i].alarmType==1){//枚举量报警
+	                	if(val!=undefined){
+	                		var backgroundColor = '#FFFFFF';
+	    	                var color = '#000000';
+	    	                var opacity = 1;
+	    	                alarmLevel=0;
+	    	                if(val==alarmInfo[i].alarmValue || val==alarmInfo[i].alarmValueMeaning){
+	    	                	alarmLevel = alarmInfo[i].alarmLevel;
+	    	                	if (alarmLevel == 0) {
+		    	                    backgroundColor = '#' + alarmShowStyle.Data.Normal.BackgroundColor;
+		    	                    color = '#' + alarmShowStyle.Data.Normal.Color;
+		    	                    opacity = alarmShowStyle.Data.Normal.Opacity;
+		    	                } else if (alarmLevel == 100) {
+		    	                    backgroundColor = '#' + alarmShowStyle.Data.FirstLevel.BackgroundColor;
+		    	                    color = '#' + alarmShowStyle.Data.FirstLevel.Color;
+		    	                    opacity = alarmShowStyle.Data.FirstLevel.Opacity;
+		    	                } else if (alarmLevel == 200) {
+		    	                    backgroundColor = '#' + alarmShowStyle.Data.SecondLevel.BackgroundColor;
+		    	                    color = '#' + alarmShowStyle.Data.SecondLevel.Color;
+		    	                    opacity = alarmShowStyle.Data.SecondLevel.Opacity;
+		    	                } else if (alarmLevel == 300) {
+		    	                    backgroundColor = '#' + alarmShowStyle.Data.ThirdLevel.BackgroundColor;
+		    	                    color = '#' + alarmShowStyle.Data.ThirdLevel.Color;
+		    	                    opacity = alarmShowStyle.Data.ThirdLevel.Opacity;
+		    	                }
+	    	                	if(alarmLevel>0){
+	    		 			 		var rgba=color16ToRgba(backgroundColor,opacity);
+	    			 			 	o.style='background-color:'+rgba+';color:'+color+';';
+	    		 			 	}
+		    	                break;
+	    	                }
+	                	}
+	                }
+	            }
+	        }
+	    }
+	    if(alarmLevel==0){
+	    	var backgroundColor = '#' + alarmShowStyle.Data.Normal.BackgroundColor;
+	    	var color = '#' + alarmShowStyle.Data.Normal.Color;
+	    	var opacity = alarmShowStyle.Data.Normal.Opacity;
+	    	var rgba = color16ToRgba(backgroundColor, opacity);
+            o.style = 'background-color:' + rgba + ';color:' + color + ';';
+	    }
+	    if (val == undefined) {
+	        val = '';
+	    }
+	    var tipval = val;
+	    return '<span data-qtip="' + tipval + '" data-dismissDelay=10000>' + val + '</span>';
+	}
+
  adviceHistoryWellDataColor = function(val,o,p,e) {
 	 	//alert(val);
 	 	var bjjb=p.data.bjjb;
