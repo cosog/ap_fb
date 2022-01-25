@@ -355,7 +355,7 @@ public class RealTimeMonitoringController extends BaseController {
 	public boolean DeviceControlOperation_Mdubus(String protocolName,String deviceId,String wellName,String deviceType,String ID,String Slave,String itemCode,String controlValue){
 		boolean result=true;
 		try {
-			int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+			int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 			String columnsKey="pumpDeviceAcquisitionItemColumns";
 			int DeviceType=0;
 			if((StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300) || StringManagerUtils.stringToInteger(deviceType)==1){
@@ -391,7 +391,7 @@ public class RealTimeMonitoringController extends BaseController {
 			String title="";
 			float ratio=0;
 			for(int i=0;i<protocol.getItems().size();i++){
-				String col=dataMappingMode==0?("addr"+protocol.getItems().get(i).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(i).getTitle()));
+				String col=dataSaveMode==0?("addr"+protocol.getItems().get(i).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(i).getTitle()));
 				if(itemCode.equalsIgnoreCase(col)){
 					addr=protocol.getItems().get(i).getAddr();
 					dataType=protocol.getItems().get(i).getIFDataType();

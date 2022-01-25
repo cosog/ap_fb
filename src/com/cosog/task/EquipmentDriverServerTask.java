@@ -50,7 +50,7 @@ public class EquipmentDriverServerTask {
 	}
 	
 	@SuppressWarnings({ "static-access", "unused" })
-//	@Scheduled(fixedRate = 1000*60*60*24*365*100)
+	@Scheduled(fixedRate = 1000*60*60*24*365*100)
 	public void driveServerTast() throws SQLException, ParseException,InterruptedException, IOException{
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
@@ -222,7 +222,7 @@ public class EquipmentDriverServerTask {
 		PreparedStatement pstmt = null;   
 		ResultSet rs = null;
 		int result=0;
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		Map<String, Map<String,String>> acquisitionItemColumnsMap=AcquisitionItemColumnsMap.getMapObject();
 		Map<String,String> pumpDeviceAcquisitionItemColumns=acquisitionItemColumnsMap.get("pumpDeviceAcquisitionItemColumns");
 		Map<String,String> pipelineDeviceAcquisitionItemColumns=acquisitionItemColumnsMap.get("pipelineDeviceAcquisitionItemColumns");
@@ -233,7 +233,7 @@ public class EquipmentDriverServerTask {
         }
 		
 		try {
-			String delSql="delete from tbl_datamapping t where t.mappingmode<>"+dataMappingMode;
+			String delSql="delete from tbl_datamapping t where t.mappingmode<>"+dataSaveMode;
 			pstmt = conn.prepareStatement(delSql);
 			result=pstmt.executeUpdate();
 			if(result>0){//字段映射模式改变，删除历史数据
@@ -252,7 +252,7 @@ public class EquipmentDriverServerTask {
 				pstmt = conn.prepareStatement(sql);
 				rs=pstmt.executeQuery();
 				while(rs.next()){
-					if(dataMappingMode==0){//以地址为准
+					if(dataSaveMode==0){//以地址为准
 						mappingTableRecordMap.put(rs.getString(2), rs.getString(1));//以地址为准
 					}else{
 						mappingTableRecordMap.put(rs.getString(1), rs.getString(2));//以名称为准
@@ -263,7 +263,7 @@ public class EquipmentDriverServerTask {
 				for(String key : mappingTableRecordMap.keySet()) {
 					if(!StringManagerUtils.existOrNot(pumpDeviceAcquisitionItemColumns,key,mappingTableRecordMap.get(key),false)){
 						String deleteSql="";
-						if(dataMappingMode==0){//以地址为准
+						if(dataSaveMode==0){//以地址为准
 							deleteSql="delete from tbl_datamapping t where t.name='"+mappingTableRecordMap.get(key)+"' and t.mappingcolumn='"+key+"' and t.protocoltype=0";
 						}else{
 							deleteSql="delete from tbl_datamapping t where t.name='"+key+"' and t.mappingcolumn='"+mappingTableRecordMap.get(key)+"' and t.protocoltype=0";
@@ -278,10 +278,10 @@ public class EquipmentDriverServerTask {
 				for(String key : pumpDeviceAcquisitionItemColumns.keySet()) {
 					if(!StringManagerUtils.existOrNot(mappingTableRecordMap,key,pumpDeviceAcquisitionItemColumns.get(key),false)){
 						String addSql="";
-						if(dataMappingMode==0){//以地址为准
-							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+pumpDeviceAcquisitionItemColumns.get(key)+"','"+key+"',0,"+dataMappingMode+")";
+						if(dataSaveMode==0){//以地址为准
+							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+pumpDeviceAcquisitionItemColumns.get(key)+"','"+key+"',0,"+dataSaveMode+")";
 						}else{
-							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+key+"','"+pumpDeviceAcquisitionItemColumns.get(key)+"',0,"+dataMappingMode+")";
+							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+key+"','"+pumpDeviceAcquisitionItemColumns.get(key)+"',0,"+dataSaveMode+")";
 						}
 						pstmt = conn.prepareStatement(addSql);
 						pstmt.executeUpdate();
@@ -298,7 +298,7 @@ public class EquipmentDriverServerTask {
 				rs=pstmt.executeQuery();
 				mappingTableRecordMap=new HashMap<String,String>();
 				while(rs.next()){
-					if(dataMappingMode==0){//以地址为准
+					if(dataSaveMode==0){//以地址为准
 						mappingTableRecordMap.put(rs.getString(2), rs.getString(1));//以地址为准
 					}else{
 						mappingTableRecordMap.put(rs.getString(1), rs.getString(2));//以名称为准
@@ -308,7 +308,7 @@ public class EquipmentDriverServerTask {
 				for(String key : mappingTableRecordMap.keySet()) {
 					if(!StringManagerUtils.existOrNot(pipelineDeviceAcquisitionItemColumns,key,mappingTableRecordMap.get(key),false)){
 						String deleteSql="";
-						if(dataMappingMode==0){//以地址为准
+						if(dataSaveMode==0){//以地址为准
 							deleteSql="delete from tbl_datamapping t where t.name='"+mappingTableRecordMap.get(key)+"' and t.mappingcolumn='"+key+"' and t.protocoltype=1";
 						}else{
 							deleteSql="delete from tbl_datamapping t where t.name='"+key+"' and t.mappingcolumn='"+mappingTableRecordMap.get(key)+"' and t.protocoltype=1";
@@ -322,10 +322,10 @@ public class EquipmentDriverServerTask {
 				for(String key : pipelineDeviceAcquisitionItemColumns.keySet()) {
 					if(!StringManagerUtils.existOrNot(mappingTableRecordMap,key,pipelineDeviceAcquisitionItemColumns.get(key),false)){
 						String addSql="";
-						if(dataMappingMode==0){//以地址为准
-							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+pipelineDeviceAcquisitionItemColumns.get(key)+"','"+key+"',1,"+dataMappingMode+")";
+						if(dataSaveMode==0){//以地址为准
+							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+pipelineDeviceAcquisitionItemColumns.get(key)+"','"+key+"',1,"+dataSaveMode+")";
 						}else{
-							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+key+"','"+pipelineDeviceAcquisitionItemColumns.get(key)+"',1,"+dataMappingMode+")";
+							addSql="insert into tbl_datamapping(name,mappingcolumn,protocoltype,mappingmode) values('"+key+"','"+pipelineDeviceAcquisitionItemColumns.get(key)+"',1,"+dataSaveMode+")";
 						}
 						pstmt = conn.prepareStatement(addSql);
 						pstmt.executeUpdate();
@@ -345,8 +345,8 @@ public class EquipmentDriverServerTask {
 	
 
 	public static int loadAcquisitionItemColumns(){
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
-		if(dataMappingMode==0){
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
+		if(dataSaveMode==0){
 			loadAcquisitionItemAddrColumns();
 		}else{
 			loadAcquisitionItemNameColumns();
@@ -448,8 +448,8 @@ public class EquipmentDriverServerTask {
 	}
 	
 	public static int loadAcquisitionItemColumns(int deviceType){
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
-		if(dataMappingMode==0){
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
+		if(dataSaveMode==0){
 			loadAcquisitionItemAddrColumns(deviceType);
 		}else{
 			loadAcquisitionItemNameColumns(deviceType);
@@ -546,7 +546,7 @@ public class EquipmentDriverServerTask {
 		PreparedStatement pstmt = null;   
 		ResultSet rs = null;
 		int result=0;
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(deviceType==1){
 			columnsKey="pipelineDeviceAcquisitionItemColumns";
@@ -572,7 +572,7 @@ public class EquipmentDriverServerTask {
 			}
 			//如驱动配置中不存在，删除字段
 			for(int i=0;i<acquisitionItemDataBaseColumns.size();i++){
-				if(dataMappingMode==0){
+				if(dataSaveMode==0){
 					if(!StringManagerUtils.existOrNot(acquisitionItemColumns,acquisitionItemDataBaseColumns.get(i),false)){
 						String deleteColumsSql="alter table "+tableName+" drop column "+acquisitionItemDataBaseColumns.get(i);
 						pstmt = conn.prepareStatement(deleteColumsSql);
@@ -592,11 +592,11 @@ public class EquipmentDriverServerTask {
 			}
 			//如数据库中不存在，添加字段
 			for(String key : acquisitionItemColumns.keySet()) {
-				if(!StringManagerUtils.existOrNot(acquisitionItemDataBaseColumns,dataMappingMode==0?key:acquisitionItemColumns.get(key),false)){
-					String addColumsSql="alter table "+tableName+" add "+(dataMappingMode==0?key:acquisitionItemColumns.get(key))+" VARCHAR2(50)";
+				if(!StringManagerUtils.existOrNot(acquisitionItemDataBaseColumns,dataSaveMode==0?key:acquisitionItemColumns.get(key),false)){
+					String addColumsSql="alter table "+tableName+" add "+(dataSaveMode==0?key:acquisitionItemColumns.get(key))+" VARCHAR2(50)";
 					pstmt = conn.prepareStatement(addColumsSql);
 					pstmt.executeUpdate();
-					System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"添加字段:"+(dataMappingMode==0?key:acquisitionItemColumns.get(key)));
+					System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+":表"+tableName+"添加字段:"+(dataSaveMode==0?key:acquisitionItemColumns.get(key)));
 					result++;
 				}
 			}
@@ -612,7 +612,7 @@ public class EquipmentDriverServerTask {
 	
 	public static int initDataDictionary(String dataDictionaryId,int deviceType){
 		int result=0;
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		String columnsKey="pumpDeviceAcquisitionItemColumns";
 		if(deviceType==1){
 			columnsKey="pipelineDeviceAcquisitionItemColumns";
@@ -637,7 +637,7 @@ public class EquipmentDriverServerTask {
 		for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 			if(modbusProtocolConfig.getProtocol().get(i).getDeviceType()==deviceType){
 				for(int j=0;j<modbusProtocolConfig.getProtocol().get(i).getItems().size();j++){
-					String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle()));
+					String col=dataSaveMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getTitle()));
 					if((!"w".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getRWType()))//非只写
 						&&(!StringManagerUtils.existOrNot(acquisitionItemColumns, col,false))){
 						String unit=modbusProtocolConfig.getProtocol().get(i).getItems().get(j).getUnit();

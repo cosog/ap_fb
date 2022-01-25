@@ -644,7 +644,7 @@ public class ConfigFile {
 	    
 	    private int productionUnit;
 	    
-	    private int dataMappingMode;
+	    private int dataSaveMode;
 	    
 	    private boolean showLogo;
 
@@ -704,11 +704,11 @@ public class ConfigFile {
 		public void setProductionUnit(int productionUnit) {
 			this.productionUnit = productionUnit;
 		}
-		public int getDataMappingMode() {
-			return dataMappingMode;
+		public int getDataSaveMode() {
+			return dataSaveMode;
 		}
-		public void setDataMappingMode(int dataMappingMode) {
-			this.dataMappingMode = dataMappingMode;
+		public void setDataSaveMode(int dataSaveMode) {
+			this.dataSaveMode = dataSaveMode;
 		}
 		public boolean getShowLogo() {
 			return showLogo;

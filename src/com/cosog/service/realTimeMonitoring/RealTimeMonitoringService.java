@@ -258,7 +258,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	
 	public String getDeviceRealTimeOverview(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -300,7 +300,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(dataMappingMode==0){
+			if(dataSaveMode==0){
 				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
 					ddicColumnsList.add(ddicColumns[i]);
 				}
@@ -315,7 +315,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 //			String itemStr="";
 //			if(protocol!=null){
 //				for(int j=0;j<protocol.getItems().size();j++){
-//					String col=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+//					String col=dataSaveMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
 //					if(ddicColumnsList.get(i).equalsIgnoreCase(col)){
 //						if(protocol.getItems().get(j).getMeaning()!=null && protocol.getItems().get(j).getMeaning().size()>0){
 //							isMatch=true;
@@ -402,12 +402,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				ModbusProtocolConfig.Items item=null;
 				if(protocol!=null){
 					for(int k=0;k<protocol.getItems().size();k++){
-						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						String col=dataSaveMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
 						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
 							item=protocol.getItems().get(k);
 							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
 								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
-									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")||StringManagerUtils.stringToFloat(value)==protocol.getItems().get(k).getMeaning().get(l).getValue()){
 										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
 										break;
 									}
@@ -484,7 +484,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	
 	public String getDeviceRealTimeOverviewExportData(String orgId,String deviceName,String deviceType,String commStatusStatValue,String deviceTypeStatValue) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -520,7 +520,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(dataMappingMode==0){
+			if(dataSaveMode==0){
 				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
 					ddicColumnsList.add(ddicColumns[i]);
 				}
@@ -581,11 +581,11 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				String value=obj[7+j]+"";
 				if(protocol!=null){
 					for(int k=0;k<protocol.getItems().size();k++){
-						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						String col=dataSaveMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
 						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
 							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
 								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
-									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")||StringManagerUtils.stringToFloat(value)==protocol.getItems().get(k).getMeaning().get(l).getValue()){
 										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
 										break;
 									}
@@ -613,7 +613,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -701,7 +701,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				
 				String sql="select t.id,t.wellname,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'), t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
 				for(int j=0;j<protocolItems.size();j++){
-					String col=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
+					String col=dataSaveMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
 					sql+=",t2."+col;
 				}
 				sql+= " from "+deviceTableName+" t "
@@ -717,7 +717,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 						String value=obj[j+6]+"";
 						String rawValue=value;
 						String addr=protocolItems.get(j).getAddr()+"";
-						String column=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
+						String column=dataSaveMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
 						String columnDataType=protocolItems.get(j).getIFDataType();
 						String resolutionMode=protocolItems.get(j).getResolutionMode()+"";
 						String bitIndex="";
@@ -764,6 +764,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 										continue;
 									}
 									if(StringManagerUtils.isNotNull(value)){
+										boolean match=false;
 										for(int m=0;valueArr!=null&&m<valueArr.length;m++){
 											if(m==protocolItems.get(j).getMeaning().get(l).getValue()){
 												bitIndex=m+"";
@@ -775,8 +776,16 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 												}
 												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
 												protocolItemResolutionDataList.add(protocolItemResolutionData);
+												match=true;
 												break;
 											}
+										}
+										if(!match){
+											value="";
+											rawValue="";
+											bitIndex=protocolItems.get(j).getMeaning().get(l).getValue()+"";
+											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,protocolItems.get(j).getMeaning().get(l).getValue()+"",unit,sort);
+											protocolItemResolutionDataList.add(protocolItemResolutionData);
 										}
 									}else{
 										for(int m=0;m<itemsArr.length;m++){
@@ -785,6 +794,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 												break;
 											}
 										}
+										value="";
+										rawValue="";
+										bitIndex=protocolItems.get(j).getMeaning().get(l).getValue()+"";
 										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,protocolItems.get(j).getMeaning().get(l).getValue()+"",unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
@@ -933,7 +945,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 	
 	public String getDeviceControlandInfoData(String deviceId,String wellName,String deviceType,int userId)throws Exception {
 		StringBuffer result_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		String deviceTableName="tbl_pumpdevice";
 		String infoTableName="tbl_pumpdeviceaddinfo";
 		String columnsKey="pumpDeviceAcquisitionItemColumns";
@@ -1006,8 +1018,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 								if(itemsArr[m].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle())){
 									if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())
 											||"w".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getRWType())){
-										controlItems.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle());
-										String col=dataMappingMode==0?("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle()));
+										String title=modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle();
+										if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getUnit())){
+											title+="("+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getUnit()+")";
+										}
+										controlItems.add(title);
+										String col=dataSaveMode==0?("ADDR"+modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getTitle()));
 										controlColumns.add(col);
 										controlItemResolutionMode.add(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode());
 										if(modbusProtocolConfig.getProtocol().get(j).getItems().get(k).getResolutionMode()==2){//数据量
@@ -1220,7 +1236,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		StringBuffer itemsBuff = new StringBuffer();
 		StringBuffer curveColorBuff = new StringBuffer();
 		
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
@@ -1270,7 +1286,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 							Object[] itemObj=(Object[]) curveItemList.get(j);
 							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
-									String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
+									String col=dataSaveMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
 									itemColumnList.add(col);
 									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
 										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");

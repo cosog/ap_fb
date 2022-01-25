@@ -631,8 +631,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 		String protocolName = ParamUtils.getParameter(request, "protocolName");
 		String classes = ParamUtils.getParameter(request, "classes");
 		String code = ParamUtils.getParameter(request, "code");
+		String type = ParamUtils.getParameter(request, "type");
 		String json = "";
-		json = acquisitionUnitItemManagerService.getProtocolAcqUnitItemsConfigData(protocolName,classes,code);
+		json = acquisitionUnitItemManagerService.getProtocolAcqUnitItemsConfigData(protocolName,classes,code,type);
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();

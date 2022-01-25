@@ -290,7 +290,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	
 	public String getDeviceHistoryData(String orgId,String deviceId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -349,7 +349,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(dataMappingMode==0){
+			if(dataSaveMode==0){
 				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
 					ddicColumnsList.add(ddicColumns[i]);
 				}
@@ -408,12 +408,12 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				ModbusProtocolConfig.Items item=null;
 				if(protocol!=null){
 					for(int k=0;k<protocol.getItems().size();k++){
-						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						String col=dataSaveMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
 						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
 							item=protocol.getItems().get(k);
 							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
 								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
-									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"") || StringManagerUtils.stringToFloat(value)==protocol.getItems().get(k).getMeaning().get(l).getValue()){
 										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
 										break;
 									}
@@ -483,7 +483,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 	
 	public String getDeviceHistoryExportData(String orgId,String deviceId,String deviceName,String deviceType,Page pager) throws IOException, SQLException{
 		StringBuffer result_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		
 		String hisTableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
@@ -531,7 +531,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				+ "to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss') ";
 		String[] ddicColumns=ddic.getSql().split(",");
 		for(int i=0;i<ddicColumns.length;i++){
-			if(dataMappingMode==0){
+			if(dataSaveMode==0){
 				if(StringManagerUtils.existOrNot(loadedAcquisitionItemColumnsMap, ddicColumns[i],false)){
 					ddicColumnsList.add(ddicColumns[i]);
 				}
@@ -570,11 +570,11 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				String value=obj[6+j]+"";
 				if(protocol!=null){
 					for(int k=0;k<protocol.getItems().size();k++){
-						String col=dataMappingMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
+						String col=dataSaveMode==0?("addr"+protocol.getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(k).getTitle()));
 						if(col.equalsIgnoreCase(ddicColumnsList.get(j))){
 							if(protocol.getItems().get(k).getMeaning()!=null && protocol.getItems().get(k).getMeaning().size()>0){
 								for(int l=0;l<protocol.getItems().get(k).getMeaning().size();l++){
-									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"")){
+									if(value.equals(protocol.getItems().get(k).getMeaning().get(l).getValue()+"") || StringManagerUtils.stringToFloat(value)==protocol.getItems().get(k).getMeaning().get(l).getValue()){
 										value=protocol.getItems().get(k).getMeaning().get(l).getMeaning();
 										break;
 									}
@@ -604,7 +604,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		int items=3;
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer info_json = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
 		AlarmShowStyle alarmShowStyle=(AlarmShowStyle) dataModelMap.get("AlarmShowStyle");
 		if(alarmShowStyle==null){
@@ -694,7 +694,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 				
 				String sql="select t.id,t.wellname,to_char(t2.acqtime,'yyyy-mm-dd hh24:mi:ss'), t2.commstatus,decode(t2.commstatus,1,'在线','离线') as commStatusName,decode(t2.commstatus,1,0,100) as commAlarmLevel ";
 				for(int j=0;j<protocolItems.size();j++){
-					String col=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
+					String col=dataSaveMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
 					sql+=",t2."+col;
 				}
 				sql+= " from "+deviceTableName+" t "
@@ -710,7 +710,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 						String value=obj[j+6]+"";
 						String rawValue=obj[j+6]+"";
 						String addr=protocolItems.get(j).getAddr()+"";
-						String column=dataMappingMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
+						String column=dataSaveMode==0?("addr"+protocolItems.get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocolItems.get(j).getTitle()));
 						String columnDataType=protocolItems.get(j).getIFDataType();
 						String resolutionMode=protocolItems.get(j).getResolutionMode()+"";
 						String bitIndex="";
@@ -755,10 +755,11 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 										continue;
 									}
 									if(StringManagerUtils.isNotNull(value)){
+										boolean match=false;
 										for(int m=0;valueArr!=null&&m<valueArr.length;m++){
 											if(m==protocolItems.get(j).getMeaning().get(l).getValue()  ){
 												isMatch=true;
-												bitIndex=m+"";
+												bitIndex=protocolItems.get(j).getMeaning().get(l).getValue()+"";
 												if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
 													value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
 													rawValue=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"1":"0";
@@ -768,8 +769,16 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 												
 												ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,bitIndex,unit,sort);
 												protocolItemResolutionDataList.add(protocolItemResolutionData);
+												match=true;
 												break;
 											}
+										}
+										if(!match){
+											value="";
+											rawValue="";
+											bitIndex=protocolItems.get(j).getMeaning().get(l).getValue()+"";
+											ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,protocolItems.get(j).getMeaning().get(l).getValue()+"",unit,sort);
+											protocolItemResolutionDataList.add(protocolItemResolutionData);
 										}
 									}else{
 										for(int m=0;m<itemsArr.length;m++){
@@ -778,6 +787,9 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 												break;
 											}
 										}
+										value="";
+										rawValue="";
+										bitIndex=protocolItems.get(j).getMeaning().get(l).getValue()+"";
 										ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawColumnName,columnName,value,rawValue,addr,column,columnDataType,resolutionMode,protocolItems.get(j).getMeaning().get(l).getValue()+"",unit,sort);
 										protocolItemResolutionDataList.add(protocolItemResolutionData);
 									}
@@ -922,7 +934,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer itemsBuff = new StringBuffer();
 		StringBuffer curveColorBuff = new StringBuffer();
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		String tableName="tbl_pumpacqdata_hist";
 		String deviceTableName="tbl_pumpdevice";
 		String graphicSetTableName="tbl_pumpdevicegraphicset";
@@ -973,7 +985,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							Object[] itemObj=(Object[]) curveItemList.get(j);
 							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
-									String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
+									String col=dataSaveMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
 									itemColumnList.add(col);
 									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
 										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");
@@ -1056,7 +1068,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 		StringBuffer result_json = new StringBuffer();
 		Gson gson = new Gson();
 		java.lang.reflect.Type type=null;
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		String deviceTableName="tbl_pumpdevice";
 		String graphicSetTableName="tbl_pumpdevicegraphicset";
 		String columnsKey="pumpDeviceAcquisitionItemColumns";
@@ -1105,7 +1117,7 @@ public class HistoryQueryService<T> extends BaseService<T>  {
 							Object[] itemObj=(Object[]) curveItemList.get(j);
 							for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 								if(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle().equalsIgnoreCase(itemObj[0]+"")){
-									String col=dataMappingMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
+									String col=dataSaveMode==0?("addr"+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr()):(loadedAcquisitionItemColumnsMap.get(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()));
 									itemColumnList.add(col);
 									if(StringManagerUtils.isNotNull(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit())){
 										itemNameList.add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle()+"("+modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getUnit()+")");

@@ -3160,7 +3160,9 @@ public class StringManagerUtils {
     public static String objectListToString(List < Object > list, String dataType) {
         StringBuffer jsonBuffer = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {
-            if ("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType) || dataType.contains("int")) {
+            if(list.get(i)==null){
+            	jsonBuffer.append(",");
+            }else if ("int".equalsIgnoreCase(dataType) || "uint".equalsIgnoreCase(dataType) || dataType.contains("int")) {
                 jsonBuffer.append(StringManagerUtils.stringToInteger(list.get(i) + "") + ",");
             } else if ("float32".equalsIgnoreCase(dataType)) {
                 jsonBuffer.append(StringManagerUtils.stringToFloat(list.get(i) + "") + ",");
