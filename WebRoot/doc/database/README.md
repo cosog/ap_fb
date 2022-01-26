@@ -893,27 +893,27 @@
 
 表2-7 泵设备报警实时数据视图
 
-| **序号** | **代码**       | **名称**     | **类型** | **备注**                         |
-|----------|----------------|--------------|----------|----------------------------------|
-| 1        | ID             | 记录编号     | NUMBER   |                                  |
-| 2        | WELLID         | 设备编号     | NUMBER   |                                  |
-| 3        | WELLNAME       | 设备名称     | VARCHAR2 |                                  |
-| 4        | DEVICETYPE     | 设备类型     | NUMBER   | 0或1                             |
-| 5        | DEVICETYPENAME | 设备类型名称 | VARCHAR2 | 泵设备或管设备                   |
-| 6        | ALARMTIME      | 报警时间     | DATE     |                                  |
-| 7        | ITEMNAME       | 报警项       | VARCHAR2 |                                  |
-| 8        | ALARMTYPE      | 报警类型     | NUMBER   | 0、1、2、3                       |
-| 9        | ALARMTYPENAME  | 报警类型名称 | VARCHAR2 | 通信报警、数值量、枚举量、开关量 |
-| 10       | ALARMVALUE     | 报警值       | NUMBER   |                                  |
-| 11       | ALARMINFO      | 报警信息     | VARCHAR2 |                                  |
-| 12       | ALARMLIMIT     | 报警限值     | NUMBER   |                                  |
-| 13       | HYSTERSIS      | 回差         | NUMBER   |                                  |
-| 14       | ALARMLEVEL     | 报警级别     | NUMBER   | 100、200、300                    |
-| 15       | ALARMLEVELNAME | 报警级别名称 | VARCHAR2 | 一级报警、二级报警、三级报警     |
-| 16       | ISSENDMESSAGE  | 是否发送短信 | NUMBER   |                                  |
-| 17       | ISSENDMAIL     | 是否发送邮件 | NUMBER   |                                  |
-| 18       | RECOVERYTIME   | 恢复时间     | DATE     |                                  |
-| 19       | ORGID          | 组织编号     | NUMBER   |                                  |
+| **序号** | **代码**       | **名称**     | **类型** | **备注**                                      |
+|----------|----------------|--------------|----------|-----------------------------------------------|
+| 1        | ID             | 记录编号     | NUMBER   |                                               |
+| 2        | WELLID         | 设备编号     | NUMBER   |                                               |
+| 3        | WELLNAME       | 设备名称     | VARCHAR2 |                                               |
+| 4        | DEVICETYPE     | 设备类型     | NUMBER   | 0或1                                          |
+| 5        | DEVICETYPENAME | 设备类型名称 | VARCHAR2 | 泵设备或管设备                                |
+| 6        | ALARMTIME      | 报警时间     | DATE     |                                               |
+| 7        | ITEMNAME       | 报警项       | VARCHAR2 |                                               |
+| 8        | ALARMTYPE      | 报警类型     | NUMBER   | 0、1、2、3                                    |
+| 9        | ALARMTYPENAME  | 报警类型名称 | VARCHAR2 | 通信报警、数值量报警、 枚举量报警、开关量报警 |
+| 10       | ALARMVALUE     | 报警值       | NUMBER   |                                               |
+| 11       | ALARMINFO      | 报警信息     | VARCHAR2 |                                               |
+| 12       | ALARMLIMIT     | 报警限值     | NUMBER   |                                               |
+| 13       | HYSTERSIS      | 回差         | NUMBER   |                                               |
+| 14       | ALARMLEVEL     | 报警级别     | NUMBER   | 100、200、300                                 |
+| 15       | ALARMLEVELNAME | 报警级别名称 | VARCHAR2 | 一级报警、二级报警、三级报警                  |
+| 16       | ISSENDMESSAGE  | 是否发送短信 | NUMBER   |                                               |
+| 17       | ISSENDMAIL     | 是否发送邮件 | NUMBER   |                                               |
+| 18       | RECOVERYTIME   | 恢复时间     | DATE     |                                               |
+| 19       | ORGID          | 组织编号     | NUMBER   |                                               |
 
 ### 2.2.8 viw\_pumpalarminfo\_hist
 
@@ -923,27 +923,27 @@
 
 表2-8 管设备报警实时数据视图
 
-| **序号** | **代码**       | **名称**     | **类型** | **备注**                         |
-|----------|----------------|--------------|----------|----------------------------------|
-| 1        | ID             | 记录编号     | NUMBER   |                                  |
-| 2        | WELLID         | 设备编号     | NUMBER   |                                  |
-| 3        | WELLNAME       | 设备名称     | VARCHAR2 |                                  |
-| 4        | DEVICETYPE     | 设备类型     | NUMBER   | 0或1                             |
-| 5        | DEVICETYPENAME | 设备类型名称 | VARCHAR2 | 泵设备或管设备                   |
-| 6        | ALARMTIME      | 报警时间     | DATE     |                                  |
-| 7        | ITEMNAME       | 报警项       | VARCHAR2 |                                  |
-| 8        | ALARMTYPE      | 报警类型     | NUMBER   | 0、1、2、3                       |
-| 9        | ALARMTYPENAME  | 报警类型名称 | VARCHAR2 | 通信报警、数值量、枚举量、开关量 |
-| 10       | ALARMVALUE     | 报警值       | NUMBER   |                                  |
-| 11       | ALARMINFO      | 报警信息     | VARCHAR2 |                                  |
-| 12       | ALARMLIMIT     | 报警限值     | NUMBER   |                                  |
-| 13       | HYSTERSIS      | 回差         | NUMBER   |                                  |
-| 14       | ALARMLEVEL     | 报警级别     | NUMBER   | 100、200、300                    |
-| 15       | ALARMLEVELNAME | 报警级别名称 | VARCHAR2 | 一级报警、二级报警、三级报警     |
-| 16       | ISSENDMESSAGE  | 是否发送短信 | NUMBER   |                                  |
-| 17       | ISSENDMAIL     | 是否发送邮件 | NUMBER   |                                  |
-| 18       | RECOVERYTIME   | 恢复时间     | DATE     |                                  |
-| 19       | ORGID          | 组织编号     | NUMBER   |                                  |
+| **序号** | **代码**       | **名称**     | **类型** | **备注**                                      |
+|----------|----------------|--------------|----------|-----------------------------------------------|
+| 1        | ID             | 记录编号     | NUMBER   |                                               |
+| 2        | WELLID         | 设备编号     | NUMBER   |                                               |
+| 3        | WELLNAME       | 设备名称     | VARCHAR2 |                                               |
+| 4        | DEVICETYPE     | 设备类型     | NUMBER   | 0或1                                          |
+| 5        | DEVICETYPENAME | 设备类型名称 | VARCHAR2 | 泵设备或管设备                                |
+| 6        | ALARMTIME      | 报警时间     | DATE     |                                               |
+| 7        | ITEMNAME       | 报警项       | VARCHAR2 |                                               |
+| 8        | ALARMTYPE      | 报警类型     | NUMBER   | 0、1、2、3                                    |
+| 9        | ALARMTYPENAME  | 报警类型名称 | VARCHAR2 | 通信报警、数值量报警、 枚举量报警、开关量报警 |
+| 10       | ALARMVALUE     | 报警值       | NUMBER   |                                               |
+| 11       | ALARMINFO      | 报警信息     | VARCHAR2 |                                               |
+| 12       | ALARMLIMIT     | 报警限值     | NUMBER   |                                               |
+| 13       | HYSTERSIS      | 回差         | NUMBER   |                                               |
+| 14       | ALARMLEVEL     | 报警级别     | NUMBER   | 100、200、300                                 |
+| 15       | ALARMLEVELNAME | 报警级别名称 | VARCHAR2 | 一级报警、二级报警、三级报警                  |
+| 16       | ISSENDMESSAGE  | 是否发送短信 | NUMBER   |                                               |
+| 17       | ISSENDMAIL     | 是否发送邮件 | NUMBER   |                                               |
+| 18       | RECOVERYTIME   | 恢复时间     | DATE     |                                               |
+| 19       | ORGID          | 组织编号     | NUMBER   |                                               |
 
 ### 2.2.10 viw\_pipelinealarminfo\_hist
 
@@ -986,28 +986,28 @@
 
 表3-1 存储过程概览
 
-| **序号** | **名称**                       | **描述**           | **备注** |
-|----------|--------------------------------|--------------------|----------|
-| 1        | PRD_RESET_SEQUENCE             | 重置序列           |          |
-| 2        | PRD_CLEAR_DATA                 | 清理数据并重置序列 |          |
-| 3        | PRD_SAVE_PUMPDEVICE            | 保存泵设备数据     |          |
-| 4        | PRD_SAVE_PIPELINEDEVICE        | 保存管设备数据     |          |
-| 5        | PRD_SAVE_SMSDEVICE             | 保存短信设备数据   |          |
-| 6        | PRD_SAVE_AUXILIARYDEVICE       | 保存辅件设备数据   |          |
-| 7        | PRD_CHANGE_PUMPDEVICENAME      | 修改泵设备名称     |          |
-| 8        | PRD_CHANGE_PIPELINEDEVICENAME  | 修改管设备名称     |          |
-| 9        | PRD_CHANGE_SMSDEVICENAME       | 修改短信设备名称   |          |
-| 10       | PRD_CHANGE_AUXILIARYDEVICENAME | 修改辅件设备名称   |          |
-| 11       | PRD_SAVE_PUMPALARMINFO         | 保存泵设备报警数据 |          |
-| 12       | PRD_SAVE_PIPELINEALARMINFO     | 保存管设备报警数据 |          |
-| 13       | PRD_SAVE_ALARMCOLOR            | 保存报警等级颜色   |          |
-| 14       | PRD_SAVE_DEVICEOPERATIONLOG    | 保存设备操作日志   |          |
-| 15       | PRD_SAVE_RESOURCEMONITORING    | 保存资源监测数据   |          |
-| 16       | PRD_SAVE_SYSTEMLOG             | 保存系统日志数据   |          |
-| 17       | PRD_UPDATE_PUMPDEVICE          | 修改泵设备数据     |          |
-| 18       | PRD_UPDATE_PIPELINEDEVICE      | 修改管设备数据     |          |
-| 19       | PRD_UPDATE_SMSDEVICE           | 修改短信设备数据   |          |
-| 20       | PRD_UPDATE_AUXILIARYDEVICE     | 修改辅件设备数据   |          |
+| **序号** | **名称**                       | **描述**           | **备注**                                             |
+|----------|--------------------------------|--------------------|------------------------------------------------------|
+| 1        | PRD_RESET_SEQUENCE             | 重置序列           |                                                      |
+| 2        | PRD_CLEAR_DATA                 | 清理数据并重置序列 | 执行后将删除泵设备、管设备及相关配置数据和采集数据。 |
+| 3        | PRD_SAVE_PUMPDEVICE            | 保存泵设备数据     |                                                      |
+| 4        | PRD_SAVE_PIPELINEDEVICE        | 保存管设备数据     |                                                      |
+| 5        | PRD_SAVE_SMSDEVICE             | 保存短信设备数据   |                                                      |
+| 6        | PRD_SAVE_AUXILIARYDEVICE       | 保存辅件设备数据   |                                                      |
+| 7        | PRD_CHANGE_PUMPDEVICENAME      | 修改泵设备名称     |                                                      |
+| 8        | PRD_CHANGE_PIPELINEDEVICENAME  | 修改管设备名称     |                                                      |
+| 9        | PRD_CHANGE_SMSDEVICENAME       | 修改短信设备名称   |                                                      |
+| 10       | PRD_CHANGE_AUXILIARYDEVICENAME | 修改辅件设备名称   |                                                      |
+| 11       | PRD_SAVE_PUMPALARMINFO         | 保存泵设备报警数据 |                                                      |
+| 12       | PRD_SAVE_PIPELINEALARMINFO     | 保存管设备报警数据 |                                                      |
+| 13       | PRD_SAVE_ALARMCOLOR            | 保存报警等级颜色   |                                                      |
+| 14       | PRD_SAVE_DEVICEOPERATIONLOG    | 保存设备操作日志   |                                                      |
+| 15       | PRD_SAVE_RESOURCEMONITORING    | 保存资源监测数据   |                                                      |
+| 16       | PRD_SAVE_SYSTEMLOG             | 保存系统日志数据   |                                                      |
+| 17       | PRD_UPDATE_PUMPDEVICE          | 修改泵设备数据     |                                                      |
+| 18       | PRD_UPDATE_PIPELINEDEVICE      | 修改管设备数据     |                                                      |
+| 19       | PRD_UPDATE_SMSDEVICE           | 修改短信设备数据   |                                                      |
+| 20       | PRD_UPDATE_AUXILIARYDEVICE     | 修改辅件设备数据   |                                                      |
 
 # 四、触发器
 
