@@ -59,7 +59,7 @@ insert into TBL_ROLE (ROLE_ID, ROLE_NAME, ROLE_FLAG, REMARK, SHOWLEVEL, ROLE_LEV
 values (1, '超级管理员', 1, '全部权限', 1, 1);
 
 insert into TBL_ROLE (ROLE_ID, ROLE_NAME, ROLE_FLAG, REMARK, SHOWLEVEL, ROLE_LEVEL)
-values (2, '软件管理员', 0, '数据查询、编辑、权限管理', 2, 2);
+values (2, '软件管理员', 1, '数据查询、编辑、权限管理', 2, 2);
 
 insert into TBL_ROLE (ROLE_ID, ROLE_NAME, ROLE_FLAG, REMARK, SHOWLEVEL, ROLE_LEVEL)
 values (3, '应用分析员', 0, '数据查询', 3, 3);
@@ -120,6 +120,9 @@ values (894, '0,0,0', 18, 1);
 
 insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
 values (1998, '0,0,0', 46, 3);
+
+insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
+values (2018, '0,0,0', 47, 3);
 
 insert into TBL_MODULE2ROLE (RM_MODULEID, RM_MATRIX, RM_ID, RM_ROLEID)
 values (2058, '0,0,0', 48, 3);

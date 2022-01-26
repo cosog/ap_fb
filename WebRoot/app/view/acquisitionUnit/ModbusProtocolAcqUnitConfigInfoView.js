@@ -88,20 +88,6 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqUnitConfigInfoView', {
                     listeners: {
                         resize: function (abstractcomponent, adjWidth, adjHeight, options) {
                         	if(protocolAcqUnitConfigItemsHandsontableHelper!=null && protocolAcqUnitConfigItemsHandsontableHelper.hot!=undefined){
-//                        		var selectRow= Ext.getCmp("ModbusProtocolAcqGroupConfigSelectRow_Id").getValue();
-//                        		var gridPanel=Ext.getCmp("ModbusProtocolAcqGroupConfigTreeGridPanel_Id");
-//                        		if(isNotVal(gridPanel)){
-//                        			var selectedItem=gridPanel.getStore().getAt(selectRow);
-//                        			if(selectedItem.data.classes==0){
-//                                		if(isNotVal(selectedItem.data.children) && selectedItem.data.children.length>0){
-//                                			CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.children[0].text,selectedItem.data.children[0].classes,selectedItem.data.children[0].code);
-//                                		}
-//                                	}else if(selectedItem.data.classes==1){
-//                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.text,selectedItem.data.classes,selectedItem.data.code);
-//                                	}else if(selectedItem.data.classes==2||selectedItem.data.classes==3){
-//                                		CreateProtocolAcqUnitItemsConfigInfoTable(selectedItem.data.protocol,selectedItem.data.classes,selectedItem.data.code);
-//                                	}
-//                        		}
                         		protocolAcqUnitConfigItemsHandsontableHelper.hot.refreshDimensions();
                         	}
                         }
@@ -113,7 +99,7 @@ Ext.define('AP.view.acquisitionUnit.ModbusProtocolAcqUnitConfigInfoView', {
     }
 });
 
-function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code){
+function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code,type){
 	Ext.Ajax.request({
 		method:'POST',
 		url:context + '/acquisitionUnitManagerController/getProtocolAcqUnitItemsConfigData',
@@ -141,17 +127,19 @@ function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code){
 				
 				protocolAcqUnitConfigItemsHandsontableHelper.colHeaders=Ext.JSON.decode(colHeaders);
 				protocolAcqUnitConfigItemsHandsontableHelper.columns=Ext.JSON.decode(columns);
-				if(result.totalRoot.length==0){
-					protocolAcqUnitConfigItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
-				}else{
-					protocolAcqUnitConfigItemsHandsontableHelper.createTable(result.totalRoot);
-				}
+//				if(result.totalRoot.length==0){
+//					protocolAcqUnitConfigItemsHandsontableHelper.createTable([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+//				}else{
+//					protocolAcqUnitConfigItemsHandsontableHelper.createTable(result.totalRoot);
+//				}
+				protocolAcqUnitConfigItemsHandsontableHelper.createTable(result.totalRoot);
 			}else{
-				if(result.totalRoot.length==0){
-					protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
-				}else{
-					protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
-				}
+//				if(result.totalRoot.length==0){
+//					protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+//				}else{
+//					protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
+//				}
+				protocolAcqUnitConfigItemsHandsontableHelper.hot.loadData(result.totalRoot);
 			}
 		},
 		failure:function(){
@@ -160,7 +148,8 @@ function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code){
 		params: {
 			protocolName:protocolName,
 			classes:classes,
-			code:code
+			code:code,
+			type:type
         }
 	});
 };

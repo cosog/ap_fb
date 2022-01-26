@@ -589,7 +589,7 @@ public class DriverAPIController extends BaseController{
 	public String DataProcessing(AcqGroup acqGroup,String wellName,String deviceType,String protocolName) throws Exception{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
-		int dataMappingMode=Config.getInstance().configFile.getOthers().getDataMappingMode();
+		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		List<String> websocketClientUserList=new ArrayList<>();
 		for (WebSocketByJavax item : WebSocketByJavax.clients.values()) { 
@@ -740,12 +740,14 @@ public class DriverAPIController extends BaseController{
 					List<AcquisitionItemInfo> acquisitionItemInfoList=new ArrayList<AcquisitionItemInfo>();
 					List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 					
-					for(int i=0;acqGroup.getAddr()!=null && acqGroup.getValue()!=null  &&i<acqGroup.getAddr().size();i++){
-						for(int j=0;acqGroup.getValue().get(i)!=null && j<protocol.getItems().size();j++){
+					for(int i=0;acqGroup.getAddr()!=null &&i<acqGroup.getAddr().size();i++){
+						for(int j=0;j<protocol.getItems().size();j++){
 							if(acqGroup.getAddr().get(i)==protocol.getItems().get(j).getAddr()){
-								
-								String columnName=dataMappingMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
-								String value=StringManagerUtils.objectListToString(acqGroup.getValue().get(i), protocol.getItems().get(j).getIFDataType());
+								String value="";
+								String columnName=dataSaveMode==0?("addr"+protocol.getItems().get(j).getAddr()):(loadedAcquisitionItemColumnsMap.get(protocol.getItems().get(j).getTitle()));
+								if(acqGroup.getValue()!=null&&acqGroup.getValue().size()>i&&acqGroup.getValue().get(i)!=null){
+									value=StringManagerUtils.objectListToString(acqGroup.getValue().get(i), protocol.getItems().get(j).getIFDataType());
+								}
 								String rawValue=value;
 								String addr=protocol.getItems().get(j).getAddr()+"";
 								String title=protocol.getItems().get(j).getTitle();
@@ -769,7 +771,7 @@ public class DriverAPIController extends BaseController{
 										}
 										if(protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
 											for(int l=0;l<protocol.getItems().get(j).getMeaning().size();l++){
-												if(StringManagerUtils.stringToFloat(value)==(protocol.getItems().get(j).getMeaning().get(l).getValue())){
+												if(StringManagerUtils.isNotNull(value)&&StringManagerUtils.stringToFloat(value)==(protocol.getItems().get(j).getMeaning().get(l).getValue())){
 													value=protocol.getItems().get(j).getMeaning().get(l).getMeaning();
 													break;
 												}
@@ -780,7 +782,16 @@ public class DriverAPIController extends BaseController{
 									}else if(protocol.getItems().get(j).getResolutionMode()==0){//如果是开关量
 										boolean isMatch=false;
 										if(protocol.getItems().get(j).getMeaning()!=null&&protocol.getItems().get(j).getMeaning().size()>0){
-											String[] valueArr=value.split(",");
+											int maxIndex=0;
+											for(int l=0;l<protocol.getItems().get(j).getMeaning().size();l++){
+												if(protocol.getItems().get(j).getMeaning().get(l).getValue()>maxIndex){
+													maxIndex=protocol.getItems().get(j).getMeaning().get(l).getValue();
+												}
+											}
+											String[] valueArr=new String[maxIndex+1];
+											if(StringManagerUtils.isNotNull(value)){
+												valueArr=value.split(",");
+											}
 											for(int l=0;l<protocol.getItems().get(j).getMeaning().size();l++){
 												title=protocol.getItems().get(j).getMeaning().get(l).getMeaning();
 												sort=9999;
@@ -797,31 +808,42 @@ public class DriverAPIController extends BaseController{
 												if(!isMatch){
 													continue;
 												}
-												if(StringManagerUtils.isNotNull(value)){
+												if(StringManagerUtils.isNotNull(value) || true){
+													boolean match=false;
 													for(int m=0;valueArr!=null&&m<valueArr.length;m++){
 														if(m==protocol.getItems().get(j).getMeaning().get(l).getValue()){
-															bitIndex=m+"";
-															if("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)){
+															bitIndex=protocol.getItems().get(j).getMeaning().get(l).getValue()+"";
+															if(("bool".equalsIgnoreCase(columnDataType) || "boolean".equalsIgnoreCase(columnDataType)) && StringManagerUtils.isNotNull(valueArr[m])){
 																value=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"开":"关";
 																rawValue=("true".equalsIgnoreCase(valueArr[m]) || "1".equalsIgnoreCase(valueArr[m]))?"1":"0";
 															}else{
-																value=valueArr[m];
+																value="";
+																rawValue="";
 															}
 															ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
 															protocolItemResolutionDataList.add(protocolItemResolutionData);
+															match=true;
 															break;
 														}
 													}
-												}else{
-													for(int k=0;k<itemsArr.length;k++){
-														if(title.equalsIgnoreCase(itemsArr[k])){
-															sort=StringManagerUtils.stringToInteger(itemsSortArr[k]);
-															break;
-														}
+													if(!match){
+														value="";
+														rawValue="";
+														bitIndex=protocol.getItems().get(j).getMeaning().get(l).getValue()+"";
+														ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+														protocolItemResolutionDataList.add(protocolItemResolutionData);
 													}
-													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
-													protocolItemResolutionDataList.add(protocolItemResolutionData);
 												}
+//												else{
+//													for(int k=0;k<itemsArr.length;k++){
+//														if(title.equalsIgnoreCase(itemsArr[k])){
+//															sort=StringManagerUtils.stringToInteger(itemsSortArr[k]);
+//															break;
+//														}
+//													}
+//													ProtocolItemResolutionData protocolItemResolutionData =new ProtocolItemResolutionData(rawTitle,title,value,rawValue,addr,columnName,columnDataType,resolutionMode,bitIndex,unit,sort);
+//													protocolItemResolutionDataList.add(protocolItemResolutionData);
+//												}
 											}
 										}else{
 											for(int k=0;k<itemsArr.length;k++){
@@ -898,7 +920,7 @@ public class DriverAPIController extends BaseController{
 										acquisitionItemInfo.setIsSendMail(StringManagerUtils.stringToInteger(alarmItemObj[12]+""));
 									}
 									break;
-								}else if(alarmType==0){//开关量报警
+								}else if(alarmType==0  && StringManagerUtils.isNotNull(acquisitionItemInfo.getRawValue()) ){//开关量报警
 									if(StringManagerUtils.isNotNull(acquisitionItemInfo.getBitIndex())){
 										if(acquisitionItemInfo.getBitIndex().equals(alarmItemObj[4]+"") && StringManagerUtils.stringToInteger(acquisitionItemInfo.getRawValue())==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
 											alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
@@ -910,7 +932,7 @@ public class DriverAPIController extends BaseController{
 											acquisitionItemInfo.setIsSendMail(StringManagerUtils.stringToInteger(alarmItemObj[12]+""));
 										}
 									}
-								}else if(alarmType==1){//枚举量报警
+								}else if(alarmType==1  && StringManagerUtils.isNotNull(acquisitionItemInfo.getRawValue()) ){//枚举量报警
 									if(StringManagerUtils.stringToInteger(acquisitionItemInfo.getRawValue())==StringManagerUtils.stringToInteger(alarmItemObj[5]+"")){
 										alarmLevel=StringManagerUtils.stringToInteger(alarmItemObj[10]+"");
 										acquisitionItemInfo.setAlarmLevel(alarmLevel);

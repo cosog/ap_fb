@@ -62,11 +62,10 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqUnitTreeInfoStore', {
                         		}
                         	}else if(record.data.classes==1){
                         		CreateProtocolAcqUnitItemsConfigInfoTable(record.data.text,record.data.classes,record.data.code);
-                        	}else if(record.data.classes==2||record.data.classes==3){
+                        	}else if(record.data.classes==2){
                         		CreateProtocolAcqUnitItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code);
-                        	}
-                        	if(record.data.classes==3){
-//                        		showAcquisitionGroupOwnItems(record.data.code);
+                        	}else if(record.data.classes==3){
+                        		CreateProtocolAcqUnitItemsConfigInfoTable(record.data.protocol,record.data.classes,record.data.code,record.data.type);
                         	}
                         	CreateProtocolAcqUnitConfigPropertiesInfoTable(record.data);
                         },beforecellcontextmenu: function (pl, td, cellIndex, record, tr, rowIndex, e, eOpts) {//右键事件
