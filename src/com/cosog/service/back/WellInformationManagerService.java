@@ -634,10 +634,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
-	public void editWellName(String oldWellName,String newWellName,String orgid) throws Exception {
-		getBaseDao().editWellName(oldWellName,newWellName,orgid);
-	}
-	
 	public void editPumpDeviceName(String oldWellName,String newWellName,String orgid) throws Exception {
 		getBaseDao().editPumpDeviceName(oldWellName,newWellName,orgid);
 	}
@@ -648,10 +644,6 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 	
 	public void editSMSDeviceName(String oldWellName,String newWellName,String orgid) throws Exception {
 		getBaseDao().editSMSDeviceName(oldWellName,newWellName,orgid);
-	}
-	
-	public void editAuxiliaryDeviceName(String oldName,String newName) throws Exception {
-		getBaseDao().editAuxiliaryDeviceName(oldName,newName);
 	}
 
 	public List<T> loadWellInformationID(Class<T> clazz) {

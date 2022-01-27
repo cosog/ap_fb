@@ -287,19 +287,13 @@ public class OrgManagerController extends BaseController {
 					}
 					strBuf.append(",\"orgId\":\"" + org.getOrgId() + "\"");
 					strBuf.append(",\"orgParent\":\""+org.getOrgParent() + "\"");
-					strBuf.append(",\"orgCode\":\""+org.getOrgCode()+"\"");
-					strBuf.append(",\"orgShowLevel\":\""+org.getShowlevel()+"\"");
-					strBuf.append(",\"orgCoordX\":\""+org.getOrgCoordX()+"\"");
-					strBuf.append(",\"orgCoordY\":\""+org.getOrgCoordY()+"\"},");
+					strBuf.append(",\"orgCode\":\""+org.getOrgCode()+"\"},");
 				}else{
 					strBuf.append("{\"text\":\"" + org.getOrgName() + "\"");
 					strBuf.append(",\"leaf\" : true");
 					strBuf.append(",\"orgId\":\"" + org.getOrgId() + "\"");
 					strBuf.append(",\"orgParent\":\""+org.getOrgParent() + "\"");
-					strBuf.append(",\"orgCode\":\""+org.getOrgCode()+"\"");
-					strBuf.append(",\"orgShowLevel\":\""+org.getShowlevel()+"\"");
-					strBuf.append(",\"orgCoordX\":\""+org.getOrgCoordX()+"\"");
-					strBuf.append(",\"orgCoordY\":\""+org.getOrgCoordY()+"\"},");
+					strBuf.append(",\"orgCode\":\""+org.getOrgCode()+"\"},");
 				}
 			}
 			strBuf=strBuf.deleteCharAt(strBuf.length()-1);
@@ -758,11 +752,6 @@ public class OrgManagerController extends BaseController {
 			org.setOrgName(list.get(i).getText());
 			org.setOrgMemo(list.get(i).getOrgMemo());
 			org.setOrgParent(Integer.parseInt(list.get(i).getOrgParent()));
-			org.setOrgLevel(Integer.parseInt(list.get(i).getOrgLevel()));
-			org.setOrgType(list.get(i).getOrgType());
-			org.setOrgCoordX(Double.parseDouble(list.get(i).getOrgCoordX()));
-			org.setOrgCoordY(Double.parseDouble(list.get(i).getOrgCoordY()));
-			org.setShowlevel(Integer.parseInt(list.get(i).getShowLevel()));
 			this.orgService.modifyOrg(org);
 		}
 		//HttpServletResponse response = ServletActionContext.getResponse();

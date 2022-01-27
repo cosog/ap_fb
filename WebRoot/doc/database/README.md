@@ -189,40 +189,26 @@
 | 4        | ORG_MEMO   | 单位说明     | VARCHAR2(4000) |          | Y        |        |          |
 | 5        | ORG_PARENT | 父级单位编号 | NUMBER(10)     |          | N        |        |          |
 | 6        | ORG_SEQ    | 单位排序     | NUMBER(10)     |          | Y        |        |          |
-| 7        | ORG_FLAG   | 单位标志     | CHAR(1)        |          | Y        |        |          |
-| 8        | ORG_REALID | 单位当前编号 | NUMBER(10)     |          | Y        |        |          |
-| 9        | ORG_LEVEL  | 单位级别     | NUMBER(1)      |          | Y        |        |          |
-| 10       | ORG_TYPE   | 单位类型     | NUMBER(1)      |          | Y        |        |          |
-| 11       | ORG_COORDX | 纬度         | NUMBER(10,6)   |          | Y        |        |          |
-| 12       | ORG_COORDY | 经度         | NUMBER(10,6)   |          | Y        |        |          |
-| 13       | SHOW_LEVEL | 地图显示级别 | NUMBER(2)      |          | Y        |        |          |
 
 ### 1.2.2 tbl\_user
 
 表1-3 用户数据表
 
-| **序号** | **代码**         | **名称**         | **类型**      | **单位** | **为空** | **键** | **备注**                    |
-|----------|------------------|------------------|---------------|----------|----------|--------|-----------------------------|
-| 1        | USER_NO          | 用户序号         | NUMBER(10)    |          | N        | 主键   |                             |
-| 2        | USER_ID          | 用户账号         | VARCHAR2(20)  |          | N        |        |                             |
-| 3        | USER_PWD         | 用户密码         | VARCHAR2(20)  |          | Y        |        |                             |
-| 4        | USER_NAME        | 用户名称         | VARCHAR2(40)  |          | N        |        |                             |
-| 5        | USER_IN_EMAIL    | 内部邮箱         | VARCHAR2(40)  |          | Y        |        |                             |
-| 6        | USER_OUT_EMAIL   | 外部邮箱         | VARCHAR2(100) |          | Y        |        |                             |
-| 7        | USER_PHONE       | 用户电话         | VARCHAR2(40)  |          | Y        |        |                             |
-| 8        | USER_MOBILE      | 手机号           | VARCHAR2(40)  |          | Y        |        |                             |
-| 9        | USER_ADDRESS     | 地址             | VARCHAR2(200) |          | Y        |        |                             |
-| 10       | USER_POSTCODE    | 邮编             | CHAR(6)       |          | Y        |        |                             |
-| 11       | USER_TITLE       | 用户职称         | VARCHAR2(100) |          | Y        |        |                             |
-| 12       | USER_TYPE        | 用户类型         | NUMBER(10)    |          | Y        |        | 对应tbl_role表中role_id字段 |
-| 13       | USER_ORGID       | 用户所属组织     | NUMBER(10)    |          | N        |        | 对应tbl_org表中org_id字段   |
-| 14       | USER_ISLEADER    | 是否领导         | CHAR(1)       |          | Y        |        | 0-不是，1-是                |
-| 15       | USER_REGTIME     | 用户注册时间     | DATE          |          | Y        |        |                             |
-| 16       | USER_STYLE       | 显示风格         | VARCHAR2(20)  |          | Y        |        |                             |
-| 17       | USER_QUICKLOGIN  | 是否快捷登录     | NUMBER(1)     |          | Y        |        | 0-不是 1-是                 |
-| 18       | USER_ENABLE      | 激活或者禁用     | NUMBER(1)     |          |          |        | 0-禁用 1-激活               |
-| 19       | USER_RECEIVESMS  | 是否接收报警短信 | NUMBER(10)    |          |          |        | 0-否，1-是                  |
-| 20       | USER_RECEIVEMAIL | 是否接收报警邮件 | NUMBER(10)    |          |          |        | 0-否，1-是                  |
+| **序号** | **代码**         | **名称**         | **类型**     | **单位** | **为空** | **键** | **备注**                    |
+|----------|------------------|------------------|--------------|----------|----------|--------|-----------------------------|
+| 1        | USER_NO          | 用户序号         | NUMBER(10)   |          | N        | 主键   |                             |
+| 2        | USER_ID          | 用户账号         | VARCHAR2(20) |          | N        |        |                             |
+| 3        | USER_PWD         | 用户密码         | VARCHAR2(20) |          | Y        |        |                             |
+| 4        | USER_NAME        | 用户名称         | VARCHAR2(40) |          | N        |        |                             |
+| 5        | USER_IN_EMAIL    | 内部邮箱         | VARCHAR2(40) |          | Y        |        |                             |
+| 6        | USER_PHONE       | 用户电话         | VARCHAR2(40) |          | Y        |        |                             |
+| 7        | USER_TYPE        | 用户类型         | NUMBER(10)   |          | Y        |        | 对应tbl_role表中role_id字段 |
+| 8        | USER_ORGID       | 用户所属组织     | NUMBER(10)   |          | N        |        | 对应tbl_org表中org_id字段   |
+| 9        | USER_REGTIME     | 用户注册时间     | DATE         |          | Y        |        |                             |
+| 10       | USER_QUICKLOGIN  | 是否快捷登录     | NUMBER(1)    |          | Y        |        | 0-不是 1-是                 |
+| 11       | USER_ENABLE      | 激活或者禁用     | NUMBER(1)    |          |          |        | 0-禁用 1-激活               |
+| 12       | USER_RECEIVESMS  | 是否接收报警短信 | NUMBER(10)   |          |          |        | 0-否，1-是                  |
+| 13       | USER_RECEIVEMAIL | 是否接收报警邮件 | NUMBER(10)   |          |          |        | 0-否，1-是                  |
 
 ### 1.2.3 tbl\_role
 
@@ -325,7 +311,7 @@
 |----------|-----------------|----------------|--------------|----------|----------|--------|---------------------------|
 | 1        | ID              | 记录编号       | NUMBER(10)   |          | N        | 主键   |                           |
 | 2        | NAME            | 协议采控项名称 | VARCHAR2(50) |          | Y        |        |                           |
-| 3        | MAPPINGCOLUMN   | 映射字段       | VARCHAR2(50) |          | Y        |        |                           |
+| 3        | MAPPINGCOLUMN   | 映射字段       | VARCHAR2(30) |          | Y        |        |                           |
 | 4        | PROTOCOLTYPE    | 协议类型       | NUMBER(1)    |          | Y        |        | 0-泵设备协议 1-管设备协议 |
 | 5        | REPETITIONTIMES | 重复次数       | NUMBER(2)    |          | Y        |        |                           |
 | 6        | MAPPINGMODE     | 映射模式       | NUMBER(1)    |          | Y        |        | 0-以地址为准 1-以名称为准 |
@@ -783,14 +769,7 @@
 | 4        | ORG_MEMO   | 单位说明     | VARCHAR2 |          |
 | 5        | ORG_PARENT | 父级单位编号 | NUMBER   |          |
 | 6        | ORG_SEQ    | 单位排序     | NUMBER   |          |
-| 7        | ORG_FLAG   | 单位标志     | CHAR     |          |
-| 8        | ORG_REALID | 单位当前编号 | NUMBER   |          |
-| 9        | ORG_LEVEL  | 单位级别     | NUMBER   |          |
-| 10       | ORG_TYPE   | 单位类型     | NUMBER   |          |
-| 11       | ORG_COORDX | 纬度         | NUMBER   |          |
-| 12       | ORG_COORDY | 经度         | NUMBER   |          |
-| 13       | SHOW_LEVEL | 地图显示级别 | NUMBER   |          |
-| 14       | ALLPATH    | 组织全路径   | VARCHAR2 |          |
+| 7        | ALLPATH    | 组织全路径   | VARCHAR2 |          |
 
 ### 2.2.2 viw_pumpdevice
 
@@ -986,28 +965,24 @@
 
 表3-1 存储过程概览
 
-| **序号** | **名称**                       | **描述**           | **备注**                                             |
-|----------|--------------------------------|--------------------|------------------------------------------------------|
-| 1        | PRD_RESET_SEQUENCE             | 重置序列           |                                                      |
-| 2        | PRD_CLEAR_DATA                 | 清理数据并重置序列 | 执行后将删除泵设备、管设备及相关配置数据和采集数据。 |
-| 3        | PRD_SAVE_PUMPDEVICE            | 保存泵设备数据     |                                                      |
-| 4        | PRD_SAVE_PIPELINEDEVICE        | 保存管设备数据     |                                                      |
-| 5        | PRD_SAVE_SMSDEVICE             | 保存短信设备数据   |                                                      |
-| 6        | PRD_SAVE_AUXILIARYDEVICE       | 保存辅件设备数据   |                                                      |
-| 7        | PRD_CHANGE_PUMPDEVICENAME      | 修改泵设备名称     |                                                      |
-| 8        | PRD_CHANGE_PIPELINEDEVICENAME  | 修改管设备名称     |                                                      |
-| 9        | PRD_CHANGE_SMSDEVICENAME       | 修改短信设备名称   |                                                      |
-| 10       | PRD_CHANGE_AUXILIARYDEVICENAME | 修改辅件设备名称   |                                                      |
-| 11       | PRD_SAVE_PUMPALARMINFO         | 保存泵设备报警数据 |                                                      |
-| 12       | PRD_SAVE_PIPELINEALARMINFO     | 保存管设备报警数据 |                                                      |
-| 13       | PRD_SAVE_ALARMCOLOR            | 保存报警等级颜色   |                                                      |
-| 14       | PRD_SAVE_DEVICEOPERATIONLOG    | 保存设备操作日志   |                                                      |
-| 15       | PRD_SAVE_RESOURCEMONITORING    | 保存资源监测数据   |                                                      |
-| 16       | PRD_SAVE_SYSTEMLOG             | 保存系统日志数据   |                                                      |
-| 17       | PRD_UPDATE_PUMPDEVICE          | 修改泵设备数据     |                                                      |
-| 18       | PRD_UPDATE_PIPELINEDEVICE      | 修改管设备数据     |                                                      |
-| 19       | PRD_UPDATE_SMSDEVICE           | 修改短信设备数据   |                                                      |
-| 20       | PRD_UPDATE_AUXILIARYDEVICE     | 修改辅件设备数据   |                                                      |
+| **序号** | **名称**                    | **描述**           | **备注**                                             |
+|----------|-----------------------------|--------------------|------------------------------------------------------|
+| 1        | PRD_RESET_SEQUENCE          | 重置序列           |                                                      |
+| 2        | PRD_CLEAR_DATA              | 清理数据并重置序列 | 执行后将删除泵设备、管设备及相关配置数据和采集数据。 |
+| 3        | PRD_SAVE_PUMPDEVICE         | 保存泵设备数据     |                                                      |
+| 4        | PRD_SAVE_PIPELINEDEVICE     | 保存管设备数据     |                                                      |
+| 5        | PRD_SAVE_SMSDEVICE          | 保存短信设备数据   |                                                      |
+| 6        | PRD_SAVE_AUXILIARYDEVICE    | 保存辅件设备数据   |                                                      |
+| 7        | PRD_SAVE_PUMPALARMINFO      | 保存泵设备报警数据 |                                                      |
+| 8        | PRD_SAVE_PIPELINEALARMINFO  | 保存管设备报警数据 |                                                      |
+| 9        | PRD_SAVE_ALARMCOLOR         | 保存报警等级颜色   |                                                      |
+| 10       | PRD_SAVE_DEVICEOPERATIONLOG | 保存设备操作日志   |                                                      |
+| 11       | PRD_SAVE_RESOURCEMONITORING | 保存资源监测数据   |                                                      |
+| 12       | PRD_SAVE_SYSTEMLOG          | 保存系统日志数据   |                                                      |
+| 13       | PRD_UPDATE_PUMPDEVICE       | 修改泵设备数据     |                                                      |
+| 14       | PRD_UPDATE_PIPELINEDEVICE   | 修改管设备数据     |                                                      |
+| 15       | PRD_UPDATE_SMSDEVICE        | 修改短信设备数据   |                                                      |
+| 16       | PRD_UPDATE_AUXILIARYDEVICE  | 修改辅件设备数据   |                                                      |
 
 # 四、触发器
 

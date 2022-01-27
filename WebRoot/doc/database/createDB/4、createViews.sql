@@ -2,8 +2,7 @@
 /* View: viw_org                                         */
 /*==============================================================*/
 create or replace view viw_org as
-select t.org_id,t.org_code,t.org_name,t.org_memo,t.org_parent,t.org_seq,t.org_flag,t.org_realid,t.org_level,t.org_type,
-t.org_coordx,t.org_coordy,t.show_level,
+select t.org_id,t.org_code,t.org_name,t.org_memo,t.org_parent,t.org_seq,
 substr(sys_connect_by_path(t.org_name,'/'),2) as allpath
 from tbl_org t
 start with t.org_parent=0

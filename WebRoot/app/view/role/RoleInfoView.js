@@ -39,25 +39,10 @@ Ext.define("AP.view.role.RoleInfoView", {
                     	grantRolePermission();
                     }
         		}]
-//        		bbar: ['->', {
-//                    xtype: 'button',
-//                    itemId: 'addRightModuleLableClassBtnId',
-//                    id: 'addRightModuleLableClassBtn_Id',
-//                    text: '保存',
-//                    iconCls: 'save',
-//                    pressed: true,
-//                    handler: function () {
-//                    	grantRolePermission();
-//                    }
-//        		}, {
-//                    xtype: 'tbspacer',
-//                    flex: 1
-//        		}]
         	}]
         });
         me.callParent(arguments);
     }
-
 });
 
 createRoleGridColumn = function(columnInfo) {

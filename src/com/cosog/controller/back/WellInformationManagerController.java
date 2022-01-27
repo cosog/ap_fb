@@ -829,68 +829,6 @@ public class WellInformationManagerController extends BaseController {
 		return null;
 	}
 	
-	@SuppressWarnings("static-access")
-	@RequestMapping("/editWellName")
-	public String editWellName() throws Exception {
-		HttpSession session=request.getSession();
-		User user = (User) session.getAttribute("userLogin");
-		String orgid=user.getUserorgids();
-		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "");
-		deviceType = ParamUtils.getParameter(request, "deviceType");
-		JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+data+"}");//解析数据
-		JSONArray jsonArray = jsonObject.getJSONArray("data");
-		for(int i=0;i<jsonArray.size();i++){
-			JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-			String oldWellName=everydata.getString("oldWellName");
-			String newWellName=everydata.getString("newWellName");
-			
-			if(StringManagerUtils.stringToInteger(deviceType)>=100&&StringManagerUtils.stringToInteger(deviceType)<200){
-				this.wellInformationManagerService.editPumpDeviceName(oldWellName,newWellName,orgid);
-			}else if(StringManagerUtils.stringToInteger(deviceType)>=200&&StringManagerUtils.stringToInteger(deviceType)<300){
-				this.wellInformationManagerService.editPipelineDeviceName(oldWellName,newWellName,orgid);
-			}else if(StringManagerUtils.stringToInteger(deviceType)>=300){
-				this.wellInformationManagerService.editSMSDeviceName(oldWellName,newWellName,orgid);
-			}
-			
-			
-		}
-		EquipmentDriverServerTask.LoadDeviceCommStatus();
-		String json ="{success:true}";
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	@SuppressWarnings("static-access")
-	@RequestMapping("/editAuxiliaryDeviceName")
-	public String editAuxiliaryDeviceName() throws Exception {
-		HttpSession session=request.getSession();
-		User user = (User) session.getAttribute("userLogin");
-		String data = ParamUtils.getParameter(request, "data").replaceAll("&nbsp;", "");
-		JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+data+"}");//解析数据
-		JSONArray jsonArray = jsonObject.getJSONArray("data");
-		for(int i=0;i<jsonArray.size();i++){
-			JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-			String oldName=everydata.getString("oldName");
-			String newName=everydata.getString("newName");
-			this.wellInformationManagerService.editAuxiliaryDeviceName(oldName,newName);
-		}
-		String json ="{success:true}";
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
 	
 	/**
 	 * <p>
