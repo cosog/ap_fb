@@ -1,8 +1,8 @@
 /*==============================================================*/
 /* 初始化tbl_org数据                                          */
 /*==============================================================*/
-insert into tbl_org (ORG_ID, ORG_CODE, ORG_NAME, ORG_MEMO, ORG_PARENT, ORG_SEQ, ORG_FLAG, ORG_REALID, ORG_LEVEL, ORG_TYPE, ORG_COORDX, ORG_COORDY, SHOW_LEVEL)
-values (1, '0000', '组织根节点', '组织根节点', 0, null, null, null, 7, 7, 0.000000, 0.000000, 1);
+insert into tbl_org (ORG_ID, ORG_CODE, ORG_NAME, ORG_MEMO, ORG_PARENT, ORG_SEQ)
+values (1, '0000', '组织根节点', '组织根节点', 0, null);
 
 /*==============================================================*/
 /* 初始化tbl_code数据                                          */

@@ -341,9 +341,6 @@ SelectedUserDataAttrInfoGridPanel = function () {
     Ext.getCmp('userOrgid_Id').setValue(userOrgid);
     Ext.getCmp('userName_Id').setValue(userName);
     Ext.getCmp('userId_Id').setValue(userId);
-//    Ext.getCmp('userPwd_Id').setValue(userPwd);
-    Ext.getCmp('userQuidkLoginComboxfield_Id').setValue(userQuickLogin);
-    Ext.getCmp('userQuidkLoginComboxfield_Id').setRawValue(userQuickLoginName);
     
     if(userQuickLogin==1){
     	Ext.getCmp('userQuickLoginRadio1_Id').setValue(true);

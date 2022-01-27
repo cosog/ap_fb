@@ -57,15 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.KeyParameter;
 import com.cosog.model.Org;
-import com.cosog.model.ProductionOutWellInfo;
-import com.cosog.model.Pump;
 import com.cosog.model.User;
-import com.cosog.model.WellTrajectory;
-import com.cosog.model.Wellorder;
-import com.cosog.model.WellsiteGridPanelData;
-import com.cosog.model.balance.BalanceResponseData;
-import com.cosog.model.balance.CycleEvaluaion;
-import com.cosog.model.balance.TorqueBalanceResponseData;
 import com.cosog.model.calculate.CommResponseData;
 import com.cosog.model.calculate.TimeEffResponseData;
 import com.cosog.model.calculate.TimeEffTotalResponseData;
@@ -86,7 +78,6 @@ import com.cosog.model.gridmodel.WellGridPanelData;
 import com.cosog.model.gridmodel.WellHandsontableChangedData;
 import com.cosog.model.gridmodel.WellProHandsontableChangedData;
 import com.cosog.model.gridmodel.WellringGridPanelData;
-import com.cosog.model.scada.CallbackDataItems;
 import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.EquipmentDriveMap;
@@ -271,9 +262,6 @@ public class BaseDao extends HibernateDaoSupport {
 		PreparedStatement ps=null;
 		try {
 			conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-//			stat=conn.createStatement();
-//			n = stat.executeUpdate(sql);
-			
 			ps=conn.prepareStatement(sql);
 			n=ps.executeUpdate();
 		} catch (SQLException e) {
@@ -315,8 +303,6 @@ public class BaseDao extends HibernateDaoSupport {
 				ps.setClob(i+1, clob);  
 			}
 			n=ps.executeUpdate();
-			
-//			n=OracleJdbcUtis.executeSqlUpdateClob(conn, ps, sql, values);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -378,11 +364,11 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public List<?> findCallSql(final String callSql, final Object... values) {
 		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(callSql);
-				for (int i = 0; i < values.length; i++) {
-					query.setParameter(i, values[i]);
-				}
-				return query.list();
+		SQLQuery query = session.createSQLQuery(callSql);
+		for (int i = 0; i < values.length; i++) {
+			query.setParameter(i, values[i]);
+		}
+		return query.list();
 	}
 
 	public List<Org> findChildOrg(Integer parentId) {
@@ -417,13 +403,13 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getAllPageByHql(final String hql, final Page page) {
 		Session session=getSessionFactory().getCurrentSession();
-				Query query = session.createQuery(hql);
-				ScrollableResults scrollableResults = query.scroll(ScrollMode.SCROLL_SENSITIVE);
-				scrollableResults.last();
-				query.setFirstResult(page.getStart());
-				query.setMaxResults(page.getLimit());
-				page.setTotalCount(scrollableResults.getRowNumber() + 1);
-				return query.list();
+		Query query = session.createQuery(hql);
+		ScrollableResults scrollableResults = query.scroll(ScrollMode.SCROLL_SENSITIVE);
+		scrollableResults.last();
+		query.setFirstResult(page.getStart());
+		query.setMaxResults(page.getLimit());
+		page.setTotalCount(scrollableResults.getRowNumber() + 1);
+		return query.list();
 	}
 
 	/**
@@ -439,63 +425,28 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getAllPageBySql(final String sql, final Page pager, final Object... values) {
 		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(sql);
-				/****
-				 * 为query对象参数赋值操作
-				 * */
-				for (int i = 0; i < values.length; i++) {
-					query.setParameter(i, values[i]);
-				}
-				query.setFirstResult(pager.getStart());// 设置起始位置
-				query.setMaxResults(pager.getLimit());// 设置分页条数
-			 int totals = getTotalCountRows(sql, values);//设置数据表中的总记录数
-				pager.setTotalCount(totals);
-				return query.list();
-	}
-	public <T> List<T> getMyCustomPageBySql(final String sqlAll,final String sql, final Page pager, final Object... values) {
-		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(sql);
-				/****
-				 * 为query对象参数赋值操作
-				 * */
-				for (int i = 0; i < values.length; i++) {
-					values[i] = values[i].toString().replace("@", ",");
-					query.setParameter(i, values[i]);
-				}
-				int totals = getTotalCountRows(sqlAll, values);//设置数据表中的总记录数
-				pager.setTotalCount(totals);
-				return query.list();
-	}
-	//漏失分析获取平均值
-	public <T> List<T> getAverageBySql(final String sqlAll,final String[] col, final Object... values) {
-		String sql = "select ";
-		for(int i = 0; i < col.length;i++){
-			String[] attr = col[i].split(" as ");
-			if (null != attr && attr.length > 1) {
-				col[i] = attr[attr.length-1];
-			}
-			if( col[i].equals("id") ){
-				sql += "(max(" + col[i] + ")+1) as id,";
-			}else if( col[i].equals("jssj") ){
-				sql += "'平均值' as jssj,";
-			}else if( col[i].contains("pf") || col[i].contains("jljh")){
-				sql += "avg(" + col[i] + "),";
-			}else if( col[i].contains("js" ) && !col[i].equals("jssj") ){
-				sql += "avg(" + col[i] + "),";
-			}else if( col[i].contains("lsxs") ){
-				sql += "decode(avg(" + col[i-1] + "),0,null,null,null," + "avg(" + col[i-2] + ")/avg(" + col[i-1] + ")) as lsxs,";
-			}else{
-				sql += "null as " + col[i] +",";
-			}
-		}
-		sql = sql.substring(0, sql.length()-1);
-		sql += " from (" + sqlAll + ")";
-		Session session=getSessionFactory().getCurrentSession();
 		SQLQuery query = session.createSQLQuery(sql);
-		/**为query对象参数赋值操作 **/
+		/****
+		* 为query对象参数赋值操作
+		 * */
 		for (int i = 0; i < values.length; i++) {
 			query.setParameter(i, values[i]);
 		}
+		query.setFirstResult(pager.getStart());// 设置起始位置
+		query.setMaxResults(pager.getLimit());// 设置分页条数
+		int totals = getTotalCountRows(sql, values);//设置数据表中的总记录数
+		pager.setTotalCount(totals);
+		return query.list();
+	}
+	public <T> List<T> getMyCustomPageBySql(final String sqlAll,final String sql, final Page pager, final Object... values) {
+		Session session=getSessionFactory().getCurrentSession();
+		SQLQuery query = session.createSQLQuery(sql);
+		for (int i = 0; i < values.length; i++) {
+			values[i] = values[i].toString().replace("@", ",");
+			query.setParameter(i, values[i]);
+		}
+		int totals = getTotalCountRows(sqlAll, values);//设置数据表中的总记录数
+		pager.setTotalCount(totals);
 		return query.list();
 	}
 
@@ -514,23 +465,22 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getAllPageBySql(final String sql, final Page pager, final Vector<String> v) {
 		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(sql);
-				int index = -1;
-				String data = "";
-				for (int i = 0; i < v.size(); i++) {
-					if (!"".equals(v.get(i)) && null != v.get(i) && v.get(i).length() > 0) {
-						index += 1;
-						data = v.get(i);
-						query.setParameter(index, data);
-					}
-
-				}
-				ScrollableResults scrollableResults = query.scroll(ScrollMode.SCROLL_SENSITIVE);
-				scrollableResults.last();
-				query.setFirstResult(pager.getStart());
-				query.setMaxResults(pager.getLimit());
-				pager.setTotalCount(scrollableResults.getRowNumber() + 1);
-				return query.list();
+		SQLQuery query = session.createSQLQuery(sql);
+		int index = -1;
+		String data = "";
+		for (int i = 0; i < v.size(); i++) {
+			if (!"".equals(v.get(i)) && null != v.get(i) && v.get(i).length() > 0) {
+				index += 1;
+				data = v.get(i);
+				query.setParameter(index, data);
+			}
+		}
+		ScrollableResults scrollableResults = query.scroll(ScrollMode.SCROLL_SENSITIVE);
+		scrollableResults.last();
+		query.setFirstResult(pager.getStart());
+		query.setMaxResults(pager.getLimit());
+		pager.setTotalCount(scrollableResults.getRowNumber() + 1);
+		return query.list();
 	}
 
 	public void getChildrenList(List parentitem, Integer orgid) {
@@ -575,31 +525,29 @@ public class BaseDao extends HibernateDaoSupport {
 		BigDecimal obj = (BigDecimal) query.uniqueResult();
 		return obj.intValue();
 	}
-
 	
-
 	public <T> List<T> getListAndTotalCountForPage(final Page pager, final String hql, final String allhql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createQuery(hql);
-			       ScrollableResults scrollableResults = query.scroll(ScrollMode.SCROLL_SENSITIVE);
-					scrollableResults.last();
-					 int totals = scrollableResults.getRowNumber()+1;
-					pager.setTotalCount(totals);
-					query.setFirstResult(pager.getStart());
-					query.setMaxResults(pager.getLimit());
-					List<T> list = query.list();
-					return list;
+		Query query = session.createQuery(hql);
+		ScrollableResults scrollableResults = query.scroll(ScrollMode.SCROLL_SENSITIVE);
+		scrollableResults.last();
+		int totals = scrollableResults.getRowNumber()+1;
+		pager.setTotalCount(totals);
+		query.setFirstResult(pager.getStart());
+		query.setMaxResults(pager.getLimit());
+		List<T> list = query.list();
+		return list;
 	}
 
 	public <T> List<T> getListAndTotalForPage(final Page pager, final String hql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createQuery(hql);
-			         int total = query.list().size();
-					pager.setTotalCount(total);
-					query.setFirstResult(pager.getStart());
-					query.setMaxResults(pager.getLimit());
-					List<T> list = query.list();
-					return list;
+		Query query = session.createQuery(hql);
+		int total = query.list().size();
+		pager.setTotalCount(total);
+		query.setFirstResult(pager.getStart());
+		query.setMaxResults(pager.getLimit());
+		List<T> list = query.list();
+		return list;
 	}
 
 	/**
@@ -614,19 +562,19 @@ public class BaseDao extends HibernateDaoSupport {
 		final String hql = "select count(*) from  " + o;
 		Long result = null;
 		Session session=getSessionFactory().getCurrentSession();
-				Query query = session.createQuery(hql);
-				return (Long) query.uniqueResult();
+		Query query = session.createQuery(hql);
+		return (Long) query.uniqueResult();
 	}
 
 	protected <T> List<T> getListForPage(final Class<T> clazz, final Criterion[] criterions, final int offset, final int length) {
 		Session session=getSessionFactory().getCurrentSession();
-				Criteria criteria = session.createCriteria(clazz);
-				for (int i = 0; i < criterions.length; i++) {
-					criteria.add(criterions[i]);
-				}
-				criteria.setFirstResult(offset);
-				criteria.setMaxResults(length);
-				return criteria.list();
+		Criteria criteria = session.createCriteria(clazz);
+		for (int i = 0; i < criterions.length; i++) {
+			criteria.add(criterions[i]);
+		}
+		criteria.setFirstResult(offset);
+		criteria.setMaxResults(length);
+		return criteria.list();
 	}
 	
 	public <T> List<T> getListForPage(final int offset, final int pageSize,final String hql) throws Exception {
@@ -641,23 +589,23 @@ public class BaseDao extends HibernateDaoSupport {
 
 	public <T> List<T> getListForPage(final int offset, final int pageSize, final String hql, final List<KeyParameter> params) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createQuery(hql);
-					for (int i = 0; i < params.size(); i++) {
-						KeyParameter p = params.get(i);
-						if (p.getParamType().equalsIgnoreCase("String")) {
-							query.setString(i, "%" + p.getStrParamValue() + "%");
-						} else if (p.getParamType().equalsIgnoreCase("Integer")) {
-							query.setInteger(i, p.getIntParamValue());
-						} else if (p.getParamType().equalsIgnoreCase("Date")) {
-							query.setDate(i, p.getDateParamValue());
-						} else if (p.getParamType().equalsIgnoreCase("Timestamp")) {
-							query.setTimestamp(i, p.getTimeParamValue());
-						}
-					}
-					query.setFirstResult(offset - 1);
-					query.setMaxResults(pageSize);
-					List<T> list = query.list();
-					return list;
+		Query query = session.createQuery(hql);
+		for (int i = 0; i < params.size(); i++) {
+			KeyParameter p = params.get(i);
+			if (p.getParamType().equalsIgnoreCase("String")) {
+				query.setString(i, "%" + p.getStrParamValue() + "%");
+			} else if (p.getParamType().equalsIgnoreCase("Integer")) {
+				query.setInteger(i, p.getIntParamValue());
+			} else if (p.getParamType().equalsIgnoreCase("Date")) {
+				query.setDate(i, p.getDateParamValue());
+			} else if (p.getParamType().equalsIgnoreCase("Timestamp")) {
+				query.setTimestamp(i, p.getTimeParamValue());
+			}
+		}
+		query.setFirstResult(offset - 1);
+		query.setMaxResults(pageSize);
+		List<T> list = query.list();
+		return list;
 	}
 
 	/**
@@ -672,21 +620,21 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getListForPage(final Page pager, final String hql, final String o) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createQuery(hql);
-					pager.setTotalCount(Integer.parseInt(getMaxCountValue(o) + ""));
-					query.setFirstResult(pager.getStart());
-					query.setMaxResults(pager.getLimit());
-					List<T> list = query.list();
-					return list;
+		Query query = session.createQuery(hql);
+		pager.setTotalCount(Integer.parseInt(getMaxCountValue(o) + ""));
+		query.setFirstResult(pager.getStart());
+		query.setMaxResults(pager.getLimit());
+		List<T> list = query.list();
+		return list;
 	}
 
 	public <T> List<T> getListForReportPage(final int offset, final int pageSize, final String hql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createSQLQuery(hql);
-					query.setFirstResult(offset);
-					query.setMaxResults(pageSize);
-					List<T> list = query.list();
-					return list;
+		Query query = session.createSQLQuery(hql);
+		query.setFirstResult(offset);
+		query.setMaxResults(pageSize);
+		List<T> list = query.list();
+		return list;
 	}
 
 	/**
@@ -705,18 +653,18 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getListPage(final int offset, final int pageSize, final String hql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createSQLQuery(hql);
-					query.setFirstResult(offset);
-					query.setMaxResults(pageSize);
-					List<T> list = query.list();
-					return list;
+		Query query = session.createSQLQuery(hql);
+		query.setFirstResult(offset);
+		query.setMaxResults(pageSize);
+		List<T> list = query.list();
+		return list;
 	}
 
 	public Long getMaxCountValue(final String o) {
 		Session session=getSessionFactory().getCurrentSession();
 		final String hql = "select count(*) from " + o;
-				Query query = session.createQuery(hql);
-				return (Long) query.uniqueResult();
+		Query query = session.createQuery(hql);
+		return (Long) query.uniqueResult();
 	}
 
 	public <T> T getObject(Class<T> clazz, Serializable id) {
@@ -733,9 +681,9 @@ public class BaseDao extends HibernateDaoSupport {
 	
 	public <T> List<T> getSQLObjects(final String sql) {
 		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(sql);
-				List list = query.list();
-				return (List<T>) list;
+		SQLQuery query = session.createSQLQuery(sql);
+		List list = query.list();
+		return (List<T>) list;
 	}
 
 	public Integer getRecordCountRows(String hql) {
@@ -756,11 +704,11 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getSQLListForPage(final int offset, final int pageSize, final String hql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createSQLQuery(hql);
-					query.setFirstResult(offset);
-					query.setMaxResults(pageSize);
-					List<T> list = query.list();
-					return list;
+		Query query = session.createSQLQuery(hql);
+		query.setFirstResult(offset);
+		query.setMaxResults(pageSize);
+		List<T> list = query.list();
+		return list;
 	}
 
 	/**
@@ -774,16 +722,15 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public <T> List<T> getSQLList(final String sql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createSQLQuery(sql);
-					List<T> list = query.list();
-					return list;
+		Query query = session.createSQLQuery(sql);
+		List<T> list = query.list();
+		return list;
 	}
 
 	public Integer getTotalCountRows(String sql, final Object... values) {
 		String allsql="";
 		if(sql.trim().indexOf("count(1)")>0||sql.trim().indexOf("count(*)")>0){
 			allsql=sql;
-			
 		}else{
 			if(sql.indexOf("distinct")>0||sql.indexOf("group")>0){
 				allsql = "select count(1)  from  (" + sql + ")";
@@ -811,8 +758,8 @@ public class BaseDao extends HibernateDaoSupport {
 
 	public Long getTotalCountValue(final String o) {
 		Session session=getSessionFactory().getCurrentSession();
-				Query query = session.createQuery(o);
-				return (Long) query.uniqueResult();
+		Query query = session.createQuery(o);
+		return (Long) query.uniqueResult();
 	}
 
 	public Integer getTotalSqlCountRows(String sql, final Object... values) {
@@ -843,12 +790,12 @@ public class BaseDao extends HibernateDaoSupport {
 
 	public <T> List<T> getWellListForPage(final int offset, final int pageSize, final String hql, final int orgId) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					Query query = session.createQuery(hql);
-					query.setInteger("orgId", orgId);
-					query.setFirstResult(offset);
-					query.setMaxResults(pageSize);
-					List<T> list = query.list();
-					return list;
+		Query query = session.createQuery(hql);
+		query.setInteger("orgId", orgId);
+		query.setFirstResult(offset);
+		query.setMaxResults(pageSize);
+		List<T> list = query.list();
+		return list;
 	}
 
 	public Serializable insertObject(Object obj) {
@@ -1874,99 +1821,7 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
-	public Boolean saveElecInverPumpingUnitData(ElecInverCalculateManagerHandsontableChangedData elecInverCalculateManagerHandsontableChangedData) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		Statement st=null; 
-		CallableStatement cs=null;
-		
-		try {
-			cs = conn.prepareCall("{call prd_save_rpcinformationNoPTF(?,?,?,?,?,?,?,?,?,?,?)}");
-			for(int i=0;i<elecInverCalculateManagerHandsontableChangedData.getUpdatelist().size();i++){
-				
-				cs.setString(1, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getWellName());
-				cs.setString(2, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getManufacturer());
-				cs.setString(3, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getModel());
-				cs.setString(4, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getStroke());
-				cs.setString(5, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getCrankRotationDirection());
-				cs.setString(6, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getOffsetAngleOfCrank());
-				cs.setString(7, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getCrankGravityRadius());
-				cs.setString(8, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getSingleCrankWeight());
-				cs.setString(9, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getSingleCrankWeight());
-				cs.setString(10, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getBalancePosition());
-				cs.setString(11, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getBalanceWeight());
-				cs.executeUpdate();
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			if(cs!=null)
-				cs.close();
-			conn.close();
-		}
-		return true;
-	}
 	
-	public Boolean saveElecInverOptimizeHandsontableData(ElecInverCalculateManagerHandsontableChangedData elecInverCalculateManagerHandsontableChangedData,String orgId) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		CallableStatement cs=null;
-		PreparedStatement ps=null;
-		try {
-			cs = conn.prepareCall("{call prd_save_rpc_inver_opt(?,?,?,?,?,?,?,?,?,?,?,?,?)}");
-			if(elecInverCalculateManagerHandsontableChangedData.getUpdatelist()!=null){
-				for(int i=0;i<elecInverCalculateManagerHandsontableChangedData.getUpdatelist().size();i++){
-					if(StringManagerUtils.isNotNull(elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getWellName())){
-						
-						cs.setString(1, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getWellName());
-						cs.setString(2, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getOffsetAngleOfCrankPS());
-						cs.setString(3, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getSurfaceSystemEfficiency());
-						cs.setString(4, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFS_LeftPercent());
-						cs.setString(5, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFS_RightPercent());
-						cs.setString(6, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getWattAngle());
-						cs.setString(7, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFilterTime_Watt());
-						cs.setString(8, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFilterTime_I());
-						cs.setString(9, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFilterTime_RPM());
-						cs.setString(10, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFilterTime_FSDiagram());
-						cs.setString(11, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFilterTime_FSDiagram_L());
-						cs.setString(12, elecInverCalculateManagerHandsontableChangedData.getUpdatelist().get(i).getFilterTime_FSDiagram_R());
-						cs.setString(13, orgId);
-						cs.executeUpdate();
-					}
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			if(ps!=null){
-				ps.close();
-			}
-			if(cs!=null){
-				cs.close();
-			}
-			conn.close();
-		}
-		return true;
-	}
-	
-	public Boolean editWellName(String oldWellName,String newWellName,String orgid) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		CallableStatement cs=null;
-		try {
-			cs = conn.prepareCall("{call prd_change_wellname(?,?,?)}");
-			cs.setString(1,oldWellName);
-			cs.setString(2, newWellName);
-			cs.setString(3, orgid);
-			cs.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			if(cs!=null){
-				cs.close();
-			}
-			conn.close();
-		}
-		return true;
-	}
 	
 	public Boolean editPumpDeviceName(String oldWellName,String newWellName,String orgid) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
@@ -2028,25 +1883,6 @@ public class BaseDao extends HibernateDaoSupport {
 		return true;
 	}
 	
-	public Boolean editAuxiliaryDeviceName(String oldName,String newName) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		CallableStatement cs=null;
-		try {
-			cs = conn.prepareCall("{call prd_change_auxiliarydevicename(?,?)}");
-			cs.setString(1,oldName);
-			cs.setString(2, newName);
-			cs.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			if(cs!=null){
-				cs.close();
-			}
-			conn.close();
-		}
-		return true;
-	}
-	
 	public Boolean savePumpEditerGridData(PumpGridPanelData p, String ids, String comandType) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;
@@ -2070,39 +1906,6 @@ public class BaseDao extends HibernateDaoSupport {
 		}
 		return true;
 	}
-	
-	public Boolean doStatItemsSetSave(String statType,String data) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		Statement st=null; 
-		JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+data+"}");//解析数据
-		JSONArray jsonArray = jsonObject.getJSONArray("data");
-		
-		try {
-			st=conn.createStatement(); 
-			if(!"GLPHD".equalsIgnoreCase(statType)&&!"PHD".equalsIgnoreCase(statType)){
-				String sql="delete from tbl_rpc_statistics_conf t where t.s_type='"+statType+"'";
-				int updatecount=st.executeUpdate(sql);
-			}
-			for(int i=0;i<jsonArray.size();i++){
-				JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-				String statitem=everydata.getString("statitem");
-				String downlimit=everydata.getString("downlimit");
-				String uplimit=everydata.getString("uplimit");
-				String sql="insert into tbl_rpc_statistics_conf(s_level,s_min,s_max,s_type,s_code) values('"+statitem+"',"+downlimit+","+uplimit+",'"+statType+"',"+(i+1)+")";
-				if("GLPHD".equalsIgnoreCase(statType)||"PHD".equalsIgnoreCase(statType)){
-					sql="update tbl_rpc_statistics_conf set s_min="+downlimit+",s_max="+uplimit+" where s_type='"+statType+"' and s_level='"+statitem+"'";
-				}
-				int updatecount=st.executeUpdate(sql);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			if(st!=null)
-				st.close();
-			conn.close();
-		}
-		return true;
-	}
 
 	/**
 	 * 注入sessionFactory
@@ -2114,21 +1917,21 @@ public class BaseDao extends HibernateDaoSupport {
 
 	public int updatealarmmessage(final String sql) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					SQLQuery query = session.createSQLQuery(sql);
-					return query.executeUpdate();
+		SQLQuery query = session.createSQLQuery(sql);
+		return query.executeUpdate();
 
 	}
 
 	public int updateBySQL(final String sql, final List pl) throws Exception {
 		Session session=getSessionFactory().getCurrentSession();
-					SQLQuery query = session.createSQLQuery(sql);
-					if (pl != null && !pl.isEmpty()) {
-						for (int i = 0; i < pl.size(); i++) {
-							query.setParameter(i, pl.get(i));
-						}
-						return query.executeUpdate();
-					}
-					return 0;
+		SQLQuery query = session.createSQLQuery(sql);
+		if (pl != null && !pl.isEmpty()) {
+			for (int i = 0; i < pl.size(); i++) {
+				query.setParameter(i, pl.get(i));
+			}
+			return query.executeUpdate();
+		}
+		return 0;
 	}
 
 	/**
@@ -2140,8 +1943,8 @@ public class BaseDao extends HibernateDaoSupport {
 	 */
 	public Object updateObject(final String sql) {
 		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(sql);
-				return query.executeUpdate();
+		SQLQuery query = session.createSQLQuery(sql);
+		return query.executeUpdate();
 	}
 
 	/**
@@ -2159,86 +1962,8 @@ public class BaseDao extends HibernateDaoSupport {
 
 	public int updateWellorder(final String hql) {
 		Session session=getSessionFactory().getCurrentSession();
-				SQLQuery query = session.createSQLQuery(hql);
-				return query.executeUpdate();
-	}
-	
-	public boolean updateWellorder(JSONObject everydata,String orgid) throws SQLException {
-		Connection conn=null;
-		try {
-			conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-			CallableStatement cs;
-			cs = conn.prepareCall("{call PRO_SAVEWELLORDER(?,?,?)}");
-			cs.setString(1, everydata.getString("jh"));
-			cs.setInt(2, everydata.getInt("pxbh"));
-			cs.setString(3, orgid);
-			cs.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}finally{
-			if(conn!=null){
-				conn.close();
-			}
-		}
-		return true;
-	}
-	
-
-	public boolean updateWellTrajectoryById(WellTrajectory wtvo, int line, int jbh) throws SQLException {
-		boolean flag = false;
-		int ok = -1;
-		ByteArrayInputStream bais = null;
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		StringBuffer sb = new StringBuffer();
-		String jsgj = wtvo.getClsd() + "," + wtvo.getCzsd() + "," + wtvo.getJxj() + "," + wtvo.getFwj() + ";";
-		String sql = "update t_welltrajectory set jsgj=?0 where jbh=?1";
-		if (wtvo != null) {
-			try {
-				String[] tracks = wtvo.getJsgj().split(";");
-				for (int i = 0; i < tracks.length; i++) {
-					if ((i + 1) == line) {
-						tracks[i] = jsgj;
-						sb.append(tracks[i]);
-					} else {
-						sb.append(tracks[i] + ";");
-					}
-
-				}
-				ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				byte[] buffer = (sb.toString()).getBytes();
-				bais = new ByteArrayInputStream(buffer);
-				ps.setBinaryStream(1, bais, bais.available()); // 第二个参数为文件的内容
-				ps.setInt(2, jbh);
-				ok = ps.executeUpdate();
-				if (ok > 0) {
-					flag = true;
-				}
-			} catch (Exception e) {
-
-				e.printStackTrace();
-			} finally {
-				try {
-					if(rs!=null){
-						rs.close();
-					}
-					if(ps!=null){
-						ps.close();
-					}
-					if(conn!=null){
-						conn.close();
-					}
-					bais.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-		}
-		return flag;
+		SQLQuery query = session.createSQLQuery(hql);
+		return query.executeUpdate();
 	}
 
 	public void callProcedureByCallName() {
@@ -2272,39 +1997,6 @@ public class BaseDao extends HibernateDaoSupport {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	// 调用存储过程 删除流程相关记录
-	public boolean deleteByCallPro(String procinstid) throws SQLException {
-		String procdure = "{Call sp_deleteInstByRootID(?)}";
-		CallableStatement cs = null;
-		Connection conn=null;
-		try {
-			conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-			cs = conn.prepareCall(procdure);
-			cs.setString(1, procinstid);
-		} catch (HibernateException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			try {
-				if(cs!=null){
-					cs.close();
-				}
-				if(conn!=null){
-					conn.close();
-				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return cs.execute();
-	}
-	
-	public void OnGetDate(final List<CallbackDataItems> list,final String RTUName) throws HibernateException,SQLException{
-		
 	}
 
 	public Boolean setAlarmColor(AlarmShowStyle alarmShowStyle) throws SQLException {
@@ -2342,101 +2034,6 @@ public class BaseDao extends HibernateDaoSupport {
 		}
 		return true;
 	}
-	public int SetWellProductionCycle(String sql) throws SQLException, ParseException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		CallableStatement cs=null;
-		Statement st=null; 
-		int result=0;
-		try {
-			st=conn.createStatement(); 
-			result=st.executeUpdate(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally{
-			if(cs!=null)
-				cs.close();
-			if(st!=null)
-				st.close();
-			conn.close();
-		}
-		return result;
-	}
-	
-	public Boolean savePSToFSPumpingUnitData(String PumpingUnitData,String PumpingUnitPTRData,String wellName) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		Statement st=null; 
-		CallableStatement cs=null;
-		JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+PumpingUnitData+"}");//解析数据
-		JSONArray jsonArray = jsonObject.getJSONArray("data");
-		
-		CLOB PTFClob=new CLOB((OracleConnection) conn);
-		PTFClob = oracle.sql.CLOB.createTemporary(conn,false,1);
-		PTFClob.putString(1, PumpingUnitPTRData);
-		try {
-			cs = conn.prepareCall("{call prd_save_rpcinformation(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
-			for(int i=0;i<jsonArray.size();i++){
-				JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-				cs.setString(1, everydata.getString("WellName"));
-				cs.setString(2, everydata.getString("Manufacturer"));
-				cs.setString(3, everydata.getString("Model"));
-				cs.setString(4, everydata.getString("Stroke"));
-				cs.setString(5, everydata.getString("CrankRotationDirection"));
-				cs.setString(6, everydata.getString("OffsetAngleOfCrank"));
-				cs.setString(7, everydata.getString("CrankGravityRadius"));
-				cs.setString(8, everydata.getString("SingleCrankWeight"));
-				cs.setString(9, everydata.getString("SingleCrankPinWeight"));
-				cs.setString(10, everydata.getString("StructuralUnbalance"));
-				cs.setString(11, everydata.getString("BalancePosition"));
-				cs.setString(12, everydata.getString("BalanceWeight"));
-				cs.setString(13, wellName);
-				cs.setClob(14, PTFClob);
-				cs.executeUpdate();
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			if(cs!=null)
-				cs.close();
-			conn.close();
-		}
-		return true;
-	}
-	
-	public Boolean savePSToFSMotorData(String MotorData,String MotorPerformanceCurverData,String wellName) throws SQLException {
-		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
-		Statement st=null; 
-		CallableStatement cs=null;
-		JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+MotorData+"}");//解析数据
-		JSONArray jsonArray = jsonObject.getJSONArray("data");
-		
-		CLOB PerformanceCurverClob=new CLOB((OracleConnection) conn);
-		PerformanceCurverClob = oracle.sql.CLOB.createTemporary(conn,false,1);
-		PerformanceCurverClob.putString(1, MotorPerformanceCurverData);
-		try {
-			cs = conn.prepareCall("{call prd_save_rpc_motor(?,?,?,?,?,?,?)}");
-			for(int i=0;i<jsonArray.size();i++){
-				JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-				cs.setString(1, everydata.getString("WellName"));
-				cs.setString(2, everydata.getString("Manufacturer"));
-				cs.setString(3, everydata.getString("Model"));
-				cs.setString(4, everydata.getString("BeltPulleyDiameter"));
-				cs.setString(5, everydata.getString("SynchroSpeed"));
-				cs.setString(6, wellName);
-				cs.setClob(7, PerformanceCurverClob);
-				cs.executeUpdate();
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			if(cs!=null)
-				cs.close();
-			conn.close();
-		}
-		return true;
-	}
-	
 	public Boolean savePumpAlarmInfo(String wellName,String deviceType,String acqTime,List<AcquisitionItemInfo> acquisitionItemInfoList) throws SQLException {
 		Connection conn=SessionFactoryUtils.getDataSource(getSessionFactory()).getConnection();
 		CallableStatement cs=null;

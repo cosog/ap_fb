@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.cosog.controller.base.BaseController;
 import com.cosog.model.AlarmShowStyle;
 import com.cosog.model.User;
-import com.cosog.model.WorkStatusAlarm;
 import com.cosog.model.drive.ModbusDriverSaveData;
 import com.cosog.service.back.AlarmSetManagerService;
 import com.cosog.service.base.CommonDataService;
@@ -53,90 +52,15 @@ import net.sf.json.JSONObject;
 public class AlarmSetManagerController extends BaseController {
 	private static Log log = LogFactory.getLog(AlarmSetManagerController.class);
 	private static final long serialVersionUID = -281275682819237996L;
-	private WorkStatusAlarm alarm;
 //	private DistreteAlarmLimit limit;
 
 	@Autowired
-	private AlarmSetManagerService<WorkStatusAlarm> alarmSetManagerService;
+	private AlarmSetManagerService<?> alarmSetManagerService;
 	@Autowired
 	private CommonDataService commonDataService;
     
 	private String orgId;
 	private String jh;
-
-
-	//添加前缀绑定
-//	@InitBinder("alarm")    
-//    public void initBinder(WebDataBinder binder) {    
-//            binder.setFieldDefaultPrefix("alarm.");    
-//    }
-	
-	/**<p>描述：修改报警设置信息</p>
-	 * 
-	 * @return
-	 */
-	@RequestMapping("/doAlarmsSetEdit")
-	public String doAlarmsSetEdit(@ModelAttribute WorkStatusAlarm alarm) {
-		String result="";
-		try {
-			this.alarmSetManagerService.modifyAlarmSet(alarm);
-			response.setCharacterEncoding(Constants.ENCODING_UTF8);
-			response.setHeader("Cache-Control", "no-cache");
-			PrintWriter pw = response.getWriter();
-			result = "{success:true,msg:true}";
-			response.setCharacterEncoding(Constants.ENCODING_UTF8);
-			response.getWriter().print(result);
-			pw.flush();
-			pw.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			result = "{success:true,msg:false}";
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	/**<p>描述：显示报警设置信息列表</p>
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/doAlarmsSetShow")
-	public String doAlarmsSetShow() throws Exception {
-		String json = "";
-		this.pager = new Page("pagerForm", request);
-		json = commonDataService.findAlarmSetDataById(pager);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset="
-				+ Constants.ENCODING_UTF8);
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-//		log.warn("doAlarmsSetShow json*********=" + json);
-		pw.print(json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
-	
-	/**<p>描述：显示报警设置下拉菜单数据信息</p>
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/loadAlarmType")
-	public String loadAlarmType() throws Exception {
-
-		String type = ParamUtils.getParameter(request, "type");
-		String json = this.alarmSetManagerService.loadAlarmSetType(type);
-		//HttpServletResponse response = ServletActionContext.getResponse();
-		response.setContentType("application/json;charset=utf-8");
-		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter pw = response.getWriter();
-		pw.print(json);
-//		log.warn("jh json is ==" + json);
-		pw.flush();
-		pw.close();
-		return null;
-	}
 	
 	/**
 	 * 获取报警级别颜色方法
@@ -229,14 +153,6 @@ public class AlarmSetManagerController extends BaseController {
 		pw.flush();
 		pw.close();
 		return null;
-	}
-	
-	public WorkStatusAlarm getAlarm() {
-		return alarm;
-	}
-
-	public void setAlarm(WorkStatusAlarm alarm) {
-		this.alarm = alarm;
 	}
 
 	public String getOrgId() {

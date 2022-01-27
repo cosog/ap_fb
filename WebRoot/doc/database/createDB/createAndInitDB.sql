@@ -1,9 +1,10 @@
 @2、createTables.sql
-@3、createViews.sql
-@4、createProcedures.sql
-@5、initModuleAndRole.sql
-@6、initDataDictionary.sql
-@7、initOthers.sql
-@8、createSequences.sql
-@9、createTriggers.sql
+@3、createIndexs.sql
+@4、createViews.sql
+@5、createProcedures.sql
+@6、initModuleAndRole.sql
+@7、initDataDictionary.sql
+@8、initOthers.sql
+@9、createSequences.sql
+@10、createTriggers.sql
 exit

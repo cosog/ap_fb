@@ -178,7 +178,6 @@ public class UserManagerService<T> extends BaseService<T> {
 			for (int i = 0; i < orgs.size(); i++) {
 				u = new User();
 				u.setOrgName(orgs.get(i).getOrgName());
-				u.setUserTitleName(titles.get(i).getItemname());
 				u.setUserNo(users.get(i).getUserNo());
 				u.setUserName(users.get(i).getUserName());
 				u.setUserOrgid(users.get(i).getUserOrgid());
@@ -187,7 +186,6 @@ public class UserManagerService<T> extends BaseService<T> {
 				u.setUserType(users.get(i).getUserType());
 				u.setUserPhone(users.get(i).getUserPhone());
 				u.setUserInEmail(users.get(i).getUserInEmail());
-				u.setUserTitle(users.get(i).getUserTitle());
 				u.setUserRegtime(users.get(i).getUserRegtime());
 				myusers.add(u);
 

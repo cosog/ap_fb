@@ -104,10 +104,8 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                     blankText: cosog.string.required
             },{
                     fieldLabel: cosog.string.userId + '<font color=red>*</font>',
-                    //minLength : 2,
                     allowBlank: false,
                     anchor: '100%',
-                    //minLengthText : '您输入的用户名称太短',
                     id: 'userId_Id',
                     name: "user.userId",
                     blankText: cosog.string.required,
@@ -116,7 +114,6 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                         blur: function (t, e) {
                             var value_ = t.getValue();
                             var userNo=Ext.getCmp("userNo_Id").getValue();
-                            // 检索动态列表头及内容信息
                             Ext.Ajax.request({
                                 method: 'POST',
                                 params: {
@@ -163,57 +160,20 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                     labelWidth: 100,
                     msgTarget: 'side',
                     blankText: cosog.string.required
-            },roleCombox, 
-//            {
-//                    xtype: "hidden",
-//                    id: 'userQuidkLoginValue_Id',
-//                    anchor: '100%',
-//                    allowBlank: false,
-//                    value: 0,
-//                    name: "user.userQuickLogin",
-//            }, 
-            {
-                    fieldLabel: cosog.string.userPhone,
+            },roleCombox,{
+                    fieldLabel: '电话',
                     id: 'userPhone_Id',
                     anchor: '100%',
                     name: "user.userPhone",
                     regex: /^((13[0-9])|(14[0,1,4-9])|(15[0-3,5-9])|(16[2,5,6,7])|(17[0-8])|(18[0-9])|(19[0-3,5-9]))\d{8}$/,
                     regexText: '您输入的手机号码格式不正确'
             }, {
-                    fieldLabel: cosog.string.userInEmail,
+                    fieldLabel: '邮箱',
                     id: 'userInEmail_Id',
                     anchor: '100%',
-                    //                    vtype : 'email',
-                    //                    vtypeText : '您输入的邮箱格式不正确',
                     regex: /^([a-z0-9A-Z]+[-|\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\.)+[a-zA-Z]{2,}$/,
                     regexText: '您输入的邮箱格式不正确',
                     name: "user.userInEmail"
-            },{
-            	xtype : "combobox",
-            	id: 'userQuidkLoginComboxfield_Id',
-            	value: '0',
-                fieldLabel: '快捷登录<font color=red>*</font>',
-                hidden:true,
-                typeAhead : true,
-                allowBlank: false,
-                autoSelect:true,
-                editable:false,
-                blankText: cosog.string.required,
-                anchor: '100%',
-                emptyText: '--请选择--',
-                triggerAction: 'all',
-                store : new Ext.data.SimpleStore({
-                	fields: ['userQuickLogin', 'userQuickLoginName'],
-                    data: [['0', '否'], ['1', '是']]
-    			}),
-                displayField: 'userQuickLoginName',
-                valueField: 'userQuickLogin',
-                queryMode : 'local',
-                listeners: {
-                    select: function (picker,record,eOpts) {
-//                    	Ext.getCmp("user_addwin_Id").down('form').getChildByElement("userQuidkLoginValue_Id").setValue(record.data.userQuickLogin);
-                    }
-                }
             },{
             	xtype: 'fieldcontainer',
                 fieldLabel : '快捷登录<font color=red>*</font>',

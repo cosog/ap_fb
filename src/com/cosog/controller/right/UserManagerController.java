@@ -117,7 +117,6 @@ public class UserManagerController extends BaseController {
 	public String doUserAdd(@ModelAttribute User user) throws IOException {
 		String result = "{success:true,msg:false}";
 		try {
-			log.debug("userTitle" + user.getUserTitle());
 			String emailContent="账号:"+user.getUserId()+"<br/>密码:"+user.getUserPwd();
 			String emailTopic="创建用户";
 			List<String> receivingEMailAccount=new ArrayList<String>();
@@ -184,7 +183,6 @@ public class UserManagerController extends BaseController {
 			user.setUserPwd(ParamUtils.getParameter(request, "userPwd"));
 			user.setUserPhone(ParamUtils.getParameter(request, "userPhone"));
 			user.setUserInEmail(ParamUtils.getParameter(request, "userInEmail"));
-			user.setUserTitle(ParamUtils.getParameter(request, "userTitle"));
 			user.setUserOrgid(303);
 			user.setUserRegtime(StringManagerUtils.stringToTimeStamp(ParamUtils.getParameter(request, "userRegtime")));
 			this.userService.deleteUser(myUserNo, User.class);
