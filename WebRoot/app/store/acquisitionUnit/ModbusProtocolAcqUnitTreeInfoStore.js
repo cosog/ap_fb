@@ -7,7 +7,7 @@ Ext.define('AP.store.acquisitionUnit.ModbusProtocolAcqUnitTreeInfoStore', {
     defaultRootId: '0',
     proxy: {
         type: 'ajax',
-        url: context + '/acquisitionUnitManagerController/modbusConfigTreeData',
+        url: context + '/acquisitionUnitManagerController/acquisitionUnitTreeData',
         actionMethods: {
             read: 'POST'
         },

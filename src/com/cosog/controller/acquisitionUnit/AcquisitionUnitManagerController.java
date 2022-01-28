@@ -249,7 +249,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 				}
 			}
 			this.acquisitionGroupManagerService.doAcquisitionGroupAdd(acquisitionGroup);
-			String sql="select t.id from TBL_ACQ_GROUP_CONF t where t.group_name='"+acquisitionGroup.getGroupName()+"' and t.protocol='"+acquisitionGroup.getProtocol()+"'";
+			String sql="select t.id from TBL_ACQ_GROUP_CONF t "
+					+ " where t.group_name='"+acquisitionGroup.getGroupName()+"' and t.protocol='"+acquisitionGroup.getProtocol()+"'"
+					+ " order by t.id desc";
 			String groupId="";
 			List list = this.service.findCallSql(sql);
 			if(list.size()>0){
@@ -766,9 +768,9 @@ public class AcquisitionUnitManagerController extends BaseController {
 		return null;
 	}
 	
-	@RequestMapping("/modbusConfigTreeData")
-	public String modbusConfigTreeData() throws IOException {
-		String json = acquisitionUnitItemManagerService.getModbusProtocolConfigTreeData();
+	@RequestMapping("/acquisitionUnitTreeData")
+	public String acquisitionUnitTreeData() throws IOException {
+		String json = acquisitionUnitItemManagerService.getAcquisitionUnitTreeData();
 		response.setContentType("application/json;charset=utf-8");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
