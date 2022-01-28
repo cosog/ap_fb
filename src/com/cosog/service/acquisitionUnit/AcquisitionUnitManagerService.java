@@ -1183,7 +1183,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		return result_json.toString().replaceAll("null", "");
 	}
 	
-	public String getModbusProtocolConfigTreeData(){
+	public String getAcquisitionUnitTreeData(){
 		StringBuffer result_json = new StringBuffer();
 		StringBuffer pumpTree_json = new StringBuffer();
 		StringBuffer pipelineTree_json = new StringBuffer();
@@ -1202,7 +1202,7 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			String groupSql="select t3.id,t3.group_code,t3.group_name,t3.acq_cycle,t3.save_cycle,t3.remark,t3.protocol,t3.type,t2.id as unitId "
 					+ " from TBL_ACQ_GROUP2UNIT_CONF t,tbl_acq_unit_conf t2,tbl_acq_group_conf t3 "
 					+ " where t.unitid=t2.id and t.groupid=t3.id "
-					+ " order by t3.protocol,t2.unit_code,t3.group_code";
+					+ " order by t3.protocol,t2.unit_code,t3.type,t3.id";
 			List<?> unitList=this.findCallSql(unitSql);
 			List<?> groupList=this.findCallSql(groupSql);
 			//排序
