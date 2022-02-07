@@ -905,7 +905,7 @@ public class BaseDao extends HibernateDaoSupport {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println(sql);
+			StringManagerUtils.printLog(sql);
 		} finally{
 			if(ps!=null){
 				ps.close();

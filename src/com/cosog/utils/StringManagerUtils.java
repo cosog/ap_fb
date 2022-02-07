@@ -215,7 +215,7 @@ public class StringManagerUtils {
         try {
             str = new String(str.getBytes(charsetName), toCharsetName);
         } catch (UnsupportedEncodingException ex) {
-            System.out.println("字符串编码转换异常：" + ex.getMessage());
+            StringManagerUtils.printLog("字符串编码转换异常：" + ex.getMessage());
         }
         return str;
     }
@@ -259,6 +259,18 @@ public class StringManagerUtils {
     public static boolean isMailLegal(String str) throws PatternSyntaxException {
         Matcher m = MAIL_PATTERN.matcher(str);
         return m.matches();
+    }
+    
+    public static void printLog(String x){
+    	if(Config.getInstance().configFile.getOthers().getPrintLog()){
+    		System.out.println(x);
+    	}
+    }
+    
+    public static void printLog(Object x){
+    	if(Config.getInstance().configFile.getOthers().getPrintLog()){
+    		System.out.println(x);
+    	}
     }
 
     /**
@@ -868,9 +880,9 @@ public class StringManagerUtils {
 
     public static void main(String args[]) {
         String result = StringManagerUtils.replace("id,jh,gtcjsj,cl", "gtcjsj", "to_char(gtcjsj,'YYYY-MM-DD hh24:mi:ss') as gtcjsj");
-        // System.out.println(StringManagerUtils.getCurrentMonth());
-        System.out.println(minusMonthDate(StringManagerUtils.stringToDate("2014-01-08")));
-        // System.out.println(showLastMonth("2014-01-31"));
+        // StringManagerUtils.printLog(StringManagerUtils.getCurrentMonth());
+        StringManagerUtils.printLog(minusMonthDate(StringManagerUtils.stringToDate("2014-01-08")));
+        // StringManagerUtils.printLog(showLastMonth("2014-01-31"));
     }
 
     public static Date minusDate(Date date) {
@@ -1031,7 +1043,7 @@ public class StringManagerUtils {
         // result = m.group(1);
         // }
         result = newStr.trim();
-        System.out.println(result);
+        StringManagerUtils.printLog(result);
         return result;
 
     }
@@ -1244,7 +1256,7 @@ public class StringManagerUtils {
             long time1 = format.parse(str_test).getTime();
             Timestamp ts = new Timestamp(time1);
             ts1 = Timestamp.valueOf(str_test);
-            // System.out.println(ts.toString() + "%%%%%%%" + ts1.toString());
+            // StringManagerUtils.printLog(ts.toString() + "%%%%%%%" + ts1.toString());
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1566,13 +1578,13 @@ public class StringManagerUtils {
                 while ((line = in .readLine()) != null) {
                     errorInfo += line;
                 }
-                System.out.println("错误信息：" + errorInfo);
+                StringManagerUtils.printLog("错误信息：" + errorInfo);
             } else {
                 throw new Exception();
             }
         } catch (Exception e) {
-            System.out.println("发送 POST 请求出现异常！" + e);
-            System.out.println(param);
+            StringManagerUtils.printLog("发送 POST 请求出现异常！" + e);
+            StringManagerUtils.printLog(param);
             e.printStackTrace();
         } finally {
             try {
@@ -1614,7 +1626,7 @@ public class StringManagerUtils {
             }
 
         } catch (Exception e) {
-            System.out.println("发送http请求出现异常！" + e);
+            StringManagerUtils.printLog("发送http请求出现异常！" + e);
             e.printStackTrace();
         } finally {
             if (conn != null) {
@@ -1638,7 +1650,7 @@ public class StringManagerUtils {
             //一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
                 //显示行号
-                //System.out.println("line " + line + ": " + tempString);
+                //StringManagerUtils.printLog("line " + line + ": " + tempString);
                 laststr = laststr + tempString;
                 line++;
             }
@@ -3269,7 +3281,7 @@ public class StringManagerUtils {
                 } else {
                     mimeMessage.addRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receivingAccount.get(i)));
                 }
-                System.out.println("发送邮件：" + receivingAccount.get(i) + "," + topic + "," + content);
+                StringManagerUtils.printLog("发送邮件：" + receivingAccount.get(i) + "," + topic + "," + content);
             }
             //邮件标题
             mimeMessage.setSubject(topic);
@@ -3286,7 +3298,7 @@ public class StringManagerUtils {
         } catch (Exception e) {
             result = false;
             for (int i = 0; i < receivingAccount.size(); i++) {
-                System.out.println("发送邮件失败：" + receivingAccount.get(i) + "," + topic + "," + content);
+                StringManagerUtils.printLog("发送邮件失败：" + receivingAccount.get(i) + "," + topic + "," + content);
             }
             e.printStackTrace();
         }

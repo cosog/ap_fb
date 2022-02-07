@@ -30,6 +30,6 @@ public class ResRecursion {
 	public static void main(String[] args) {
 		ResRecursion r = new ResRecursion();
 		// r.recursionFn(r.nodeList, new Node(1, 0));
-		// System.out.println(r.modifyStr(r.returnStr.toString()));
+		// StringManagerUtils.printLog(r.modifyStr(r.returnStr.toString()));
 	}
 }

@@ -1329,7 +1329,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
 		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
 	}
 	
@@ -1388,7 +1387,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
 		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString();
 	}
 	
@@ -1447,7 +1445,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			}
 		}
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString();
 	}
 	
@@ -1507,7 +1504,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			}
 		}
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString();
 	}
 	
@@ -1608,7 +1604,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
 		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
 	}
 	
@@ -1738,7 +1733,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
 		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
 	}
 	
@@ -1814,7 +1808,6 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 		result_json.append("{\"classes\":0,\"text\":\"泵设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pumpTree_json+"},");
 		result_json.append("{\"classes\":0,\"text\":\"管设备\",\"iconCls\": \"device\",\"expanded\": true,\"children\": "+pipelineTree_json+"}");
 		result_json.append("]");
-//		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
 	}
 	
