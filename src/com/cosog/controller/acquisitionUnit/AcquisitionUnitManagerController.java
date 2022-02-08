@@ -506,7 +506,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 							}
 						}
 						if(StringManagerUtils.isNotNull(module_[6])){
-							System.out.println("#"+module_[6]+"isColor16:"+StringManagerUtils.isColor16("#"+module_[6]));
+							StringManagerUtils.printLog("#"+module_[6]+"isColor16:"+StringManagerUtils.isColor16("#"+module_[6]));
 						}
 						
 						acquisitionGroupItem = new AcquisitionGroupItem();
@@ -908,7 +908,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 		String fileName="ModbusProtocolConfig.json";
 		String data = ParamUtils.getParameter(request, "data");
-//		System.out.println(data);
+//		StringManagerUtils.printLog(data);
 		java.lang.reflect.Type type = new TypeToken<ModbusDriverSaveData>() {}.getType();
 		ModbusDriverSaveData modbusDriverSaveData=gson.fromJson(data, type);
 		if(modbusDriverSaveData!=null){

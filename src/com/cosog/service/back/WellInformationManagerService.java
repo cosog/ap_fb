@@ -32,8 +32,10 @@ import com.cosog.service.base.CommonDataService;
 import com.cosog.service.data.DataitemsInfoService;
 import com.cosog.task.EquipmentDriverServerTask;
 import com.cosog.utils.EquipmentDriveMap;
+import com.cosog.utils.LicenseMap;
 import com.cosog.utils.Page;
 import com.cosog.utils.StringManagerUtils;
+import com.cosog.utils.LicenseMap.License;
 
 @Service("wellInformationManagerService")
 public class WellInformationManagerService<T> extends BaseService<T> {
@@ -533,16 +535,48 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().saveSMSDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
-	public void doPumpDeviceAdd(PumpDeviceInformation pumpDeviceInformation) throws Exception {
-		getBaseDao().addObject(pumpDeviceInformation);
+	public boolean doPumpDeviceAdd(PumpDeviceInformation pumpDeviceInformation) throws Exception {
+		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
+		boolean sign=false;
+		if(license.getNumber()==0){
+			sign=true;
+		}else{
+			String sql="select count(1) from tbl_pumpdevice";
+			int pumpDeviceCount=this.getTotalCountRows(sql);
+			sql="select count(1) from tbl_pipelinedevice";
+			int pipelineDeviceCount=this.getTotalCountRows(sql);
+			if(pumpDeviceCount+pipelineDeviceCount<license.getNumber()){
+				sign=true;
+			}
+		}
+		if(sign){
+			getBaseDao().addObject(pumpDeviceInformation);
+		}
+		return sign;
 	}
 	
 	public void doPumpDeviceEdit(PumpDeviceInformation pumpDeviceInformation) throws Exception {
 		getBaseDao().updateObject(pumpDeviceInformation);
 	}
 	
-	public void doPipelineDeviceAdd(PipelineDeviceInformation pipelineDeviceInformation) throws Exception {
-		getBaseDao().addObject(pipelineDeviceInformation);
+	public boolean doPipelineDeviceAdd(PipelineDeviceInformation pipelineDeviceInformation) throws Exception {
+		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
+		boolean sign=false;
+		if(license.getNumber()==0){
+			sign=true;
+		}else{
+			String sql="select count(1) from tbl_pumpdevice";
+			int pumpDeviceCount=this.getTotalCountRows(sql);
+			sql="select count(1) from tbl_pipelinedevice";
+			int pipelineDeviceCount=this.getTotalCountRows(sql);
+			if(pumpDeviceCount+pipelineDeviceCount<license.getNumber()){
+				sign=true;
+			}
+		}
+		if(sign){
+			getBaseDao().addObject(pipelineDeviceInformation);
+		}
+		return sign;
 	}
 	
 	public void doSMSDeviceAdd(SmsDeviceInformation smsDeviceInformation) throws Exception {

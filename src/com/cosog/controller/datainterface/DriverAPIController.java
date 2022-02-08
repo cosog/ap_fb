@@ -143,7 +143,7 @@ public class DriverAPIController extends BaseController{
 		java.lang.reflect.Type type=null;
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
-		System.out.println(currentTime+"：ad未运行，所有设备离线");
+		StringManagerUtils.printLog(currentTime+"：ad未运行，所有设备离线");
 		String protocols="";
 		Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 		if(equipmentDriveMap.size()==0){
@@ -335,7 +335,7 @@ public class DriverAPIController extends BaseController{
 		StringBuffer webSocketSendData = new StringBuffer();
 		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String data=StringManagerUtils.convertStreamToString(ss,"utf-8");
-		System.out.println("接收到ad推送online数据："+data);
+		StringManagerUtils.printLog("接收到ad推送online数据："+data);
 		java.lang.reflect.Type type = new TypeToken<AcqOnline>() {}.getType();
 		AcqOnline acqOnline=gson.fromJson(data, type);
 		if(acqOnline!=null){
@@ -539,7 +539,7 @@ public class DriverAPIController extends BaseController{
 		ServletInputStream ss = request.getInputStream();
 		Gson gson=new Gson();
 		String data=StringManagerUtils.convertStreamToString(ss,"utf-8");
-		System.out.println(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"接收到ad推送group数据："+data);
+		StringManagerUtils.printLog(StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss")+"接收到ad推送group数据："+data);
 		java.lang.reflect.Type type = new TypeToken<AcqGroup>() {}.getType();
 		AcqGroup acqGroup=gson.fromJson(data, type);
 		String json = "{success:true,flag:true}";

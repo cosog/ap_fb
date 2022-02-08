@@ -938,7 +938,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		result_json.append(",\"CellInfo\":"+info_json);
 		result_json.append(",\"AlarmShowStyle\":"+new Gson().toJson(alarmShowStyle));
 		result_json.append("}");
-//		System.out.println(result_json.toString());
 		return result_json.toString().replaceAll("null", "");
 	}
 	
@@ -1227,7 +1226,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		result_json.append("]}");
-//		System.out.println(result_json.toString());
 		return result_json.toString();
 	}
 	
@@ -1358,7 +1356,6 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			}
 		}
 		result_json.append("]}");
-//		System.out.println(result_json.toString());
 		return result_json.toString();
 	}
 	

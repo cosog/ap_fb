@@ -16,6 +16,8 @@ import javax.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cosog.utils.StringManagerUtils;
+
 @ServerEndpoint(value="/websocketServer/{userId}")
 public class WebSocketByJavax {
 	public Logger logger = LoggerFactory.getLogger(WebSocketByJavax.class);
@@ -36,8 +38,8 @@ public class WebSocketByJavax {
         	clients.put(this.userId,this);
             addOnlineCount();
             logger.debug("新连接：{}",this.userId);
-            System.out.println("接收到客户端连接:"+this.userId);
-            System.out.println("当前线上用户数量:"+clients.size()+","+this.getOnlineCount());
+            StringManagerUtils.printLog("接收到客户端连接:"+this.userId);
+            StringManagerUtils.printLog("当前线上用户数量:"+clients.size()+","+this.getOnlineCount());
         }
     }
     
@@ -50,8 +52,8 @@ public class WebSocketByJavax {
         	if(clients.containsKey(userId)){
         		clients.remove(userId);
                 subOnlineCount();
-                System.out.println("用户"+userId+"已退出！");
-                System.out.println("剩余在线用户"+clients.size()+","+this.getOnlineCount());
+                StringManagerUtils.printLog("用户"+userId+"已退出！");
+                StringManagerUtils.printLog("剩余在线用户"+clients.size()+","+this.getOnlineCount());
         	}
         }
     }

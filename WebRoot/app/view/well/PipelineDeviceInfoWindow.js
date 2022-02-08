@@ -360,12 +360,12 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
                         			CreateAndLoadGatheringPipelineDeviceInfoTable(true);
                         		}
                                 
-                                if (action.result.msg == true) {
+                        		if (action.result.msg == true && action.result.resultCode==1) {
                                     Ext.Msg.alert(cosog.string.ts, "<font color=blue>" + cosog.string.success + "</font>");
-                                }
-                                if (action.result.msg == false) {
+                                }else if (action.result.msg == true && action.result.resultCode==-66) {
+                                    Ext.Msg.alert(cosog.string.ts, "<font color=red>设备数许可超限</font>");
+                                }else if (action.result.msg == false) {
                                     Ext.Msg.alert(cosog.string.ts, "<font color=red>" + cosog.string.failInfo + "</font>");
-
                                 }
                             },
                             failure: function () {

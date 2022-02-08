@@ -647,6 +647,8 @@ public class ConfigFile {
 	    private int dataSaveMode;
 	    
 	    private boolean showLogo;
+	    
+	    private boolean printLog;
 
 		private String serialnumber;
 
@@ -715,6 +717,12 @@ public class ConfigFile {
 		}
 		public void setShowLogo(boolean showLogo) {
 			this.showLogo = showLogo;
+		}
+		public boolean getPrintLog() {
+			return printLog;
+		}
+		public void setPrintLog(boolean printLog) {
+			this.printLog = printLog;
 		}
 	}
 }
