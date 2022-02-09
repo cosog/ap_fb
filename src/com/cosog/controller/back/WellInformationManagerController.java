@@ -719,17 +719,15 @@ public class WellInformationManagerController extends BaseController {
 			if(pumpDeviceInformation.getOrgId()==null){
 				pumpDeviceInformation.setOrgId(user.getUserOrgid());
 			}
-			boolean sign=this.pumpDeviceManagerService.doPumpDeviceAdd(pumpDeviceInformation);
-			if(sign){
-				EquipmentDriverServerTask.LoadDeviceCommStatus();
-				List<String> addWellList=new ArrayList<String>();
-				addWellList.add(pumpDeviceInformation.getWellName());
+			this.pumpDeviceManagerService.doPumpDeviceAdd(pumpDeviceInformation);
+			EquipmentDriverServerTask.LoadDeviceCommStatus();
+			List<String> addWellList=new ArrayList<String>();
+			addWellList.add(pumpDeviceInformation.getWellName());
+			if(pumpDeviceInformation.getStatus()==1){
 				EquipmentDriverServerTask.initPumpDriverAcquisitionInfoConfig(addWellList,"update");
-				pumpDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pumpDeviceInformation.getDeviceType(), user);
-				result = "{success:true,msg:true,resultCode:1}";
-			}else{
-				result = "{success:true,msg:true,resultCode:-66}";
 			}
+			pumpDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pumpDeviceInformation.getDeviceType(), user);
+			result = "{success:true,msg:true,resultCode:1}";
 			
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
 			out.print(result);
@@ -776,17 +774,15 @@ public class WellInformationManagerController extends BaseController {
 		HttpSession session=request.getSession();
 		try {
 			User user = (User) session.getAttribute("userLogin");
-			boolean sign=this.pipelineDeviceManagerService.doPipelineDeviceAdd(pipelineDeviceInformation);
-			if(sign){
-				EquipmentDriverServerTask.LoadDeviceCommStatus();
-				List<String> addWellList=new ArrayList<String>();
-				addWellList.add(pipelineDeviceInformation.getWellName());
+			this.pipelineDeviceManagerService.doPipelineDeviceAdd(pipelineDeviceInformation);
+			EquipmentDriverServerTask.LoadDeviceCommStatus();
+			List<String> addWellList=new ArrayList<String>();
+			addWellList.add(pipelineDeviceInformation.getWellName());
+			if(pipelineDeviceInformation.getStatus()==1){
 				EquipmentDriverServerTask.initPipelineDriverAcquisitionInfoConfig(addWellList,"update");
-				pipelineDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pipelineDeviceInformation.getDeviceType(), user);
-				result = "{success:true,msg:true,resultCode:1}";
-			}else{
-				result = "{success:true,msg:true,resultCode:-66}";
 			}
+			pipelineDeviceManagerService.getBaseDao().saveDeviceOperationLog(null, addWellList, null, pipelineDeviceInformation.getDeviceType(), user);
+			result = "{success:true,msg:true,resultCode:1}";
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
 			out.print(result);
 		} catch (Exception e) {

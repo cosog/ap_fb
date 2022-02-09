@@ -330,8 +330,8 @@ CREATE OR REPLACE PROCEDURE prd_save_pipelinedevice (
                                                     v_signInId    in varchar2,
                                                     v_slave   in varchar2,
                                                     v_videoUrl   in varchar2,
+                                                    v_status in NUMBER,
                                                     v_sortNum  in NUMBER,
-                                                    v_license  in NUMBER,
                                                     v_isCheckout in NUMBER,
                                                     v_result out NUMBER,
                                                     v_resultstr out varchar2) as
@@ -339,9 +339,6 @@ CREATE OR REPLACE PROCEDURE prd_save_pipelinedevice (
   wellId number :=0;
   othercount number :=0;
   otherDeviceAllPath varchar2(3000) := '';
-  wellamount number :=0;
-  pumpDeviceAmount number :=0;
-  pipelineDeviceAmount number :=0;
   p_msg varchar2(3000) := 'error';
 begin
   select count(1) into wellcount from tbl_pipelinedevice t where t.wellname=v_wellName and t.orgid=v_orgId;
@@ -358,7 +355,7 @@ begin
           t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
           t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
           t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
-          t.signinid=v_signInId,t.slave=v_slave,t.videourl=v_videourl,t.sortnum=v_sortNum
+          t.signinid=v_signInId,t.slave=v_slave,t.videourl=v_videourl,t.status=v_status,t.sortnum=v_sortNum
         Where t.wellName=v_wellName and t.orgid=v_orgId;
         commit;
         v_result:=1;
@@ -379,15 +376,11 @@ begin
       end if;
       
     elsif wellcount=0 then
-      select count(1) into pumpDeviceAmount from tbl_pumpdevice t ;
-      select count(1) into pipelineDeviceAmount from tbl_pipelinedevice t ;
-      wellamount :=pumpDeviceAmount+pipelineDeviceAmount;
-      if v_license=0 or wellamount<v_license then
-        --判断signinid和slave是否已存在
+      --判断signinid和slave是否已存在
         select count(1) into othercount from tbl_pipelinedevice t where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null;
         if othercount=0 then
-          insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,videourl,Sortnum)
-          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_sortNum);
+          insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
+          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
           update tbl_pipelinedevice t 
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
@@ -409,11 +402,6 @@ begin
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
           p_msg := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
         end if;
-      else
-        v_result:=-11;
-        v_resultstr := '设备数量超出license限制';
-        p_msg := '设备数量超出license限制';
-      end if;
     end if;
   else
     p_msg := '需要校验';
@@ -422,15 +410,11 @@ begin
       v_resultstr := '所选组织下存在同名设备';
       p_msg := '所选组织下存在同名设备';
     elsif wellcount=0 then
-      select count(1) into pumpDeviceAmount from tbl_pumpdevice t ;
-      select count(1) into pipelineDeviceAmount from tbl_pipelinedevice t ;
-      wellamount :=pumpDeviceAmount+pipelineDeviceAmount;
-      if v_license=0 or wellamount<v_license then
-        --判断signinid和slave是否已存在
+      --判断signinid和slave是否已存在
         select count(1) into othercount from tbl_pipelinedevice t where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null;
         if othercount=0 then
-          insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,videourl,Sortnum)
-          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_sortNum);
+          insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
+          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
           update tbl_pipelinedevice t 
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
@@ -452,11 +436,6 @@ begin
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
           p_msg := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
         end if;
-      else
-        v_result:=-11;
-        v_resultstr := '设备数量超出license限制';
-        p_msg := '设备数量超出license限制';
-      end if;
     end if;
   end if;
   dbms_output.put_line('p_msg:' || p_msg);
@@ -536,8 +515,8 @@ CREATE OR REPLACE PROCEDURE prd_save_pumpdevice (
                                                     v_signInId    in varchar2,
                                                     v_slave   in varchar2,
                                                     v_videoUrl   in varchar2,
+                                                    v_status in NUMBER,
                                                     v_sortNum  in NUMBER,
-                                                    v_license  in NUMBER,
                                                     v_isCheckout in NUMBER,
                                                     v_result out NUMBER,
                                                     v_resultstr out varchar2) as
@@ -545,9 +524,6 @@ CREATE OR REPLACE PROCEDURE prd_save_pumpdevice (
   wellId number :=0;
   othercount number :=0;
   otherDeviceAllPath varchar2(3000) := '';
-  wellamount number :=0;
-  pumpDeviceAmount number :=0;
-  pipelineDeviceAmount number :=0;
   p_msg varchar2(3000) := 'error';
 begin
   select count(1) into wellcount from tbl_pumpdevice t where t.wellname=v_wellName and t.orgid=v_orgId;
@@ -564,7 +540,7 @@ begin
           t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
           t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
           t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
-          t.signinid=v_signInId,t.slave=v_slave,t.videourl=v_videourl,t.sortnum=v_sortNum
+          t.signinid=v_signInId,t.slave=v_slave,t.videourl=v_videourl,t.status=v_status, t.sortnum=v_sortNum
         Where t.wellName=v_wellName and t.orgid=v_orgId;
         commit;
         v_result:=1;
@@ -585,15 +561,11 @@ begin
       end if;
       
     elsif wellcount=0 then
-      select count(1) into pumpDeviceAmount from tbl_pumpdevice t ;
-      select count(1) into pipelineDeviceAmount from tbl_pipelinedevice t ;
-      wellamount :=pumpDeviceAmount+pipelineDeviceAmount;
-      if v_license=0 or wellamount<v_license then
-        --判断signinid和slave是否已存在
+      --判断signinid和slave是否已存在
         select count(1) into othercount from tbl_pumpdevice t where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null;
         if othercount=0 then
-          insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,videourl,Sortnum)
-          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_sortNum);
+          insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
+          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
           update tbl_pumpdevice t 
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
@@ -615,11 +587,6 @@ begin
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
           p_msg := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
         end if;
-      else
-        v_result:=-11;
-        v_resultstr := '设备数量超出license限制';
-        p_msg := '设备数量超出license限制';
-      end if;
     end if;
   else
     p_msg := '需要校验';
@@ -628,15 +595,11 @@ begin
       v_resultstr := '所选组织下存在同名设备';
       p_msg := '所选组织下存在同名设备';
     elsif wellcount=0 then
-      select count(1) into pumpDeviceAmount from tbl_pumpdevice t ;
-      select count(1) into pipelineDeviceAmount from tbl_pipelinedevice t ;
-      wellamount :=pumpDeviceAmount+pipelineDeviceAmount;
-      if v_license=0 or wellamount<v_license then
-        --判断signinid和slave是否已存在
+      --判断signinid和slave是否已存在
         select count(1) into othercount from tbl_pumpdevice t where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null;
         if othercount=0 then
-          insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,videourl,Sortnum)
-          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_sortNum);
+          insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
+          values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
           update tbl_pumpdevice t 
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
@@ -658,11 +621,6 @@ begin
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
           p_msg := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
         end if;
-      else
-        v_result:=-11;
-        v_resultstr := '设备数量超出license限制';
-        p_msg := '设备数量超出license限制';
-      end if;
     end if;
   end if;
   dbms_output.put_line('p_msg:' || p_msg);
@@ -915,7 +873,7 @@ Exception
 end prd_update_pipelinedevice;
 /
 
-CREATE OR REPLACE PROCEDURE prd_update_pumpdevice ( v_recordId in NUMBER,
+CREATE OR REPLACE PROCEDURE prd_update_pipelinedevice ( v_recordId in NUMBER,
                                                     v_wellName    in varchar2,
                                                     v_devicetype in NUMBER,
                                                     v_applicationScenariosName    in varchar2,
@@ -924,6 +882,7 @@ CREATE OR REPLACE PROCEDURE prd_update_pumpdevice ( v_recordId in NUMBER,
                                                     v_signInId    in varchar2,
                                                     v_slave   in varchar2,
                                                     v_videoUrl   in varchar2,
+                                                    v_status in NUMBER,
                                                     v_sortNum  in NUMBER,
                                                     v_result out NUMBER,
                                                     v_resultstr out varchar2) as
@@ -933,16 +892,16 @@ CREATE OR REPLACE PROCEDURE prd_update_pumpdevice ( v_recordId in NUMBER,
   p_msg varchar2(3000) := 'error';
 begin
   --验证权限
-  select count(1) into wellcount from tbl_pumpdevice t 
+  select count(1) into wellcount from tbl_pipelinedevice t 
   where t.wellname=v_wellName and t.id<>v_recordId 
-  and t.orgid=( select t2.orgid from tbl_pumpdevice t2 where t2.id=v_recordId);
+  and t.orgid=( select t2.orgid from tbl_pipelinedevice t2 where t2.id=v_recordId);
     if wellcount=0 then
-        select count(1) into othercount from tbl_pumpdevice t 
+        select count(1) into othercount from tbl_pipelinedevice t 
         where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null
         and t.id<>v_recordId;
         
         if v_recordId >0 and othercount=0 then
-          Update tbl_pumpdevice t
+          Update tbl_pipelinedevice t
            Set t.wellname=v_wellName,
                t.devicetype=v_devicetype,
                t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
@@ -950,6 +909,7 @@ begin
                t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
                t.signinid=v_signInId,t.slave=v_slave,
                t.videourl=v_videourl,
+               t.status=v_status,
                t.sortnum=v_sortNum
            Where t.id=v_recordId;
            commit;
@@ -957,12 +917,12 @@ begin
            v_resultstr := '修改成功';
            p_msg := '修改成功';
         elsif othercount>0 then
-          select substr(v.path||'/'||t.wellname,2) into otherDeviceAllPath  from tbl_pumpdevice t, (select org.org_id, sys_connect_by_path(org.org_name,'/') as path
+          select substr(v.path||'/'||t.wellname,2) into otherDeviceAllPath  from tbl_pipelinedevice t, (select org.org_id, sys_connect_by_path(org.org_name,'/') as path
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
           where t.orgid=v.org_id 
-          and t.id=(select t2.id from tbl_pumpdevice t2
+          and t.id=(select t2.id from tbl_pipelinedevice t2
             where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null
             and t2.id<>v_recordId);
           v_result:=-22;
@@ -979,7 +939,7 @@ Exception
   When Others Then
     p_msg := Sqlerrm || ',' || '操作失败';
     dbms_output.put_line('p_msg:' || p_msg);
-end prd_update_pumpdevice;
+end prd_update_pipelinedevice;
 /
 
 CREATE OR REPLACE PROCEDURE prd_update_smsdevice (v_recordId   in NUMBER,

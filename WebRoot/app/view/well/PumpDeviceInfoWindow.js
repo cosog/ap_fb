@@ -323,6 +323,30 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                     }
                 }
             },{
+            	xtype: 'fieldcontainer',
+                fieldLabel : '状态<font color=red>*</font>',
+                defaultType: 'radiofield',
+                id: 'pumpDeviceStatus_Id',
+                anchor: '100%',
+                defaults: {
+                    flex: 1
+                },
+                layout: 'hbox',
+                items: [
+                    {
+                        boxLabel:'使能',
+                        name:'pumpDeviceInformation.status',
+                        checked:true,
+                        inputValue: '1',
+                        id: 'pumpDeviceStatusRadio1_Id'
+                    }, {
+                        boxLabel:'禁用',
+                        name:'pumpDeviceInformation.status',
+                        inputValue:'0',
+                        id:'pumpDeviceStatusRadio0_Id'
+                    }
+                ]
+            },{
             	xtype: 'numberfield',
             	id: "pumpDeviceSortNum_Id",
             	name: "pumpDeviceInformation.sortNum",

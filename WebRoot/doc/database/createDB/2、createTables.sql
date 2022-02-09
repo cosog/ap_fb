@@ -569,6 +569,7 @@ create table TBL_PUMPDEVICE
   instancecode         VARCHAR2(50),
   alarminstancecode    VARCHAR2(50),
   videourl             VARCHAR2(400),
+  status               NUMBER(1) default 1,
   sortnum              NUMBER(10) default 9999
 )
 tablespace AP_FB_DATA
@@ -598,6 +599,7 @@ create table TBL_PIPELINEDEVICE
   instancecode         VARCHAR2(50),
   alarminstancecode    VARCHAR2(50),
   videourl             VARCHAR2(400),
+  status               NUMBER(1) default 1,
   sortnum              NUMBER(10) default 9999
 )
 tablespace AP_FB_DATA

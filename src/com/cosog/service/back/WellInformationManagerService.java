@@ -374,6 +374,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 					collisionBuff.append("\"alarmInstanceName\":\""+list.get(i).getAlarmInstanceName()+"\",");
 					collisionBuff.append("\"signInId\":\""+list.get(i).getSignInId()+"\",");
 					collisionBuff.append("\"slave\":\""+list.get(i).getSlave()+"\",");
+					collisionBuff.append("\"statusName\":\""+list.get(i).getStatusName()+"\",");
 					collisionBuff.append("\"sortNum\":\""+list.get(i).getSortNum()+"\",");
 					collisionBuff.append("\"dataInfo\":\""+list.get(i).getSaveStr()+"\"},");
 				}else if(list.get(i).getSaveSign()==-33){//覆盖信息
@@ -385,6 +386,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 					overlayBuff.append("\"alarmInstanceName\":\""+list.get(i).getAlarmInstanceName()+"\",");
 					overlayBuff.append("\"signInId\":\""+list.get(i).getSignInId()+"\",");
 					overlayBuff.append("\"slave\":\""+list.get(i).getSlave()+"\",");
+					overlayBuff.append("\"statusName\":\""+list.get(i).getStatusName()+"\",");
 					overlayBuff.append("\"sortNum\":\""+list.get(i).getSortNum()+"\",");
 					overlayBuff.append("\"dataInfo\":\""+list.get(i).getSaveStr()+"\"},");
 				}
@@ -498,6 +500,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 					collisionBuff.append("\"alarmInstanceName\":\""+list.get(i).getAlarmInstanceName()+"\",");
 					collisionBuff.append("\"signInId\":\""+list.get(i).getSignInId()+"\",");
 					collisionBuff.append("\"slave\":\""+list.get(i).getSlave()+"\",");
+					collisionBuff.append("\"statusName\":\""+list.get(i).getStatusName()+"\",");
 					collisionBuff.append("\"sortNum\":\""+list.get(i).getSortNum()+"\",");
 					collisionBuff.append("\"dataInfo\":\""+list.get(i).getSaveStr()+"\"},");
 				}else if(list.get(i).getSaveSign()==-33){//覆盖信息
@@ -509,6 +512,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 					overlayBuff.append("\"alarmInstanceName\":\""+list.get(i).getAlarmInstanceName()+"\",");
 					overlayBuff.append("\"signInId\":\""+list.get(i).getSignInId()+"\",");
 					overlayBuff.append("\"slave\":\""+list.get(i).getSlave()+"\",");
+					overlayBuff.append("\"statusName\":\""+list.get(i).getStatusName()+"\",");
 					overlayBuff.append("\"sortNum\":\""+list.get(i).getSortNum()+"\",");
 					overlayBuff.append("\"dataInfo\":\""+list.get(i).getSaveStr()+"\"},");
 				}
@@ -535,48 +539,16 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		getBaseDao().saveSMSDeviceData(wellHandsontableChangedData,orgId,deviceType,user);
 	}
 	
-	public boolean doPumpDeviceAdd(PumpDeviceInformation pumpDeviceInformation) throws Exception {
-		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
-		boolean sign=false;
-		if(license.getNumber()==0){
-			sign=true;
-		}else{
-			String sql="select count(1) from tbl_pumpdevice";
-			int pumpDeviceCount=this.getTotalCountRows(sql);
-			sql="select count(1) from tbl_pipelinedevice";
-			int pipelineDeviceCount=this.getTotalCountRows(sql);
-			if(pumpDeviceCount+pipelineDeviceCount<license.getNumber()){
-				sign=true;
-			}
-		}
-		if(sign){
-			getBaseDao().addObject(pumpDeviceInformation);
-		}
-		return sign;
+	public void doPumpDeviceAdd(PumpDeviceInformation pumpDeviceInformation) throws Exception {
+		getBaseDao().addObject(pumpDeviceInformation);
 	}
 	
 	public void doPumpDeviceEdit(PumpDeviceInformation pumpDeviceInformation) throws Exception {
 		getBaseDao().updateObject(pumpDeviceInformation);
 	}
 	
-	public boolean doPipelineDeviceAdd(PipelineDeviceInformation pipelineDeviceInformation) throws Exception {
-		License license=LicenseMap.getMapObject().get(LicenseMap.SN);
-		boolean sign=false;
-		if(license.getNumber()==0){
-			sign=true;
-		}else{
-			String sql="select count(1) from tbl_pumpdevice";
-			int pumpDeviceCount=this.getTotalCountRows(sql);
-			sql="select count(1) from tbl_pipelinedevice";
-			int pipelineDeviceCount=this.getTotalCountRows(sql);
-			if(pumpDeviceCount+pipelineDeviceCount<license.getNumber()){
-				sign=true;
-			}
-		}
-		if(sign){
-			getBaseDao().addObject(pipelineDeviceInformation);
-		}
-		return sign;
+	public void doPipelineDeviceAdd(PipelineDeviceInformation pipelineDeviceInformation) throws Exception {
+		getBaseDao().addObject(pipelineDeviceInformation);
 	}
 	
 	public void doSMSDeviceAdd(SmsDeviceInformation smsDeviceInformation) throws Exception {
@@ -960,7 +932,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		
 		String columns=service.showTableHeadersColumns(ddicName);
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " videoUrl,sortNum"
+				+ " videoUrl,sortNum,status,statusName"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
 		sql+= " and t.orgid in ("+orgId+" )";
@@ -1029,6 +1001,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
 			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"status\":\""+obj[10]+"\",");
+			result_json.append("\"statusName\":\""+obj[11]+"\",");
 			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 //		for(int i=1;i<=recordCount-list.size();i++){
@@ -1059,7 +1033,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " videoUrl,sortNum"
+				+ " videoUrl,sortNum,status,statusName"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
 		sql+= " and t.orgid in ("+orgId+" )";
@@ -1082,6 +1056,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
 			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"status\":\""+obj[10]+"\",");
+			result_json.append("\"statusName\":\""+obj[11]+"\",");
 			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){
@@ -1119,7 +1095,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 		
 		String columns=service.showTableHeadersColumns(ddicName);
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " videoUrl,sortNum"
+				+ " videoUrl,sortNum,status,statusName"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
 		sql+= " and t.orgid in ("+orgId+" )  ";		
@@ -1189,6 +1165,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
 			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"status\":\""+obj[10]+"\",");
+			result_json.append("\"statusName\":\""+obj[11]+"\",");
 			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 //		for(int i=1;i<=recordCount-list.size();i++){
@@ -1214,7 +1192,7 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			WellInformation_Str = " and t.wellname like '%" + wellInformationName+ "%'";
 		}
 		String sql = "select id,orgName,wellName,applicationScenariosName,instanceName,alarmInstanceName,signInId,slave,"
-				+ " videoUrl,sortNum"
+				+ " videoUrl,sortNum,status,statusName"
 				+ " from "+tableName+" t where 1=1"
 				+ WellInformation_Str;
 		sql+= " and t.orgid in ("+orgId+" )  ";		
@@ -1239,6 +1217,8 @@ public class WellInformationManagerService<T> extends BaseService<T> {
 			result_json.append("\"signInId\":\""+obj[6]+"\",");
 			result_json.append("\"slave\":\""+obj[7]+"\",");
 			result_json.append("\"videoUrl\":\""+obj[8]+"\",");
+			result_json.append("\"status\":\""+obj[10]+"\",");
+			result_json.append("\"statusName\":\""+obj[11]+"\",");
 			result_json.append("\"sortNum\":\""+obj[9]+"\"},");
 		}
 		for(int i=1;i<=recordCount-list.size();i++){

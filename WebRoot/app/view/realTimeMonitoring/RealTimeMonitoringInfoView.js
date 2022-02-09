@@ -74,6 +74,12 @@ Ext.define("AP.view.realTimeMonitoring.RealTimeMonitoringInfoView", {
                         	ResourceProbeHistoryCurveWindow.show();
                         }
                 	},{
+                		xtype: 'button',
+                        id:"adLicenseStatusProbeLabel_id",
+                        text: 'License超限:',
+                        hidden: true,
+                        handler: function (v, o) {}
+                	},{
                         id: 'ResourceMonitoringCurveItem_Id',
                         xtype: 'textfield',
                         value: '',

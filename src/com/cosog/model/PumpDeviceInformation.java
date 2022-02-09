@@ -29,6 +29,7 @@ public class PumpDeviceInformation implements java.io.Serializable {
 	private String signInId;
 	private String slave;
 	private String videoUrl;
+	private Integer status;
 	private Integer sortNum;
 	
 
@@ -154,5 +155,14 @@ public class PumpDeviceInformation implements java.io.Serializable {
 
 	public void setSortNum(Integer sortNum) {
 		this.sortNum = sortNum;
+	}
+
+	@Column(name = "status", precision = 22, scale = 0)
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 }

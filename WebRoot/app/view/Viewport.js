@@ -483,6 +483,14 @@ function websocketOnMessage(evt) {
 				Ext.getCmp("adRunStatusProbeLabel_id").setIconCls("dtyellow");
 			}
 			Ext.getCmp("adRunStatusProbeLabel_id").setText("驱动 v"+data.adVersion);
+			
+			if(data.adLicenseSign){
+				Ext.getCmp("adLicenseStatusProbeLabel_id").setText("<font color=#DC2828 >License超限:"+data.deviceAmount+"/"+data.adLicense+"</font>");
+				Ext.getCmp("adLicenseStatusProbeLabel_id").show();
+			}else{
+				Ext.getCmp("adLicenseStatusProbeLabel_id").setText("");
+				Ext.getCmp("adLicenseStatusProbeLabel_id").hide();
+			}
 		}
 	}
 }

@@ -324,6 +324,30 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
                     }
                 }
             },{
+            	xtype: 'fieldcontainer',
+                fieldLabel : '状态<font color=red>*</font>',
+                defaultType: 'radiofield',
+                id: 'pipelineDeviceStatus_Id',
+                anchor: '100%',
+                defaults: {
+                    flex: 1
+                },
+                layout: 'hbox',
+                items: [
+                    {
+                        boxLabel:'使能',
+                        name:'pipelineDeviceInformation.status',
+                        checked:true,
+                        inputValue: '1',
+                        id: 'pipelineDeviceStatusRadio1_Id'
+                    }, {
+                        boxLabel:'禁用',
+                        name:'pipelineDeviceInformation.status',
+                        inputValue:'0',
+                        id:'pipelineDeviceStatusRadio0_Id'
+                    }
+                ]
+            },{
             	xtype: 'numberfield',
             	id: "pipelineDeviceSortNum_Id",
             	name: "pipelineDeviceInformation.sortNum",

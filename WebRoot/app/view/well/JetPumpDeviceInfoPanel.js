@@ -393,6 +393,8 @@ function CreateAndLoadJetPumpDeviceInfoTable(isNew) {
                         columns += "{data:'" + result.columns[i].dataIndex + "',type:'dropdown',strict:true,allowInvalid:false,source:" + source + "}";
                     } else if (result.columns[i].dataIndex.toUpperCase() === "sortNum".toUpperCase()) {
                         columns += "{data:'" + result.columns[i].dataIndex + "',type:'text',allowInvalid: true, validator: function(val, callback){return handsontableDataCheck_Num_Nullable(val, callback,this.row, this.col,jetPumpDeviceInfoHandsontableHelper);}}";
+                    } else if (result.columns[i].dataIndex.toUpperCase() === "statusName".toUpperCase()) {
+                    	columns += "{data:'" + result.columns[i].dataIndex + "',type:'dropdown',strict:true,allowInvalid:false,source:['使能', '禁用']}";
                     } else {
                         columns += "{data:'" + result.columns[i].dataIndex + "'}";
                     }

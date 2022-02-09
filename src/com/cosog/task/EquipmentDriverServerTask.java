@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -1129,7 +1131,7 @@ public class EquipmentDriverServerTask {
 				+ " from tbl_pumpdevice t,tbl_protocolinstance t2 "
 				+ " where t.instancecode=t2.code ";
 		if("update".equalsIgnoreCase(method)){
-			sql+= " and t.signinid is not null and t.slave is not null";
+			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
 		}	
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
@@ -1162,6 +1164,51 @@ public class EquipmentDriverServerTask {
 		return result;
 	}
 	
+	public static int initPumpDriverAcquisitionInfoConfigById(List<String> wellIdList,String method){
+		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
+		Gson gson = new Gson();
+		int result=0;
+		String wellId=StringUtils.join(wellIdList, ",");
+		if(!StringManagerUtils.isNotNull(method)){
+			method="update";
+		}
+		String sql="select t.wellname,t.signinid,t.slave,t2.name "
+				+ " from tbl_pumpdevice t left outer join tbl_protocolinstance t2  on t.instancecode=t2.code "
+				+ " where 1=1 ";
+		if("update".equalsIgnoreCase(method)){
+			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
+		}	
+		if(StringManagerUtils.isNotNull(wellId)){
+			sql+=" and t.id in("+wellId+")";
+		}
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null ){
+        	return -1;
+        }
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				InitId initId=new InitId();
+				initId.setMethod(method);
+				initId.setID(rs.getString(2));
+				initId.setSlave((byte) rs.getInt(3));
+				initId.setInstanceName(rs.getString(4));
+				StringManagerUtils.printLog("管设备ID初始化："+gson.toJson(initId));
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+			}
+		} catch (SQLException e) {
+			StringManagerUtils.printLog("ID初始化sql："+sql);
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return result;
+	}
+	
 	public static int initPipelineDriverAcquisitionInfoConfig(List<String> wellList,String method){
 		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
 		Gson gson = new Gson();
@@ -1174,10 +1221,55 @@ public class EquipmentDriverServerTask {
 				+ " from tbl_pipelinedevice t,tbl_protocolinstance t2 "
 				+ " where t.instancecode=t2.code ";
 		if("update".equalsIgnoreCase(method)){
-			sql+= " and t.signinid is not null and t.slave is not null";
+			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
 		}	
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
+		}
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null ){
+        	return -1;
+        }
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				InitId initId=new InitId();
+				initId.setMethod(method);
+				initId.setID(rs.getString(2));
+				initId.setSlave((byte) rs.getInt(3));
+				initId.setInstanceName(rs.getString(4));
+				StringManagerUtils.printLog("管设备ID初始化："+gson.toJson(initId));
+				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+			}
+		} catch (SQLException e) {
+			StringManagerUtils.printLog("ID初始化sql："+sql);
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return result;
+	}
+	
+	public static int initPipelineDriverAcquisitionInfoConfigById(List<String> wellIdList,String method){
+		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
+		Gson gson = new Gson();
+		int result=0;
+		String wellId=StringUtils.join(wellIdList, ",");
+		if(!StringManagerUtils.isNotNull(method)){
+			method="update";
+		}
+		String sql="select t.wellname,t.signinid,t.slave,t2.name "
+				+ " from tbl_pipelinedevice t left outer join tbl_protocolinstance t2  on t.instancecode=t2.code "
+				+ " where 1=1 ";
+		if("update".equalsIgnoreCase(method)){
+			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
+		}	
+		if(StringManagerUtils.isNotNull(wellId)){
+			sql+=" and t.id in("+wellId+")";
 		}
 		Connection conn = null;   
 		PreparedStatement pstmt = null;   

@@ -481,6 +481,7 @@ public class ConfigFile {
 	
 	public static class DriverProbe{
 		private String init;
+		private String app;
 		private String mem;
 		private String disk;
 		private String host;
@@ -514,6 +515,12 @@ public class ConfigFile {
 		}
 		public void setCpu(String cpu) {
 			this.cpu = cpu;
+		}
+		public String getApp() {
+			return app;
+		}
+		public void setApp(String app) {
+			this.app = app;
 		}
 	}
 	

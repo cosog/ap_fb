@@ -23,6 +23,7 @@ t.videourl,
 t.instancecode,
 decode(t.devicetype,2,t4.name,t2.name) as instancename,
 t.alarminstancecode,t3.name as alarminstancename,
+t.status,decode(t.status,1,'使能','禁用') as statusName,
 t.sortnum
 from tbl_pumpdevice t
 left outer join  tbl_org org  on t.orgid=org.org_id
@@ -46,6 +47,7 @@ t.videourl,
 t.instancecode,
 decode(t.devicetype,2,t4.name,t2.name) as instancename,
 t.alarminstancecode,t3.name as alarminstancename,
+t.status,decode(t.status,1,'使能','禁用') as statusName,
 t.sortnum
 from tbl_pipelinedevice t
 left outer join  tbl_org org  on t.orgid=org.org_id
