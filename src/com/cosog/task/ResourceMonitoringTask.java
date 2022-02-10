@@ -32,6 +32,7 @@ import com.cosog.model.calculate.AppRunStatusProbeResonanceData;
 import com.cosog.model.calculate.CPUProbeResponseData;
 import com.cosog.model.calculate.CommResponseData;
 import com.cosog.model.calculate.MemoryProbeResponseData;
+import com.cosog.model.drive.InitializedDeviceInfo;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.task.EquipmentDriverServerTask.DriverProbeResponse;
 import com.cosog.utils.Config;
@@ -249,13 +250,13 @@ public class ResourceMonitoringTask {
     }
 	
 	public static  int getDeviceAmount() throws IOException, SQLException{
+		int deviceAmount=0;
 		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
-		List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
-		if(commStatusList==null){
-			EquipmentDriverServerTask.LoadDeviceCommStatus();
-			commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
+		Map<Integer,InitializedDeviceInfo> initializedDeviceList=(Map<Integer,InitializedDeviceInfo>) dataModelMap.get("InitializedDeviceList");
+		if(initializedDeviceList!=null){
+			deviceAmount=initializedDeviceList.size();
 		}
-		return commStatusList.size();
+		return deviceAmount;
 	}
 	
 	public static class TableSpaceInfo{

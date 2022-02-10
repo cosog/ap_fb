@@ -341,7 +341,7 @@ Ext.define("AP.view.well.PipelineDeviceInfoWindow", {
                         inputValue: '1',
                         id: 'pipelineDeviceStatusRadio1_Id'
                     }, {
-                        boxLabel:'禁用',
+                        boxLabel:'失效',
                         name:'pipelineDeviceInformation.status',
                         inputValue:'0',
                         id:'pipelineDeviceStatusRadio0_Id'

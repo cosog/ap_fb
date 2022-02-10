@@ -206,7 +206,7 @@
 | 8        | USER_ORGID       | 用户所属组织     | NUMBER(10)   |          | N        |        | 对应tbl_org表中org_id字段   |
 | 9        | USER_REGTIME     | 用户注册时间     | DATE         |          | Y        |        |                             |
 | 10       | USER_QUICKLOGIN  | 是否快捷登录     | NUMBER(1)    |          | Y        |        | 0-不是 1-是                 |
-| 11       | USER_ENABLE      | 激活或者禁用     | NUMBER(1)    |          |          |        | 0-禁用 1-激活               |
+| 11       | USER_ENABLE      | 使能或者失效     | NUMBER(1)    |          |          |        | 0-失效 1-使能               |
 | 12       | USER_RECEIVESMS  | 是否接收报警短信 | NUMBER(10)   |          |          |        | 0-否，1-是                  |
 | 13       | USER_RECEIVEMAIL | 是否接收报警邮件 | NUMBER(10)   |          |          |        | 0-否，1-是                  |
 
@@ -471,7 +471,7 @@
 | 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |               |
 | 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |               |
 | 10       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |               |
-| 11       | STATUS               | 状态         | NUMBER(1)     |          | Y        |        | 0-禁用 1-使能 |
+| 11       | STATUS               | 状态         | NUMBER(1)     |          | Y        |        | 0-失效 1-使能 |
 | 12       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |               |
 
 ### 1.2.20 tbl\_pipelinedevice
@@ -490,7 +490,7 @@
 | 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |               |
 | 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |               |
 | 10       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |               |
-| 11       | STATUS               | 状态         | NUMBER(1)     |          | Y        |        | 0-禁用 1-使能 |
+| 11       | STATUS               | 状态         | NUMBER(1)     |          | Y        |        | 0-失效 1-使能 |
 | 12       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |               |
 
 ### 1.2.21 tbl\_smsdevice
@@ -794,8 +794,8 @@
 | 13       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |               |
 | 14       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |               |
 | 15       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |               |
-| 16       | STATUS                   | 状态         | NUMBER   | 0-禁用 1-使能 |
-| 17       | STATUSNAME               | 状态名称     | VARCHAR2 | 禁用或使能    |
+| 16       | STATUS                   | 状态         | NUMBER   | 0-失效 1-使能 |
+| 17       | STATUSNAME               | 状态名称     | VARCHAR2 | 失效或使能    |
 | 18       | SORTNUM                  | 排序编号     | NUMBER   |               |
 
 ### 2.2.3 viw\_pipelinedevice
@@ -819,8 +819,8 @@
 | 13       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |               |
 | 14       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |               |
 | 15       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |               |
-| 16       | STATUS                   | 状态         | NUMBER   | 0-禁用 1-使能 |
-| 17       | STATUSNAME               | 状态名称     | VARCHAR2 | 禁用或使能    |
+| 16       | STATUS                   | 状态         | NUMBER   | 0-失效 1-使能 |
+| 17       | STATUSNAME               | 状态名称     | VARCHAR2 | 失效或使能    |
 | 18       | SORTNUM                  | 排序编号     | NUMBER   |               |
 
 ### 2.2.4 viw\_sysdevice

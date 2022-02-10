@@ -376,7 +376,7 @@ SelectedUserDataAttrInfoGridPanel = function () {
     var traininguserRegtime = new Date(Date.parse(userRegtime.replace(/-/g, "/")));
     userRegTimeInput.format = 'Y-m-d H:i:s';
     userRegTimeInput.setValue(traininguserRegtime);
-    if(parseInt(user_)==parseInt(userNo)){//如果是当前用户，不能修改自己的角色和激活状态
+    if(parseInt(user_)==parseInt(userNo)){//如果是当前用户，不能修改自己的角色和使能状态
 //    	Ext.getCmp('userType_Id1').setReadOnly(true);
 //    	Ext.getCmp('userEnableRadio1_Id').setReadOnly(true);
 //    	Ext.getCmp('userEnableRadio0_Id').setReadOnly(true);

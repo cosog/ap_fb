@@ -940,7 +940,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
 							status=0;
 							disableWellIdList.add(wellHandsontableChangedData.getUpdatelist().get(i).getId());
 						}
@@ -973,13 +973,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						}
 					}
 				}
@@ -988,7 +982,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getInsertlist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getInsertlist().get(i).getStatusName())){
 							status=0;
 							disableWellIdList.add(wellHandsontableChangedData.getInsertlist().get(i).getId());
 						}
@@ -1021,13 +1015,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						}
 					}
 				}
@@ -1104,7 +1092,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
 							status=0;
 						}
 						cs.setString(1, orgId);
@@ -1134,13 +1122,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						}else{//保存失败，数据冲突或者超出限制
 							wellHandsontableChangedData.getUpdatelist().get(i).setSaveSign(saveSign);
 							wellHandsontableChangedData.getUpdatelist().get(i).setSaveStr(saveResultStr);
@@ -1153,7 +1135,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getInsertlist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getInsertlist().get(i).getStatusName())){
 							status=0;
 						}
 						cs.setString(1, orgId);
@@ -1183,13 +1165,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						}else{
 							wellHandsontableChangedData.getInsertlist().get(i).setSaveSign(saveSign);
 							wellHandsontableChangedData.getInsertlist().get(i).setSaveStr(saveResultStr);
@@ -1264,7 +1240,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
 							status=0;
 							disableWellIdList.add(wellHandsontableChangedData.getUpdatelist().get(i).getId());
 						}
@@ -1297,13 +1273,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						}
 					}
 				}
@@ -1312,7 +1282,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getInsertlist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getInsertlist().get(i).getStatusName())){
 							status=0;
 							disableWellIdList.add(wellHandsontableChangedData.getInsertlist().get(i).getId());
 						}
@@ -1345,13 +1315,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						}
 					}
 				}
@@ -1428,7 +1392,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getUpdatelist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
 							status=0;
 						}
 						cs.setString(1, orgId);
@@ -1456,13 +1420,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getUpdatelist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getUpdatelist().get(i).getWellName());
 						}else{//保存失败，数据冲突或者超出限制
 							wellHandsontableChangedData.getUpdatelist().get(i).setSaveSign(saveSign);
 							wellHandsontableChangedData.getUpdatelist().get(i).setSaveStr(saveResultStr);
@@ -1475,7 +1433,7 @@ public class BaseDao extends HibernateDaoSupport {
 				for(int i=0;i<wellHandsontableChangedData.getInsertlist().size();i++){
 					if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())){
 						int status=1;
-						if("禁用".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
+						if("失效".equalsIgnoreCase(wellHandsontableChangedData.getUpdatelist().get(i).getStatusName())){
 							status=0;
 						}
 						cs.setString(1, orgId);
@@ -1504,13 +1462,7 @@ public class BaseDao extends HibernateDaoSupport {
 							}else if(saveSign==1){//更新
 								updateWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 							}
-							if(StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getWellName())
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSignInId()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getSlave()) 
-									&&StringManagerUtils.isNotNull(wellHandsontableChangedData.getInsertlist().get(i).getInstanceName())
-									&&status==1){
-								initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
-							}
+							initWellList.add(wellHandsontableChangedData.getInsertlist().get(i).getWellName());
 						}else{
 							wellHandsontableChangedData.getInsertlist().get(i).setSaveSign(saveSign);
 							wellHandsontableChangedData.getInsertlist().get(i).setSaveStr(saveResultStr);

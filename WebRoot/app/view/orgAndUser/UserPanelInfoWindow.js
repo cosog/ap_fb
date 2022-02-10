@@ -255,13 +255,13 @@ Ext.define("AP.view.orgAndUser.UserPanelInfoWindow", {
                 layout: 'hbox',
                 items: [
                     {
-                        boxLabel:'激活',
+                        boxLabel:'使能',
                         name:'user.userEnable',
                         checked:true,
                         inputValue: '1',
                         id: 'userEnableRadio1_Id'
                     }, {
-                        boxLabel:'禁用',
+                        boxLabel:'失效',
                         name:'user.userEnable',
                         inputValue:'0',
                         id:'userEnableRadio0_Id'

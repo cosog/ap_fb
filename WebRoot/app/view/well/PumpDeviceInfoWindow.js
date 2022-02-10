@@ -340,7 +340,7 @@ Ext.define("AP.view.well.PumpDeviceInfoWindow", {
                         inputValue: '1',
                         id: 'pumpDeviceStatusRadio1_Id'
                     }, {
-                        boxLabel:'禁用',
+                        boxLabel:'失效',
                         name:'pumpDeviceInformation.status',
                         inputValue:'0',
                         id:'pumpDeviceStatusRadio0_Id'

@@ -9,17 +9,20 @@ public class CommStatus {
 	public int commStatus;
 	
 	public int orgId;
+	
+	public int deviceStatus;
 
 	public CommStatus() {
 		super();
 	}
 
-	public CommStatus(String deviceName, int deviceType, int commStatus, int orgId) {
+	public CommStatus(String deviceName, int deviceType, int commStatus, int orgId,int deviceStatus) {
 		super();
 		this.deviceName = deviceName;
 		this.deviceType = deviceType;
 		this.commStatus = commStatus;
 		this.orgId = orgId;
+		this.deviceStatus = deviceStatus;
 	}
 
 	public String getDeviceName() {
@@ -52,5 +55,13 @@ public class CommStatus {
 
 	public void setOrgId(int orgId) {
 		this.orgId = orgId;
+	}
+
+	public int getDeviceStatus() {
+		return deviceStatus;
+	}
+
+	public void setDeviceStatus(int deviceStatus) {
+		this.deviceStatus = deviceStatus;
 	}
 }
