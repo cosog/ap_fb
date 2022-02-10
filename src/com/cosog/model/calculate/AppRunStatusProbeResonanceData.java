@@ -5,6 +5,8 @@ import java.util.List;
 public class AppRunStatusProbeResonanceData {
 
 	private String Ver;
+	
+	private int Number;
 
     private List<String> URL;
 
@@ -20,4 +22,10 @@ public class AppRunStatusProbeResonanceData {
     public List<String> getURL(){
         return this.URL;
     }
+	public int getNumber() {
+		return Number;
+	}
+	public void setNumber(int number) {
+		Number = number;
+	}
 }

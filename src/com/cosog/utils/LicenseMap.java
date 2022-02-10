@@ -13,7 +13,7 @@ public final class LicenseMap {
 	static {
 		map = new HashMap<Integer, License>();
 		map.put(0, new License("阿里云服务器 Windows Server2019", "00:16:3E:01:D8:63", 0,"IP:8.130.30.138"));
-		map.put(1, new License("阿里云服务器 Windows Server2019", "00:16:3E:12:AC:FC", 0,"8.142.92.84"));
+		map.put(1, new License("阿里云服务器 Windows Server2019", "00:16:3E:12:AC:FC", 1,"8.142.92.84"));
 		
 		moduleMap=new HashMap<Integer, List<Integer>>();//全集
 		List<Integer> moduleList0=new ArrayList<Integer>();

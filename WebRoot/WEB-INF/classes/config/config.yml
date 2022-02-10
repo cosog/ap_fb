@@ -16,48 +16,48 @@ viewInformation:
 agileCalculate:
    probe:
       app: 
-       - http://39.99.42.182:18100/api/probe/app
+       - http://8.142.92.84:18100/api/probe/app
       mem: 
-       - http://39.99.42.182:18100/api/probe/mem
+       - http://8.142.92.84:18100/api/probe/mem
       disk: 
-       - http://39.99.42.182:18100/api/probe/disk
+       - http://8.142.92.84:18100/api/probe/disk
       host: 
-       - http://39.99.42.182:18100/api/probe/host
+       - http://8.142.92.84:18100/api/probe/host
       cpu: 
-       - http://39.99.42.182:18100/api/probe/cpu
+       - http://8.142.92.84:18100/api/probe/cpu
    FESDiagram: 
-    - http://39.99.42.182:18100/api/calc/rpc/fesdiagram/pro
+    - http://8.142.92.84:18100/api/calc/rpc/fesdiagram/pro
    FSDiagram: 
-    - http://39.99.42.182:18100/api/calc/rpc/fsdiagram/balance/back
+    - http://8.142.92.84:18100/api/calc/rpc/fsdiagram/balance/back
    ESDiagram:
       balance: 
-       - http://39.99.42.182:18100/api/calc/rpc/esdiagram/balance/back
+       - http://8.142.92.84:18100/api/calc/rpc/esdiagram/balance/back
       inversion:
          inversionSwitch: false
          url:
             motorauto: 
-             - http://39.99.42.182:18100/api/calc/rpc/esdiagram/inversion/motorauto
+             - http://8.142.92.84:18100/api/calc/rpc/esdiagram/inversion/motorauto
             motorsemiauto: 
-             - http://39.99.42.182:18100/api/calc/rpc/esdiagram/inversion/motorsemiauto
+             - http://8.142.92.84:18100/api/calc/rpc/esdiagram/inversion/motorsemiauto
             beam: 
-             - http://39.99.42.182:18100/api/calc/rpc/esdiagram/inversion/beam
+             - http://8.142.92.84:18100/api/calc/rpc/esdiagram/inversion/beam
          timerCorrectionStart: 06:00:00
          imerCorrectionEnd: 21:00:00
          timerCorrectionLimit: 1800
    pcpProduction: 
-    - http://39.99.42.182:18100/api/calc/pcp/rpm
+    - http://8.142.92.84:18100/api/calc/pcp/rpm
    communication: 
-    - http://39.99.42.182:18100/api/calc/plugin/timeeff/comm
+    - http://8.142.92.84:18100/api/calc/plugin/timeeff/comm
    run: 
-    - http://39.99.42.182:18100/api/calc/plugin/timeeff/run
+    - http://8.142.92.84:18100/api/calc/plugin/timeeff/run
    energy: 
-    - http://39.99.42.182:18100/api/calc/plugin/energy
+    - http://8.142.92.84:18100/api/calc/plugin/energy
    totalCalculation:
       well: 
-       - http://39.99.42.182:18100/api/analy/total/well
+       - http://8.142.92.84:18100/api/analy/total/well
    plugin: 
-      wellboreTrajectory: http://39.99.42.182:18100/api/calc/plugin/2xyz
-      fa2fs: http://39.99.42.182:18100/api/plugin/fa2fs
+      wellboreTrajectory: http://8.142.92.84:18100/api/calc/plugin/2xyz
+      fa2fs: http://8.142.92.84:18100/api/plugin/fa2fs
 tcpServer:
    port: 19100
 mqtt:
@@ -65,25 +65,21 @@ mqtt:
    userName: ""
    passWord: ""
 driverConfig:
-   server: http://39.99.42.182:19200/api/init/server
-   protocol: http://39.99.42.182:19200/api/init/protocol
-   instance: http://39.99.42.182:19200/api/init/instance
-   id: http://39.99.42.182:19200/api/init/id
-   SMS: http://39.99.42.182:19200/api/init/sms
-   readAddr: http://39.99.42.182:19200/api/read/addr
-   writeAddr: http://39.99.42.182:19200/api/write/addr
-   writeSMS: http://39.99.42.182:19200/api/write/sms
+   server: http://8.142.92.84:19200/api/init/server
+   protocol: http://8.142.92.84:19200/api/init/protocol
+   instance: http://8.142.92.84:19200/api/init/instance
+   id: http://8.142.92.84:19200/api/init/id
+   SMS: http://8.142.92.84:19200/api/init/sms
+   readAddr: http://8.142.92.84:19200/api/read/addr
+   writeAddr: http://8.142.92.84:19200/api/write/addr
+   writeSMS: http://8.142.92.84:19200/api/write/sms
    probe:
-      init: 
-         http://39.99.42.182:19200/api/probe/init
-      cpu: 
-         http://39.99.42.182:19200/api/probe/cpu
-      mem: 
-         http://39.99.42.182:19200/api/probe/mem
-      disk: 
-         http://39.99.42.182:19200/api/probe/disk
-      host: 
-         http://39.99.42.182:19200/api/probe/host
+      init: http://8.142.92.84:19200/api/probe/init
+      app: http://8.142.92.84:19200/api/probe/app
+      cpu: http://8.142.92.84:19200/api/probe/cpu
+      mem: http://8.142.92.84:19200/api/probe/mem
+      disk: http://8.142.92.84:19200/api/probe/disk
+      host: http://8.142.92.84:19200/api/probe/host
 email:
    snedAccount:
       account: shfzby@126.com
@@ -102,5 +98,5 @@ others:
    dataSaveMode: 1
    showLogo: true
    printLog: true
-   serialnumber: God bless you!
+   serialnumber: ""
       

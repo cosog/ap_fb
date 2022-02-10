@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,7 @@ import com.cosog.model.CommStatus;
 import com.cosog.model.drive.InitId;
 import com.cosog.model.drive.InitInstance;
 import com.cosog.model.drive.InitProtocol;
+import com.cosog.model.drive.InitializedDeviceInfo;
 import com.cosog.model.drive.KafkaConfig;
 import com.cosog.model.drive.ModbusProtocolConfig;
 import com.cosog.utils.AcquisitionItemColumnsMap;
@@ -103,10 +106,9 @@ public class EquipmentDriverServerTask {
 		initProtocolConfig("","");
 		initInstanceConfig(null,"");
 		initSMSInstanceConfig(null,"");
+		initSMSDevice(null,"");
 		initPumpDriverAcquisitionInfoConfig(null,"");
 		initPipelineDriverAcquisitionInfoConfig(null,"");
-		initSMSDevice(null,"");
-		
 		boolean sendMsg=false;
 		do{
 			String responseData=StringManagerUtils.sendPostMethod(probeUrl, "","utf-8");
@@ -1121,16 +1123,23 @@ public class EquipmentDriverServerTask {
 		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
 		Gson gson = new Gson();
 		int result=0;
+		
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		Map<Integer,InitializedDeviceInfo> initializedDeviceList=(Map<Integer,InitializedDeviceInfo>) dataModelMap.get("InitializedDeviceList");
+		if(initializedDeviceList==null){
+			initializedDeviceList=new HashMap<Integer,InitializedDeviceInfo>();
+		}
+		
 		String wellName=StringManagerUtils.joinStringArr2(wellList, ",");
 		if(!StringManagerUtils.isNotNull(method)){
 			method="update";
 		}
-		String sql="select t.wellname,t.signinid,t.slave,t2.name "
+		String sql="select t.wellname,t.signinid,t.slave,t2.name,t.devicetype,t.id,t.orgid,t.status "
 				+ " from tbl_pumpdevice t,tbl_protocolinstance t2 "
 				+ " where t.instancecode=t2.code ";
-		if("update".equalsIgnoreCase(method)){
-			sql+= " and t.signinid is not null and t.slave is not null";
-		}	
+//		if("update".equalsIgnoreCase(method)){
+//			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
+//		}	
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
 		}
@@ -1145,14 +1154,184 @@ public class EquipmentDriverServerTask {
 			pstmt = conn.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()){
-				InitId initId=new InitId();
-				initId.setMethod(method);
-				initId.setID(rs.getString(2));
-				initId.setSlave((byte) rs.getInt(3));
-				initId.setInstanceName(rs.getString(4));
-				StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
-				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+				InitializedDeviceInfo initialized=initializedDeviceList.get(rs.getInt(6));
+				int status=rs.getInt(8);
+				if("update".equalsIgnoreCase(method)&&status==1){
+					if(initialized==null&&StringManagerUtils.isNotNull(rs.getString(2))&& rs.getInt(3)>0 &&StringManagerUtils.isNotNull(rs.getString(4))){//如果未初始化
+						InitId initId=new InitId();
+						initId.setMethod("update");
+						initId.setID(rs.getString(2));
+						initId.setSlave((byte) rs.getInt(3));
+						initId.setInstanceName(rs.getString(4));
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						if(StringManagerUtils.isNotNull(response)){
+							InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+							initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+						}
+					}else if(initialized!=null){
+						//如果已经初始化但注册包ID、设备从地址、实例有一项为空，删除设备
+						if( (!StringManagerUtils.isNotNull(rs.getString(2))) || rs.getInt(3)==0 || (!StringManagerUtils.isNotNull(rs.getString(4))) ){
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								initializedDeviceList.remove(rs.getInt(6));
+							}
+						}
+						//如果已经初始化但信息有变化
+						else if(! (initialized.getSigninid().equalsIgnoreCase(rs.getString(2))&&initialized.getSlave()==(byte) rs.getInt(3)&& initialized.getInstanceName().equalsIgnoreCase(rs.getString(4)))   ){
+							//删掉原有初始化
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							//重新初始化
+							initId.setMethod("update");
+							initId.setID(rs.getString(2));
+							initId.setSlave((byte) rs.getInt(3));
+							initId.setInstanceName(rs.getString(4));
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+								initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+							}
+						}
+					}
+				}else{
+					if(initialized!=null){
+						//删掉原有初始化
+						InitId initId=new InitId();
+						initId.setMethod("delete");
+						initId.setID(initialized.getSigninid());
+						initId.setSlave(initialized.getSlave());
+						initId.setInstanceName(initialized.getInstanceName());
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						initializedDeviceList.remove(rs.getInt(6));
+					}
+				}
 			}
+			dataModelMap.put("InitializedDeviceList", initializedDeviceList);
+		} catch (SQLException e) {
+			StringManagerUtils.printLog("ID初始化sql："+sql);
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return result;
+	}
+	
+	public static int initPumpDriverAcquisitionInfoConfigById(List<String> wellIdList,String method){
+		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
+		Gson gson = new Gson();
+		int result=0;
+		
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		Map<Integer,InitializedDeviceInfo> initializedDeviceList=(Map<Integer,InitializedDeviceInfo>) dataModelMap.get("InitializedDeviceList");
+		if(initializedDeviceList==null){
+			initializedDeviceList=new HashMap<Integer,InitializedDeviceInfo>();
+		}
+		
+		String wellId=StringUtils.join(wellIdList, ",");
+		if(!StringManagerUtils.isNotNull(method)){
+			method="update";
+		}
+		String sql="select t.wellname,t.signinid,t.slave,t2.name,t.devicetype,t.id,t.orgid,t.status "
+				+ " from tbl_pumpdevice t left outer join tbl_protocolinstance t2  on t.instancecode=t2.code "
+				+ " where 1=1 ";
+//		if("update".equalsIgnoreCase(method)){
+//			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
+//		}	
+		if(StringManagerUtils.isNotNull(wellId)){
+			sql+=" and t.id in("+wellId+")";
+		}
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null ){
+        	return -1;
+        }
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				InitializedDeviceInfo initialized=initializedDeviceList.get(rs.getInt(6));
+				int status=rs.getInt(8);
+				if("update".equalsIgnoreCase(method)&&status==1){
+					if(initialized==null&&StringManagerUtils.isNotNull(rs.getString(2))&& rs.getInt(3)>0 &&StringManagerUtils.isNotNull(rs.getString(4))){//如果未初始化
+						InitId initId=new InitId();
+						initId.setMethod("update");
+						initId.setID(rs.getString(2));
+						initId.setSlave((byte) rs.getInt(3));
+						initId.setInstanceName(rs.getString(4));
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						if(StringManagerUtils.isNotNull(response)){
+							InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+							initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+						}
+					}else if(initialized!=null){
+						//如果已经初始化但注册包ID、设备从地址、实例有一项为空，删除设备
+						if( (!StringManagerUtils.isNotNull(rs.getString(2))) || rs.getInt(3)==0 || (!StringManagerUtils.isNotNull(rs.getString(4))) ){
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								initializedDeviceList.remove(rs.getInt(6));
+							}
+						}
+						//如果已经初始化但信息有变化
+						else if(! (initialized.getSigninid().equalsIgnoreCase(rs.getString(2))&&initialized.getSlave()==(byte) rs.getInt(3)&& initialized.getInstanceName().equalsIgnoreCase(rs.getString(4)))   ){
+							//删掉原有初始化
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							//重新初始化
+							initId.setMethod("update");
+							initId.setID(rs.getString(2));
+							initId.setSlave((byte) rs.getInt(3));
+							initId.setInstanceName(rs.getString(4));
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+								initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+							}
+						}
+					}
+				}else{
+					if(initialized!=null){
+						//删掉原有初始化
+						InitId initId=new InitId();
+						initId.setMethod("delete");
+						initId.setID(initialized.getSigninid());
+						initId.setSlave(initialized.getSlave());
+						initId.setInstanceName(initialized.getInstanceName());
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						initializedDeviceList.remove(rs.getInt(6));
+					}
+				}
+			}
+			dataModelMap.put("InitializedDeviceList", initializedDeviceList);
 		} catch (SQLException e) {
 			StringManagerUtils.printLog("ID初始化sql："+sql);
 			e.printStackTrace();
@@ -1166,16 +1345,23 @@ public class EquipmentDriverServerTask {
 		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
 		Gson gson = new Gson();
 		int result=0;
+		
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		Map<Integer,InitializedDeviceInfo> initializedDeviceList=(Map<Integer,InitializedDeviceInfo>) dataModelMap.get("InitializedDeviceList");
+		if(initializedDeviceList==null){
+			initializedDeviceList=new HashMap<Integer,InitializedDeviceInfo>();
+		}
+		
 		String wellName=StringManagerUtils.joinStringArr2(wellList, ",");
 		if(!StringManagerUtils.isNotNull(method)){
 			method="update";
 		}
-		String sql="select t.wellname,t.signinid,t.slave,t2.name "
+		String sql="select t.wellname,t.signinid,t.slave,t2.name,t.devicetype,t.id,t.orgid,status "
 				+ " from tbl_pipelinedevice t,tbl_protocolinstance t2 "
 				+ " where t.instancecode=t2.code ";
-		if("update".equalsIgnoreCase(method)){
-			sql+= " and t.signinid is not null and t.slave is not null";
-		}	
+//		if("update".equalsIgnoreCase(method)){
+//			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
+//		}	
 		if(StringManagerUtils.isNotNull(wellName)){
 			sql+=" and t.wellname in("+wellName+")";
 		}
@@ -1190,14 +1376,184 @@ public class EquipmentDriverServerTask {
 			pstmt = conn.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()){
-				InitId initId=new InitId();
-				initId.setMethod(method);
-				initId.setID(rs.getString(2));
-				initId.setSlave((byte) rs.getInt(3));
-				initId.setInstanceName(rs.getString(4));
-				StringManagerUtils.printLog("管设备ID初始化："+gson.toJson(initId));
-				StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+				InitializedDeviceInfo initialized=initializedDeviceList.get(rs.getInt(6));
+				int status=rs.getInt(8);
+				if("update".equalsIgnoreCase(method)&&status==1){
+					if(initialized==null&&StringManagerUtils.isNotNull(rs.getString(2))&& rs.getInt(3)>0 &&StringManagerUtils.isNotNull(rs.getString(4))){//如果未初始化
+						InitId initId=new InitId();
+						initId.setMethod("update");
+						initId.setID(rs.getString(2));
+						initId.setSlave((byte) rs.getInt(3));
+						initId.setInstanceName(rs.getString(4));
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						if(StringManagerUtils.isNotNull(response)){
+							InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+							initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+						}
+					}else if(initialized!=null){
+						//如果已经初始化但注册包ID、设备从地址、实例有一项为空，删除设备
+						if( (!StringManagerUtils.isNotNull(rs.getString(2))) || rs.getInt(3)==0 || (!StringManagerUtils.isNotNull(rs.getString(4))) ){
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								initializedDeviceList.remove(rs.getInt(6));
+							}
+						}
+						//如果已经初始化但信息有变化
+						else if(! (initialized.getSigninid().equalsIgnoreCase(rs.getString(2))&&initialized.getSlave()==(byte) rs.getInt(3)&& initialized.getInstanceName().equalsIgnoreCase(rs.getString(4)))   ){
+							//删掉原有初始化
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							//重新初始化
+							initId.setMethod("update");
+							initId.setID(rs.getString(2));
+							initId.setSlave((byte) rs.getInt(3));
+							initId.setInstanceName(rs.getString(4));
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+								initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+							}
+						}
+					}
+				}else{
+					if(initialized!=null){
+						//删掉原有初始化
+						InitId initId=new InitId();
+						initId.setMethod("delete");
+						initId.setID(initialized.getSigninid());
+						initId.setSlave(initialized.getSlave());
+						initId.setInstanceName(initialized.getInstanceName());
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						initializedDeviceList.remove(rs.getInt(6));
+					}
+				}
 			}
+			dataModelMap.put("InitializedDeviceList", initializedDeviceList);
+		} catch (SQLException e) {
+			StringManagerUtils.printLog("ID初始化sql："+sql);
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return result;
+	}
+	
+	public static int initPipelineDriverAcquisitionInfoConfigById(List<String> wellIdList,String method){
+		String initUrl=Config.getInstance().configFile.getDriverConfig().getId();
+		Gson gson = new Gson();
+		int result=0;
+		
+		Map<String, Object> dataModelMap = DataModelMap.getMapObject();
+		Map<Integer,InitializedDeviceInfo> initializedDeviceList=(Map<Integer,InitializedDeviceInfo>) dataModelMap.get("InitializedDeviceList");
+		if(initializedDeviceList==null){
+			initializedDeviceList=new HashMap<Integer,InitializedDeviceInfo>();
+		}
+		
+		String wellId=StringUtils.join(wellIdList, ",");
+		if(!StringManagerUtils.isNotNull(method)){
+			method="update";
+		}
+		String sql="select t.wellname,t.signinid,t.slave,t2.name,t.devicetype,t.id,t.orgid,t.status "
+				+ " from tbl_pipelinedevice t left outer join tbl_protocolinstance t2  on t.instancecode=t2.code "
+				+ " where 1=1 ";
+//		if("update".equalsIgnoreCase(method)){
+//			sql+= " and t.signinid is not null and t.slave is not null and t.status=1";
+//		}	
+		if(StringManagerUtils.isNotNull(wellId)){
+			sql+=" and t.id in("+wellId+")";
+		}
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null ){
+        	return -1;
+        }
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				InitializedDeviceInfo initialized=initializedDeviceList.get(rs.getInt(6));
+				int status=rs.getInt(8);
+				if("update".equalsIgnoreCase(method)&&status==1){
+					if(initialized==null&&StringManagerUtils.isNotNull(rs.getString(2))&& rs.getInt(3)>0 &&StringManagerUtils.isNotNull(rs.getString(4))){//如果未初始化
+						InitId initId=new InitId();
+						initId.setMethod("update");
+						initId.setID(rs.getString(2));
+						initId.setSlave((byte) rs.getInt(3));
+						initId.setInstanceName(rs.getString(4));
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						if(StringManagerUtils.isNotNull(response)){
+							InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+							initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+						}
+					}else if(initialized!=null){
+						//如果已经初始化但注册包ID、设备从地址、实例有一项为空，删除设备
+						if( (!StringManagerUtils.isNotNull(rs.getString(2))) || rs.getInt(3)==0 || (!StringManagerUtils.isNotNull(rs.getString(4))) ){
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								initializedDeviceList.remove(rs.getInt(6));
+							}
+						}
+						//如果已经初始化但信息有变化
+						else if(! (initialized.getSigninid().equalsIgnoreCase(rs.getString(2))&&initialized.getSlave()==(byte) rs.getInt(3)&& initialized.getInstanceName().equalsIgnoreCase(rs.getString(4)))   ){
+							//删掉原有初始化
+							InitId initId=new InitId();
+							initId.setMethod("delete");
+							initId.setID(initialized.getSigninid());
+							initId.setSlave(initialized.getSlave());
+							initId.setInstanceName(initialized.getInstanceName());
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							//重新初始化
+							initId.setMethod("update");
+							initId.setID(rs.getString(2));
+							initId.setSlave((byte) rs.getInt(3));
+							initId.setInstanceName(rs.getString(4));
+							StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+							String response=StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+							if(StringManagerUtils.isNotNull(response)){
+								InitializedDeviceInfo initializedDeviceInfo=new InitializedDeviceInfo(rs.getInt(7),rs.getInt(6),rs.getString(1),rs.getInt(5),rs.getString(2),(byte) rs.getInt(3),rs.getString(4));
+								initializedDeviceList.put(initializedDeviceInfo.getDeviceId(), initializedDeviceInfo);
+							}
+						}
+					}
+				}else{
+					if(initialized!=null){
+						//删掉原有初始化
+						InitId initId=new InitId();
+						initId.setMethod("delete");
+						initId.setID(initialized.getSigninid());
+						initId.setSlave(initialized.getSlave());
+						initId.setInstanceName(initialized.getInstanceName());
+						StringManagerUtils.printLog("泵设备ID初始化："+gson.toJson(initId));
+						StringManagerUtils.sendPostMethod(initUrl, gson.toJson(initId),"utf-8");
+						initializedDeviceList.remove(rs.getInt(6));
+					}
+				}
+			}
+			dataModelMap.put("InitializedDeviceList", initializedDeviceList);
 		} catch (SQLException e) {
 			StringManagerUtils.printLog("ID初始化sql："+sql);
 			e.printStackTrace();
@@ -1572,7 +1928,7 @@ public class EquipmentDriverServerTask {
 		if(conn==null){
 			return ;
 		}
-		String sql="select t.wellname,t.devicetype,t.orgid,t2.commstatus "
+		String sql="select t.wellname,t.devicetype,t.orgid,t2.commstatus,t.status "
 				+ " from tbl_pumpdevice t "
 				+ " left outer join tbl_pumpacqdata_latest t2 on t2.wellid=t.id "
 				+ " order by t.sortnum";
@@ -1584,10 +1940,11 @@ public class EquipmentDriverServerTask {
 			commStatus.setDeviceType(rs.getInt(2));
 			commStatus.setOrgId(rs.getInt(3));
 			commStatus.setCommStatus(rs.getInt(4));
+			commStatus.setDeviceStatus(rs.getInt(5));
 			commStatusList.add(commStatus);
 		}
 		
-		sql="select t.wellname,t.devicetype,t.orgid,t2.commstatus "
+		sql="select t.wellname,t.devicetype,t.orgid,t2.commstatus,t.status "
 				+ " from tbl_pipelinedevice t "
 				+ " left outer join tbl_pipelineacqdata_latest t2 on t2.wellid=t.id "
 				+ " order by t.sortnum";
@@ -1599,6 +1956,7 @@ public class EquipmentDriverServerTask {
 			commStatus.setDeviceType(rs.getInt(2));
 			commStatus.setOrgId(rs.getInt(3));
 			commStatus.setCommStatus(rs.getInt(4));
+			commStatus.setDeviceStatus(rs.getInt(5));
 			commStatusList.add(commStatus);
 		}
 		dataModelMap.put("DeviceCommStatus", commStatusList);

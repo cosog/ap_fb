@@ -49,6 +49,8 @@ public class WellHandsontableChangedData {
 	    
 	    private String videoUrl="";
 	    
+	    private String statusName="";
+	    
 	    private String sortNum="";
 	    
 	    private int saveSign;
@@ -149,6 +151,14 @@ public class WellHandsontableChangedData {
 
 		public void setSaveStr(String saveStr) {
 			this.saveStr = saveStr;
+		}
+
+		public String getStatusName() {
+			return statusName;
+		}
+
+		public void setStatusName(String statusName) {
+			this.statusName = statusName;
 		}
 	    
 	}

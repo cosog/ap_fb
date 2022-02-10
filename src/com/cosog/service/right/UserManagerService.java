@@ -91,7 +91,7 @@ public class UserManagerService<T> extends BaseService<T> {
 				+ " u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin,0,'否','是') as userQuickLoginName,"
 				+ " u.user_receivesms as receiveSMS,decode(u.user_receivesms,1,'是','否') as receiveSMSName,"
 				+ " u.user_receivemail as receiveMail,decode(u.user_receivemail,1,'是','否') as receiveMailName,"
-				+ " u.user_enable as userEnable,decode(u.user_enable,1,'激活','禁用') as userEnableName"
+				+ " u.user_enable as userEnable,decode(u.user_enable,1,'使能','失效') as userEnableName"
 				+ " from tbl_user u"
 				+ " left outer join  tbl_org o on u.user_orgid=o.org_id"
 				+ " left outer join tbl_role r on u.user_type=r.role_id"

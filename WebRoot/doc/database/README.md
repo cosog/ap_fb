@@ -206,7 +206,7 @@
 | 8        | USER_ORGID       | 用户所属组织     | NUMBER(10)   |          | N        |        | 对应tbl_org表中org_id字段   |
 | 9        | USER_REGTIME     | 用户注册时间     | DATE         |          | Y        |        |                             |
 | 10       | USER_QUICKLOGIN  | 是否快捷登录     | NUMBER(1)    |          | Y        |        | 0-不是 1-是                 |
-| 11       | USER_ENABLE      | 激活或者禁用     | NUMBER(1)    |          |          |        | 0-禁用 1-激活               |
+| 11       | USER_ENABLE      | 使能或者失效     | NUMBER(1)    |          |          |        | 0-失效 1-使能               |
 | 12       | USER_RECEIVESMS  | 是否接收报警短信 | NUMBER(10)   |          |          |        | 0-否，1-是                  |
 | 13       | USER_RECEIVEMAIL | 是否接收报警邮件 | NUMBER(10)   |          |          |        | 0-否，1-是                  |
 
@@ -459,37 +459,39 @@
 
 表1-20 泵设备信息表
 
-| **序号** | **代码**             | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注** |
-|----------|----------------------|--------------|---------------|----------|----------|--------|----------|
-| 1        | ID                   | 记录编号     | NUMBER(10)    |          | N        | 主键   |          |
-| 2        | ORGID                | 单位编号     | NUMBER(10)    |          | Y        |        |          |
-| 3        | WELLNAME             | 设备名称     | VARCHAR2(200) |          | Y        |        |          |
-| 4        | DEVICETYPE           | 设备类型     | NUMBER(1)     |          | Y        |        |          |
-| 5        | APPLICATIONSCENARIOS | 应用场景     | NUMBER(2)     |          | Y        |        |          |
-| 6        | SIGNINID             | 注册包ID     | VARCHAR2(200) |          | N        |        |          |
-| 7        | SLAVE                | 设备从地址   | VARCHAR2(200) |          | Y        |        |          |
-| 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |          |
-| 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |          |
-| 10       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |          |
-| 11       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |          |
+| **序号** | **代码**             | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**      |
+|----------|----------------------|--------------|---------------|----------|----------|--------|---------------|
+| 1        | ID                   | 记录编号     | NUMBER(10)    |          | N        | 主键   |               |
+| 2        | ORGID                | 单位编号     | NUMBER(10)    |          | Y        |        |               |
+| 3        | WELLNAME             | 设备名称     | VARCHAR2(200) |          | Y        |        |               |
+| 4        | DEVICETYPE           | 设备类型     | NUMBER(1)     |          | Y        |        |               |
+| 5        | APPLICATIONSCENARIOS | 应用场景     | NUMBER(2)     |          | Y        |        |               |
+| 6        | SIGNINID             | 注册包ID     | VARCHAR2(200) |          | N        |        |               |
+| 7        | SLAVE                | 设备从地址   | VARCHAR2(200) |          | Y        |        |               |
+| 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |               |
+| 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |               |
+| 10       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |               |
+| 11       | STATUS               | 状态         | NUMBER(1)     |          | Y        |        | 0-失效 1-使能 |
+| 12       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |               |
 
 ### 1.2.20 tbl\_pipelinedevice
 
 表1-21 管设备信息表
 
-| **序号** | **代码**             | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注** |
-|----------|----------------------|--------------|---------------|----------|----------|--------|----------|
-| 1        | ID                   | 记录编号     | NUMBER(10)    |          | N        | 主键   |          |
-| 2        | ORGID                | 单位编号     | NUMBER(10)    |          | Y        |        |          |
-| 3        | WELLNAME             | 设备名称     | VARCHAR2(200) |          | Y        |        |          |
-| 4        | DEVICETYPE           | 设备类型     | NUMBER(1)     |          | Y        |        |          |
-| 5        | APPLICATIONSCENARIOS | 应用场景     | NUMBER(2)     |          | Y        |        |          |
-| 6        | SIGNINID             | 注册包ID     | VARCHAR2(200) |          | N        |        |          |
-| 7        | SLAVE                | 设备从地址   | VARCHAR2(200) |          | Y        |        |          |
-| 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |          |
-| 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |          |
-| 17       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |          |
-| 18       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |          |
+| **序号** | **代码**             | **名称**     | **类型**      | **单位** | **为空** | **键** | **备注**      |
+|----------|----------------------|--------------|---------------|----------|----------|--------|---------------|
+| 1        | ID                   | 记录编号     | NUMBER(10)    |          | N        | 主键   |               |
+| 2        | ORGID                | 单位编号     | NUMBER(10)    |          | Y        |        |               |
+| 3        | WELLNAME             | 设备名称     | VARCHAR2(200) |          | Y        |        |               |
+| 4        | DEVICETYPE           | 设备类型     | NUMBER(1)     |          | Y        |        |               |
+| 5        | APPLICATIONSCENARIOS | 应用场景     | NUMBER(2)     |          | Y        |        |               |
+| 6        | SIGNINID             | 注册包ID     | VARCHAR2(200) |          | N        |        |               |
+| 7        | SLAVE                | 设备从地址   | VARCHAR2(200) |          | Y        |        |               |
+| 8        | INSTANCECODE         | 采控实例代码 | VARCHAR2(50)  |          | Y        |        |               |
+| 9        | ALARMINSTANCECODE    | 报警实例代码 | VARCHAR2(50)  |          | Y        |        |               |
+| 10       | VIDEOURL             | 视频地址     | VARCHAR2(400) |          | Y        |        |               |
+| 11       | STATUS               | 状态         | NUMBER(1)     |          | Y        |        | 0-失效 1-使能 |
+| 12       | SORTNUM              | 排序编号     | NUMBER(10)    |          | Y        |        |               |
 
 ### 1.2.21 tbl\_smsdevice
 
@@ -775,47 +777,51 @@
 
 表2-2 泵设备信息视图
 
-| **序号** | **代码**                 | **名称**     | **类型** | **备注** |
-|----------|--------------------------|--------------|----------|----------|
-| 1        | ID                       | 记录编号     | NUMBER   |          |
-| 2        | ORGNAME                  | 组织名称     | VARCHAR2 |          |
-| 3        | ORGID                    | 组织编号     | NUMBER   |          |
-| 4        | WELLNAME                 | 设备名称     | VARCHAR2 |          |
-| 5        | APPLICATIONSCENARIOS     | 应用场景     | NUMBER   |          |
-| 6        | APPLICATIONSCENARIOSNAME | 应用场景名称 | VARCHAR2 |          |
-| 7        | DEVICETYPE               | 设备类型     | NUMBER   |          |
-| 8        | DEVICETYPENAME           | 设备类型名称 | VARCHAR2 |          |
-| 9        | SIGNINID                 | 注册包ID     | VARCHAR2 |          |
-| 10       | SLAVE                    | 设备从地址   | VARCHAR2 |          |
-| 11       | VIDEOURL                 | 视频路径     | VARCHAR2 |          |
-| 12       | INSTANCECODE             | 采控实例编码 | VARCHAR2 |          |
-| 13       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |          |
-| 14       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |          |
-| 15       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |          |
-| 16       | SORTNUM                  | 排序编号     | NUMBER   |          |
+| **序号** | **代码**                 | **名称**     | **类型** | **备注**      |
+|----------|--------------------------|--------------|----------|---------------|
+| 1        | ID                       | 记录编号     | NUMBER   |               |
+| 2        | ORGNAME                  | 组织名称     | VARCHAR2 |               |
+| 3        | ORGID                    | 组织编号     | NUMBER   |               |
+| 4        | WELLNAME                 | 设备名称     | VARCHAR2 |               |
+| 5        | APPLICATIONSCENARIOS     | 应用场景     | NUMBER   |               |
+| 6        | APPLICATIONSCENARIOSNAME | 应用场景名称 | VARCHAR2 |               |
+| 7        | DEVICETYPE               | 设备类型     | NUMBER   |               |
+| 8        | DEVICETYPENAME           | 设备类型名称 | VARCHAR2 |               |
+| 9        | SIGNINID                 | 注册包ID     | VARCHAR2 |               |
+| 10       | SLAVE                    | 设备从地址   | VARCHAR2 |               |
+| 11       | VIDEOURL                 | 视频路径     | VARCHAR2 |               |
+| 12       | INSTANCECODE             | 采控实例编码 | VARCHAR2 |               |
+| 13       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |               |
+| 14       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |               |
+| 15       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |               |
+| 16       | STATUS                   | 状态         | NUMBER   | 0-失效 1-使能 |
+| 17       | STATUSNAME               | 状态名称     | VARCHAR2 | 失效或使能    |
+| 18       | SORTNUM                  | 排序编号     | NUMBER   |               |
 
 ### 2.2.3 viw\_pipelinedevice
 
 表2-3 管设备信息视图
 
-| **序号** | **代码**                 | **名称**     | **类型** | **备注** |
-|----------|--------------------------|--------------|----------|----------|
-| 1        | ID                       | 记录编号     | NUMBER   |          |
-| 2        | ORGNAME                  | 组织名称     | VARCHAR2 |          |
-| 3        | ORGID                    | 组织编号     | NUMBER   |          |
-| 4        | WELLNAME                 | 设备名称     | VARCHAR2 |          |
-| 5        | APPLICATIONSCENARIOS     | 应用场景     | NUMBER   |          |
-| 6        | APPLICATIONSCENARIOSNAME | 应用场景名称 | VARCHAR2 |          |
-| 7        | DEVICETYPE               | 设备类型     | NUMBER   |          |
-| 8        | DEVICETYPENAME           | 设备类型名称 | VARCHAR2 |          |
-| 9        | SIGNINID                 | 注册包ID     | VARCHAR2 |          |
-| 10       | SLAVE                    | 设备从地址   | VARCHAR2 |          |
-| 11       | VIDEOURL                 | 视频路径     | VARCHAR2 |          |
-| 12       | INSTANCECODE             | 采控实例编码 | VARCHAR2 |          |
-| 13       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |          |
-| 14       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |          |
-| 15       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |          |
-| 16       | SORTNUM                  | 排序编号     | NUMBER   |          |
+| **序号** | **代码**                 | **名称**     | **类型** | **备注**      |
+|----------|--------------------------|--------------|----------|---------------|
+| 1        | ID                       | 记录编号     | NUMBER   |               |
+| 2        | ORGNAME                  | 组织名称     | VARCHAR2 |               |
+| 3        | ORGID                    | 组织编号     | NUMBER   |               |
+| 4        | WELLNAME                 | 设备名称     | VARCHAR2 |               |
+| 5        | APPLICATIONSCENARIOS     | 应用场景     | NUMBER   |               |
+| 6        | APPLICATIONSCENARIOSNAME | 应用场景名称 | VARCHAR2 |               |
+| 7        | DEVICETYPE               | 设备类型     | NUMBER   |               |
+| 8        | DEVICETYPENAME           | 设备类型名称 | VARCHAR2 |               |
+| 9        | SIGNINID                 | 注册包ID     | VARCHAR2 |               |
+| 10       | SLAVE                    | 设备从地址   | VARCHAR2 |               |
+| 11       | VIDEOURL                 | 视频路径     | VARCHAR2 |               |
+| 12       | INSTANCECODE             | 采控实例编码 | VARCHAR2 |               |
+| 13       | INSTANCENAME             | 采控实例名称 | VARCHAR2 |               |
+| 14       | ALARMINSTANCECODE        | 短信实例编码 | VARCHAR2 |               |
+| 15       | ALARMINSTANCENAME        | 短信实例名称 | VARCHAR2 |               |
+| 16       | STATUS                   | 状态         | NUMBER   | 0-失效 1-使能 |
+| 17       | STATUSNAME               | 状态名称     | VARCHAR2 | 失效或使能    |
+| 18       | SORTNUM                  | 排序编号     | NUMBER   |               |
 
 ### 2.2.4 viw\_sysdevice
 
