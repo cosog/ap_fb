@@ -98,7 +98,7 @@ public class ResourceMonitoringTask {
 			adRunStatus="运行";
 			adRunStatusValue=1;
 			adVersion=adStatusProbeResonanceData.getVer();
-			adLicense=adStatusProbeResonanceData.getNumber();
+			adLicense=adStatusProbeResonanceData.getLicenseNumber();
 			if(adLicense>0&&deviceAmount>adLicense){
 				adLicenseSign=true;
 			}

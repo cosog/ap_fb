@@ -6,7 +6,9 @@ public class AppRunStatusProbeResonanceData {
 
 	private String Ver;
 	
-	private int Number;
+	private int LicenseNumber;
+	
+	private int IDSlaveNumber;
 
     private List<String> URL;
 
@@ -22,10 +24,16 @@ public class AppRunStatusProbeResonanceData {
     public List<String> getURL(){
         return this.URL;
     }
-	public int getNumber() {
-		return Number;
+	public int getLicenseNumber() {
+		return LicenseNumber;
 	}
-	public void setNumber(int number) {
-		Number = number;
+	public void setLicenseNumber(int licenseNumber) {
+		LicenseNumber = licenseNumber;
+	}
+	public int getIDSlaveNumber() {
+		return IDSlaveNumber;
+	}
+	public void setIDSlaveNumber(int iDSlaveNumber) {
+		IDSlaveNumber = iDSlaveNumber;
 	}
 }
