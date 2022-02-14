@@ -141,7 +141,7 @@ public class DriverAPIController extends BaseController{
 	public String AllDeviceOffline2() throws Exception {
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
-		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
+//		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String currentTime=StringManagerUtils.getCurrentTime("yyyy-MM-dd HH:mm:ss");
 		StringManagerUtils.printLog(currentTime+"：ad未运行，所有设备离线");
 		String protocols="";
@@ -333,7 +333,7 @@ public class DriverAPIController extends BaseController{
 		ServletInputStream ss = request.getInputStream();
 		Gson gson=new Gson();
 		StringBuffer webSocketSendData = new StringBuffer();
-		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
+//		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		String data=StringManagerUtils.convertStreamToString(ss,"utf-8");
 		StringManagerUtils.printLog("接收到ad推送online数据："+data);
 		java.lang.reflect.Type type = new TypeToken<AcqOnline>() {}.getType();
@@ -590,7 +590,7 @@ public class DriverAPIController extends BaseController{
 		Gson gson=new Gson();
 		java.lang.reflect.Type type=null;
 		int dataSaveMode=Config.getInstance().configFile.getOthers().getDataSaveMode();
-		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
+//		String commUrl=Config.getInstance().configFile.getAgileCalculate().getCommunication()[0];
 		List<String> websocketClientUserList=new ArrayList<>();
 		for (WebSocketByJavax item : WebSocketByJavax.clients.values()) { 
             String[] clientInfo=item.userId.split("_");
