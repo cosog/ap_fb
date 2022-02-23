@@ -57,9 +57,9 @@
     <title><%=viewProjectName%></title>
     <!-- 链接外部图标，如：中石油、中石化 -->
     <%if(showLogo){ %>
-	<link rel="Bookmark" href="<%=path%>/images/logo/favicon.ico" />
-	<link rel="icon" href="<%=path%>/images/logo/favicon.ico" type="image/x-icon" />
-	<link rel="shortcut icon" href="<%=path%>/images/logo/favicon.ico" type="image/x-icon" />
+	<link rel="Bookmark" href="<%=path%>/images/logo/favicon.ico?timestamp=202202231815" />
+	<link rel="icon" href="<%=path%>/images/logo/favicon.ico?timestamp=202202231815" type="image/x-icon" />
+	<link rel="shortcut icon" href="<%=path%>/images/logo/favicon.ico?timestamp=202202231815" type="image/x-icon" />
 	<%} %>
     <!-- 链接css -->
     <link rel="stylesheet" href="<%=path%>/scripts/bootstrap/css/bootstrap.min.css" type="text/css" />
