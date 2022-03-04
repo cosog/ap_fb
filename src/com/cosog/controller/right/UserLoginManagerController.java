@@ -218,7 +218,7 @@ public class UserLoginManagerController extends BaseController {
 				out.print("{success:true,flag:false,'msg':'<font color=\"purple\">用户" + username + "已被禁用 !</font>' }");
 			} else {
 				if(locale.equalsIgnoreCase("zh_CN")){
-				out.print("{success:true,flag:false,'msg':'<font color=\"purple\">用户" + username + "的账号或密码错误 !</font>' }");
+					out.print("{success:true,flag:false,'msg':'<font color=\"purple\">用户" + username + "的账号或密码错误 !</font>' }");
 				}else if(locale.equalsIgnoreCase("en")){
 					out.print("{success:true,flag:false,'msg':'<font color=\"purple\">User "+ username +"\\'s account or password is wrong!</font>' }");
 				}

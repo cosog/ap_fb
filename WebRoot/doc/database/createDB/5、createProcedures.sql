@@ -873,7 +873,7 @@ Exception
 end prd_update_pipelinedevice;
 /
 
-CREATE OR REPLACE PROCEDURE prd_update_pipelinedevice ( v_recordId in NUMBER,
+CREATE OR REPLACE PROCEDURE prd_update_pumpdevice ( v_recordId in NUMBER,
                                                     v_wellName    in varchar2,
                                                     v_devicetype in NUMBER,
                                                     v_applicationScenariosName    in varchar2,
@@ -892,16 +892,16 @@ CREATE OR REPLACE PROCEDURE prd_update_pipelinedevice ( v_recordId in NUMBER,
   p_msg varchar2(3000) := 'error';
 begin
   --验证权限
-  select count(1) into wellcount from tbl_pipelinedevice t 
+  select count(1) into wellcount from tbl_pumpdevice t 
   where t.wellname=v_wellName and t.id<>v_recordId 
-  and t.orgid=( select t2.orgid from tbl_pipelinedevice t2 where t2.id=v_recordId);
+  and t.orgid=( select t2.orgid from tbl_pumpdevice t2 where t2.id=v_recordId);
     if wellcount=0 then
-        select count(1) into othercount from tbl_pipelinedevice t 
+        select count(1) into othercount from tbl_pumpdevice t 
         where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null
         and t.id<>v_recordId;
         
         if v_recordId >0 and othercount=0 then
-          Update tbl_pipelinedevice t
+          Update tbl_pumpdevice t
            Set t.wellname=v_wellName,
                t.devicetype=v_devicetype,
                t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
@@ -917,12 +917,12 @@ begin
            v_resultstr := '修改成功';
            p_msg := '修改成功';
         elsif othercount>0 then
-          select substr(v.path||'/'||t.wellname,2) into otherDeviceAllPath  from tbl_pipelinedevice t, (select org.org_id, sys_connect_by_path(org.org_name,'/') as path
+          select substr(v.path||'/'||t.wellname,2) into otherDeviceAllPath  from tbl_pumpdevice t, (select org.org_id, sys_connect_by_path(org.org_name,'/') as path
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
           where t.orgid=v.org_id 
-          and t.id=(select t2.id from tbl_pipelinedevice t2
+          and t.id=(select t2.id from tbl_pumpdevice t2
             where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null
             and t2.id<>v_recordId);
           v_result:=-22;
@@ -939,7 +939,7 @@ Exception
   When Others Then
     p_msg := Sqlerrm || ',' || '操作失败';
     dbms_output.put_line('p_msg:' || p_msg);
-end prd_update_pipelinedevice;
+end prd_update_pumpdevice;
 /
 
 CREATE OR REPLACE PROCEDURE prd_update_smsdevice (v_recordId   in NUMBER,
