@@ -1085,19 +1085,19 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		if(StringManagerUtils.stringToInteger(deviceType)>0){
 			tableName="tbl_pipelineacqdata_latest";
 		}
-		for(int i=0;i<controlColumns.size();i++){
-			sql+=",t2."+controlColumns.get(i);
-		}
+//		for(int i=0;i<controlColumns.size();i++){
+//			sql+=",t2."+controlColumns.get(i);
+//		}
 		sql+= " from "+deviceTableName+" t,"+tableName+" t2 where t.id=t2.wellid and t.id="+deviceId;
 		
 		result_json.append("{ \"success\":true,\"isControl\":"+isControl+",");
 		List<?> list = this.findCallSql(sql);
 		if(list.size()>0){
 			if(controlColumns.size()>0){
-				Object[] obj=(Object[]) list.get(0);
-				result_json.append("\"commStatus\":\""+obj[0]+"\",");
+//				Object[] obj=(Object[]) list.get(0);
+				result_json.append("\"commStatus\":\""+list.get(0)+"\",");
 				for(int i=0;i<controlColumns.size();i++){
-					deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\""+obj[1+i]+"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
+					deviceControlList.append("{\"title\":\""+controlItems.get(i)+"\",\"name\":\""+controlColumns.get(i)+"\",\"resolutionMode\":"+controlItemResolutionMode.get(i)+",\"value\":\"\",\"itemMeaning\":\""+controlItemMeaningList.get(i)+"\"},");
 				}
 				if(deviceControlList.toString().endsWith(",")){
 					deviceControlList.deleteCharAt(deviceControlList.length() - 1);
