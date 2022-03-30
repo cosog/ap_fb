@@ -346,15 +346,15 @@ begin
     if wellcount>0 then
       select t.id into wellId from tbl_pipelinedevice t where t.wellname=v_wellName and t.orgid=v_orgId;
       --判断signinid和slave是否已存在
-      select count(1) into othercount from tbl_pipelinedevice t 
+      select count(1) into othercount from tbl_pipelinedevice t
       where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null
       and t.id<>wellId;
       if othercount=0 then
         Update tbl_pipelinedevice t
         Set t.orgid   = v_orgId,t.devicetype=v_devicetype,
           t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-          t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
-          t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
+          t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.devicetype=1 and t2.name=v_instance and rownum=1)),
+          t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=1 and t2.name=v_alarmInstance and rownum=1),
           t.signinid=v_signInId,t.slave=v_slave,t.videourl=v_videourl,t.status=v_status,t.sortnum=v_sortNum
         Where t.wellName=v_wellName and t.orgid=v_orgId;
         commit;
@@ -366,7 +366,7 @@ begin
         from tbl_org org
         start with org.org_parent=0
         connect by   org.org_parent= prior org.org_id) v
-        where t.orgid=v.org_id 
+        where t.orgid=v.org_id
         and t.id=(select t2.id from tbl_pipelinedevice t2
             where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null
             and t2.id<>wellId);
@@ -374,7 +374,7 @@ begin
         v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
         p_msg := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
       end if;
-      
+
     elsif wellcount=0 then
       --判断signinid和slave是否已存在
         select count(1) into othercount from tbl_pipelinedevice t where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null;
@@ -382,10 +382,10 @@ begin
           insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
           values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
-          update tbl_pipelinedevice t 
+          update tbl_pipelinedevice t
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1),
-            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1)
+            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.devicetype=1 and t2.name=v_instance and rownum=1),
+            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=1 and t2.name=v_alarmInstance and rownum=1)
           Where t.wellName=v_wellName and t.orgid=v_orgId;
           commit;
           v_result:=0;
@@ -396,7 +396,7 @@ begin
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
-          where t.orgid=v.org_id 
+          where t.orgid=v.org_id
           and t.id=(select t2.id from tbl_pipelinedevice t2 where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null);
           v_result:=-22;
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
@@ -416,10 +416,10 @@ begin
           insert into tbl_pipelinedevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
           values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
-          update tbl_pipelinedevice t 
+          update tbl_pipelinedevice t
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1),
-            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1)
+            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.devicetype=1 and t2.name=v_instance and rownum=1),
+            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=1 and t2.name=v_alarmInstance and rownum=1)
           Where t.wellName=v_wellName and t.orgid=v_orgId;
           commit;
           v_result:=0;
@@ -430,7 +430,7 @@ begin
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
-          where t.orgid=v.org_id 
+          where t.orgid=v.org_id
           and t.id=(select t2.id from tbl_pipelinedevice t2 where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null);
           v_result:=-22;
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
@@ -531,15 +531,15 @@ begin
     if wellcount>0 then
       select t.id into wellId from tbl_pumpdevice t where t.wellname=v_wellName and t.orgid=v_orgId;
       --判断signinid和slave是否已存在
-      select count(1) into othercount from tbl_pumpdevice t 
+      select count(1) into othercount from tbl_pumpdevice t
       where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null
       and t.id<>wellId;
       if othercount=0 then
         Update tbl_pumpdevice t
         Set t.orgid   = v_orgId,t.devicetype=v_devicetype,
           t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-          t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
-          t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
+          t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.devicetype=0 and t2.name=v_instance and rownum=1)),
+          t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=0 and t2.name=v_alarmInstance and rownum=1),
           t.signinid=v_signInId,t.slave=v_slave,t.videourl=v_videourl,t.status=v_status, t.sortnum=v_sortNum
         Where t.wellName=v_wellName and t.orgid=v_orgId;
         commit;
@@ -551,7 +551,7 @@ begin
         from tbl_org org
         start with org.org_parent=0
         connect by   org.org_parent= prior org.org_id) v
-        where t.orgid=v.org_id 
+        where t.orgid=v.org_id
         and t.id=(select t2.id from tbl_pumpdevice t2
             where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null
             and t2.id<>wellId);
@@ -559,7 +559,7 @@ begin
         v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
         p_msg := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
       end if;
-      
+
     elsif wellcount=0 then
       --判断signinid和slave是否已存在
         select count(1) into othercount from tbl_pumpdevice t where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null;
@@ -567,10 +567,10 @@ begin
           insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
           values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
-          update tbl_pumpdevice t 
+          update tbl_pumpdevice t
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1),
-            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1)
+            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.devicetype=0 and t2.name=v_instance and rownum=1),
+            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=0 and t2.name=v_alarmInstance and rownum=1)
           Where t.wellName=v_wellName and t.orgid=v_orgId;
           commit;
           v_result:=0;
@@ -581,7 +581,7 @@ begin
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
-          where t.orgid=v.org_id 
+          where t.orgid=v.org_id
           and t.id=(select t2.id from tbl_pumpdevice t2 where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null);
           v_result:=-22;
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
@@ -601,10 +601,10 @@ begin
           insert into tbl_pumpdevice(orgId,wellName,devicetype,signinid,slave,videourl,status,Sortnum)
           values(v_orgId,v_wellName,v_devicetype,v_signInId,v_slave,v_videourl,v_status,v_sortNum);
           commit;
-          update tbl_pumpdevice t 
+          update tbl_pumpdevice t
           set t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1),
-            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1)
+            t.instancecode=(select t2.code from tbl_protocolinstance t2 where t2.devicetype=0 and t2.name=v_instance and rownum=1),
+            t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=0 and t2.name=v_alarmInstance and rownum=1)
           Where t.wellName=v_wellName and t.orgid=v_orgId;
           commit;
           v_result:=0;
@@ -615,7 +615,7 @@ begin
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
-          where t.orgid=v.org_id 
+          where t.orgid=v.org_id
           and t.id=(select t2.id from tbl_pumpdevice t2 where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null);
           v_result:=-22;
           v_resultstr := '注册包ID和设备从地址与'||otherDeviceAllPath||'设备冲突';
@@ -824,21 +824,21 @@ CREATE OR REPLACE PROCEDURE prd_update_pipelinedevice ( v_recordId in NUMBER,
   p_msg varchar2(3000) := 'error';
 begin
   --验证权限
-  select count(1) into wellcount from tbl_pipelinedevice t 
-  where t.wellname=v_wellName and t.id<>v_recordId 
+  select count(1) into wellcount from tbl_pipelinedevice t
+  where t.wellname=v_wellName and t.id<>v_recordId
   and t.orgid=( select t2.orgid from tbl_pipelinedevice t2 where t2.id=v_recordId);
     if wellcount=0 then
-        select count(1) into othercount from tbl_pipelinedevice t 
+        select count(1) into othercount from tbl_pipelinedevice t
         where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null
         and t.id<>v_recordId;
-        
+
         if v_recordId >0 and othercount=0 then
           Update tbl_pipelinedevice t
            Set t.wellname=v_wellName,
                t.devicetype=v_devicetype,
                t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-               t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
-               t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
+               t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.devicetype=1 and t2.name=v_instance and rownum=1)),
+               t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=1 and t2.name=v_alarmInstance and rownum=1),
                t.signinid=v_signInId,t.slave=v_slave,
                t.videourl=v_videourl,
                t.sortnum=v_sortNum
@@ -852,7 +852,7 @@ begin
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
-          where t.orgid=v.org_id 
+          where t.orgid=v.org_id
           and t.id=(select t2.id from tbl_pipelinedevice t2
             where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null
             and t2.id<>v_recordId);
@@ -892,21 +892,21 @@ CREATE OR REPLACE PROCEDURE prd_update_pumpdevice ( v_recordId in NUMBER,
   p_msg varchar2(3000) := 'error';
 begin
   --验证权限
-  select count(1) into wellcount from tbl_pumpdevice t 
-  where t.wellname=v_wellName and t.id<>v_recordId 
+  select count(1) into wellcount from tbl_pumpdevice t
+  where t.wellname=v_wellName and t.id<>v_recordId
   and t.orgid=( select t2.orgid from tbl_pumpdevice t2 where t2.id=v_recordId);
     if wellcount=0 then
-        select count(1) into othercount from tbl_pumpdevice t 
+        select count(1) into othercount from tbl_pumpdevice t
         where t.signinid=v_signInId and t.slave=v_slave and t.signinid is not null and t.slave is not null
         and t.id<>v_recordId;
-        
+
         if v_recordId >0 and othercount=0 then
           Update tbl_pumpdevice t
            Set t.wellname=v_wellName,
                t.devicetype=v_devicetype,
                t.applicationscenarios=(select c.itemvalue from tbl_code c where c.itemcode='APPLICATIONSCENARIOS' and c.itemname=v_applicationScenariosName),
-               t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.name=v_instance and rownum=1)),
-               t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.name=v_alarmInstance and rownum=1),
+               t.instancecode=decode(v_devicetype,2,(select t2.code from tbl_protocolsmsinstance t2 where t2.name=v_instance and rownum=1),(select t2.code from tbl_protocolinstance t2 where t2.devicetype=0 and t2.name=v_instance and rownum=1)),
+               t.alarminstancecode=(select t2.code from tbl_protocolalarminstance t2 where t2.devicetype=0 and t2.name=v_alarmInstance and rownum=1),
                t.signinid=v_signInId,t.slave=v_slave,
                t.videourl=v_videourl,
                t.status=v_status,
@@ -921,7 +921,7 @@ begin
           from tbl_org org
           start with org.org_parent=0
           connect by   org.org_parent= prior org.org_id) v
-          where t.orgid=v.org_id 
+          where t.orgid=v.org_id
           and t.id=(select t2.id from tbl_pumpdevice t2
             where t2.signinid=v_signInId and t2.slave=v_slave and t2.signinid is not null and t2.slave is not null
             and t2.id<>v_recordId);

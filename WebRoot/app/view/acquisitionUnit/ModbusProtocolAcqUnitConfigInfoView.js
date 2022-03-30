@@ -108,7 +108,7 @@ function CreateProtocolAcqUnitItemsConfigInfoTable(protocolName,classes,code,typ
 			var result =  Ext.JSON.decode(response.responseText);
 			if(protocolAcqUnitConfigItemsHandsontableHelper==null || protocolAcqUnitConfigItemsHandsontableHelper.hot==undefined){
 				protocolAcqUnitConfigItemsHandsontableHelper = ProtocolAcqUnitConfigItemsHandsontableHelper.createNew("ModbusProtocolAcqGroupItemsConfigTableInfoDiv_id");
-				var colHeaders="['','序号','名称','地址','读写类型','单位','解析模式','显示级别','显示顺序','实时曲线','实时曲线颜色','历史曲线','历史曲线曲线']";
+				var colHeaders="['','序号','名称','地址','读写类型','单位','解析模式','显示级别','显示顺序','实时曲线','实时曲线颜色','历史曲线','历史曲线颜色']";
 				var columns="[" 
 						+"{data:'checked',type:'checkbox'}," 
 						+"{data:'id'}," 

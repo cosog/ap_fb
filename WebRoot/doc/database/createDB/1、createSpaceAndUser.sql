@@ -2,15 +2,15 @@ drop tablespace ap_fb_temp including contents and datafiles;
 drop tablespace ap_fb_data including contents and datafiles;
 drop user ap_fb cascade;
 create temporary tablespace ap_fb_temp
-TEMPFILE 'D:\oracle19c\oradata\ORCL\orclpdb\ap_fb_temp.dbf'
-size 50m
+TEMPFILE 'D:\oracle11g\oradata\orcl\ap_fb_temp.dbf'
+size 50m reuse
 autoextend on
 next 50m maxsize unlimited
 extent management local;
 create tablespace ap_fb_data
 logging
-DATAFILE 'D:\oracle19c\oradata\ORCL\orclpdb\ap_fb_data.dbf'
-size 350m
+DATAFILE 'D:\oracle11g\oradata\orcl\ap_fb_data.dbf'
+size 350m reuse
 autoextend on
 next 50m maxsize unlimited
 extent management local;
