@@ -526,6 +526,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 					}
 				}
 				EquipmentDriverServerTask.initInstanceConfigByAcqGroupId(groupId+"","update");
+				EquipmentDriverServerTask.initPumpDriverAcquisitionInfoConfigByAcqGroupId(groupId+"","update");
 			}
 			result = "{success:true,msg:true}";
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);

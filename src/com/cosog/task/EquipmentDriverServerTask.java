@@ -1729,6 +1729,47 @@ public class EquipmentDriverServerTask {
 		return 0;
 	}
 	
+	@SuppressWarnings("resource")
+	public static int initPumpDriverAcquisitionInfoConfigByAcqGroupId(String groupId,String method){
+		List<String> wellList=new ArrayList<String>();
+		Connection conn = null;   
+		PreparedStatement pstmt = null;   
+		ResultSet rs = null;
+		conn=OracleJdbcUtis.getConnection();
+		if(conn==null){
+        	return -1;
+        }
+		try {
+			String sql="select t.id from tbl_pumpdevice t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 ,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5 "
+					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id="+groupId;
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				wellList.add(rs.getString(1));
+			}
+			if(wellList.size()>0){
+				initPumpDriverAcquisitionInfoConfigById(wellList,method);
+			}
+			
+			wellList=new ArrayList<String>();
+			sql="select t.id from tbl_pipelinedevice t,tbl_protocolinstance t2,tbl_acq_unit_conf t3 ,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5 "
+					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id="+groupId;
+			pstmt = conn.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()){
+				wellList.add(rs.getString(1));
+			}
+			if(wellList.size()>0){
+				initPipelineDriverAcquisitionInfoConfigById(wellList,method);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally{
+			OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
+		}
+		return 0;
+	}
+	
 	public static int initSMSDevice(List<String> wellList,String method){
 		String initUrl=Config.getInstance().configFile.getDriverConfig().getSMS();
 		Gson gson = new Gson();
