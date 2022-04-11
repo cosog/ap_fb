@@ -79,10 +79,6 @@ boolean isConnection=false;
 <script type="text/javascript" src="<%=path%>/scripts/highcharts/offline-exporting.js?timestamp=202201271758"></script>
 <script type="text/javascript" src="<%=path%>/scripts/highcharts/highcharts-zh_CN.js?timestamp=202201271758"></script>
 
-<!-- echarts -->
-<script type="text/javascript" src="<%=path%>/scripts/echarts/echarts.min.js?timestamp=202201271758"></script>
-<script type="text/javascript" src="<%=path%>/scripts/echarts/echarts-gl.min.js?timestamp=202201271758"></script>
-
 <script type="text/javascript" src="<%=path%>/scripts/extjs/ux/ux.js?timestamp=202201271758"></script>
 <script type="text/javascript" src="<%=path%>/scripts/customMap/js/wellmap.js?timestamp=202201271758"></script>
 

@@ -820,9 +820,9 @@ public class AcquisitionUnitManagerService<T> extends BaseService<T> {
 			}
 		}
 		
-		boolean checked=false;
-		String delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
 		for(int i=0;i<commStatusItemsList.size();i++){
+			boolean checked=false;
+			String delay="",alarmLevel="",alarmSign="",isSendMessage="",isSendMail="";
 			if(StringManagerUtils.existOrNot(itemsList,commStatusItemsList.get(i),false)){
 				for(int j=0;j<list.size();j++){
 					Object[] obj = (Object[]) list.get(j);

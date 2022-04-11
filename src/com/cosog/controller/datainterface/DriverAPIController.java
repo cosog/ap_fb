@@ -952,11 +952,10 @@ public class DriverAPIController extends BaseController{
 					}
 					
 					//更新内存中设备通信状态
-					Map<String, Object> commStatusModelMap = DataModelMap.getMapObject();
-					List<CommStatus> commStatusList=(List<CommStatus>) commStatusModelMap.get("DeviceCommStatus");
+					List<CommStatus> commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
 					if(commStatusList==null){
 						EquipmentDriverServerTask.LoadDeviceCommStatus();
-						commStatusList=(List<CommStatus>) commStatusModelMap.get("DeviceCommStatus");
+						commStatusList=(List<CommStatus>) dataModelMap.get("DeviceCommStatus");
 					}
 					for(int i=0;i<commStatusList.size();i++){
 						if(wellName.equals(commStatusList.get(i).getDeviceName()) && deviceType.equals(commStatusList.get(i).getDeviceType()+"")){
@@ -965,7 +964,6 @@ public class DriverAPIController extends BaseController{
 						}
 					}
 					dataModelMap.put("DeviceCommStatus", commStatusList);
-					
 					if(save || alarm){//如果满足保存周期或者有报警，保存数据
 						String saveRawDataSql="insert into "+rawDataTable+"(wellid,acqtime,rawdata)values("+wellId+",to_date('"+acqTime+"','yyyy-mm-dd hh24:mi:ss'),'"+acqGroup.getRawData()+"' )";
 						

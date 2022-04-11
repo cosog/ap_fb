@@ -518,14 +518,15 @@ public class AcquisitionUnitManagerController extends BaseController {
 						acquisitionGroupItem.setBitIndex(bitIndex>=0?bitIndex:null);
 						acquisitionGroupItem.setShowLevel(StringManagerUtils.isNumber(module_[4])?StringManagerUtils.stringTransferInteger(module_[4]):null);
 						acquisitionGroupItem.setRealtimeCurve((StringManagerUtils.isNumber(module_[5]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[5]):null);
-						acquisitionGroupItem.setRealtimeCurveColor(StringManagerUtils.isNumber(module_[5]) && !"开关量".equalsIgnoreCase(resolutionMode)&&StringManagerUtils.isColor16("#"+module_[6])?module_[6]:"");
+						acquisitionGroupItem.setRealtimeCurveColor((!"开关量".equalsIgnoreCase(resolutionMode))&&StringManagerUtils.isColor16("#"+module_[6])?module_[6]:"");
 						acquisitionGroupItem.setHistoryCurve((StringManagerUtils.isNumber(module_[7]) && !"开关量".equalsIgnoreCase(resolutionMode))?StringManagerUtils.stringTransferInteger(module_[7]):null);
-						acquisitionGroupItem.setHistoryCurveColor(StringManagerUtils.isNumber(module_[7]) && !"开关量".equalsIgnoreCase(resolutionMode)&&StringManagerUtils.isColor16("#"+module_[8])?module_[8]:"");
+						acquisitionGroupItem.setHistoryCurveColor((!"开关量".equalsIgnoreCase(resolutionMode))&&StringManagerUtils.isColor16("#"+module_[8])?module_[8]:"");
 						acquisitionGroupItem.setMatrix(module_[10]);
 						this.acquisitionUnitItemManagerService.grantAcquisitionItemsPermission(acquisitionGroupItem);
 					}
 				}
 				EquipmentDriverServerTask.initInstanceConfigByAcqGroupId(groupId+"","update");
+				EquipmentDriverServerTask.initPumpDriverAcquisitionInfoConfigByAcqGroupId(groupId+"","update");
 			}
 			result = "{success:true,msg:true}";
 			response.setCharacterEncoding(Constants.ENCODING_UTF8);
