@@ -191,8 +191,10 @@ public class StringManagerUtils {
                 }
             } else // 非汉字字符,如图形符号或ASCII码  
             {
-                chinese = conversionStr(chinese, "ISO8859-1", "GB2312");
-                chinese = chinese.substring(0, 1);
+//                chinese = conversionStr(chinese, "ISO8859-1", "GB2312");
+//                chinese = chinese.substring(0, 1);
+            	//过滤掉汉字图形符号或ASCII码  
+            	chinese="";
             }
         }else{
         	int asciiValue=Integer.valueOf(chinese.charAt(0));
