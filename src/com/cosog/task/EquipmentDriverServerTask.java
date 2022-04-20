@@ -1003,7 +1003,6 @@ public class EquipmentDriverServerTask {
 				rs=pstmt.executeQuery();
 				while(rs.next()){
 					InitInstance initInstance=InstanceListMap.get(rs.getString(1));
-					boolean isCtrl=false;
 					if(initInstance==null){
 						initInstance=new InitInstance();
 						initInstance.setMethod(method);
@@ -1025,6 +1024,8 @@ public class EquipmentDriverServerTask {
 						InitInstance.Group group=new InitInstance.Group();
 						group.setInterval(rs.getInt(11));
 						group.setAddr(new ArrayList<Integer>());
+						int groupType=rs.getInt(12);
+						
 						if(StringManagerUtils.isNotNull(rs.getString(13))){
 							String[] itemsArr=rs.getString(13).split(",");
 							for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
@@ -1033,9 +1034,9 @@ public class EquipmentDriverServerTask {
 										for(int k=0;k<modbusProtocolConfig.getProtocol().get(i).getItems().size();k++){
 											if(itemsArr[j].equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getTitle())){
 												if(!StringManagerUtils.existOrNot(group.getAddr(), modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr())){
-													group.getAddr().add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
-													if("rw".equalsIgnoreCase(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getRWType())){
-														isCtrl=true;
+													String rwType=modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getRWType();
+													if((groupType==1&&(!"r".equalsIgnoreCase(rwType))) || (groupType==0&&(!"w".equalsIgnoreCase(rwType)))){
+														group.getAddr().add(modbusProtocolConfig.getProtocol().get(i).getItems().get(k).getAddr());
 													}
 												}
 												break;
@@ -1047,7 +1048,7 @@ public class EquipmentDriverServerTask {
 								}
 							}
 						}
-						if(rs.getInt(12)==1){//控制组
+						if(groupType==1){//控制组
 							initInstance.getCtrlGroup().add(group);
 						}else{
 							initInstance.getAcqGroup().add(group);
