@@ -136,6 +136,12 @@ BEGIN
 end;
 /
 
+create or replace trigger trg_b_pipelineacqrawdata_i   before  insert on tbl_pipelineacqrawdata FOR EACH ROW
+BEGIN
+  SELECT seq_pipelineacqrawdata.nextval INTO :new.id FROM dual;
+end;
+/
+
 create or replace trigger trg_b_pumpacqdata_hist_i   before  insert on tbl_pumpacqdata_hist FOR EACH ROW
 BEGIN
   SELECT seq_pumpacqdata_hist.nextval INTO :new.id FROM dual;
