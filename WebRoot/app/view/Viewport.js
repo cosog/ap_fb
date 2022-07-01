@@ -520,7 +520,7 @@ function getDeviceCommStatusTotal(){
 		var statTabActiveId = Ext.getCmp("PumpRealTimeMonitoringStatTabPanel").getActiveTab().id;
 		if(statTabActiveId=="PumpRealTimeMonitoringStatGraphPanel_Id"){
 			load=true;
-		}else if(newCard.id=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+		}else if(statTabActiveId=="PumpRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
 			load=false;
 		}
 		
@@ -529,7 +529,7 @@ function getDeviceCommStatusTotal(){
 		var statTabActiveId = Ext.getCmp("PipelineRealTimeMonitoringStatTabPanel").getActiveTab().id;
 		if(statTabActiveId=="PipelineRealTimeMonitoringStatGraphPanel_Id"){
 			load=true;
-		}else if(newCard.id=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
+		}else if(statTabActiveId=="PipelineRealTimeMonitoringDeviceTypeStatGraphPanel_Id"){
 			load=false;
 		}
 	}

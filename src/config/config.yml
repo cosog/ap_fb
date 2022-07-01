@@ -32,7 +32,7 @@ driverConfig:
 email:
    snedAccount:
       account: shfzby@126.com
-      password: CANDRMRCDLKHUKQX
+      password: WYWHZENVGKLPZWIR
       smtpHost: smtp.126.com
       smtpPort: 465
 others:

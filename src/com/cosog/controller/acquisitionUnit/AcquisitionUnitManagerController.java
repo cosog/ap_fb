@@ -1062,14 +1062,15 @@ public class AcquisitionUnitManagerController extends BaseController {
 						Iterator<Items> it = modbusProtocolConfig.getProtocol().get(i).getItems().iterator();
 						while(it.hasNext()){
 							boolean isDel=true;
+							Items item=(Items)it.next();
 							for(int k=0;k<modbusDriverSaveData.getDataConfig().size();k++){
-								if(((Items)it.next()).getTitle().equalsIgnoreCase(modbusDriverSaveData.getDataConfig().get(k).getTitle())){
+								if(item.getTitle().equalsIgnoreCase(modbusDriverSaveData.getDataConfig().get(k).getTitle())){
 									isDel=false;
 									break;
 								}
 							}
 							if(isDel){
-								delItemList.add(((Items)it.next()).getTitle());
+								delItemList.add(item.getTitle());
 								it.remove();
 							}
 						}
