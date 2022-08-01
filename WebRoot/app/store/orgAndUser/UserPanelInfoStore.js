@@ -28,27 +28,15 @@ Ext.define('AP.store.orgAndUser.UserPanelInfoStore', {
                 var arrColumns = get_rawData.columns;
                 var cloums = createUserGridColumn(arrColumns);
                 var newColumns = Ext.JSON.decode(cloums);
-                //分页工具栏
-                var bbar = new Ext.PageNumberToolbar({
-                    store: store,
-                    pageSize: defaultPageSize,
-                    displayInfo: true,
-//                    displayMsg: '当前记录 {0} -- {1} 条 共 {2} 条记录',
-                    displayMsg: '当前 {0}~{1}条  共 {2} 条',
-                    emptyMsg: "没有记录可显示",
-                    prevText: "上一页",
-                    nextText: "下一页",
-                    refreshText: "刷新",
-                    lastText: "最后页",
-                    firstText: "第一页",
-                    beforePageText: "当前页",
-                    afterPageText: "共{0}页"
-                });
                 var gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "UserInfoGridPanel_Id",
+                    selModel: 'cellmodel',//cellmodel rowmodel
+                    plugins: [{
+                        ptype: 'cellediting',//cellediting rowediting
+                        clicksToEdit: 2
+                    }],
                     border: false,
                     stateful: true,
-                    autoScroll: true,
                     columnLines: true,
                     layout: "fit",
                     stripeRows: true,
@@ -59,14 +47,216 @@ Ext.define('AP.store.orgAndUser.UserPanelInfoStore', {
                         emptyText: "<div class='con_div_' id='div_dataactiveid'><" + cosog.string.nodata + "></div>",
                         forceFit: true
                     },
-//                    bbar: bbar,
                     store: store,
-                    columns: newColumns,
-                    listeners: {
-                        selectionchange: function (sm, selections) {
+                    columns: [{
+                        header: '序号',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        width: 50,
+                        xtype: 'rownumberer'
+                    }, {
+                        header: '用户名称',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        sortable: false,
+                        dataIndex: 'userName',
+                        flex:2,
+                        editor: {
+                            allowBlank: false
                         },
-                        itemdblclick: function () {
-                            modifyUserInfo();
+                        renderer: function (value, o, p, e) {
+                            return adviceCurrentUserName(value, o, p, e);
+                        }
+                    }, {
+                        header: '用户账号',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        dataIndex: 'userId',
+                        flex:2,
+                        editor: {
+                            allowBlank: false
+                        },
+                        renderer: function (value) {
+                        	if(isNotVal(value)){
+                        		return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? "" : value) + "</span>";
+                        	}
+                        }
+                    }, {
+                        header: '角色',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        dataIndex: 'userTypeName',
+                        flex:2,
+                        editor: {
+                            xtype: 'combo',
+                            typeAhead: true,
+                            triggerAction: 'all',
+                            allowBlank: false,
+                            editable: false,
+                            store: get_rawData.roleList
+                        },
+                        renderer: function (value) {
+                            return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? "" : value) + "</span>";
+                        }
+                    }, {
+                        header: '电话',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        dataIndex: 'userPhone',
+                        flex:2,
+                        editor: {
+                        	regex: /^((13[0-9])|(14[0,1,4-9])|(15[0-3,5-9])|(16[2,5,6,7])|(17[0-8])|(18[0-9])|(19[0-3,5-9]))\d{8}$/,
+                        	allowBlank: true
+                        },
+                        renderer: function (value) {
+                            if(isNotVal(value)){
+                            	return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? " " : value) + "</span>";
+                            }
+                        }
+                    }, {
+                        header: '邮箱',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        dataIndex: 'userInEmail',
+                        flex:3,
+                        editor: {
+                        	vtype: 'email',
+                            regex: /^([a-z0-9A-Z]+[-|\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\.)+[a-zA-Z]{2,}$/,
+                            allowBlank: true
+                        },
+                        renderer: function (value) {
+                        	if(isNotVal(value)){
+                        		return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? "" : value) + "</span>";
+                        	}
+                        }
+                    }, {
+                        header: '快捷登录',
+                        xtype: 'checkcolumn',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        width: 65,
+                        dataIndex: 'userQuickLoginName',
+                        editor: {
+                        	xtype: 'checkbox',
+                            cls: 'x-grid-checkheader-editor',
+                        	allowBlank: false
+                        }
+                    }, {
+                        header: '接收短信',
+                        xtype: 'checkcolumn',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        width: 65,
+                        dataIndex: 'receiveSMSName',
+                        editor: {
+                        	xtype: 'checkbox',
+                            cls: 'x-grid-checkheader-editor',
+                        	allowBlank: false
+                        }
+                    }, {
+                        header: '接收邮件',
+                        xtype: 'checkcolumn',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        width: 65,
+                        dataIndex: 'receiveMailName',
+                        editor: {
+                        	xtype: 'checkbox',
+                            cls: 'x-grid-checkheader-editor',
+                        	allowBlank: false
+                        }
+                    }, {
+                        header: '使能',
+                        xtype: 'checkcolumn',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        dataIndex: 'userEnableName',
+                        headerCheckbox: false,
+                        width: 40,
+                        editor: {
+                        	xtype: 'checkbox',
+                            cls: 'x-grid-checkheader-editor',
+                        	allowBlank: false
+                        },
+                    	listeners: {
+                    	    beforecheckchange: function( cell, rowIndex, checked, record, e, eOpts){
+                    	    	if(rowIndex==0){
+                    	    		return false;
+                    	    	}else{
+                                    return true;
+                                }
+                    	    }
+                    	}
+                    }, {
+                        header: '隶属单位',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        flex:2,
+                        dataIndex: 'allPath',
+                        renderer: function (value) {
+                        	if(isNotVal(value)){
+                        		return "<span data-qtip=" + (value == undefined ? "" : value) + ">" + (value == undefined ? "" : value) + "</span>";
+                        	}
+                        }
+                    }, {
+                        header: '创建时间',
+                        lockable: true,
+                        align: 'center',
+                        sortable: true,
+                        flex:2,
+                        dataIndex: 'userRegtime',
+                        renderer:function(value,o,p,e){
+                        	return adviceTimeFormat(value,o,p,e);
+                        }
+                    },{
+                    	header: '保存',
+                    	xtype: 'actioncolumn',
+                    	width: 40,
+                        align: 'center',
+                        sortable: false,
+                        menuDisabled: true,
+                        items: [{
+                            iconCls: 'submit',
+                            tooltip: '保存',
+                            handler: function (view, recIndex, cellIndex, item, e, record) {
+                            	updateUserInfoByGridBtn(record);
+                            }
+                        }]
+                    },{
+                    	header: '删除',
+                    	xtype: 'actioncolumn',
+                    	width: 40,
+                        align: 'center',
+                        sortable: false,
+                        menuDisabled: true,
+                        items: [{
+                            iconCls: 'delete',
+                            tooltip: '删除用户',
+                            handler: function (view, recIndex, cellIndex, item, e, record) {
+                            	delUserInfoByGridBtn(record);
+                            }
+                        }]
+                    }],
+                    listeners: {
+                    	celldblclick : function( grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+                    		var record = grid.getStore().getAt(rowIndex);
+                            var dataIndex=grid.getHeaderAtIndex(cellIndex).dataIndex;
+                            if (rowIndex==0 && ( dataIndex.toUpperCase()=='userId'.toUpperCase() || dataIndex.toUpperCase()=='userTypeName'.toUpperCase() || dataIndex.toUpperCase()=='userEnableName'.toUpperCase()  )) {
+                                return false;
+                            } else {
+                                return true;
+                            }
                         }
                     }
                 });
