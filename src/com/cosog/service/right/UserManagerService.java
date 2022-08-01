@@ -83,17 +83,22 @@ public class UserManagerService<T> extends BaseService<T> {
 	public String doUserShow(Page pager, Map map,String orgIds,User user) throws IOException, SQLException {
 		StringBuffer sqlwhere = new StringBuffer();
 		StringBuffer result_json = new StringBuffer();
+		StringBuffer role_json = new StringBuffer();
 		String columns=	service.showTableHeadersColumns("userMange");
 		String userName = (String) map.get("userName");
+		String roleSql = " select t.role_id,t.role_name from tbl_role t"
+				+ " where t.role_level>(select t3.role_level from tbl_user t2,tbl_role t3 where t2.user_type=t3.role_id and t2.user_no="+user.getUserNo()+")"
+				+ " order by t.role_id";
 		String sql="select u.user_no as  userNo,u.user_name as userName,u.user_orgid as userOrgid,o.org_name as orgName,u.user_id as userId,"
 				+ " u.user_pwd as userPwd,u.user_type as userType,r.role_name as userTypeName,u.user_phone as userPhone,u.user_in_email as userInEmail,"
 				+ " to_char(u.user_regtime,'YYYY-MM-DD hh24:mi:ss') as userRegtime,"
 				+ " u.user_quicklogin as userQuickLogin,decode(u.user_quicklogin,0,'否','是') as userQuickLoginName,"
 				+ " u.user_receivesms as receiveSMS,decode(u.user_receivesms,1,'是','否') as receiveSMSName,"
 				+ " u.user_receivemail as receiveMail,decode(u.user_receivemail,1,'是','否') as receiveMailName,"
-				+ " u.user_enable as userEnable,decode(u.user_enable,1,'使能','失效') as userEnableName"
+				+ " u.user_enable as userEnable,decode(u.user_enable,1,'使能','失效') as userEnableName,"
+				+ " o.allpath"
 				+ " from tbl_user u"
-				+ " left outer join  tbl_org o on u.user_orgid=o.org_id"
+				+ " left outer join  VIW_ORG o on u.user_orgid=o.org_id"
 				+ " left outer join tbl_role r on u.user_type=r.role_id"
 				+ " where u.user_orgid in (" + orgIds + ")"
 				+ " and ("
@@ -104,14 +109,21 @@ public class UserManagerService<T> extends BaseService<T> {
 			sql+=" and u.user_name like '%" + userName + "%'";
 		}
 		sql+=" order by r.role_level,user_no,u.user_no";
-		List<?> list = this.findCallSql(sql);
-		result_json.append("{\"success\":true,\"totalCount\":"+list.size()
-//		+",\"currentId\":"+user.getUserNo()
-//		+",\"currentLevel\":"+currentLevel
-//		+",\"currentShowLevel\":"+currentShowLevel
-//		+",\"currentFlag\":"+currentFlag
-		+",\"columns\":"+columns+",\"totalRoot\":[");
 		
+		List<?> roleList = this.findCallSql(roleSql);
+		List<?> list = this.findCallSql(sql);
+		role_json.append("[");
+		result_json.append("{\"success\":true,\"totalCount\":"+list.size()+",\"columns\":"+columns+",");
+		for (Object o : roleList) {
+			Object[] obj = (Object[]) o;
+			role_json.append("['"+obj[1]+"','"+obj[1]+"'],");
+		}
+		if (role_json.toString().endsWith(",")) {
+			role_json.deleteCharAt(role_json.length() - 1);
+		}
+		role_json.append("]");
+		result_json.append("\"roleList\":"+role_json+",");
+		result_json.append("\"totalRoot\":[");
 		for (Object o : list) {
 			Object[] obj = (Object[]) o;
 			result_json.append("{\"userNo\":"+obj[0]+",");
@@ -126,13 +138,14 @@ public class UserManagerService<T> extends BaseService<T> {
 			result_json.append("\"userInEmail\":\""+obj[9]+"\",");
 			result_json.append("\"userRegtime\":\""+obj[10]+"\",");
 			result_json.append("\"userQuickLogin\":\""+obj[11]+"\",");
-			result_json.append("\"userQuickLoginName\":\""+obj[12]+"\",");
+			result_json.append("\"userQuickLoginName\":"+(StringManagerUtils.stringToInteger(obj[11]+"")==1)+",");
 			result_json.append("\"receiveSMS\":\""+obj[13]+"\",");
-			result_json.append("\"receiveSMSName\":\""+obj[14]+"\",");
+			result_json.append("\"receiveSMSName\":"+(StringManagerUtils.stringToInteger(obj[13]+"")==1)+",");
 			result_json.append("\"receiveMail\":\""+obj[15]+"\",");
-			result_json.append("\"receiveMailName\":\""+obj[16]+"\",");
+			result_json.append("\"receiveMailName\":"+(StringManagerUtils.stringToInteger(obj[15]+"")==1)+",");
 			result_json.append("\"userEnable\":\""+obj[17]+"\",");
-			result_json.append("\"userEnableName\":\""+obj[18]+"\"},");
+			result_json.append("\"userEnableName\":"+(StringManagerUtils.stringToInteger(obj[17]+"")==1)+",");
+			result_json.append("\"allPath\":\""+obj[19]+"\"},");
 		}
 		if (result_json.toString().endsWith(",")) {
 			result_json.deleteCharAt(result_json.length() - 1);
@@ -408,5 +421,49 @@ public class UserManagerService<T> extends BaseService<T> {
 		
 		String sql = "update tbl_user t set t.user_orgid="+selectedOrgId+" where t.user_no in ("+selectedUserId+")";
 		this.getBaseDao().updateOrDeleteBySql(sql);
+	}
+	
+	public int updateUserInfo(User user,boolean isLoginedUser) throws Exception {
+		int r=0;
+		boolean flag = this.judgeUserExistsOrNot(user.getUserId(),user.getUserNo()+"");
+		if(flag){
+			r=2;
+		}else{
+			String sql = "update tbl_user t set ";
+			if(!isLoginedUser){//当前登录用户不可修改账号、角色、使能状态
+				sql+= "t.user_id='"+user.getUserId()+"', "
+						+ "t.user_type=(select r.role_id from tbl_role r where r.role_name='"+user.getUserTypeName()+"'), "
+						+ "t.user_enable="+user.getUserEnable()+", ";
+			}	
+			sql+= "t.user_name='"+user.getUserName()+"', "
+				+ "t.user_phone='"+user.getUserPhone()+"', "
+				+ "t.user_in_email='"+user.getUserInEmail()+"', "
+				+ "t.user_quicklogin="+user.getUserQuickLogin()+", "
+				+ "t.user_receivesms="+user.getReceiveSMS()+", "
+				+ "t.user_receivemail="+user.getReceiveMail()+" "
+				+ "where t.user_no = "+user.getUserNo();
+			int result=this.getBaseDao().updateOrDeleteBySql(sql);
+			if(result>0){
+				r=1;
+			}
+		}
+		return r;
+	}
+	
+	public int updateUserPassword(User user) throws Exception {
+		int r=0;
+		String sql = "update tbl_user t set t.user_pwd='"+user.getUserPwd()+"' where t.user_no = "+user.getUserNo();
+		r=this.getBaseDao().updateOrDeleteBySql(sql);
+		return r;
+	}
+	
+	public String getUserEmail(User user) throws Exception {
+		String email="";
+		String sql="select t.user_in_email from tbl_user t where t.user_no = "+user.getUserNo();
+		List<?> list = this.findCallSql(sql);
+		if(list.size()>0 && list.get(0)!=null){
+			email=list.get(0).toString();
+		}
+		return email;
 	}
 }

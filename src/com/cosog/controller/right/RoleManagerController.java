@@ -142,6 +142,59 @@ public class RoleManagerController extends BaseController {
 		}
 		return null;
 	}
+	
+	@RequestMapping("/updateRoleInfo")
+	public String updateRoleInfo() throws IOException {
+		String result = "{success:true,flag:true}";
+		try {
+			boolean isLoginedUserRole=false;
+			String roleId = ParamUtils.getParameter(request, "roleId");
+			String roleName = ParamUtils.getParameter(request, "roleName");
+			String roleLevel = ParamUtils.getParameter(request, "roleLevel");
+			String roleFlagName = ParamUtils.getParameter(request, "roleFlagName");
+			String showLevel = ParamUtils.getParameter(request, "showLevel");
+			String remark = ParamUtils.getParameter(request, "remark");
+			
+			Role role=new Role();
+			role.setRoleId(StringManagerUtils.stringToInteger(roleId));
+			role.setRoleName(roleName);
+			role.setRoleLevel(StringManagerUtils.stringToInteger(roleLevel));
+			role.setRoleFlag("true".equalsIgnoreCase(roleFlagName)?1:0);
+			role.setShowLevel(StringManagerUtils.stringToInteger(showLevel));
+			role.setRemark(remark);
+			
+			log.debug("edit role ==" + role.getRoleId());
+			
+			
+			
+			HttpSession session=request.getSession();
+			User prttentuser = (User) session.getAttribute("userLogin");
+			//如果是当前登录用户角色
+			if(prttentuser.getUserType()==role.getRoleId()){
+				isLoginedUserRole=true;
+			}
+			boolean userIdChange=false;
+			int r=this.roleService.updateRoleInfo(role,isLoginedUserRole);
+			if(r==1){
+				result = "{success:true,flag:true}";
+			}else if(r==2){
+				result = "{success:true,flag:false}";
+			}else{
+				result = "{success:false,flag:false}";
+			}
+		} catch (Exception e) {
+			result = "{success:false,flag:false}";
+			e.printStackTrace();
+		}
+		response.setCharacterEncoding(Constants.ENCODING_UTF8);
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter pw = response.getWriter();
+		response.setCharacterEncoding(Constants.ENCODING_UTF8);
+		response.getWriter().print(result);
+		pw.flush();
+		pw.close();
+		return null;
+	}
 
 	/**<p>描述：角色模块显示方法</p>
 	 * @return

@@ -154,7 +154,7 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 	
 	
 	var panel_Id = "";
-	if (module_Code != "video" && module_Code != "map_MapDraw" && module_Code != "realtime_RealtimeMonitor"
+	if (module_Code != "org_OrgInfoTreeGridView" && module_Code != "map_MapDraw" && module_Code != "realtime_RealtimeMonitor"
 		&& module_Code != "ProductionReport"
 		&& module_Code != "ProductionData"
 		&& module_Code != "WellInformation"
@@ -275,6 +275,13 @@ refreshPanel=function(leftOrg_Id,secondTab_Code,rec){
 			}
 		} else {
 			// Ext.Msg.alert("info", '抱歉，该模块正在开发中... ');
+		}
+	}else if(module_Code == "org_OrgInfoTreeGridView"){
+		var gridPanel = Ext.getCmp("OrgInfoTreeGridView_Id");
+		if (isNotVal(gridPanel)) {
+			gridPanel.getStore().load();
+		}else{
+			Ext.create('AP.store.orgAndUser.OrgInfoStore');
 		}
 	}else if(module_Code == "WellInformation"){
 		var tabPanel = Ext.getCmp("DeviceManagerTabPanel");

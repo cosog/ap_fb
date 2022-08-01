@@ -186,8 +186,8 @@ left outer join tbl_code code2 on t.action=code2.itemvalue and upper(code2.itemc
 /* View: viw_systemlog                                  */
 /*==============================================================*/
 create or replace view viw_systemlog as
-select t.id,t.createtime,t.user_id,t.loginip,t.action,t3.itemname as actionname,t.remark ,t2.user_orgid as orgid
-from tbl_systemlog t,tbl_user t2,tbl_code t3
-where t.user_id=t2.user_id
+select t.id,t.createtime,t2.user_no,t.user_id,t4.role_id,t4.role_level,t.loginip,t.action,t3.itemname as actionname,t.remark ,t2.user_orgid as orgid
+from tbl_systemlog t,tbl_user t2,tbl_code t3,tbl_role t4
+where t.user_id=t2.user_id and t2.user_type=t4.role_id
 and t.action=t3.itemvalue and upper(t3.itemcode)=upper('systemAction');
 /

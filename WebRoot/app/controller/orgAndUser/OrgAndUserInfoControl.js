@@ -306,13 +306,9 @@ function modifyUserInfo() {
     var user_model = user_panel.getSelectionModel();
     var _record = user_model.getSelection();
     if (_record.length>0) {
-    	var UserUpdateInfoWindow = Ext.create("AP.view.orgAndUser.UserPanelInfoWindow", {
-            title: cosog.string.editUser
-        });
-        UserUpdateInfoWindow.show();
-        Ext.getCmp("addFormUser_Id").hide();
-        Ext.getCmp("updateFormUser_Id").show();
-        SelectedUserDataAttrInfoGridPanel();
+    	var UserEditPasswordWindow = Ext.create("AP.view.orgAndUser.UserEditPasswordWindow");
+    	UserEditPasswordWindow.show();
+    	SelectedUserDataAttrInfoGridPanel();
     }else {
         Ext.Msg.alert(cosog.string.deleteCommand, cosog.string.checkOne);
     }
@@ -322,70 +318,12 @@ function modifyUserInfo() {
 SelectedUserDataAttrInfoGridPanel = function () {
     var dataattr_row = Ext.getCmp("UserInfoGridPanel_Id").getSelectionModel().getLastSelected();
     var userNo = dataattr_row.data.userNo;
-    var userOrgid = dataattr_row.data.userOrgid;
-    var orgName = dataattr_row.data.orgName;
     var userName = dataattr_row.data.userName;
     var userId = dataattr_row.data.userId;
-    var userPwd = dataattr_row.data.userPwd;
-    var userQuickLogin = dataattr_row.data.userQuickLogin;
-    var userQuickLoginName = dataattr_row.data.userQuickLoginName;
-    var receiveSMS = dataattr_row.data.receiveSMS;
-    var receiveMail = dataattr_row.data.receiveMail;
-    var userEnable = dataattr_row.data.userEnable;
-    var userType = dataattr_row.data.userType;
-    var userTypeName = dataattr_row.data.userTypeName;
-    var userPhone = dataattr_row.data.userPhone;
-    var userInEmail = dataattr_row.data.userInEmail;
-    var userRegtime = dataattr_row.data.userRegtime;
-    Ext.getCmp('userNo_Id').setValue(userNo);
-    Ext.getCmp('userOrgid_Id').setValue(userOrgid);
-    Ext.getCmp('userName_Id').setValue(userName);
-    Ext.getCmp('userId_Id').setValue(userId);
     
-    if(userQuickLogin==1){
-    	Ext.getCmp('userQuickLoginRadio1_Id').setValue(true);
-    }else{
-    	Ext.getCmp('userQuickLoginRadio0_Id').setValue(true);
-    }
-    
-    if(receiveSMS==1){
-    	Ext.getCmp('userReceiveSMSRadio1_Id').setValue(true);
-    }else{
-    	Ext.getCmp('userReceiveSMSRadio0_Id').setValue(true);
-    }
-    
-    if(receiveMail==1){
-    	Ext.getCmp('userReceiveMailRadio1_Id').setValue(true);
-    }else{
-    	Ext.getCmp('userReceiveMailRadio0_Id').setValue(true);
-    }
-    
-    if(userEnable==1){
-    	Ext.getCmp('userEnableRadio1_Id').setValue(true);
-    }else{
-    	Ext.getCmp('userEnableRadio0_Id').setValue(true);
-    }
-    
-//    Ext.getCmp('userQuidkLoginValue_Id').setValue(userQuickLogin);
-    Ext.getCmp('userType_Id').setValue(userType);
-    Ext.getCmp('userType_Id1').setValue(userType);
-    Ext.getCmp('userType_Id1').setRawValue(userTypeName);
-    Ext.getCmp('userPhone_Id').setValue(userPhone);
-    Ext.getCmp('userInEmail_Id').setValue(userInEmail);
-    var userRegTimeInput = Ext.getCmp('userRegTime_Id')
-    var traininguserRegtime = new Date(Date.parse(userRegtime.replace(/-/g, "/")));
-    userRegTimeInput.format = 'Y-m-d H:i:s';
-    userRegTimeInput.setValue(traininguserRegtime);
-    if(parseInt(user_)==parseInt(userNo)){//如果是当前用户，不能修改自己的角色和使能状态
-//    	Ext.getCmp('userType_Id1').setReadOnly(true);
-//    	Ext.getCmp('userEnableRadio1_Id').setReadOnly(true);
-//    	Ext.getCmp('userEnableRadio0_Id').setReadOnly(true);
-    	
-    	Ext.getCmp('userType_Id1').disable();
-    	Ext.getCmp('userEnableRadioGroup_Id').disable();
-//    	Ext.getCmp('userEnableRadio1_Id').disable();
-//    	Ext.getCmp('userEnableRadio0_Id').disable();
-    }
+    Ext.getCmp('userEditPassword_UserNo_Id').setValue(userNo);
+    Ext.getCmp('userEditPassword_UserName_Id').setValue(userName);
+    Ext.getCmp('userEditPassword_UserId_Id').setValue(userId);
 };
 
 function delUserInfo() {
@@ -447,6 +385,102 @@ function delUserInfo() {
     return false;
 };
 
+function delUserInfoByGridBtn(record) {
+//	alert(record.data.userNo);
+//  record.drop();
+	Ext.MessageBox.msgButtons['yes'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+  Ext.MessageBox.msgButtons['no'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/cancel.png'/>&nbsp;&nbsp;&nbsp;取消";
+  Ext.Msg.confirm(cosog.string.yesdel, '是否删除用户'+record.get("userId"), function (btn) {
+      if (btn == "yes") {
+          var deletejson = [];
+          var noDelete=[];
+          var deleteUserId=[];
+      	
+          if(record.get("userNo")>0 && parseInt(record.get("userNo"))!=parseInt(user_)){
+  			deletejson.push(record.get("userNo"));
+  			deleteUserId.push(record.get("userId"));
+  		}else if(record.get("userNo")>0 && parseInt(record.get("userNo"))==parseInt(user_)){
+  			noDelete.push(record.get("userNo"));
+  		}
+          
+      	if(deletejson.length>0){
+      		var delparamsId = "" + deletejson.join(",");
+      		var delUserId = "" + deleteUserId.join(",");
+      		Ext.Ajax.request({
+      			url : context + '/userManagerController/doUserBulkDelete',
+      			method : "POST",
+      			params : {
+      				paramsId : delparamsId,
+      				delUserId : delUserId
+      			},
+      			success : function(response) {
+      				var result = Ext.JSON.decode(response.responseText);
+      				if (result.flag == true) {
+      					Ext.Msg.alert('提示', "【<font color=blue>成功删除</font>】"+ deletejson.length + "条数据信息。");
+      				}
+      				if (result.flag == false) {
+      					Ext.Msg.alert('提示', "<font color=red>SORRY！删除失败。</font>");
+      				}
+      				Ext.getCmp("UserInfoGridPanel_Id").getStore().load();
+      			},
+      			failure : function() {
+      				Ext.Msg.alert("提示", "【<font color=red>异常抛出 </font>】：请与管理员联系！");
+      			}
+      		});
+      	}else if(noDelete.length>0){
+      		Ext.Msg.alert('提示', "<font color=red>不能删除当前登录用户。</font>");
+      	}else{
+      		Ext.Msg.alert('提示', "<font color=red>所选属性无效，删除失败。</font>");
+      	}
+      }
+  });
+}
+
+function updateUserInfoByGridBtn(record) {
+
+    var userNo=record.get("userNo");
+    var userName=record.get("userName");
+    var userId=record.get("userId");
+    var userTypeName=record.get("userTypeName");
+    var userPhone=record.get("userPhone");
+    var userInEmail=record.get("userInEmail");
+    var userQuickLoginName=record.get("userQuickLoginName");
+    var receiveSMSName=record.get("receiveSMSName");
+    var receiveMailName=record.get("receiveMailName");
+    var userEnableName=record.get("userEnableName");
+	
+    Ext.Ajax.request({
+		url : context + '/userManagerController/updateUserInfo',
+		method : "POST",
+		params : {
+			userNo : userNo,
+			userName : userName,
+			userId : userId,
+			userTypeName : userTypeName,
+			userPhone : userPhone,
+			userInEmail : userInEmail,
+			userQuickLoginName : userQuickLoginName,
+			receiveSMSName : receiveSMSName,
+			receiveMailName : receiveMailName,
+			userEnableName : userEnableName
+		},
+		success : function(response) {
+			var result = Ext.JSON.decode(response.responseText);
+			if (result.success==true && result.flag == true) {
+				Ext.Msg.alert('提示', "<font color=blue>保存成功。</font>");
+			}else if (result.success==true && result.flag == false) {
+				Ext.Msg.alert('提示', "<font color=red>用户账号已存在,保存失败。</font>");
+			}else {
+				Ext.Msg.alert('提示', "<font color=red>SORRY！保存失败。</font>");
+			}
+			Ext.getCmp("UserInfoGridPanel_Id").getStore().load();
+		},
+		failure : function() {
+			Ext.Msg.alert("提示", "【<font color=red>异常抛出 </font>】：请与管理员联系！");
+		}
+	});
+}
+
 //窗体创建按钮事件
 var SaveUserDataInfoSubmitBtnForm = function () {
     var saveDataAttrInfoWinFormId = Ext.getCmp("user_addwin_Id").down('form');
@@ -500,6 +534,36 @@ function UpdateUserDataInfoSubmitBtnForm() {
                 if (action.result.msg == false) {
                     Ext.Msg.alert(cosog.string.ts,
                         "<font color=red>SORRY！</font>" + cosog.string.updatefail + "。");
+                }
+            },
+            failure: function () {
+                Ext.Msg.alert(cosog.string.ts, "【<font color=red>" + cosog.string.execption + " </font>】：" + cosog.string.contactadmin + "！");
+            }
+        });
+    } else {
+    	Ext.Msg.alert(cosog.string.ts, "<font color=red>*为必填项，请检查数据有效性.</font>");
+    }
+    return false;
+};
+
+//修改密码窗体上的修改按钮事件
+function EditUserPasswordSubmitBtnForm() {
+    var getUpdateDataInfoSubmitBtnFormId = Ext.getCmp("userEditPasswordWindow_Id").down('form');
+    Ext.MessageBox.msgButtons['ok'].text = "<img   style=\"border:0;position:absolute;right:50px;top:1px;\"  src=\'" + context + "/images/zh_CN/accept.png'/>&nbsp;&nbsp;&nbsp;确定";
+    if (getUpdateDataInfoSubmitBtnFormId.getForm().isValid()) {
+        getUpdateDataInfoSubmitBtnFormId.getForm().submit({
+            url: context + '/userManagerController/doUserEditPassword',
+            clientValidation: false, // 进行客户端验证
+            method: "POST",
+            waitMsg: cosog.string.updatewait,
+            waitTitle: 'Please Wait...',
+            success: function (response, action) {
+                Ext.getCmp('userEditPasswordWindow_Id').close();
+                if (action.result.flag == true) {
+                	Ext.getCmp("UserInfoGridPanel_Id").getStore().load();
+                	Ext.Msg.alert(cosog.string.ts, "【<font color=blue>" + cosog.string.sucupate + "</font>】，" + cosog.string.dataInfo + "。");
+                }else if (action.result.flag == false) {
+                    Ext.Msg.alert(cosog.string.ts,"<font color=red>SORRY！</font>" + cosog.string.updatefail + "。");
                 }
             },
             failure: function () {
