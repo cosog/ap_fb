@@ -1011,6 +1011,8 @@ public class EquipmentDriverServerTask {
 						initInstance.setAcqProtocolType(rs.getString(2));
 						initInstance.setCtrlProtocolType(rs.getString(3));
 						
+						initInstance.setPrefixSuffixHex(true);
+						
 						initInstance.setSignInPrefix(rs.getString(4)==null?"":rs.getString(4));
 						initInstance.setSignInSuffix(rs.getString(5)==null?"":rs.getString(5));
 						
