@@ -971,7 +971,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				+ " group by t.wellname,t3.protocol";
 		String auxiliaryDeviceSql="select t3.id,t3.name,t3.model,t3.remark "
 				+ " from "+deviceTableName+" t,tbl_auxiliary2master t2,tbl_auxiliarydevice t3 "
-				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t.id="+deviceId
+				+ " where t.id=t2.masterid and t2.auxiliaryid=t3.id and t3.type="+StringManagerUtils.stringToInteger(deviceType)+" and t.id="+deviceId
 				+ " order by t3.sort,t3.name";
 		String deviceAddInfoSql = "select t2.id,t2.itemname,t2.itemvalue||decode(t2.itemunit,null,'','','','('||t2.itemunit||')') as itemvalue "
 				+ " from "+deviceTableName+" t,"+infoTableName+" t2 "
