@@ -427,26 +427,34 @@ public class DriverAPIController extends BaseController{
 					String updateRealData="update "+realtimeTable+" t set t.acqTime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
 					String updateRealCommRangeClobSql="update "+realtimeTable+" t set t.commrange=?";
 					
-					String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
+//					String updateHistData="update "+historyTable+" t set t.acqTime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'), t.CommStatus="+(acqOnline.getStatus()?1:0);
+					String insertHistColumns="wellid,acqTime,CommStatus";
+					String insertHistValue=wellId+",to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss'),"+(acqOnline.getStatus()?1:0);
+					String insertHistSql="";
+					
+					
 					String updateHistCommRangeClobSql="update "+historyTable+" t set t.commrange=?";
 					List<String> clobCont=new ArrayList<String>();
 					
 					if(commResponseData!=null&&commResponseData.getResultStatus()==1){
 						updateRealData+=",t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
 								+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime();
-						updateHistData+=",t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
-								+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime();
+//						updateHistData+=",t.commTimeEfficiency= "+commResponseData.getCurrent().getCommEfficiency().getEfficiency()
+//								+ " ,t.commTime= "+commResponseData.getCurrent().getCommEfficiency().getTime();
+						insertHistColumns+=",commTimeEfficiency,commTime";
+						insertHistValue+=","+commResponseData.getCurrent().getCommEfficiency().getEfficiency()+","+commResponseData.getCurrent().getCommEfficiency().getTime();
 						
 						clobCont.add(commResponseData.getCurrent().getCommEfficiency().getRangeString());
 					}
 					updateRealData+=" where t.wellId= "+wellId;
 					updateRealCommRangeClobSql+=" where t.wellId= "+wellId;
 					
-					updateHistData+=" where t.wellId= "+wellId+" and t.acqtime=( select max(t2.acqtime) from "+historyTable+" t2 where t2.wellid=t.wellid )";
-					updateHistCommRangeClobSql+=" where t.wellId= "+wellId+" and t.acqtime=( select max(t2.acqtime) from "+historyTable+" t2 where t2.wellid=t.wellid )";;
+//					updateHistData+=" where t.wellId= "+wellId+" and t.acqtime=( select max(t2.acqtime) from "+historyTable+" t2 where t2.wellid=t.wellid )";
+					insertHistSql="insert into "+historyTable+"("+insertHistColumns+")values("+insertHistValue+")";
+					updateHistCommRangeClobSql+=" where t.wellId= "+wellId+" and t.acqtime=to_date('"+currentTime+"','yyyy-mm-dd hh24:mi:ss')";
 					
 					int result=commonDataService.getBaseDao().updateOrDeleteBySql(updateRealData);
-					result=commonDataService.getBaseDao().updateOrDeleteBySql(updateHistData);
+					result=commonDataService.getBaseDao().updateOrDeleteBySql(insertHistSql);
 					
 					//更新内存中设备通信状态
 					Map<String, Object> dataModelMap = DataModelMap.getMapObject();

@@ -1,3 +1,4 @@
+Alter PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;
 drop tablespace ap_fb_temp including contents and datafiles;
 drop tablespace ap_fb_data including contents and datafiles;
 drop user ap_fb cascade;
