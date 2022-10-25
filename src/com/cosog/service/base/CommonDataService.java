@@ -1983,28 +1983,30 @@ public class CommonDataService extends BaseService {
 			JSONArray jsonArray = jsonObject.getJSONArray("data");
 			int count = 0;
 			for (int i=0;i<jsonArray.size();i++) {
-				JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-				count++;
-				for (int j = 0; j < columns.length; j++) {
-					Label excelTitle=null;
-					if (columns[j].equalsIgnoreCase("id") || columns[j].equalsIgnoreCase("jlbh")) {
-						wsheet.setColumnView(j, 10);
-						excelTitle = new Label(j, count+1, count + "", titleWritableFormat);
-					}else {
-						if(columns[j].equalsIgnoreCase("jssj")||columns[j].equalsIgnoreCase("cjsj")||columns[j].equalsIgnoreCase("gtcjsj")
-								||columns[j].indexOf("time")>0||columns[j].indexOf("Time")>0
-								||columns[j].indexOf("date")>0||columns[j].indexOf("Date")>0){
-							wsheet.setColumnView(j, 30);
-						}else{
-							wsheet.setColumnView(j, 16);
+				if(i<65536-2){
+					JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
+					count++;
+					for (int j = 0; j < columns.length; j++) {
+						Label excelTitle=null;
+						if (columns[j].equalsIgnoreCase("id") || columns[j].equalsIgnoreCase("jlbh")) {
+							wsheet.setColumnView(j, 10);
+							excelTitle = new Label(j, count+1, count + "", titleWritableFormat);
+						}else {
+							if(columns[j].equalsIgnoreCase("jssj")||columns[j].equalsIgnoreCase("cjsj")||columns[j].equalsIgnoreCase("gtcjsj")
+									||columns[j].indexOf("time")>0||columns[j].indexOf("Time")>0
+									||columns[j].indexOf("date")>0||columns[j].indexOf("Date")>0){
+								wsheet.setColumnView(j, 30);
+							}else{
+								wsheet.setColumnView(j, 16);
+							}
+							if(everydata.has(columns[j])){
+								excelTitle = new Label(j, count+1,everydata.getString(columns[j]),titleWritableFormat);
+							}else{
+								excelTitle = new Label(j, count+1,"",titleWritableFormat);
+							}
 						}
-						if(everydata.has(columns[j])){
-							excelTitle = new Label(j, count+1,everydata.getString(columns[j]),titleWritableFormat);
-						}else{
-							excelTitle = new Label(j, count+1,"",titleWritableFormat);
-						}
+						wsheet.addCell(excelTitle);
 					}
-					wsheet.addCell(excelTitle);
 				}
 			}
 			wbook.write();
@@ -2065,28 +2067,30 @@ public class CommonDataService extends BaseService {
 			JSONArray jsonArray = jsonObject.getJSONArray("data");
 			int count = 0;
 			for (int i=0;i<jsonArray.size();i++) {
-				JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
-				count++;
-				for (int j = 0; j < columns.length; j++) {
-					Label excelTitle=null;
-					if (columns[j].equalsIgnoreCase("id") || columns[j].equalsIgnoreCase("jlbh")) {
-						wsheet.setColumnView(j, 10);
-						excelTitle = new Label(j, count, count + "", titleWritableFormat);
-					}else {
-						if(columns[j].equalsIgnoreCase("jssj")||columns[j].equalsIgnoreCase("cjsj")||columns[j].equalsIgnoreCase("gtcjsj")
-								||columns[j].indexOf("time")>0||columns[j].indexOf("date")>0||columns[j].indexOf("Date")>0){
-							wsheet.setColumnView(j, 30);
-						}else{
-							wsheet.setColumnView(j, 16);
+				if(i<65536-2){
+					JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
+					count++;
+					for (int j = 0; j < columns.length; j++) {
+						Label excelTitle=null;
+						if (columns[j].equalsIgnoreCase("id") || columns[j].equalsIgnoreCase("jlbh")) {
+							wsheet.setColumnView(j, 10);
+							excelTitle = new Label(j, count, count + "", titleWritableFormat);
+						}else {
+							if(columns[j].equalsIgnoreCase("jssj")||columns[j].equalsIgnoreCase("cjsj")||columns[j].equalsIgnoreCase("gtcjsj")
+									||columns[j].indexOf("time")>0||columns[j].indexOf("date")>0||columns[j].indexOf("Date")>0){
+								wsheet.setColumnView(j, 30);
+							}else{
+								wsheet.setColumnView(j, 16);
+							}
+							if(everydata.has(columns[j])){
+								excelTitle = new Label(j, count,everydata.getString(columns[j]),titleWritableFormat);
+							}else{
+								excelTitle = new Label(j, count,"",titleWritableFormat);
+							}
+							
 						}
-						if(everydata.has(columns[j])){
-							excelTitle = new Label(j, count,everydata.getString(columns[j]),titleWritableFormat);
-						}else{
-							excelTitle = new Label(j, count,"",titleWritableFormat);
-						}
-						
+						wsheet.addCell(excelTitle);
 					}
-					wsheet.addCell(excelTitle);
 				}
 			}
 			wbook.write();
