@@ -576,7 +576,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 			result_json.append("\"commStatusName\":\""+obj[3]+"\",");
 			result_json.append("\"commAlarmLevel\":"+obj[4]+",");
 			result_json.append("\"acqTime\":\""+obj[5]+"\",");
-			result_json.append("\"deviceTypeName\":\""+obj[6]+"\",");
+			result_json.append("\"deviceTypeName\":\""+obj[6]+"\"");
 			for(int j=0;j<ddicColumnsList.size();j++){
 				String value=obj[7+j]+"";
 				if(protocol!=null){
@@ -595,10 +595,7 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 						}
 					}
 				}
-				result_json.append("\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+value+"\",");
-			}
-			if(result_json.toString().endsWith(",")){
-				result_json.deleteCharAt(result_json.length() - 1);
+				result_json.append(",\""+ddicColumnsList.get(j).replaceAll(" ", "")+"\":\""+value+"\"");
 			}
 			result_json.append("},");
 		}

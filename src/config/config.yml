@@ -14,21 +14,21 @@ viewInformation:
    linkaddress: http://www.cosogoil.com
    linkshow: ""
 driverConfig:
-   server: http://39.99.42.182:19200/api/init/server
-   protocol: http://39.99.42.182:19200/api/init/protocol
-   instance: http://39.99.42.182:19200/api/init/instance
-   id: http://39.99.42.182:19200/api/init/id
-   SMS: http://39.99.42.182:19200/api/init/sms
-   readAddr: http://39.99.42.182:19200/api/read/addr
-   writeAddr: http://39.99.42.182:19200/api/write/addr
-   writeSMS: http://39.99.42.182:19200/api/write/sms
+   server: http://127.0.0.1:19200/api/init/server
+   protocol: http://127.0.0.1:19200/api/init/protocol
+   instance: http://127.0.0.1:19200/api/init/instance
+   id: http://127.0.0.1:19200/api/init/id
+   SMS: http://127.0.0.1:19200/api/init/sms
+   readAddr: http://127.0.0.1:19200/api/read/addr
+   writeAddr: http://127.0.0.1:19200/api/write/addr
+   writeSMS: http://127.0.0.1:19200/api/write/sms
    probe:
-      init: http://39.99.42.182:19200/api/probe/init
-      app: http://39.99.42.182:19200/api/probe/app
-      cpu: http://39.99.42.182:19200/api/probe/cpu
-      mem: http://39.99.42.182:19200/api/probe/mem
-      disk: http://39.99.42.182:19200/api/probe/disk
-      host: http://39.99.42.182:19200/api/probe/host
+      init: http://127.0.0.1:19200/api/probe/init
+      app: http://127.0.0.1:19200/api/probe/app
+      cpu: http://127.0.0.1:19200/api/probe/cpu
+      mem: http://127.0.0.1:19200/api/probe/mem
+      disk: http://127.0.0.1:19200/api/probe/disk
+      host: http://127.0.0.1:19200/api/probe/host
 email:
    snedAccount:
       account: shfzby@126.com
@@ -47,5 +47,5 @@ others:
    dataSaveMode: 1
    showLogo: true
    printLog: true
+   exportLimit: 10000
    serialnumber: ""
-      

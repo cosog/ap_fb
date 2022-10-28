@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import com.cosog.model.DataModels;
 import com.cosog.model.data.DataDictionary;
 import com.cosog.service.data.DataitemsInfoService;
+import com.cosog.utils.Config;
 import com.cosog.utils.DataModelMap;
 import com.cosog.utils.Page;
 import com.cosog.utils.StringManagerUtils;
@@ -1950,6 +1951,7 @@ public class CommonDataService extends BaseService {
 	public boolean exportGridPanelData(HttpServletResponse response,String fileName,String title,String head,String field,String data) {
 		OutputStream os=null;
 		WritableWorkbook wbook=null;
+		int maxvalue=Config.getInstance().configFile.getOthers().getExportLimit();
 		try{
 		//生成excel文件
 			os = response.getOutputStream();//
@@ -1972,22 +1974,24 @@ public class CommonDataService extends BaseService {
 			WritableCellFormat titleWritableFormat = new WritableCellFormat(font1);// 定义格式化对象
 			titleWritableFormat.setAlignment(Alignment.CENTRE);// 水平居中显示
 
+			Label excelTitle=null;
 			// wsheet.setRowView(1,30);// 设置行高
 			titleWritableFormat.setBorder(Border.ALL, BorderLineStyle.THIN); // 设置边框线
 			for (int i = 0; i < heads.length; i++) {
 				wsheet.setColumnView(i, 15);// 设置列宽
-				Label excelTitle = new Label(i, 1, heads[i], titleWritableFormat);
+				excelTitle = new Label(i, 1, heads[i], titleWritableFormat);
 				wsheet.addCell(excelTitle);
 			}
 			JSONObject jsonObject = JSONObject.fromObject("{\"data\":"+data+"}");//解析数据
 			JSONArray jsonArray = jsonObject.getJSONArray("data");
+			JSONObject everydata=null;
 			int count = 0;
 			for (int i=0;i<jsonArray.size();i++) {
-				if(i<65536-2){
-					JSONObject everydata = JSONObject.fromObject(jsonArray.getString(i));
+				if(i<maxvalue){
+					everydata = JSONObject.fromObject(jsonArray.getString(i));
 					count++;
 					for (int j = 0; j < columns.length; j++) {
-						Label excelTitle=null;
+						excelTitle=null;
 						if (columns[j].equalsIgnoreCase("id") || columns[j].equalsIgnoreCase("jlbh")) {
 							wsheet.setColumnView(j, 10);
 							excelTitle = new Label(j, count+1, count + "", titleWritableFormat);
