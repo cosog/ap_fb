@@ -342,6 +342,8 @@ public class ConfigFile {
 	    private boolean showLogo;
 	    
 	    private boolean printLog;
+	    
+	    private int exportLimit;
 
 		private String serialnumber;
 
@@ -416,6 +418,12 @@ public class ConfigFile {
 		}
 		public void setPrintLog(boolean printLog) {
 			this.printLog = printLog;
+		}
+		public int getExportLimit() {
+			return exportLimit;
+		}
+		public void setExportLimit(int exportLimit) {
+			this.exportLimit = exportLimit;
 		}
 	}
 }

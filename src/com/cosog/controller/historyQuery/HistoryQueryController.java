@@ -217,6 +217,7 @@ public class HistoryQueryController extends BaseController  {
 	@RequestMapping("/exportHistoryQueryDataExcel")
 	public String exportHistoryQueryDataExcel() throws Exception {
 		String json = "";
+		String result="{\"success\":true}";
 		orgId = ParamUtils.getParameter(request, "orgId");
 		String deviceName = java.net.URLDecoder.decode(ParamUtils.getParameter(request, "deviceName"),"utf-8");
 		String deviceId = ParamUtils.getParameter(request, "deviceId");
@@ -269,12 +270,18 @@ public class HistoryQueryController extends BaseController  {
 		pager.setStart_date(startDate);
 		pager.setEnd_date(endDate);
 		
-		json = historyQueryService.getDeviceHistoryExportData(orgId,deviceId,deviceName,deviceType,pager);
-		this.service.exportGridPanelData(response,fileName,title, heads, fields,json);
+//		json = historyQueryService.getDeviceHistoryExportData(orgId,deviceId,deviceName,deviceType,pager);
+		long time1 =System.nanoTime()/1000;
+		boolean bool=this.historyQueryService.exportDeviceHistoryData(response,fileName,title, heads, fields,orgId,deviceId,deviceName,deviceType,pager);
+		long time2 =System.nanoTime()/1000;
+		System.out.println("历史数据excel形成耗时:"+(time2-time1));
+		if(!bool){
+			result="{\"success\":false}";
+		}
 		response.setContentType("application/json;charset="+ Constants.ENCODING_UTF8);
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter pw = response.getWriter();
-		pw.print(json);
+		pw.print(result);
 		pw.flush();
 		pw.close();
 		return null;
