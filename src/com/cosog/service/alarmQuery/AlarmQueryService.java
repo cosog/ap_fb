@@ -158,14 +158,6 @@ public class AlarmQueryService<T> extends BaseService<T>  {
 				excelTitle = new Label(i, 1, heads[i], titleWritableFormat);
 				wsheet.addCell(excelTitle);
 			}
-			String ddicName="commStatusAlarm";
-			if(StringManagerUtils.stringToInteger(alarmType)==1){
-				ddicName="numericValueAlarm";
-			}else if(StringManagerUtils.stringToInteger(alarmType)==2){
-				ddicName="enumValueAlarm";
-			}else if(StringManagerUtils.stringToInteger(alarmType)==3){
-				ddicName="switchingValueAlarm";
-			}
 			String tableName="viw_pumpalarminfo_hist";
 			if(StringManagerUtils.stringToInteger(deviceType)==1){
 				tableName="viw_pipelinealarminfo_hist";
