@@ -2,7 +2,7 @@ server:
    accessPath: http://127.0.0.1:16100/ap_fb
 spring:
    datasource:
-      driverUrl: jdbc:oracle:thin:@127.0.0.1:1521:orcl
+      driverUrl: jdbc:oracle:thin:@106.14.144.112:1521/orclpdb
       driver: oracle.jdbc.driver.OracleDriver
       dialect: org.hibernate.dialect.Oracle10gDialect
       user: ap_fb

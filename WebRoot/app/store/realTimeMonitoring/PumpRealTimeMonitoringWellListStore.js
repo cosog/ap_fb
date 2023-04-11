@@ -37,7 +37,7 @@ Ext.define('AP.store.realTimeMonitoring.PumpRealTimeMonitoringWellListStore', {
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PumpRealTimeMonitoringListGridPanel_Id",
                     border: false,
-                    autoLoad: true,
+                    autoLoad: false,
                     bbar: bbar,
                     columnLines: true,
                     forceFit: false,
