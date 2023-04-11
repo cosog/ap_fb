@@ -37,7 +37,7 @@ Ext.define('AP.store.realTimeMonitoring.PipelineRealTimeMonitoringWellListStore'
                 gridPanel = Ext.create('Ext.grid.Panel', {
                     id: "PipelineRealTimeMonitoringListGridPanel_Id",
                     border: false,
-                    autoLoad: true,
+                    autoLoad: false,
                     bbar: bbar,
                     columnLines: true,
                     forceFit: false,

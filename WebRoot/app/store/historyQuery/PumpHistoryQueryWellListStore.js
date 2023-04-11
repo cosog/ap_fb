@@ -56,9 +56,9 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
                     		Ext.getCmp('PumpHistoryQueryStartDate_Id').setRawValue('');
                     		Ext.getCmp('PumpHistoryQueryEndDate_Id').setValue('');
                     		Ext.getCmp('PumpHistoryQueryEndDate_Id').setRawValue('');
-                    		var gridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
-                            if (isNotVal(gridPanel)) {
-                            	gridPanel.getStore().loadPage(1);
+                    		var pumpHistoryQueryDataGridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
+                            if (isNotVal(pumpHistoryQueryDataGridPanel)) {
+                            	pumpHistoryQueryDataGridPanel.getStore().loadPage(1);
                             }else{
                             	Ext.create("AP.store.historyQuery.PumpHistoryDataStore");
                             }
@@ -73,9 +73,9 @@ Ext.define('AP.store.historyQuery.PumpHistoryQueryWellListStore', {
             	gridPanel.getSelectionModel().select(0, true);
             }else{
             	Ext.getCmp("PumpHistoryQueryInfoDeviceListSelectRow_Id").setValue(-1);
-            	var gridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
-                if (isNotVal(gridPanel)) {
-                	gridPanel.getStore().loadPage(1);
+            	var pumpHistoryQueryDataGridPanel = Ext.getCmp("PumpHistoryQueryDataGridPanel_Id");
+                if (isNotVal(pumpHistoryQueryDataGridPanel)) {
+                	pumpHistoryQueryDataGridPanel.getStore().loadPage(1);
                 }else{
                 	Ext.create("AP.store.historyQuery.PumpHistoryDataStore");
                 }
