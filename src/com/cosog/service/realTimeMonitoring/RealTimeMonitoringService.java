@@ -632,9 +632,12 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		Map<String,String> loadedAcquisitionItemColumnsMap=acquisitionItemColumnsMap.get(columnsKey);
 		
 		String itemsSql="select t.wellname,t3.protocol, "
-				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
-				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort,"
-				+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
+//				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
+//				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort,"
+//				+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
+				+ " rtrim(xmlagg(xmlparse(content t6.itemname || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) key,"
+				+ " rtrim(xmlagg(xmlparse(content decode(t6.sort,null,9999,t6.sort) || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) sort,"
+				+ " rtrim(xmlagg(xmlparse(content decode(t6.bitindex,null,9999,t6.bitindex) || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) bitindex"
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 				+ " and t.id="+deviceId
@@ -678,10 +681,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 				}
 			}
 			
-			if(protocol!=null && StringManagerUtils.isNotNull(itemsObj[2]+"")){
-				String[] itemsArr=(itemsObj[2]+"").split(",");
-				String[] itemsSortArr=(itemsObj[3]+"").split(",");
-				String[] itemsBitIndexArr=(itemsObj[4]+"").split(",");
+			if(protocol!=null && StringManagerUtils.isNotNull(StringManagerUtils.CLOBObjectToString(itemsObj[2]))){
+				String[] itemsArr=StringManagerUtils.CLOBObjectToString(itemsObj[2]).split(",");
+				String[] itemsSortArr=StringManagerUtils.CLOBObjectToString(itemsObj[3]).split(",");
+				String[] itemsBitIndexArr=StringManagerUtils.CLOBObjectToString(itemsObj[4]).split(",");
 				List<ModbusProtocolConfig.Items> protocolItems=new ArrayList<ModbusProtocolConfig.Items>();
 				List<ProtocolItemResolutionData> protocolItemResolutionDataList=new ArrayList<ProtocolItemResolutionData>();
 				for(int j=0;j<protocol.getItems().size();j++){
@@ -959,8 +962,10 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		
 		String isControlSql="select t2.role_flag from tbl_user t,tbl_role t2 where t.user_type=t2.role_id and t.user_no="+userId;
 		String protocolItemsSql="select t.wellname,t3.protocol, "
-				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.sort,t6.id,t6.bitindex ) key,"
-				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.sort,t6.id,t6.bitindex ) sort "
+//				+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.sort,t6.id,t6.bitindex ) key,"
+//				+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.sort,t6.id,t6.bitindex ) sort "
+				+ " rtrim(xmlagg(xmlparse(content t6.itemname || ',' wellformed) order by t6.groupid,t6.sort,t6.id,t6.bitindex).getclobval(),',' ) key,"
+				+ " rtrim(xmlagg(xmlparse(content decode(t6.sort,null,9999,t6.sort) || ',' wellformed) order by t6.groupid,t6.sort,t6.id,t6.bitindex).getclobval(),',' ) sort "
 				+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 				+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 				+ " and t.id="+deviceId+" and t5.type=1"
@@ -998,8 +1003,9 @@ public class RealTimeMonitoringService<T> extends BaseService<T> {
 		for(int i=0;i<itemsList.size();i++){
 			Object[] obj=(Object[]) itemsList.get(i);
 			protocolCode=obj[1]+"";
-			String[] itemsArr=(obj[2]+"").split(",");
-			String[] itemsSortArr=(obj[3]+"").split(",");
+			String[] itemsArr=StringManagerUtils.CLOBObjectToString(obj[2]).split(",");
+			String[] itemsSortArr=StringManagerUtils.CLOBObjectToString(obj[3]).split(",");
+			
 			Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 			if(equipmentDriveMap.size()==0){
 				EquipmentDriverServerTask.loadProtocolConfig();

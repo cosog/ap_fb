@@ -972,7 +972,8 @@ public class EquipmentDriverServerTask {
 			String sql="select t.name,t.acqprotocoltype,t.ctrlprotocoltype,"
 					+ "t.signinprefix,t.signinsuffix,t.heartbeatprefix,t.heartbeatsuffix,"
 					+ "t2.protocol,t2.unit_code,t4.group_code,t4.acq_cycle,t4.type,"
-					+ "listagg(t5.itemname, ',') within group(order by t5.id ) key "
+//					+ "listagg(t5.itemname, ',') within group(order by t5.id ) key "
+					+ " rtrim(xmlagg(xmlparse(content t5.itemname || ',' wellformed) order by t5.id).getclobval(),',' ) key"
 					+ " from tbl_protocolinstance t "
 					+ " left outer join tbl_acq_unit_conf t2 on t.unitid=t2.id "
 					+ " left outer join tbl_acq_group2unit_conf t3 on t2.id=t3.unitid "
@@ -1028,8 +1029,15 @@ public class EquipmentDriverServerTask {
 						group.setAddr(new ArrayList<Integer>());
 						int groupType=rs.getInt(12);
 						
-						if(StringManagerUtils.isNotNull(rs.getString(13))){
-							String[] itemsArr=rs.getString(13).split(",");
+						String itemsStr="";
+						try {
+							itemsStr=StringManagerUtils.CLOBtoString2(rs.getClob(13));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						if(StringManagerUtils.isNotNull(itemsStr)){
+							String[] itemsArr=itemsStr.split(",");
 							for(int i=0;i<modbusProtocolConfig.getProtocol().size();i++){
 								if(modbusProtocolConfig.getProtocol().get(i).getName().equalsIgnoreCase(rs.getString(8))){
 									for(int j=0;j<itemsArr.length;j++){
@@ -1068,7 +1076,7 @@ public class EquipmentDriverServerTask {
 					}
 				}
 			} catch (SQLException e) {
-				StringManagerUtils.printLog("ID初始化sql："+sql);
+				StringManagerUtils.printLog("实例初始化sql："+sql);
 				e.printStackTrace();
 			} finally{
 				OracleJdbcUtis.closeDBConnection(conn, pstmt, rs);
