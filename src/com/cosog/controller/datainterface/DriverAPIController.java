@@ -665,9 +665,12 @@ public class DriverAPIController extends BaseController{
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
 					+ " order by t2.id";
 			String itemsSql="select t.wellname,t3.protocol, "
-					+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
-					+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort, "
-					+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
+					+ " rtrim(xmlagg(xmlparse(content t6.itemname || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) key,"
+					+ " rtrim(xmlagg(xmlparse(content decode(t6.sort,null,9999,t6.sort) || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) sort,"
+					+ " rtrim(xmlagg(xmlparse(content decode(t6.bitindex,null,9999,t6.bitindex) || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) bitindex"
+//					+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key,"
+//					+ " listagg(decode(t6.sort,null,9999,t6.sort), ',') within group(order by t6.groupid,t6.id ) sort, "
+//					+ " listagg(decode(t6.bitindex,null,9999,t6.bitindex), ',') within group(order by t6.groupid,t6.id ) bitindex  "
 					+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 					+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 					+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
@@ -688,9 +691,11 @@ public class DriverAPIController extends BaseController{
 				String wellId=obj[obj.length-1]+"";
 				//配置的采控项
 				Object[] itemsObj=(Object[]) itemsList.get(0);
-				String[] itemsArr=(itemsObj[2]+"").split(",");
-				String[] itemsSortArr=(itemsObj[3]+"").split(",");
-				String[] itemsBitIndexArr=(itemsObj[4]+"").split(",");
+				
+				String[] itemsArr=StringManagerUtils.CLOBObjectToString(itemsObj[2]).split(",");
+				String[] itemsSortArr=StringManagerUtils.CLOBObjectToString(itemsObj[3]).split(",");
+				String[] itemsBitIndexArr=StringManagerUtils.CLOBObjectToString(itemsObj[4]).split(",");
+				
 				Map<String, Object> equipmentDriveMap = EquipmentDriveMap.getMapObject();
 				if(equipmentDriveMap.size()==0){
 					EquipmentDriverServerTask.loadProtocolConfig();
@@ -1012,7 +1017,8 @@ public class DriverAPIController extends BaseController{
 						columns+= "]";
 						
 						String userItemsSql="select "
-								+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key"
+//								+ " listagg(t6.itemname, ',') within group(order by t6.groupid,t6.id ) key"
+								+ " rtrim(xmlagg(xmlparse(content t6.itemname || ',' wellformed) order by t6.groupid,t6.id).getclobval(),',' ) key"
 								+ " from "+deviceTableName+" t,tbl_protocolinstance t2,tbl_acq_unit_conf t3,tbl_acq_group2unit_conf t4,tbl_acq_group_conf t5,tbl_acq_item2group_conf t6 "
 								+ " where t.instancecode=t2.code and t2.unitid=t3.id and t3.id=t4.unitid and t4.groupid=t5.id and t5.id=t6.groupid "
 								+ " and t.signinid='"+acqGroup.getID()+"' and to_number(t.slave)="+acqGroup.getSlave()
@@ -1021,8 +1027,7 @@ public class DriverAPIController extends BaseController{
 						
 						List<?> userItemsList = commonDataService.findCallSql(userItemsSql);
 						if(userItemsList.size()>0&&userItemsList.get(0)!=null){
-							String[] userItems=userItemsList.get(0).toString().split(",");
-							
+							String[] userItems=StringManagerUtils.CLOBObjectToString(userItemsList.get(0)).split(",");
 							
 							webSocketSendData.append("{ \"success\":true,\"functionCode\":\""+functionCode+"\",\"wellName\":\""+wellName+"\",\"acqTime\":\""+acqTime+"\",\"columns\":"+columns+",");
 							webSocketSendData.append("\"totalRoot\":[");
