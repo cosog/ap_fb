@@ -912,6 +912,7 @@ public class AcquisitionUnitManagerController extends BaseController {
 		StringManagerUtils stringManagerUtils=new StringManagerUtils();
 		String fileName="ModbusProtocolConfig.json";
 		String data = ParamUtils.getParameter(request, "data");
+		data = StringManagerUtils.superscriptToNormal(data);
 //		StringManagerUtils.printLog(data);
 		java.lang.reflect.Type type = new TypeToken<ModbusDriverSaveData>() {}.getType();
 		ModbusDriverSaveData modbusDriverSaveData=gson.fromJson(data, type);
